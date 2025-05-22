@@ -48,7 +48,6 @@ composer.lock
 package-lock.json
 
 
-
 # Ignore test environment files
 .env.testing
 phpunit.xml
@@ -70,7 +69,5 @@ phpunit.xml.dist
 # *.flv
 # *.mov
 # *.wmv
-
-
 
 
