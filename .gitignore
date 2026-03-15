@@ -52,6 +52,10 @@ pnpm-lock.yaml
 
 
 
+# Laravel environment (không commit mật khẩu, key, DB)
+.env
+.env.backup
+.env.production
 # Ignore test environment files
 .env.testing
 phpunit.xml
