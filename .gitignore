@@ -39,13 +39,17 @@ Thumbs.db
 storage/app/public
 storage/framework/cache/data
 storage/framework/sessions/
-storage/framework/testing
+storage/framework/testing/
 storage/framework/views/
 storage/logs
-public/upload/files
+public/upload/files/
+public/upload/images/
 vendor/
+.composer-cache/
 composer.lock
 package-lock.json
+pnpm-lock.yaml
+
 
 
 # Ignore test environment files
@@ -69,5 +73,4 @@ phpunit.xml.dist
 # *.flv
 # *.mov
 # *.wmv
-
 

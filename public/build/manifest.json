@@ -1,0 +1,106 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-Cw8mYmck.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/fontawesome_pro/webfonts/fa-brands-400.ttf": {
+    "file": "assets/fa-brands-400-CbnkDbAI.ttf",
+    "src": "resources/fontawesome_pro/webfonts/fa-brands-400.ttf"
+  },
+  "resources/fontawesome_pro/webfonts/fa-brands-400.woff2": {
+    "file": "assets/fa-brands-400-0IQFxQqs.woff2",
+    "src": "resources/fontawesome_pro/webfonts/fa-brands-400.woff2"
+  },
+  "resources/fontawesome_pro/webfonts/fa-duotone-900.ttf": {
+    "file": "assets/fa-duotone-900-BmBVfxr5.ttf",
+    "src": "resources/fontawesome_pro/webfonts/fa-duotone-900.ttf"
+  },
+  "resources/fontawesome_pro/webfonts/fa-duotone-900.woff2": {
+    "file": "assets/fa-duotone-900-CMQgRMzW.woff2",
+    "src": "resources/fontawesome_pro/webfonts/fa-duotone-900.woff2"
+  },
+  "resources/fontawesome_pro/webfonts/fa-light-300.ttf": {
+    "file": "assets/fa-light-300-B25myIii.ttf",
+    "src": "resources/fontawesome_pro/webfonts/fa-light-300.ttf"
+  },
+  "resources/fontawesome_pro/webfonts/fa-light-300.woff2": {
+    "file": "assets/fa-light-300-DtQF1Shp.woff2",
+    "src": "resources/fontawesome_pro/webfonts/fa-light-300.woff2"
+  },
+  "resources/fontawesome_pro/webfonts/fa-regular-400.ttf": {
+    "file": "assets/fa-regular-400-w-HYIetp.ttf",
+    "src": "resources/fontawesome_pro/webfonts/fa-regular-400.ttf"
+  },
+  "resources/fontawesome_pro/webfonts/fa-regular-400.woff2": {
+    "file": "assets/fa-regular-400-ORrACF7o.woff2",
+    "src": "resources/fontawesome_pro/webfonts/fa-regular-400.woff2"
+  },
+  "resources/fontawesome_pro/webfonts/fa-sharp-light-300.ttf": {
+    "file": "assets/fa-sharp-light-300-BPokpzPG.ttf",
+    "src": "resources/fontawesome_pro/webfonts/fa-sharp-light-300.ttf"
+  },
+  "resources/fontawesome_pro/webfonts/fa-sharp-light-300.woff2": {
+    "file": "assets/fa-sharp-light-300-BuzFbrEQ.woff2",
+    "src": "resources/fontawesome_pro/webfonts/fa-sharp-light-300.woff2"
+  },
+  "resources/fontawesome_pro/webfonts/fa-sharp-regular-400.ttf": {
+    "file": "assets/fa-sharp-regular-400-B4BtV1rs.ttf",
+    "src": "resources/fontawesome_pro/webfonts/fa-sharp-regular-400.ttf"
+  },
+  "resources/fontawesome_pro/webfonts/fa-sharp-regular-400.woff2": {
+    "file": "assets/fa-sharp-regular-400-BPQkoSg1.woff2",
+    "src": "resources/fontawesome_pro/webfonts/fa-sharp-regular-400.woff2"
+  },
+  "resources/fontawesome_pro/webfonts/fa-sharp-solid-900.ttf": {
+    "file": "assets/fa-sharp-solid-900-DvEEFdOP.ttf",
+    "src": "resources/fontawesome_pro/webfonts/fa-sharp-solid-900.ttf"
+  },
+  "resources/fontawesome_pro/webfonts/fa-sharp-solid-900.woff2": {
+    "file": "assets/fa-sharp-solid-900-D6wCZOwN.woff2",
+    "src": "resources/fontawesome_pro/webfonts/fa-sharp-solid-900.woff2"
+  },
+  "resources/fontawesome_pro/webfonts/fa-solid-900.ttf": {
+    "file": "assets/fa-solid-900-BaRITtSJ.ttf",
+    "src": "resources/fontawesome_pro/webfonts/fa-solid-900.ttf"
+  },
+  "resources/fontawesome_pro/webfonts/fa-solid-900.woff2": {
+    "file": "assets/fa-solid-900-6nmD8yp-.woff2",
+    "src": "resources/fontawesome_pro/webfonts/fa-solid-900.woff2"
+  },
+  "resources/fontawesome_pro/webfonts/fa-thin-100.ttf": {
+    "file": "assets/fa-thin-100-CmGmDq-e.ttf",
+    "src": "resources/fontawesome_pro/webfonts/fa-thin-100.ttf"
+  },
+  "resources/fontawesome_pro/webfonts/fa-thin-100.woff2": {
+    "file": "assets/fa-thin-100-GFodRVqa.woff2",
+    "src": "resources/fontawesome_pro/webfonts/fa-thin-100.woff2"
+  },
+  "resources/fontawesome_pro/webfonts/fa-v4compatibility.ttf": {
+    "file": "assets/fa-v4compatibility-DaUZC2ct.ttf",
+    "src": "resources/fontawesome_pro/webfonts/fa-v4compatibility.ttf"
+  },
+  "resources/fontawesome_pro/webfonts/fa-v4compatibility.woff2": {
+    "file": "assets/fa-v4compatibility-DQlc2d5w.woff2",
+    "src": "resources/fontawesome_pro/webfonts/fa-v4compatibility.woff2"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-U1Wg5J53.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/scss/style.scss": {
+    "file": "assets/style-004-sBNL.css",
+    "src": "resources/scss/style.scss",
+    "isEntry": true,
+    "name": "style",
+    "names": [
+      "style.css"
+    ]
+  }
+}

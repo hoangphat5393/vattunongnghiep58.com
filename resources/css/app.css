@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+    --font-sans: "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+    --color-leaf-50: #f4fbe9;
+    --color-leaf-100: #e5f4c7;
+    --color-leaf-200: #d3eea2;
+    --color-leaf-300: #bee778;
+    --color-leaf-400: #a3dd52;
+    --color-leaf-500: #7cc72f;
+    --color-leaf-600: #5ca91d;
+    --color-leaf-700: #3c7c16;
+    --color-leaf-800: #275514;
+    --color-leaf-900: #16350b;
+}
+
+@layer utilities {
+    .curved-bottom {
+        border-bottom-left-radius: 50% 20px;
+        border-bottom-right-radius: 50% 20px;
+    }
+}

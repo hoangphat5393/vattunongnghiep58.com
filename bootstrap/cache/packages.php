@@ -17,31 +17,6 @@
       0 => 'CKSource\\CKFinderBridge\\CKFinderServiceProvider',
     ),
   ),
-  'codezero/browser-locale' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'CodeZero\\BrowserLocale\\Laravel\\BrowserLocaleServiceProvider',
-    ),
-  ),
-  'codezero/laravel-localized-routes' => 
-  array (
-    'aliases' => 
-    array (
-      'LocaleConfig' => 'CodeZero\\LocalizedRoutes\\Facades\\LocaleConfig',
-    ),
-    'providers' => 
-    array (
-      0 => 'CodeZero\\LocalizedRoutes\\LocalizedRoutesServiceProvider',
-    ),
-  ),
-  'codezero/laravel-uri-translator' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'CodeZero\\UriTranslator\\UriTranslatorServiceProvider',
-    ),
-  ),
   'diglactic/laravel-breadcrumbs' => 
   array (
     'aliases' => 
@@ -124,17 +99,6 @@
       0 => 'Termwind\\Laravel\\TermwindServiceProvider',
     ),
   ),
-  'olimortimer/laravelshoppingcart' => 
-  array (
-    'aliases' => 
-    array (
-      'Cart' => 'Gloudemans\\Shoppingcart\\Facades\\Cart',
-    ),
-    'providers' => 
-    array (
-      0 => 'Gloudemans\\Shoppingcart\\ShoppingcartServiceProvider',
-    ),
-  ),
   'spatie/laravel-ignition' => 
   array (
     'aliases' => 
@@ -144,6 +108,17 @@
     'providers' => 
     array (
       0 => 'Spatie\\LaravelIgnition\\IgnitionServiceProvider',
+    ),
+  ),
+  'surfsidemedia/shoppingcart' => 
+  array (
+    'aliases' => 
+    array (
+      'Cart' => 'Surfsidemedia\\Shoppingcart\\Facades\\Cart',
+    ),
+    'providers' => 
+    array (
+      0 => 'Surfsidemedia\\Shoppingcart\\ShoppingcartServiceProvider',
     ),
   ),
 );

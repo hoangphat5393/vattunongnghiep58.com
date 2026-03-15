@@ -1,0 +1,11 @@
+<div class="box-news">
+    <div class="news-thumb ratio ratio-4x3 overflow-hidden">
+        <img class="img-fluid" src="{{ url($post->image) }}" onerror="this.src='{{ asset('assets/images/placeholder.png') }}';">
+    </div>
+    <div class="news-text">
+        <a href="{{ route('news.single', ['id' => $post->id, 'slug' => $post->slug], true, $lc) }}" class="news-title stretched-link">
+            {{ $post->title }}
+        </a>
+    </div>
+
+</div>
