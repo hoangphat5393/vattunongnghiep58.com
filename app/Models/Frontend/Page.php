@@ -30,9 +30,14 @@ class Page extends Model
 
     public function scopePages(Builder $query)
     {
-        return $query->where(function ($q) {
-            $q->where('type', 'page')->orWhereNull('type');
-        });
+        // Bảng pages dùng cột type (cocojt đã bỏ). Chỉ query theo type để tránh lỗi "Unknown column 'cocojt'".
+        $table = $this->getTable();
+        if (\Illuminate\Support\Facades\Schema::hasColumn($table, 'type')) {
+            return $query->where(function ($q) {
+                $q->where('type', 'page')->orWhereNull('type');
+            });
+        }
+        return $query;
     }
 
     // public function filterCategoryId($query, $value)

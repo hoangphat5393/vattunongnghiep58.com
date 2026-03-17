@@ -58,11 +58,6 @@ class User extends Authenticatable
         return Auth::guard('web')->user();
     }
 
-    // public function theme(): HasMany
-    // {
-    //     return $this->hasMany('App\Models\Theme', 'admin_id', 'id');
-    // }
-
     /**
      * A user has and belongs to many roles.
      *

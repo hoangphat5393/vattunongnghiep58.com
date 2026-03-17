@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Models\Frontend\Category;
 use App\Models\Frontend\Page;
-use App\Models\Frontend\Post;
 use App\Models\Frontend\Product;
 use Gornymedia\Shortcodes\Facades\Shortcode;
 use Carbon\Carbon, Cart, Auth;
@@ -83,7 +80,7 @@ class PageController extends Controller
             'seo_keyword'   => $page->seo_keyword ?? '',
         ];
 
-        return view('frontend.home', $this->data)->compileShortcodes();
+        return view('frontend.home', $this->data);
     }
 
     public function page($slug)
@@ -130,9 +127,9 @@ class PageController extends Controller
             $templateName = 'frontend.page.' . $slug;
 
             if (View::exists($templateName)) {
-                return view($templateName,  $this->data)->compileShortcodes();
+                return view($templateName,  $this->data);
             } else {
-                return view('frontend.page.index', ['data' => $this->data])->compileShortcodes();
+                return view('frontend.page.index', ['data' => $this->data]);
             }
         } else {
             return view('errors.404');

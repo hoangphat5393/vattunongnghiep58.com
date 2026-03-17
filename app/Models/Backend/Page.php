@@ -32,9 +32,12 @@ class Page extends Model
 
     public function scopePages(Builder $query)
     {
-        return $query->where(function ($q) {
-            $q->where('type', 'page')->orWhereNull('type');
-        });
+        if (\Illuminate\Support\Facades\Schema::hasColumn($this->getTable(), 'type')) {
+            return $query->where(function ($q) {
+                $q->where('type', 'page')->orWhereNull('type');
+            });
+        }
+        return $query;
     }
 
     public function user(): BelongsTo

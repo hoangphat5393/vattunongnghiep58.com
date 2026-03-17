@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Frontend\Category;
-use App\Models\Frontend\Post;
+use App\Models\Frontend\Page;
 use App\Models\Frontend\Product;
 use App\Traits\FrontendDataTransform;
 use Carbon\Carbon;
@@ -44,7 +44,7 @@ class FrontendDataTransformTest extends TestCase
 
     public function test_transform_home_news_formats_dates_and_title()
     {
-        $post = new Post();
+        $post = new Page();
         $post->id = 5;
         $post->slug = 'bi-quyet-trong-rau';
         $post->name = 'Bí quyết trồng rau';

@@ -6,20 +6,22 @@ use Auth, DB, Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
-use App\Models\Menus,  App\Models\MenuItems;
-use App\Models\Rating_Product, App\Models\Page, App\Models\Brand, App\Models\Slider, App\Models\Addtocard, App\Models\Addtocard_Detail, App\Models\Discount_code, App\Models\Backend\User;
-use App\Models\District, App\Models\Ward;
-use App\Models\Category;
-use App\Models\Product, App\Models\ProductCategory;
-use App\Models\DictionaryCategory;
-use App\Models\Post, App\Models\PostCategory;
-use Illuminate\Support\Facades\Schema;
-use App\Models\Video, App\Models\VideoCategory;
-use App\Models\Campaign;
-use App\Models\EmailTemplate;
-use App\Models\Contact, App\Models\Subscription;
+use App\Models\Backend\Menu;
+use App\Models\Backend\MenuItems;
+use App\Models\Backend\Page;
+use App\Models\Backend\User;
+use App\Models\Backend\District;
+use App\Models\Backend\Ward;
+use App\Models\Backend\Category;
+use App\Models\Backend\Product;
+use App\Models\Backend\ProductCategory;
+use App\Models\Backend\Slider;
+use App\Models\Backend\EmailTemplate;
+use App\Models\Backend\Contact;
+use App\Models\Backend\Subscription;
+use App\Models\Backend\AddToCard;
+use App\Models\Backend\AddToCardDetail;
 
 
 class AjaxController extends Controller
@@ -75,26 +77,24 @@ class AjaxController extends Controller
                 break;
 
             case 'email_template':
-                \App\Models\EmailTemplate::whereIn('id', $arr)->delete();
+                EmailTemplate::whereIn('id', $arr)->delete();
                 return 1;
                 break;
             case 'menuWp':
-                $menuWp = Menus::whereIn('id', $arr)->get();
+                $menuWp = Menu::whereIn('id', $arr)->get();
 
                 if ($menuWp->count() > 0) {
                     foreach ($menuWp as $item) {
                         // DELETE LIST CHILD
-                        if ($item->children->count() > 0) {
-                            $item_child_id = $item->children->pluck('id');
+                        if ($item->items->count() > 0) {
+                            $item_child_id = $item->items->pluck('id');
                             MenuItems::whereIn('id', $item_child_id)->delete();
                         }
-                        // DELETE SLIDER
                         $item->delete();
                     }
                 }
 
-                // SET AUTO_INCREMENT TO 1
-                $table = (new Menus)->getTable();
+                $table = (new Menu)->getTable();
                 $table2 = (new MenuItems)->getTable();
                 DB::statement("ALTER TABLE $table AUTO_INCREMENT = 1;");
                 DB::statement("ALTER TABLE $table2 AUTO_INCREMENT = 1;");
@@ -108,10 +108,7 @@ class AjaxController extends Controller
             case 'post-category':
                 Category::whereIn('id', $arr)->delete();
 
-                // DELETE DATA FROM PIVOT TABLE (bảng post_categories đã bỏ)
-                if (Schema::hasTable('post_categories')) {
-                    PostCategory::whereIn('category_id', $arr)->delete();
-                }
+                // Bảng post_categories đã xóa, không còn pivot.
 
                 // SET AUTO_INCREMENT TO 1
                 $table = (new Category)->getTable();
@@ -141,31 +138,9 @@ class AjaxController extends Controller
                 DB::statement("ALTER TABLE $table AUTO_INCREMENT = 1;");
                 return 1;
                 break;
-            case 'campaign':
-                Campaign::whereIn('id', $arr)->delete();
-
-                // DELETE DATA FROM PIVOT TABLE
-                // PostCategory::whereIn('campaign', $arr)->delete();
-
-                // SET AUTO_INCREMENT TO 1
-                $table = (new Campaign)->getTable();
-                DB::statement("ALTER TABLE $table AUTO_INCREMENT = 1;");
-                return 1;
-                break;
-            case 'video':
-                Video::whereIn('id', $arr)->delete();
-
-                // DELETE DATA FROM PIVOT TABLE
-                VideoCategory::whereIn('video_id', $arr)->delete();
-
-                // SET AUTO_INCREMENT TO 1
-                $table = (new Video)->getTable();
-                DB::statement("ALTER TABLE $table AUTO_INCREMENT = 1;");
-                return 1;
-                break;
             case 'user_admin':
                 //xóa user admin
-                $loadDelete = Admin::whereIn('id', $arr)->delete();
+                $loadDelete = User::whereIn('id', $arr)->delete();
 
                 //delete products
                 // $productDelete = Theme::all();
@@ -182,8 +157,8 @@ class AjaxController extends Controller
                 return 1;
                 break;
             case 'order':
-                $loadDelete = Addtocard::whereIn('cart_id', $arr)->delete();
-                $addToCardDelete = Addtocard_Detail::whereIn('cart_id', $arr)->delete();
+                $loadDelete = AddToCard::whereIn('cart_id', $arr)->delete();
+                $addToCardDelete = AddToCardDetail::whereIn('cart_id', $arr)->delete();
                 return 1;
                 break;
             case 'contact':
@@ -300,7 +275,7 @@ class AjaxController extends Controller
                 $i = 1;
                 $newMenuWP = '';
                 foreach ($arr as $id) {
-                    $menuWP = Menus::find($id);
+                    $menuWP = Menu::find($id);
 
                     // Get menu list items
                     $list_items = $menuWP->items;
@@ -318,7 +293,7 @@ class AjaxController extends Controller
                         foreach ($list_items as $item) {
                             $menuItem = MenuItems::find($item->id);
                             $newMenuItem = $menuItem->replicate();
-                            $newMenuItem->menu = $newMenuWP->id; // changing the slider_id
+                            $newMenuItem->menu_id = $newMenuWP->id; // changing the slider_id
                             $newMenuItem->created_at = Carbon::now(); // changing the created_at date
                             $newMenuItem->save(); // saving it to the database
                         }
@@ -398,61 +373,6 @@ class AjaxController extends Controller
                 }
                 return 1;
                 break;
-            case 'campaign':
-                // Replicate Campaign + Category
-                $i = 1;
-                $newCampaign = '';
-                foreach ($arr as $id) {
-                    $campaign = Campaign::find($id);
-
-                    // Get categories of current post 
-                    // $category_id = $post->categories->pluck('id')->toArray();
-
-                    // Replicate post
-                    $newCampaign = $campaign->replicate();
-                    // $newPost->name = $newPost->name . ' ' . $i;
-                    // $newPost->slug = Str::slug($newPost->name);
-                    $newCampaign->created_at = Carbon::now(); // changing the created_at date
-                    $newCampaign->save(); // saving it to the database
-
-                    $slug = Str::slug($newCampaign->name . '-' . $newCampaign->id);
-
-                    // update sort = id
-                    Campaign::where("id", $newCampaign->id)->update(['slug' => $slug, 'sort' => $newCampaign->id]);
-
-                    // Replicate Post Category
-                    // $newCampaign = Post::find($newCampaign->id);
-                    // $newCampaign->categories()->sync($category_id);
-                    $i++;
-                }
-                return 1;
-                break;
-            case 'video':
-                // Replicate Post + Category
-                $i = 1;
-                $newVideo = '';
-                foreach ($arr as $id) {
-                    $video = Video::find($id);
-
-                    // Get categories of current post 
-                    $category_id = $video->categories->pluck('id')->toArray();
-
-                    // Replicate video
-                    $newVideo = $video->replicate();
-                    $newVideo->created_at = Carbon::now(); // changing the created_at date
-                    $newVideo->save(); // saving it to the database
-
-                    // update sort = id
-                    Video::where("id", $newVideo->id)->update(['sort' => $newVideo->id]);
-
-                    // Replicate Video Category
-                    $newVideo = Video::find($newVideo->id);
-                    $newVideo->categories()->sync($category_id);
-                    $i++;
-                }
-                return 1;
-                break;
-
             case 'slider':
                 // Replicate Slider + list image
                 $i = 1;

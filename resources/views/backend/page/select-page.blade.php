@@ -5,8 +5,7 @@
 
 @if ($type == '')
     @php
-        $pages = \App\Models\Page::where('status', 1)->where('parent', 0)->get();
-
+        $pages = \App\Models\Backend\Page::where('status', 1)->where('parent', 0)->get();
     @endphp
     @if ($pages->count() > 0)
         <select class="custom-select me-2" name="parent">

@@ -3,6 +3,7 @@
 // use CodeZero\LocalizedRoutes\Middleware\SetLocale;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Artisan;
 
 // use App\Http\Controllers\Admin\PageController;
 // use App\Http\Controllers\Admin\AlbumController;
