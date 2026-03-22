@@ -60,8 +60,8 @@
                                     <form method="GET" action="" id="frm-filter-post" class="form-inline">
                                         <div class="input-group mb-3">
                                             <input type="text" class="form-control" id="name" name="name" placeholder="@lang('admin.name')" aria-label="@lang('admin.Keyword')" aria-describedby="name" value="{{ request('name') }}">
-                                            <button class="btn btn-outline-primary" type="submit" id="button-addon2">
-                                                <i class="fa-regular fa-magnifying-glass"></i> @lang('admin.search')
+                                            <button class="btn btn-outline-primary" type="submit" id="button-addon2" aria-label="@lang('admin.search')">
+                                                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
                                             </button>
                                         </div>
                                     </form>
@@ -75,7 +75,7 @@
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-bordered list-data v-center" id="table_index">
+                                <table class="table table-bordered table-hover list-data v-center" id="table_index">
                                     <thead>
                                         <tr>
                                             <th class="text-center" style="width:50px">

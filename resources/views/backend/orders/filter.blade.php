@@ -35,7 +35,7 @@
     </div>
     <!-- /.app-content-header -->
     <!-- Main content -->
-    <section class="content">
+    <div class="app-content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
@@ -44,13 +44,13 @@
                             <h3 class="card-title">Filter Orders</h3>
                         </div> <!-- /.card-header -->
                         <div class="card-body">
-                            <div class="clear">
-                                <ul class="nav fl">
+                            <div class="clearfix">
+                                <ul class="nav float-start">
                                     <li class="nav-item">
                                         <a class="btn btn-danger" onclick="delete_id('order')" href="javascript:void(0)"><i class="fas fa-trash"></i> Delete</a>
                                     </li>
                                 </ul>
-                                <div class="fr">
+                                <div class="float-end">
                                     <form method="GET" action="{{ route('admin.order.search') }}" id="frm-filter-post" class="form-inline">
                                         <select class="custom-select me-2" name="order_status">
                                             <option value="">Tình trạng đơn hàng</option>
@@ -63,13 +63,15 @@
                                         <input type="text" class="form-control" value="<?php if (isset($_GET['search_title'])) {
                                             echo $_GET['search_title'];
                                         } ?>" name="search_title" id="search_title" placeholder="Mã đơn hàng">
-                                        <button type="submit" class="btn btn-primary ms-2">Tìm kiếm</button>
+                                        <button type="submit" class="btn btn-primary ms-2" aria-label="Tìm kiếm">
+                                            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                                        </button>
                                     </form>
                                 </div>
                             </div>
                             <br />
-                            <div class="clear">
-                                <div class="fr">
+                            <div class="clearfix">
+                                <div class="float-end">
                                     {!! $data_order->links() !!}
                                 </div>
                             </div>
@@ -134,7 +136,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="fr">
+                            <div class="float-end">
                                 {!! $data_order->links() !!}
                             </div>
                         </div> <!-- /.card-body -->

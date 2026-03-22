@@ -44,8 +44,8 @@
                             <h3 class="card-title">Lọc sản phẩm</h3>
                         </div> <!-- /.card-header -->
                         <div class="card-body">
-                            <div class="clear">
-                                <ul class="nav fl">
+                            <div class="clearfix">
+                                <ul class="nav float-start">
                                     <li class="nav-item">
                                         <a class="btn btn-danger" onclick="delete_id('product')" href="javascript:void(0)"><i class="fas fa-trash"></i> Delete</a>
                                     </li>
@@ -53,7 +53,7 @@
                                         <a class="btn btn-primary" href="{{ route('admin.product.create') }}" style="margin-left: 6px;"><i class="fas fa-plus"></i> Add New</a>
                                     </li>
                                 </ul>
-                                <div class="fr">
+                                <div class="float-end">
                                     <form method="GET" action="{{ route('admin.product.index') }}" id="frm-filter-post" class="form-inline">
                                         <?php
                                         $list_cate = App\Models\Category_Theme::orderBy('category_theme.categoryName', 'ASC')->select('category_theme.categoryID', 'category_theme.categoryName')->get();
@@ -67,16 +67,18 @@
                                         <input type="text" class="form-control" name="search_title" value="<?php if (isset($_GET['search_title'])) {
                                             echo $_GET['search_title'];
                                         } ?>" id="search_title" placeholder="Từ khoá">
-                                        <button type="submit" class="btn btn-primary ms-2">Tìm kiếm</button>
+                                        <button type="submit" class="btn btn-primary ms-2" aria-label="Tìm kiếm">
+                                            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                                        </button>
                                     </form>
                                 </div>
                             </div>
                             <br />
-                            <div class="clear">
-                                <div class="fl" style="font-size: 17px;">
+                            <div class="clearfix">
+                                <div class="float-start" style="font-size: 17px;">
                                     <b>Tổng</b>: <span class="bold" style="color: red; font-weight: bold;">{{ $total_item }}</span> sản phẩm
                                 </div>
-                                <div class="fr">
+                                <div class="float-end">
                                     {!! $data_product->appends(request()->except('page'))->links() !!}
                                 </div>
                             </div>
@@ -137,7 +139,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="fr">
+                            <div class="float-end">
                                 {!! $data_product->appends(request()->except('page'))->links() !!}
                             </div>
                         </div> <!-- /.card-body -->

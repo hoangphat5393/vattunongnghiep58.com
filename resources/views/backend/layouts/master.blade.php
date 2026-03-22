@@ -6,17 +6,17 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     {{-- begin::Primary Meta Tags --}}
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+
+    {{-- Match new-admin-ui (AdminLTE v4): theme + accessibility hints --}}
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+    <meta name="supported-color-schemes" content="light dark" />
 
     <meta name="title" content="{{ setting_option('webtitle') }}" />
 
     <meta name="author" content="OneHealth Foundation" />
-
-    {{-- <meta name="description" content="AdminLTE is a Free Bootstrap 5 Admin Dashboard, 30 example pages using Vanilla JS." />
-
-    <meta name="keywords" content="bootstrap 5, bootstrap, bootstrap 5 admin dashboard, bootstrap 5 dashboard, bootstrap 5 charts, bootstrap 5 calendar, bootstrap 5 datepicker, bootstrap 5 tables, bootstrap 5 datatable, vanilla js datatable, colorlibhq, colorlibhq dashboard, colorlibhq admin dashboard" /> --}}
-
-    {{-- end::Primary Meta Tags --}}
 
     {{-- CSRF Token --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -36,23 +36,23 @@
     {{-- begin::Fonts --}}
     <link rel="stylesheet" href="{{ asset('assets/admin/css/index.css') }}" />
 
-    {{-- begin::Third Party Plugin(OverlayScrollbars) --}}
-    <link rel="stylesheet" href="{{ asset('assets/plugin/overlayscrollbars@2.10.1/overlayscrollbars.min.css') }}">
+    {{-- begin::Third Party Plugin(OverlayScrollbars) — aligned with new-admin-ui @2.11.0 --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
 
     {{-- Font Awesome 6.4.2 --}}
     <link rel="stylesheet" href="{{ asset('assets/fontawesome_pro/css/all.min.css') }}">
 
+    {{-- Bootstrap Icons (sidebar toggle, dashboard widgets, etc.) — new-admin-ui uses 1.13.1 --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
+
     {{-- AdminLTE v4 CSS --}}
     <link rel="stylesheet" href="{{ asset('assets/admin/css/adminlte.min.css') }}?ver={{ time() }}">
-
-    {{-- <link rel="stylesheet" href="{{ asset('assets/plugin/datetimepicker/jquery.datetimepicker.min.css') }}"> --}}
 
     {{-- Datetime Picker --}}
     <link rel="stylesheet" href="{{ asset('assets/plugin/flatpickr/flatpickr.min.css') }}">
 
     <link rel="stylesheet" href="{{ asset('assets/plugin/icheck-bootstrap/icheck-bootstrap.min.css') }}">
 
-    {{-- https://gitbrent.github.io/bootstrap4-toggle/ (Bootstrap 5 compatible) --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap5-toggle@5.0.4/css/bootstrap5-toggle.min.css" rel="stylesheet">
 
     {{-- Jquery UI --}}
@@ -60,7 +60,7 @@
     <link rel="stylesheet" href="{{ asset('assets/plugin/jquery-confirm-v3.3.4/jquery-confirm.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugin/select2/css/select2.min.css') }}">
 
-    {{-- Admin Custom Css --}}
+    {{-- Chỉ override CMS: không trùng reset với AdminLTE/Bootstrap; xem public/assets/css/style_admin.css --}}
     <link rel="stylesheet" href="{{ asset('assets/css/style_admin.css') }}?ver={{ time() }}">
 
     @stack('style')
@@ -101,8 +101,7 @@
     <script src="{{ asset('assets/plugin/axios.min.js') }}"></script>
 
     {{-- begin::Third Party Plugin(OverlayScrollbars) --}}
-    {{-- <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/browser/overlayscrollbars.browser.es6.min.js" integrity="sha256-dghWARbRe2eLlIJ56wNB+b760ywulqK3DzZYEpsg2fQ=" crossorigin="anonymous"></script> --}}
-    <script src="{{ asset('assets/plugin/overlayscrollbars@2.10.1/overlayscrollbars.browser.es6.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
     {{-- end::Third Party Plugin(OverlayScrollbars) --}}
 
     {{-- begin::Required Plugin(popperjs for Bootstrap 5) --}}
@@ -174,7 +173,7 @@
         });
     </script>
 
-    {{-- begin::OverlayScrollbars Configure --}}
+    {{-- begin::OverlayScrollbars Configure (same as new-admin-ui: skip on mobile to avoid touch issues) --}}
     <script>
         const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
         const Default = {
@@ -184,7 +183,12 @@
         };
         document.addEventListener('DOMContentLoaded', function() {
             const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
-            if (sidebarWrapper && typeof OverlayScrollbarsGlobal?.OverlayScrollbars !== 'undefined') {
+            const isMobile = window.innerWidth <= 992;
+            if (
+                sidebarWrapper &&
+                typeof OverlayScrollbarsGlobal?.OverlayScrollbars !== 'undefined' &&
+                !isMobile
+            ) {
                 OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
                     scrollbars: {
                         theme: Default.scrollbarTheme,

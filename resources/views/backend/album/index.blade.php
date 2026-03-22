@@ -127,7 +127,7 @@
                                 </table>
                             </div>
 
-                            <div class="fr">
+                            <div class="float-end">
                                 {!! $album->links() !!}
                             </div>
 

@@ -46,7 +46,7 @@
 
                             <div class="d-flex justify-content-between">
                                 @include('backend.partials.button_add_delete', ['type' => 'post', 'route' => route('admin.post.create')])
-                                <div class="fr mt-3 mt-lg-0">
+                                <div class="float-end mt-3 mt-lg-0">
                                     <form method="GET" action="" id="frm-filter-post" class="form-inline">
                                         @php
                                             // $categories = App\Models\Backend\Category::select('id', 'name')->where('type', 'post')->orderByDesc('sort')->get();
@@ -64,10 +64,10 @@
                             </div>
 
                             <div class="d-flex align-items-center justify-content-between my-4">
-                                <div class="fl">
+                                <div class="float-start">
                                     <b>@lang('admin.Total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.News')
                                 </div>
-                                <div class="fr">
+                                <div class="float-end">
                                     {!! $data->links() !!}
                                 </div>
                             </div>
@@ -146,7 +146,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="fr">
+                            <div class="float-end">
                                 {!! $data->links() !!}
                             </div>
                         </div> <!-- /.card-body -->

@@ -51,25 +51,27 @@
                             <div class="d-flex justify-content-between">
                                 @include('backend.partials.button_add_delete', ['type' => 'product-category', 'route' => route('admin.product-category.create')])
 
-                                <div class="fr mt-3 mt-lg-0">
+                                <div class="float-end mt-3 mt-lg-0">
                                     <form method="GET" action="" id="frm-filter-post" class="form-inline">
                                         <input type="text" class="form-control" name="search_name" id="search_name" placeholder="@lang('admin.Keyword')" value="{{ request('search_name') }}">
-                                        <button type="submit" class="btn btn-primary ml-2">@lang('admin.Search')</button>
+                                        <button type="submit" class="btn btn-primary ms-2" aria-label="@lang('admin.Search')">
+                                            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                                        </button>
                                     </form>
                                 </div>
                             </div>
 
                             <div class="d-flex align-items-center justify-content-between my-4">
-                                <div class="fl">
-                                    <b>@lang('admin.Total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.News')
+                                <div class="float-start">
+                                    <b>@lang('admin.Total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.category')
                                 </div>
-                                <div class="fr">
+                                <div class="float-end">
                                     {!! $categories->links() !!}
                                 </div>
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-bordered v-center" id="table_index">
+                                <table class="table table-bordered table-hover v-center" id="table_index">
                                     <thead>
                                         <tr>
                                             <th scope="col" class="text-center">
@@ -92,15 +94,13 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="fr">
+                            <div class="float-end">
                                 {!! $categories->links() !!}
                             </div>
                         </div> <!-- /.card-body -->
                     </div><!-- /.card -->
-                </div> <!-- /.col -->
-            </div>
-        </div>
-    </div>/.row -->
-    </div> <!-- /.container-fluid -->
-    </section>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div><!-- /.app-content -->
 @endsection

@@ -1,130 +1,93 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <title>Admin Login</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="icon" type="image/png" href="{{ asset('assets/login/images/icons/favicon.ico') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/login/vendor/bootstrap/css/bootstrap.min.css') }}">
-
-    <!-- Font Awesome 6.4.2 -->
-    <link rel="stylesheet" href="{{ asset('assets/fontawesome_pro/css/all.min.css') }}">
-
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/login/fonts/Linearicons-Free-v1.0.0/icon-font.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/plugin/animate/animate.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/login/vendor/css-hamburgers/hamburgers.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/login/vendor/animsition/css/animsition.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/login/vendor/select2/select2.min.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/login/vendor/daterangepicker/daterangepicker.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/login/css/util.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/login/css/main.css') }}">
-    <style>
-        .btn-show-pass {
-            font-size: 18px;
-            color: #999999;
-            display: flex;
-            align-items: center;
-            position: absolute;
-            height: 100%;
-            top: 0;
-            right: 0;
-            padding: 0 25px;
-            cursor: pointer;
-            transition: all 0.4s;
-            z-index: 10;
-        }
-
-        .btn-show-pass:hover {
-            color: #d41872;
-        }
-
-        .btn-show-pass.active {
-            color: #d41872;
-        }
-
-        /* Adjust input padding to prevent text overlap */
-        input[name="password"] {
-            padding-right: 60px !important;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="limiter">
-        <div class="container-login100" style="background-image: url('{{ asset('assets/login/images/bg-01.jpg') }}');">
-            <div class="wrap-login100 p-t-30 p-b-50">
-                <span class="login100-form-title p-b-41">
-                    Admin Login
-                </span>
-                <form action="{{ route('admin.login') }}" method="POST" class="login100-form validate-form p-b-33 p-t-5">
-                    @csrf
-                    <div class="wrap-input100 validate-input" data-validate="Enter username">
-                        <input class="input100 @error('email') is-invalid @enderror" type="text" name="email" id="email" placeholder="Username or Email" required autofocus>
-                        <span class="focus-input100" data-placeholder="&#xe82a;"></span>
-                        @error('email')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-
-                    <div class="wrap-input100 validate-input" data-validate="Enter password">
-                        <input class="input100 @error('password') is-invalid @enderror" type="password" id="password" name="password" placeholder="Password" required autocomplete="current-password">
-                        <span class="focus-input100" data-placeholder="&#xe80f;"></span>
-                        <span class="btn-show-pass">
-                            <i class="fa-solid fa-eye"></i>
-                        </span>
-                        @error('password')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-                    </div>
-
-                    <div class="container-login100-form-btn m-t-32">
-                        <button type="submit" class="login100-form-btn">
-                            Login
-                        </button>
-                    </div>
-
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="dropDownSelect1"></div>
-
-    <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
-    <script src="{{ asset('assets/login/vendor/animsition/js/animsition.min.js') }}"></script>
-    <script src="{{ asset('assets/login/vendor/bootstrap/js/popper.js') }}"></script>
-    <script src="{{ asset('assets/login/vendor/bootstrap/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('assets/login/vendor/select2/select2.min.js') }}"></script>
-    <script src="{{ asset('assets/login/vendor/daterangepicker/moment.min.js') }}"></script>
-    <script src="{{ asset('assets/login/vendor/daterangepicker/daterangepicker.js') }}"></script>
-    <script src="{{ asset('assets/login/vendor/countdowntime/countdowntime.js') }}"></script>
-    <script src="{{ asset('assets/login/js/main.js') }}"></script>
-
-    <script>
-        $(document).ready(function() {
-            $('.btn-show-pass').on('click', function() {
-                var input = $(this).siblings('input');
-                var icon = $(this).find('i');
-                if (input.attr('type') == 'password') {
-                    input.attr('type', 'text');
-                    icon.removeClass('fa-eye').addClass('fa-eye-slash');
-                    $(this).addClass('active');
-                } else {
-                    input.attr('type', 'password');
-                    icon.removeClass('fa-eye-slash').addClass('fa-eye');
-                    $(this).removeClass('active');
-                }
-            });
-        });
-    </script>
-
-</body>
-
-</html>
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="color-scheme" content="light dark">
+    <title>Đăng nhập quản trị — {{ setting_option('webtitle') }}</title>
+
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ get_image(setting_option('favicon_16')) }}">
+
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/index.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/fontawesome_pro/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/adminlte.min.css') }}?ver={{ config('app.asset_version', '1') }}">
+</head>
+
+{{-- AdminLTE v4 login v2 pattern (new-admin-ui/dist/examples/login-v2.html), Font Awesome icons --}}
+
+<body class="login-page bg-body-secondary">
+    <div class="login-box">
+        <div class="card card-outline card-primary shadow-sm">
+            <div class="card-header">
+                <a href="{{ route('admin.login') }}" class="link-dark text-center d-block text-decoration-none">
+                    <h1 class="mb-0 fs-4"><b>{{ setting_option('webtitle') ?: 'Admin' }}</b></h1>
+                </a>
+            </div>
+            <div class="card-body login-card-body">
+                <p class="login-box-msg">Đăng nhập để tiếp tục phiên làm việc</p>
+
+                <form action="{{ route('admin.login') }}" method="POST">
+                    @csrf
+                    <div class="input-group mb-3">
+                        <div class="form-floating flex-grow-1">
+                            <input type="text" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" placeholder="" required autofocus autocomplete="username">
+                            <label for="email">Email hoặc tên đăng nhập</label>
+                        </div>
+                        <span class="input-group-text"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span>
+                    </div>
+                    @error('email')
+                        <div class="text-danger small mb-2">{{ $message }}</div>
+                    @enderror
+
+                    <div class="input-group mb-3">
+                        <div class="form-floating flex-grow-1">
+                            <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" placeholder="" required autocomplete="current-password">
+                            <label for="password">{{ __('Password') }}</label>
+                        </div>
+                        <span class="input-group-text btn-show-pass" role="button" tabindex="0" title="Hiện/ẩn mật khẩu"><i class="fa-solid fa-eye" aria-hidden="true"></i></span>
+                    </div>
+                    @error('password')
+                        <div class="text-danger small mb-2">{{ $message }}</div>
+                    @enderror
+
+                    <div class="row">
+                        <div class="col-8 d-inline-flex align-items-center">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="remember" id="remember" value="1" {{ old('remember') ? 'checked' : '' }}>
+                                <label class="form-check-label" for="remember">{{ __('Remember me') }}</label>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">{{ __('Login') }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ asset('assets/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/adminlte.min.js') }}"></script>
+    <script>
+        $(function() {
+            $('.btn-show-pass').on('click', function() {
+                var $input = $(this).closest('.input-group').find('input[name="password"]');
+                var $icon = $(this).find('i');
+                if ($input.attr('type') === 'password') {
+                    $input.attr('type', 'text');
+                    $icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    $input.attr('type', 'password');
+                    $icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

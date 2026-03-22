@@ -78,7 +78,7 @@
                                     <textarea id="CSSTextarea" class="form-control" name="css_content">{!! $scssContent ?? '' !!}</textarea>
                                 </div>
 
-                                <div class="posts_tbl_setting clear text-center">
+                                <div class="posts_tbl_setting clearfix text-center">
                                     <button id="submit_setting" class="btn btn-primary pull-left" name="submit" type="submit">Save Changes</button>
                                 </div>
                             </div>

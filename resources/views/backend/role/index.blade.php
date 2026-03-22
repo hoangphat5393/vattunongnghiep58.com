@@ -50,10 +50,10 @@
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center my-4">
-                                {{-- <div class="fl">
+                                {{-- <div class="float-start">
                                     <b>@lang('admin.Total')</b>: <span class="bold" style="color: red; font-weight: bold;">{{ $total_item ?? 0 }}</span> @lang('admin.Users')
                                 </div>
-                                <div class="fr">
+                                <div class="float-end">
                                     {!! $permissions->links() !!}
                                 </div> --}}
                             </div>

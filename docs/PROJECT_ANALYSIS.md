@@ -60,14 +60,16 @@ Tài liệu này tổng hợp kiến trúc, cơ sở dữ liệu, luồng dữ l
 
 Danh sách bảng thực tế (rút gọn theo output `php artisan db:show`):
 
-`addtocard`, `addtocard_detail`, `admin_menus`, `admin_permission`, `admin_role_permission`, `admins`, `album_items`, `albums`, `cache`, `cache_locks`, `categories`, `contacts`, `countries`, `customer`, `customer_forget_pass_otp`, `email_templates`, `failed_jobs`, `import_log`, `jobs`, `media_files`, `menu_items`, `menus`, `migrations`, `pages`, `password_reset_tokens`, `password_resets`, `payment_request`, `payments`, `permission_role`, `permissions`, `product_categories`, `products`, `role_user`, `roles`, `sessions`, `settings`, `settings_cost`, `shipping_order`, `shop_currencies`, `shop_order_payment_status`, `shop_order_status`, `shop_payment_method`, `user_password_auto`, `users`.
+`addtocard`, `addtocard_detail`, `admin_menus`, `admins`, `album_items`, `albums`, `cache`, `cache_locks`, `categories`, `contacts`, `countries`, `customer`, `customer_forget_pass_otp`, `email_templates`, `failed_jobs`, `import_log`, `jobs`, `media_files`, `menu_items`, `menus`, `migrations`, `pages`, `password_reset_tokens`, `password_resets`, `payment_request`, `payments`, `permission_role`, `permissions`, `product_categories`, `products`, `role_user`, `roles`, `sessions`, `settings`, `settings_cost`, `shipping_order`, `shop_currencies`, `shop_order_payment_status`, `shop_order_status`, `shop_payment_method`, `user_password_auto`, `users`.
+
+_(Các bảng legacy `admin_permission` / `admin_role_permission` đã được loại bỏ sau khi dữ liệu chuyển sang `permissions` + `permission_role` — xem `docs/GHI_CHU_LOAI_BO_BANG_ADMIN_PERMISSION.md`.)_
 
 ### 3.3. Quan hệ logic (ORM / nghiệp vụ)
 
 - **Sản phẩm — danh mục (n-n):** bảng trung gian **`product_categories`** (`product_id`, `category_id`) — có **index FK** trên `product_id` và `category_id`.
 - **Trang / bài viết:** bảng **`pages`**, phân biệt **`type`** (ví dụ `page` / `post`) — thay cho mô hình `posts` cũ (đã migrate/loại bỏ qua migrations).
 - **Đơn hàng:** **`addtocard`** (header đơn) + **`addtocard_detail`** (dòng chi tiết) — tên bảng theo legacy; model `Frontend\AddToCard` / `AddToCardDetail`.
-- **ACL:** `users` ↔ `roles` qua **`role_user`**; `roles` ↔ `permissions` qua **`permission_role`**; bảng bổ trợ **`admin_permission`**, **`admin_role_permission`** (chi tiết quyền theo menu admin).
+- **ACL:** `users` ↔ `roles` qua **`role_user`**; `roles` ↔ `permissions` qua **`permission_role`**. (Schema cũ `admin_permission` / `admin_role_permission` không còn dùng runtime.)
 - **Bảng `admins`:** tồn tại trong schema nhưng **guard admin** cấu hình dùng model `Backend\User` với **`$table = 'users'`** — cần **một nguồn sự thật** (tránh nhầm lẫn khi bảo trì).
 
 ### 3.4. Ví dụ chi tiết bảng (từ `php artisan db:table`)

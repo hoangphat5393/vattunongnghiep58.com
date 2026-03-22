@@ -28,7 +28,7 @@ class SystemHealthTest extends TestCase
      */
     public function test_critical_tables_exist()
     {
-        $tables = ['admin_permission', 'admin_role_permission', 'roles', 'users', 'admins'];
+        $tables = ['permissions', 'permission_role', 'roles', 'users', 'admins'];
         foreach ($tables as $table) {
             $this->assertTrue(Schema::hasTable($table), "Table '$table' does not exist.");
         }

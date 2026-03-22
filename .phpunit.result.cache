@@ -1,0 +1,1 @@
+{"version":2,"defects":{"Tests\\Feature\\AdminPermissionTest::test_can_create_permission_and_assign_to_role":1},"times":{"Tests\\Feature\\AdminPermissionTest::test_can_create_permission_and_assign_to_role":0.032}}

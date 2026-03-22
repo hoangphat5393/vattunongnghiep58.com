@@ -319,8 +319,8 @@
                         <div class="card-body">
                             <form action="{{ route('admin.theme-option.post') }}" method="POST" id="frm-theme-option" enctype="multipart/form-data">
                                 @csrf
-                                <div class="container_group_setting clear">
-                                    <div class="group_item_auto_theme clear">
+                                <div class="container_group_setting clearfix">
+                                    <div class="group_item_auto_theme clearfix">
                                         @php
                                             $settings = App\Models\Setting::orderBy('sort')->get();
                                         @endphp

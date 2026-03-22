@@ -79,10 +79,10 @@
                             </div>
 
                             <div class="d-flex align-items-center justify-content-between my-4">
-                                <div class="fl">
+                                <div class="float-start">
                                     <b>@lang('admin.Total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.News')
                                 </div>
-                                <div class="fr">
+                                <div class="float-end">
                                     {!! $data->links() !!}
                                 </div>
                             </div>
@@ -145,7 +145,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="fr">
+                            <div class="float-end">
                                 {!! $data->links() !!}
                             </div>
                         </div> <!-- /.card-body -->

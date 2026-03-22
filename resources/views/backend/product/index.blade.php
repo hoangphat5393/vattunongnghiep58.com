@@ -48,7 +48,7 @@
 
                             <div class="d-flex justify-content-between mb-3">
                                 @include('backend.partials.button_add_delete', ['type' => 'product', 'route' => route('admin.product.create')])
-                                <div class="fr mt-3 mt-lg-0">
+                                <div class="float-end mt-3 mt-lg-0">
                                     <form method="GET" action="" id="frm-filter-post" class="d-flex align-items-center">
                                         @php
                                             $categories = App\Models\Backend\Category::select('id', 'name')->orderByDesc('sort')->get();
@@ -60,22 +60,24 @@
                                             @endforeach
                                         </select>
                                         <input type="text" class="form-control me-2" name="name" id="name" placeholder="@lang('admin.Keyword')" value="{{ request('name') }}">
-                                        <button type="submit" class="btn btn-primary">@lang('admin.Search')</button>
+                                        <button type="submit" class="btn btn-primary" aria-label="@lang('admin.Search')">
+                                            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                                        </button>
                                     </form>
                                 </div>
                             </div>
 
                             <div class="d-flex align-items-center justify-content-between my-4">
-                                <div class="fl">
+                                <div>
                                     <b>@lang('admin.Total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.Products')
                                 </div>
-                                <div class="fr">
+                                <div class="float-end">
                                     {!! $products->links() !!}
                                 </div>
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-bordered list-data v-center" id="table_index">
+                                <table class="table table-bordered table-hover list-data v-center" id="table_index">
                                     <thead>
                                         <tr>
                                             <th class="text-center" style="width:50px">
@@ -138,7 +140,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="fr">
+                            <div class="float-end">
                                 {!! $products->links() !!}
                             </div>
                         </div> <!-- /.card-body -->

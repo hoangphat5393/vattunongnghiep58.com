@@ -132,7 +132,7 @@
                                 <h4>Chuyên mục</h4>
                             </div>
                             <div class="card-body max-vh-75">
-                                <div class="inside clear">
+                                <div class="inside clearfix">
                                     @php
                                         $array_checked = isset($product_detail) ? $product_detail->categories->pluck('id')->toArray() : [];
                                         $category_type = 'product';
