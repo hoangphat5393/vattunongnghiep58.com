@@ -62,7 +62,7 @@
                             </div> <!-- /.card-header -->
                             <div class="card-body">
                                 <!-- show error form -->
-                                <div class="errorTxt"></div>
+                                <div class="js-validation-messages mb-2 small" role="alert"></div>
                                 {{-- <ul class="nav nav-tabs hidden" id="tabLang" role="tablist">
                                     <li class="nav-item">
                                         <a class="nav-link active" id="vi-tab" data-toggle="tab" href="#vi" role="tab" aria-controls="vi" aria-selected="true">Tiếng việt</a>
@@ -184,6 +184,7 @@
 
             //xử lý validate
             $("#frm-create-category").validate({
+                errorLabelContainer: '#frm-create-category .js-validation-messages',
                 rules: {
                     name: "required",
                 },
@@ -191,7 +192,6 @@
                     name: "Nhập tiêu đề thể loại tin",
                 },
                 errorElement: 'div',
-                errorLabelContainer: '.errorTxt',
                 invalidHandler: function(event, validator) {
                     $('html, body').animate({
                         scrollTop: 0

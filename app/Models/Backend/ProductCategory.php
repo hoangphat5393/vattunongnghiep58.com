@@ -1,16 +1,22 @@
-<?php
-
-namespace App\Models\Backend;
-
-use Illuminate\Database\Eloquent\Model;
-use App\Traits\LocalizeController;
-
-
-class ProductCategory extends Model
-{
-    use LocalizeController;
-
-    public $timestamps = true;
-    protected $table = 'product_category';
-    protected $guarded = [];
-}
+<?php
+
+namespace App\Models\Backend;
+
+use Illuminate\Database\Eloquent\Model;
+use App\Traits\LocalizeController;
+
+
+/**
+ * Pivot product ↔ category (bảng product_categories).
+ * Tên class lịch sử là ProductCategory; không nhầm với model Category (danh mục).
+ */
+class ProductCategory extends Model
+{
+    use LocalizeController;
+
+    public $timestamps = true;
+
+    protected $table = 'product_categories';
+
+    protected $guarded = [];
+}

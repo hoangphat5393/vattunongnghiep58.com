@@ -71,7 +71,7 @@
 
                             <div class="card-body">
                                 {{-- show error form --}}
-                                <div class="errorTxt"></div>
+                                <div class="js-validation-messages mb-2 small" role="alert"></div>
 
                                 <div class="form-group">
                                     <label for="description_en">CSS Content</label>

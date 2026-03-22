@@ -79,7 +79,7 @@
                             <div class="card-body">
 
                                 {{-- show error form --}}
-                                <div class="errorTxt"></div>
+                                <div class="js-validation-messages mb-2 small" role="alert"></div>
 
                                 @if (count($errors) > 0)
                                     <div class="alert-tb alert alert-danger">
@@ -171,11 +171,6 @@
         .avtive-wpap-pass {
             display: block;
         }
-
-        #frm-create-useradmin .error {
-            color: #dc3545;
-            font-size: 13px;
-        }
     </style>
 @endpush
 
@@ -184,6 +179,7 @@
         $(function() {
             //xử lý validate
             $("#formEdit").validate({
+                errorLabelContainer: '#formEdit .js-validation-messages',
                 rules: {
                     email: {
                         required: true,
@@ -204,8 +200,6 @@
                     repassword: "Mật khẩu không chính xác",
                 },
 
-                // errorElement: 'div',
-                // errorLabelContainer: '.errorTxt',
                 invalidHandler: function(event, validator) {
                     $('html, body').animate({
                         scrollTop: 0

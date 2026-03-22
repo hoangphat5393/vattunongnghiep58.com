@@ -72,7 +72,7 @@
                             </div> <!-- /.card-header -->
                             <div class="card-body">
                                 <!-- show error form -->
-                                <div class="errorTxt"></div>
+                                <div class="js-validation-messages mb-2 small" role="alert"></div>
 
                                 {{-- <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
                                     <li class="nav-item" role="presentation">
@@ -141,7 +141,8 @@
 
         $(function() {
             //xử lý validate
-            $("#frm-create-post").validate({
+            $("#formEdit").validate({
+                errorLabelContainer: '#formEdit .js-validation-messages',
                 ignore: [],
                 rules: {
                     name_en: "required",
@@ -154,7 +155,6 @@
                     group: "Select group"
                 },
                 errorElement: 'div',
-                errorLabelContainer: '.errorTxt',
                 invalidHandler: function(event, validator) {
                     $('html, body').animate({
                         scrollTop: 0

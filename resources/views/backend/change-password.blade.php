@@ -136,8 +136,9 @@
                             <form id="frm-updateinfo-useradmin" action="{{ route('admin.postChangePassword') }}" method="POST">
                                 @csrf
                                 @foreach ($errors->all() as $error)
-                                    <div class="error-msg">{{ $error }}</div>
+                                    <div class="text-error small mb-1">{{ $error }}</div>
                                 @endforeach
+                                <div class="js-validation-messages mb-2 small" role="alert"></div>
 
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
@@ -161,7 +162,7 @@
                                         <div class="col-md-12">
                                             <label for="current_password" class="form-label">@lang('admin.current password')</label>
                                             <input type="password" class="form-control" name="current_password" palceholder="@lang('admin.current password')" id="current_password" class="form-control" disabled>
-                                            <small class="error"></small>
+                                            <small class="text-error d-block mt-1" id="current-password-ajax-feedback" role="status"></small>
                                         </div>
                                         <div class="col-md-12">
                                             <label for="new_password" class="form-label">@lang('admin.new password')</label>
@@ -238,13 +239,14 @@
                         beforeSend: function() {},
                         success: function(data) {
                             console.log(data)
-                            $('.error').html(data);
+                            $('#current-password-ajax-feedback').html(data);
                         }
                     }); //ajax
                 });
 
                 //validate
                 $("#frm-updateinfo-useradmin").validate({
+                    errorLabelContainer: '#frm-updateinfo-useradmin .js-validation-messages',
                     rules: {
                         email: "required",
                         name: "required",
@@ -262,8 +264,6 @@
                         confirm_password: "Mật khẩu không chính xác",
                     },
 
-                    // errorElement : 'div',
-                    // errorLabelContainer: '.errorTxt',
                     invalidHandler: function(event, validator) {
                         $('html, body').animate({
                             scrollTop: 0

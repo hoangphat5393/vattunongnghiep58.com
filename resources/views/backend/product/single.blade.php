@@ -76,7 +76,16 @@
                             <div class="card-body">
 
                                 <!-- show error form -->
-                                <div class="errorTxt"></div>
+                                @if ($errors->any())
+                                    <div class="alert alert-danger" role="alert">
+                                        <ul class="mb-0 ps-3">
+                                            @foreach ($errors->all() as $err)
+                                                <li>{{ $err }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+                                <div class="js-validation-messages mb-2 small" role="alert"></div>
 
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="vi" role="tabpanel" aria-labelledby="vi-tab">
@@ -211,6 +220,7 @@
 
                 //xử lý validate
                 $("#frm-create-product").validate({
+                    errorLabelContainer: '#frm-create-product .js-validation-messages',
                     // errorPlacement: function(error, element) {
                     //     var place = element.closest('.form-group');
                     //     if (!place.get(0)) {
@@ -226,37 +236,28 @@
                     // },
                     rules: {
                         name: "required",
-                        // 'category_item[]': {
-                        //     required: true,
-                        //     minlength: 1
-                        // },
                         price: {
-                            required: function(element) {
+                            required: function() {
                                 return $('input:radio[name="price_type"]:checked').val() == 'price';
                             },
-                            number: function(element) {
+                            number: function() {
                                 return $('input:radio[name="price_type"]:checked').val() == 'price';
                             },
-                            // min: 1,
                         },
-                        category_id: {
-                            required: true
+                        'category_id[]': {
+                            required: true,
+                            minlength: 1,
                         },
                     },
                     messages: {
-                        name: "Enter Name",
-                        'category_item[]': "Select category",
+                        name: "Nhập tên sản phẩm",
                         price: {
-                            required: "Enter price",
-                            required: "Enter number only",
-                            // min: "Enter price > 0"
+                            required: "Nhập giá",
+                            number: "Giá phải là số",
                         },
-                        category_id: {
-                            required: "Select category"
-                        },
+                        'category_id[]': "Chọn ít nhất một chuyên mục",
                     },
                     errorElement: 'div',
-                    errorLabelContainer: '.errorTxt',
                     invalidHandler: function(event, validator) {
                         $('html, body').animate({
                             scrollTop: 0

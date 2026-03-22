@@ -74,12 +74,16 @@ class NewsController extends Controller
     //     // return $this->newsDetail($slug);
     // }
 
-    // News detail
-    public function newsDetail($slug)
+    // News detail — route: news/{slug}-{id}.html (cần cả slug và id để khớp URL và tránh trùng slug)
+    public function newsDetail($slug, $id)
     {
-        $news = Page::posts()->where('slug', $slug)->with('user')->first();
+        $news = Page::posts()
+            ->where('slug', $slug)
+            ->where('id', (int) $id)
+            ->with('user')
+            ->first();
 
-        if (!$news) {
+        if (! $news) {
             return redirect()->route('news');
         }
 

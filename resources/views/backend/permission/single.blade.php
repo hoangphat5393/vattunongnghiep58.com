@@ -65,7 +65,7 @@
                             </div> <!-- /.card-header -->
                             <div class="card-body">
                                 <!-- show error form -->
-                                <div class="errorTxt"></div>
+                                <div class="js-validation-messages mb-2 small" role="alert"></div>
                                 @if ($errors->has('name'))
                                     <span class="form-text">
                                         <i class="fa fa-info-circle"></i> {{ $errors->first('name') }}
@@ -131,6 +131,7 @@
         jQuery(document).ready(function($) {
             //xử lý validate
             $("#frm-create-useradmin").validate({
+                errorLabelContainer: '#frm-create-useradmin .js-validation-messages',
                 rules: {
                     email: {
                         required: true,
@@ -152,8 +153,6 @@
                     repassword: "Mật khẩu không chính xác",
                 },
 
-                // errorElement : 'div',
-                // errorLabelContainer: '.errorTxt',
                 invalidHandler: function(event, validator) {
                     $('html, body').animate({
                         scrollTop: 0

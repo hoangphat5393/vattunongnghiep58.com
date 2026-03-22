@@ -115,7 +115,7 @@
 
                     <div class="row">
                         <div class="col-12 text-end">
-                            <button type="button" class="btn btn-sm btn-default" data-bs-dismiss="modal">Hủy bỏ</button>
+                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
                             <button type="button" class="btn btn-info btn-sm add-submit">Lưu thay đổi</button>
                         </div>
                     </div>

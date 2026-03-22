@@ -80,7 +80,7 @@
                             <div class="card-body">
 
                                 {{-- show error form --}}
-                                <div class="errorTxt"></div>
+                                <div class="js-validation-messages mb-2 small" role="alert"></div>
 
                                 <div class="mb-3">
                                     <label for="slug" class="form-label">@lang('admin.slug')</label>
@@ -184,7 +184,7 @@
             if (!form) return;
 
             form.addEventListener('submit', function(event) {
-                var errorContainer = document.querySelector('.errorTxt');
+                var errorContainer = document.querySelector('#formEdit .js-validation-messages');
                 if (errorContainer) {
                     errorContainer.innerHTML = '';
                 }
@@ -200,6 +200,7 @@
                     event.preventDefault();
                     if (errorContainer) {
                         var list = document.createElement('ul');
+                        list.className = 'error list-unstyled mb-0 small';
                         errors.forEach(function(message) {
                             var item = document.createElement('li');
                             item.textContent = message;

@@ -72,14 +72,34 @@ class PostController extends Controller
         }
     }
 
+    /**
+     * REST alias: routes/admin.php maps POST /admin/post → store.
+     */
+    public function store(Request $request)
+    {
+        return $this->post($request);
+    }
+
+    /**
+     * REST alias: routes/admin.php maps PUT /admin/post/{id} → update.
+     */
+    public function update(Request $request, $id)
+    {
+        $request->merge(['id' => $id]);
+
+        return $this->post($request);
+    }
+
     public function post(Request $request)
     {
-        $data = request()->except(['_token',  'gallery', 'created_at', 'submit', 'tab_lang', 'custom_field']);
+        $data = request()->except(['_token', '_method', 'gallery', 'created_at', 'submit', 'tab_lang', 'custom_field']);
 
         //id post
         $sid = $request->id ?? 0;
 
         $data['name'] = $data['name'] ?? $data['title'] ?? '';
+        unset($data['title']); // Cột DB là `name`, không có `title`
+
         if ($request->slug) {
             $data['slug'] = addslashes($request->slug);
         } else {

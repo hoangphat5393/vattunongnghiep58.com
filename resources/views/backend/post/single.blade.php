@@ -1,19 +1,33 @@
 @extends('backend.layouts.master')
 @php
     $lc = app()->getLocale();
-    if (isset($edit_data)) {
+
+    // Giống backend/page/single: map bản ghi Page (tin) sang biến dùng trong form
+    if (!empty($edit_data)) {
         extract($edit_data->getAttributes());
-        if ($gallery) {
-            $gallery = unserialize($gallery);
-        }
+        $title = $edit_data->name ?? '';
+        $title_head = $title !== '' ? $title : __('Edit news');
+        $slug = $slug ?? '';
+        $description = $edit_data->description != '' ? htmlspecialchars_decode($edit_data->description) : '';
+        $content = $edit_data->content != '' ? htmlspecialchars_decode($edit_data->content) : '';
+        $description_en = ($edit_data->description_en ?? '') !== '' ? htmlspecialchars_decode($edit_data->description_en) : '';
+        $content_en = ($edit_data->content_en ?? '') !== '' ? htmlspecialchars_decode($edit_data->content_en) : '';
+        $name_en = $edit_data->name_en ?? '';
+        $sort = $sort ?? 0;
+        $image = $image ?? '';
+        $seo_title = $seo_title ?? '';
+        $seo_keyword = $seo_keyword ?? '';
+        $seo_description = $seo_description ?? '';
+        $id = (int) ($id ?? ($edit_data->id ?? 0));
+    } else {
+        $title_head = $title ?? __('Add news');
+        $id = (int) ($id ?? 0);
     }
-    $title_head = $title ?? __('Add news');
-    $id = $id ?? 0;
 
     if (request()->route()->named('admin.post.create')) {
-        $form_action = route('admin.post.store'); // Create news
+        $form_action = route('admin.post.store');
     } else {
-        $form_action = route('admin.post.update', $id); // Update news
+        $form_action = route('admin.post.update', $id);
     }
 @endphp
 
@@ -70,11 +84,11 @@
                             </div>
                             <div class="card-body">
                                 {{-- show error form --}}
-                                <div class="errorTxt"></div>
+                                <div class="js-validation-messages mb-2 small" role="alert"></div>
                                 <div class="form-group">
                                     <label for="slug">Slug</label>
                                     <input type="text" class="form-control slug_slugify" id="slug" name="slug" placeholder="Slug" value="{{ $slug ?? '' }}">
-                                    @if ($id > 0)
+                                    @if ($id > 0 && ($slug ?? '') !== '')
                                         <p><b style="color: #0000cc;">Link:</b>
                                             <u><i><a style="color: #F00;" href="{{ route('news.detail', [$slug, $id]) }}" target="_blank">{{ route('news.detail', [$slug, $id]) }}</a></i></u>
                                         </p>
@@ -189,19 +203,19 @@
 
             //xử lý validate
             $("#frm-create-post").validate({
+                errorLabelContainer: '#frm-create-post .js-validation-messages',
                 rules: {
-                    name: "required",
+                    title: "required",
                     // 'category[]': {
                     //     required: true,
                     //     minlength: 1
                     // }
                 },
                 messages: {
-                    name: "Nhập tiêu đề tin",
+                    title: "Nhập tiêu đề tin",
                     'category[]': "Chọn thể loại tin",
                 },
                 errorElement: 'div',
-                errorLabelContainer: '.errorTxt',
                 invalidHandler: function(event, validator) {
                     $('html, body').animate({
                         scrollTop: 0

@@ -116,11 +116,9 @@ class AjaxController extends Controller
                 return 1;
                 break;
             case 'product':
-
-                Product::whereIn('id', $arr)->delete();
-
-                // DELETE DATA FROM PIVOT TABLE
+                // Xóa pivot trước (product_categories), rồi xóa sản phẩm
                 ProductCategory::whereIn('product_id', $arr)->delete();
+                Product::whereIn('id', $arr)->delete();
 
                 // SET AUTO_INCREMENT TO 1
                 $table = (new Product)->getTable();

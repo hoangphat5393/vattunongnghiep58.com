@@ -59,6 +59,7 @@
     <link rel="stylesheet" href="{{ asset('assets/plugin/jquery-ui/jquery-ui.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugin/jquery-confirm-v3.3.4/jquery-confirm.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/plugin/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/plugin/datetimepicker/jquery.datetimepicker.min.css') }}">
 
     {{-- Chỉ override CMS: không trùng reset với AdminLTE/Bootstrap; xem public/assets/css/style_admin.css --}}
     <link rel="stylesheet" href="{{ asset('assets/css/style_admin.css') }}?ver={{ time() }}">
@@ -136,7 +137,7 @@
     <script src="{{ asset('assets/plugin/jsvectormap/world.js') }}"></script>
 
     {{-- <script src="{{ asset('assets/plugin/moment.min.js') }}"></script> --}}
-    {{-- <script src="{{ asset('assets/plugin/datetimepicker/jquery.datetimepicker.full.min.js') }}"></script> --}}
+    <script src="{{ asset('assets/plugin/datetimepicker/jquery.datetimepicker.full.min.js') }}"></script>
 
     {{-- Datetime Picker --}}
     <script src="{{ asset('assets/plugin/flatpickr/flatpickr.js') }}"></script>

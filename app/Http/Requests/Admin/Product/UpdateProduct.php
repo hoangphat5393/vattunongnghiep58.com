@@ -1,55 +1,60 @@
-<?php
-
-namespace App\Http\Requests\Admin\Product;
-
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rule;
-
-class UpdateProduct extends FormRequest
-{
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        return Gate::allows('admin.product.edit', $this->product);
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules(): array
-    {
-        return [
-            'title' => ['sometimes', 'string'],
-            'slug' => ['sometimes', Rule::unique('products', 'slug')->ignore($this->product->getKey(), $this->product->getKeyName()), 'string'],
-            'short_description' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
-            'url' => ['nullable', 'string'],
-            'status' => ['sometimes', 'boolean'],
-            'meta_title' => ['nullable', 'string'],
-            'meta_description' => ['nullable', 'string'],
-            'cats' => ['nullable','array']
-        ];
-    }
-
-    /**
-     * Modify input data
-     *
-     * @return array
-     */
-    public function getSanitized(): array
-    {
-        $sanitized = $this->validated();
-
-
-        //Add your code for manipulation with request data here
-
-        return $sanitized;
-    }
-}
+<?php
+
+namespace App\Http\Requests\Admin\Product;
+
+use App\Models\Backend\Product as ProductModel;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+
+class UpdateProduct extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return Gate::allows('admin.product.edit');
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $name = $this->input('name');
+        if (! $this->filled('slug') && is_string($name) && $name !== '') {
+            $this->merge(['slug' => Str::slug($name)]);
+        }
+    }
+
+    public function rules(): array
+    {
+        $id = (int) $this->route('id');
+        $table = (new ProductModel)->getTable();
+
+        return [
+            'name' => ['required', 'string', 'max:500'],
+            'slug' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique($table, 'slug')->ignore($id),
+            ],
+            'description' => ['nullable', 'string'],
+            'content' => ['nullable', 'string'],
+            'status' => ['nullable', 'in:0,1'],
+            'category_id' => ['nullable', 'array'],
+            'category_id.*' => ['integer'],
+            'price' => ['nullable'],
+            'price_type' => ['nullable', 'string', 'in:price,contact'],
+            'unit' => ['nullable', 'string', 'max:100'],
+            'promotion' => ['nullable', 'string'],
+            'stock' => ['nullable'],
+            'sort' => ['nullable'],
+            'seo_title' => ['nullable', 'string'],
+            'seo_keyword' => ['nullable', 'string'],
+            'seo_description' => ['nullable', 'string'],
+        ];
+    }
+
+    public function getSanitized(): array
+    {
+        return $this->validated();
+    }
+}
