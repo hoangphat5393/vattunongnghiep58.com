@@ -20,12 +20,12 @@
     },
     "dependencies": {
         "@popperjs/core": "^2.11.8",
-        "@tailwindcss/vite": "^4.2.1",
+        "@tailwindcss/vite": "^4.2.2",
         "animate.css": "^4.1.1",
         "aos": "^2.3.4",
-        "sweetalert2": "^11.26.23",
+        "sweetalert2": "^11.26.24",
         "swiper": "^12.1.2",
-        "tailwindcss": "^4.2.1"
+        "tailwindcss": "^4.2.2"
     },
     "packageManager": "pnpm@10.32.1"
 }

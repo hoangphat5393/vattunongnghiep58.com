@@ -80,19 +80,20 @@ class PageController extends Controller
             'seo_keyword'   => $page->seo_keyword ?? '',
         ];
 
-        return view('frontend.home', $this->data);
+        return view('frontend.home', $this->data)->compileShortcodes();
     }
 
     public function page($slug)
     {
+
         $this->localized();
         if ('home' == $slug || 'trangchu' == $slug) {
             return $this->index();
         }
 
-        // $this->data['listLocation'] = $this->listLocation();
 
         $page = Page::pages()->where('slug', $slug)->first();
+
 
         if ($page) {
             // if ($page->template == 'project')
@@ -127,9 +128,9 @@ class PageController extends Controller
             $templateName = 'frontend.page.' . $slug;
 
             if (View::exists($templateName)) {
-                return view($templateName,  $this->data);
+                return view($templateName,  $this->data)->compileShortcodes();
             } else {
-                return view('frontend.page.index', ['data' => $this->data]);
+                return view('frontend.page.index', ['data' => $this->data])->compileShortcodes();
             }
         } else {
             return view('errors.404');

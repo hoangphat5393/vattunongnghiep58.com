@@ -63,7 +63,7 @@ class ProductController extends Controller
             return $this->categoryDetail($slug);
         }
 
-        return view('frontend.product.index', $this->data);
+        return view('frontend.product.index', $this->data)->compileShortcodes();
     }
 
     // Single category
@@ -271,7 +271,7 @@ class ProductController extends Controller
                 return response()->json([
                     'error' => 0,
                     'msg'   => 'Success',
-                    'view'   => view('frontend.product.product-quick-view', ['data' => $this->data])->render(),
+                    'view'   => view('frontend.product.product-quick-view', ['data' => $this->data])->compileShortcodes()->render(),
                 ]);
                 // return view($this->templatePath .'.product.product-single', ['data'=>$this->data])->compileShortcodes();
             }

@@ -1,5 +1,5 @@
 @php
-    $headerMenu = \App\Models\Frontend\Menu::where('name', 'Menu-main')->first();
+    $headerMenu = \App\Models\Frontend\Menu::byName('Menu-main');
     $currentUrl = url()->current();
 @endphp
 

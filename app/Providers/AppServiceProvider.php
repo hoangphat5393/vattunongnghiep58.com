@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\View;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Vite;
 
@@ -86,10 +85,6 @@ class AppServiceProvider extends ServiceProvider
 
         view()->share('templatePath', env('APP_THEME', 'theme'));
         view()->share('templateFile', env('APP_THEME', 'theme'));
-
-        View::macro('compileShortcodes', function () {
-            return $this;
-        });
 
         Paginator::useBootstrap();
     }

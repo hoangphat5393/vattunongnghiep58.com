@@ -38,7 +38,7 @@ class NewsController extends Controller
         // extra data
         $this->data['feature_news'] = $feature_news;
 
-        return view('frontend.news.index', $this->data);
+        return view('frontend.news.index', $this->data)->compileShortcodes();
     }
 
     // Single category

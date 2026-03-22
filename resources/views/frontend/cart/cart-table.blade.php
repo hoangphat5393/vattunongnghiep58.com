@@ -1,109 +1,98 @@
-<table class="w-full">
-    <thead class="bg-leaf-50 border-b border-leaf-100 text-left">
-        <tr>
-            <th class="py-4 px-4 md:px-6 font-bold text-gray-700">Sản phẩm</th>
-            <th class="py-4 px-4 md:px-6 font-bold text-gray-700 text-center hidden md:table-cell">
-                Đơn giá
-            </th>
-            <th class="py-4 px-4 md:px-6 font-bold text-gray-700 text-center">
-                Số lượng
-            </th>
-            <th class="py-4 px-4 md:px-6 font-bold text-gray-700 text-center">
-                Thành tiền
-            </th>
-            <th class="py-4 px-4 md:px-6"></th>
-        </tr>
-    </thead>
-    <tbody class="divide-y divide-gray-100">
-        @foreach ($carts as $cart)
-            @php
-                $product = $ProductModel::find($cart->id);
-            @endphp
-
-            @if (!empty($product))
-                <tr class="hover:bg-gray-50 transition cart-items cart__row_item">
-                    <td class="py-4 px-4 md:px-6">
-                        <div class="flex items-center gap-4">
-                            <div class="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
-                                @if (!empty($product->image))
-                                    <a href="{{ route('product.detail', [$product->slug, $product->id]) }}"
-                                        title="{{ $product->name }}">
-                                        <img src="{{ get_image($product->image) }}" alt="{{ $product->name }}"
-                                            class="w-full h-full object-cover">
-                                    </a>
-                                @endif
-                            </div>
-                            <div>
-                                <a href="{{ route('product.detail', [$product->slug, $product->id]) }}"
-                                    title="{{ $product->name }}"
-                                    class="font-bold text-gray-900 hover:text-leaf-600">
-                                    {{ $product->name }}
-                                </a>
-                                @if (!empty($product->description))
-                                    <p class="text-xs text-gray-500 mt-1">
-                                        {{ \Illuminate\Support\Str::limit(strip_tags($product->description), 60) }}
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-                    </td>
-                    <td class="py-4 px-4 md:px-6 text-center hidden md:table-cell align-middle">
-                        <span class="font-bold text-leaf-700">
-                            {!! render_price($cart->price, 'VND') !!}
-                        </span>
-                    </td>
-                    <td class="py-4 px-4 md:px-6 align-middle">
-                        <div class="flex items-center justify-center gap-2">
-                            <button type="button"
-                                class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 quantity-decrease"
-                                data-rowid="{{ $cart->rowId }}">
-                                -
-                            </button>
-                            <input
-                                class="w-12 text-center font-bold text-gray-800 border border-gray-200 rounded-lg quantity1 cart__qty-input"
-                                type="number" name="updates[]" value="{{ $cart->qty }}" min="1"
-                                data-rowid="{{ $cart->rowId }}">
-                            <button type="button"
-                                class="w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 quantity-increase"
-                                data-rowid="{{ $cart->rowId }}">
-                                +
-                            </button>
-                        </div>
-                    </td>
-                    <td class="py-4 px-4 md:px-6 text-center align-middle">
-                        <span class="font-bold text-gray-900">
-                            {!! render_price($cart->price * $cart->qty, 'VND') !!}
-                        </span>
-                    </td>
-                    <td class="py-4 px-4 md:px-6 text-center align-middle">
-                        <button class="text-red-500 hover:text-red-700 transition inline-flex items-center gap-1 text-sm font-bold cart__remove"
-                            type="button" data="{{ $cart->rowId }}">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                </path>
-                            </svg>
-                            Xóa
-                        </button>
-                    </td>
-                </tr>
-            @endif
-        @endforeach
-    </tbody>
-</table>
-
-<div
-    class="p-4 md:p-6 bg-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-2 rounded-b-2xl border-t border-gray-100">
-    <a href="{{ route('product') }}"
-        class="inline-flex items-center gap-2 text-leaf-600 font-bold hover:underline text-sm md:text-base">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
-            </path>
-        </svg>
-        Tiếp tục mua hàng
-    </a>
-    <a href="{{ route('carts.remove') }}"
-        class="text-red-500 hover:text-red-700 font-bold text-sm md:text-base whitespace-nowrap">
-        Xóa tất cả
-    </a>
-</div>
+@inject('ProductModel', 'App\Models\Frontend\Product')
+
+<table class="w-full">
+    <thead class="bg-leaf-50 border-b border-leaf-100 text-left">
+        <tr>
+            <th class="py-4 px-4 md:px-6 font-bold text-gray-700">Sản phẩm</th>
+            <th class="py-4 px-4 md:px-6 font-bold text-gray-700 text-center hidden md:table-cell">
+                Đơn giá
+            </th>
+            <th class="py-4 px-4 md:px-6 font-bold text-gray-700 text-center">
+                Số lượng
+            </th>
+            <th class="py-4 px-4 md:px-6 font-bold text-gray-700 text-center">
+                Thành tiền
+            </th>
+            <th class="py-4 px-4 md:px-6"></th>
+        </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+        @foreach ($carts as $cart)
+            @php
+                $product = $ProductModel::find($cart->id);
+            @endphp
+
+            @if (!empty($product))
+                <tr class="hover:bg-gray-50 transition cart-items cart__row_item">
+                    <td class="py-4 px-4 md:px-6">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
+                                @if (!empty($product->image))
+                                    <a href="{{ route('product.detail', [$product->slug, $product->id]) }}" title="{{ $product->name }}">
+                                        <img src="{{ get_image($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                                    </a>
+                                @endif
+                            </div>
+                            <div>
+                                <a href="{{ route('product.detail', [$product->slug, $product->id]) }}" title="{{ $product->name }}" class="font-bold text-gray-900 hover:text-leaf-600">
+                                    {{ $product->name }}
+                                </a>
+                                @if (!empty($product->description))
+                                    @php
+                                        $descPlain = strip_tags(html_entity_decode($product->description, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+                                    @endphp
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        {{ \Illuminate\Support\Str::limit(trim($descPlain), 60) }}
+                                    </p>
+                                @endif
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4 md:px-6 text-center hidden md:table-cell align-middle">
+                        <span class="font-bold text-leaf-700">
+                            {!! render_price($cart->price, 'VND') !!}
+                        </span>
+                    </td>
+                    <td class="py-4 px-4 md:px-6 align-middle">
+                        <div class="flex items-center justify-center gap-2">
+                            <button type="button" class="cursor-pointer w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 quantity-decrease" data-rowid="{{ $cart->rowId }}">
+                                -
+                            </button>
+                            <input class="w-12 text-center font-bold text-gray-800 border border-gray-200 rounded-lg quantity1 cart__qty-input cursor-text" type="number" name="updates[]" value="{{ $cart->qty }}" min="1" data-rowid="{{ $cart->rowId }}">
+                            <button type="button" class="cursor-pointer w-8 h-8 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 quantity-increase" data-rowid="{{ $cart->rowId }}">
+                                +
+                            </button>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4 md:px-6 text-center align-middle">
+                        <span class="font-bold text-gray-900">
+                            {!! render_price($cart->price * $cart->qty, 'VND') !!}
+                        </span>
+                    </td>
+                    <td class="py-4 px-4 md:px-6 text-center align-middle">
+                        <button class="cursor-pointer text-red-500 hover:text-red-700 transition inline-flex items-center gap-1 text-sm font-bold cart__remove" type="button" data-rowid="{{ $cart->rowId }}" data="{{ $cart->rowId }}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                </path>
+                            </svg>
+                            Xóa
+                        </button>
+                    </td>
+                </tr>
+            @endif
+        @endforeach
+    </tbody>
+</table>
+
+<div class="p-4 md:p-6 bg-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-2 rounded-b-2xl border-t border-gray-100">
+    <a href="{{ route('product') }}" class="cursor-pointer inline-flex items-center gap-2 text-leaf-600 font-bold hover:underline text-sm md:text-base">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+            </path>
+        </svg>
+        Tiếp tục mua hàng
+    </a>
+    <a href="{{ route('carts.remove') }}" class="cursor-pointer text-red-500 hover:text-red-700 font-bold text-sm md:text-base whitespace-nowrap">
+        Xóa tất cả
+    </a>
+</div>

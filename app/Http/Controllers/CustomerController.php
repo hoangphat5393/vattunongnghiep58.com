@@ -2,21 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Frontend\User;
-use App\Models\Frontend\Customer;
-use App\Models\Frontend\Product;
+use App\Models\Frontend\User, App\Models\Frontend\Customer;
+
 use Auth, Cart, Validator, Redirect, Hash, Mail, DB, Input, File;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use App\Models\Frontend\Category;
-use App\Models\Frontend\AddToCard;
-use App\Models\Frontend\AddToCardDetail;
+use App\Models\Frontend\Addtocard;
 use App\Models\Frontend\Shipping_order;
-use App\Models\Backend\Subscription;
-use App\Models\Backend\ShopPaymentMethod;
-use App\Models\Frontend\Wishlist;
-use App\Models\Backend\Customer_forget_pass_otp;
+use App\Models\Frontend\Customer_forget_pass_otp;
 use App\Models\Frontend\ShopOrderStatus;
 use App\Models\Frontend\ShopOrderPaymentStatus;
 // use App\Libraries\Helpers;
@@ -57,7 +52,7 @@ class CustomerController extends Controller
                 'seo_title' => 'Đăng nhập',
             ];
             // return view($this->templatePath . '.customer.login', $this->data);
-            return view('theme.customer.login', $this->data);
+            return view('theme.customer.login', $this->data)->compileShortcodes();
         }
         return redirect(url('/'));
     }
@@ -75,7 +70,7 @@ class CustomerController extends Controller
         else
             $remember_me = false;
 
-        $check_user = User::where('email', $request->email)->first();
+        $check_user = \App\User::where('email', $request->email)->first();
         if ($check_user != '' && $check_user->status == 0) {
             if (Auth::attempt($login, $remember_me)) {
                 return response()->json([
@@ -270,7 +265,7 @@ class CustomerController extends Controller
         $this->data['seo'] = [
             'seo_title' => 'Đăng ký thành viên',
         ];
-        return view('theme.customer.register', $this->data);
+        return view('theme.customer.register',  $this->data)->compileShortcodes();
     }
 
     public function createCustomer(Request $request)
@@ -365,7 +360,7 @@ class CustomerController extends Controller
 
     public function createCustomerSuccess()
     {
-        return view($this->templatePath . '.customer.includes.register_success');
+        return view($this->templatePath . '.customer.includes.register_success')->compileShortcodes();
     }
 
     public function profile()
@@ -415,7 +410,7 @@ class CustomerController extends Controller
             'phone' => $rq->phone,
             'full_phone' => $rq->full_phone,
         );
-        $respons = User::find($id)->update($data);
+        $respons = (new \App\User)->find($id)->update($data);
         $msg = "Thông tin tài khoản đã được cập nhật";
         $url =  route('customer.profile');
         msg_move_page($msg, $url);
@@ -424,15 +419,17 @@ class CustomerController extends Controller
     public function myPost()
     {
         $this->localized();
-        $this->data['products'] = Product::where('user_id', Auth::id())->orderByDesc('id')->paginate(10);
+        $this->data['products'] = \App\Product::where('user_id', auth()->user()->id)->orderbyDesc('id')->paginate(10);
 
         return view('theme.customer.my-post', ['data' => $this->data]);
     }
 
     public function deletePost($id)
     {
-        $db = Product::where('id', $id)->where('user_id', Auth::id())->first();
-        if ($db && $db->delete()) {
+        $db = \App\Product::where('id', $id)->where('user_id', auth()->user()->id)->first();
+        if ($db->delete()) {
+            \App\Models\ThemeInfo::where('theme_id', $id)->delete();
+            \App\Models\Join_Category_Theme::where('theme_id', $id)->delete();
             return redirect()->back();
         }
     }
@@ -479,7 +476,7 @@ class CustomerController extends Controller
     {
         $this->data['status'] = 'success';
         $price_post = $request->price_post;
-        $wallet = Auth::user()->wallet;
+        $wallet = auth()->user()->wallet;
         $wallet_check = 'ok';
         if ($wallet < $price_post) {
             $wallet_check = 'error';
@@ -491,14 +488,14 @@ class CustomerController extends Controller
 
     public function wishlist()
     {
-        if (Auth::check()) {
-            $this->data['wishlist'] = Wishlist::with('product')->where('user_id', Auth::id())->get();
+        if (auth()->check()) {
+            $this->data['wishlist'] = \App\Models\Wishlist::with('product')->where('user_id', auth()->user()->id)->get();
             return view('theme.customer.wishlist', ['data' => $this->data]);
         } else {
             $wishlist = json_decode(\Cookie::get('wishlist'));
 
             if ($wishlist != '') {
-                $this->data['wishlist'] = Product::whereIn('id', $wishlist)->get();
+                $this->data['wishlist'] = \App\Product::whereIn('id', $wishlist)->get();
                 // dd($this->data['wishlist']);
             }
             return view($this->templatePath . '.customer.wishlist', ['data' => $this->data]);
@@ -530,7 +527,7 @@ class CustomerController extends Controller
             $this->data['status'] = 'error';
             $this->data['message'] = $error;
         } else {
-            Subscription::updateOrCreate(['email' => $email]);
+            \App\Models\Subscription::updateOrCreate(['email' => $email]);
             $this->data['status'] = 'success';
             $this->data['message'] = 'Đăng ký thành công';
         }
@@ -671,7 +668,7 @@ class CustomerController extends Controller
     public function myOrder()
     {
         $this->data['user'] = Auth::user();
-        $this->data['orders'] = AddToCard::where('user_id', Auth::id())->orderByDesc('cart_id')->paginate(10);
+        $this->data['orders'] = \App\Models\Addtocard::where('user_id', Auth::user()->id)->orderByDesc('cart_id')->paginate(10);
 
         $this->data['seo'] = [
             'seo_title' => 'Customer |  My Order',
@@ -685,9 +682,9 @@ class CustomerController extends Controller
 
     public function myOrderDetail($id_cart)
     {
-        $this->data['shop_payment_method'] = ShopPaymentMethod::where('status', 1)->get()->pluck('name', 'code')->toArray();
-        $this->data['order'] = AddToCard::find($id_cart);
-        $this->data['order_detail'] = AddToCardDetail::where('cart_id', $this->data['order']->cart_id)->get();
+        $this->data['shop_payment_method'] = \App\Models\ShopPaymentMethod::where('status', 1)->get()->pluck('name', 'code')->toArray();
+        $this->data['order'] = \App\Models\Addtocard::find($id_cart);
+        $this->data['order_detail'] = \App\Models\Addtocard_Detail::where('cart_id', $this->data['order']->cart_id)->get();
 
         $total_price = isset($order_detail->total) ? $order_detail->total : 0;
 
@@ -703,7 +700,7 @@ class CustomerController extends Controller
     public function orderView()
     {
         $id = request()->id;
-        $order = AddToCard::find($id);
+        $order = \App\Models\Addtocard::find($id);
         if ($order) {
             $view = view($this->templatePath . '.customer.order-view', compact('order'))->render();
             return response()->json([
@@ -743,7 +740,7 @@ class CustomerController extends Controller
 
     public function messages()
     {
-        $this->data['user'] = Auth::user();
+        $this->data['user'] = auth()->user();
         $this->data['seo'] = [
             'seo_title' => 'Messages'
         ];

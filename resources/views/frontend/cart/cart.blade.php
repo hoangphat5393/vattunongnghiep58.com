@@ -19,38 +19,38 @@
 
     <main class="bg-leaf-50 flex-grow">
         <div class="container mx-auto px-4 py-8">
-        @if ($carts->count())
-            <h1 class="text-3xl font-extrabold text-gray-900 mb-8">Giỏ hàng của bạn</h1>
+            @if ($carts->count())
+                <h1 class="text-3xl font-extrabold text-gray-900 mb-8">Giỏ hàng của bạn</h1>
 
-            <div class="flex flex-col lg:flex-row gap-4 carts-content">
-                <div class="lg:w-3/4">
-                    <div class="bg-white rounded-2xl shadow-sm border border-leaf-100 overflow-hidden">
-                        <div class="overflow-x-auto cart-table-include">
-                            @include('frontend.cart.cart-table')
+                <div class="flex flex-col lg:flex-row gap-4 carts-content">
+                    <div class="lg:w-3/4">
+                        <div class="bg-white rounded-2xl shadow-sm border border-leaf-100 overflow-hidden">
+                            <div class="overflow-x-auto cart-table-include">
+                                @include('frontend.cart.cart-table')
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                @include('frontend.cart.includes.cart-sidebar')
-            </div>
-        @else
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mt-4 text-center">
-                <p class="text-gray-600 text-lg">@lang('Cart is empty!')</p>
-            </div>
-        @endif
+                    @include('frontend.cart.includes.cart-sidebar')
+                </div>
+            @else
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mt-4 text-center">
+                    <p class="text-gray-600 text-lg">@lang('Cart is empty!')</p>
+                </div>
+            @endif
         </div>
     </main>
 @endsection
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.addEventListener('click', function (event) {
+        document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('click', function(event) {
                 var removeBtn = event.target.closest('.cart__remove');
                 if (removeBtn) {
                     event.preventDefault();
 
-                    var rowId = removeBtn.getAttribute('data');
+                    var rowId = removeBtn.getAttribute('data-rowid') || removeBtn.getAttribute('data');
                     if (!rowId) {
                         return;
                     }
@@ -61,7 +61,7 @@
                         data: {
                             rowId: rowId
                         }
-                    }).then(function (res) {
+                    }).then(function(res) {
                         if (res.data.error === 0) {
                             if (res.data.view) {
                                 var tableContainer = document.querySelector('.carts-content .cart-table-include');
@@ -69,8 +69,14 @@
                                     tableContainer.innerHTML = res.data.view;
                                 }
                             }
+                            if (res.data.view_sidebar) {
+                                var sidebarEl = document.querySelector('.carts-content .cart-sidebar-include');
+                                if (sidebarEl) {
+                                    sidebarEl.outerHTML = res.data.view_sidebar;
+                                }
+                            }
 
-                            setTimeout(function () {
+                            setTimeout(function() {
                                 var cartCount = document.getElementById('CartCount');
                                 if (cartCount) {
                                     cartCount.innerHTML = res.data.count_cart;
@@ -85,7 +91,7 @@
                         } else {
                             alertJs('error', res.data.msg);
                         }
-                    }).catch(function () {
+                    }).catch(function() {
                         alertJs('error', 'Đã xảy ra lỗi, vui lòng thử lại!');
                     });
                 }
@@ -117,7 +123,7 @@
                 }
             });
 
-            document.addEventListener('change', function (event) {
+            document.addEventListener('change', function(event) {
                 var qtyInput = event.target.closest('.quantity1');
                 if (!qtyInput) {
                     return;
@@ -141,7 +147,7 @@
                         rowId: rowId,
                         qty: qty
                     }
-                }).then(function (res) {
+                }).then(function(res) {
                     if (res.data.error === 0) {
                         if (res.data.view) {
                             var tableContainer = document.querySelector('.carts-content .cart-table-include');
@@ -149,8 +155,14 @@
                                 tableContainer.innerHTML = res.data.view;
                             }
                         }
+                        if (res.data.view_sidebar) {
+                            var sidebarEl = document.querySelector('.carts-content .cart-sidebar-include');
+                            if (sidebarEl) {
+                                sidebarEl.outerHTML = res.data.view_sidebar;
+                            }
+                        }
 
-                        setTimeout(function () {
+                        setTimeout(function() {
                             var cartCount = document.getElementById('CartCount');
                             if (cartCount) {
                                 cartCount.innerHTML = res.data.count_cart;
@@ -166,7 +178,7 @@
                                 var headerCart = siteCart.querySelector('#header-cart');
                                 if (headerCart) {
                                     headerCart.classList.add('d-block');
-                                    setTimeout(function () {
+                                    setTimeout(function() {
                                         headerCart.classList.remove('d-block');
                                     }, 1000);
                                 }
@@ -177,7 +189,7 @@
                     } else {
                         alertJs('error', res.data.msg);
                     }
-                }).catch(function () {
+                }).catch(function() {
                     alertJs('error', 'Đã xảy ra lỗi, vui lòng thử lại!');
                 });
             }

@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-Cw8mYmck.css",
+    "file": "assets/app-Cb__BmfF.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -89,7 +89,7 @@
     "src": "resources/fontawesome_pro/webfonts/fa-v4compatibility.woff2"
   },
   "resources/js/app.js": {
-    "file": "assets/app-U1Wg5J53.js",
+    "file": "assets/app-CEBbIOBD.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true

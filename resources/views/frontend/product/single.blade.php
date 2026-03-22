@@ -151,7 +151,7 @@
                             @if ($product->price_type == 'price' && $product->price)
                                 {{ number_format($product->price, 0, ',', '.') }} đ
                             @else
-                                <a href="tel:{{ setting_option('phone') }}" class="text-leaf-600">
+                                <a href="tel:{{ setting_option('phone') }}" class="cursor-pointer text-leaf-600">
                                     Liên hệ: {{ setting_option('phone') }}
                                 </a>
                             @endif
@@ -168,22 +168,22 @@
                                 <div class="flex items-center gap-4">
                                     <span class="w-24 font-bold text-gray-700">Số lượng:</span>
                                     <div class="flex items-center border-2 border-gray-200 rounded-lg">
-                                        <button type="button" class="px-3 py-2 text-gray-600 hover:text-leaf-600 hover:bg-gray-100 rounded-l-md quantity-btn minus">
+                                        <button type="button" class="cursor-pointer px-3 py-2 text-gray-600 hover:text-leaf-600 hover:bg-gray-100 rounded-l-md quantity-btn minus">
                                             -
                                         </button>
-                                        <input type="text" id="quantity_field" class="w-12 text-center border-none focus:outline-none text-gray-700 font-bold qtyField quantity_field" name="qty" step="1" min="1" value="1" size="8" placeholder="0" pattern="[0-9]*" inputmode="numeric">
-                                        <button type="button" class="px-3 py-2 text-gray-600 hover:text-leaf-600 hover:bg-gray-100 rounded-r-md quantity-btn plus">
+                                        <input type="text" id="quantity_field" class="w-12 text-center border-none focus:outline-none text-gray-700 font-bold qtyField quantity_field cursor-text" name="qty" step="1" min="1" value="1" size="8" placeholder="0" pattern="[0-9]*" inputmode="numeric">
+                                        <button type="button" class="cursor-pointer px-3 py-2 text-gray-600 hover:text-leaf-600 hover:bg-gray-100 rounded-r-md quantity-btn plus">
                                             +
                                         </button>
                                     </div>
                                 </div>
 
                                 <div class="flex flex-wrap gap-4">
-                                    <a href="{{ route('page', 'contact') }}" class="px-6 py-3 rounded-xl border-2 border-leaf-600 text-leaf-700 font-bold hover:bg-leaf-50 transition flex items-center gap-2">
+                                    <a href="{{ route('page', 'contact') }}" class="cursor-pointer px-6 py-3 rounded-xl border-2 border-leaf-600 text-leaf-700 font-bold hover:bg-leaf-50 transition flex items-center gap-2">
                                         Giá sỉ - Liên hệ
                                     </a>
 
-                                    <button type="button" class="flex-1 bg-leaf-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-leaf-500/30 hover:bg-leaf-700 transition transform hover:-translate-y-1 flex justify-center items-center gap-2 product-form__cart-add">
+                                    <button type="button" class="cursor-pointer flex-1 bg-leaf-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-leaf-500/30 hover:bg-leaf-700 transition transform hover:-translate-y-1 flex justify-center items-center gap-2 product-form__cart-add">
                                         Thêm vào giỏ
                                     </button>
                                 </div>
@@ -214,17 +214,13 @@
                 <h2 class="text-2xl font-bold text-gray-900 mb-8">Sản phẩm liên quan</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     @foreach ($related_products as $related)
-                        <div
-                            class="bg-white rounded-3xl p-4 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition duration-300 border border-gray-100 relative group">
+                        <div class="bg-white rounded-3xl p-4 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition duration-300 border border-gray-100 relative group">
                             <div class="h-64 rounded-2xl overflow-hidden mb-4 relative">
-                                <a href="{{ route('product.detail', [$related->slug, $related->id]) }}"
-                                    class="block w-full h-full">
-                                    <img src="{{ get_image($related->image) }}" alt="{{ $related->name }}"
-                                        class="w-full h-full object-cover" />
+                                <a href="{{ route('product.detail', [$related->slug, $related->id]) }}" class="block w-full h-full">
+                                    <img src="{{ get_image($related->image) }}" alt="{{ $related->name }}" class="w-full h-full object-cover" />
                                 </a>
                             </div>
-                            <h3
-                                class="font-bold text-lg text-gray-800 mb-1 group-hover:text-leaf-600 transition line-clamp-2">
+                            <h3 class="font-bold text-lg text-gray-800 mb-1 group-hover:text-leaf-600 transition line-clamp-2">
                                 <a href="{{ route('product.detail', [$related->slug, $related->id]) }}">
                                     {{ $related->name }}
                                 </a>
@@ -239,11 +235,9 @@
                                         <a href="tel:{{ setting_option('phone') }}">Liên hệ</a>
                                     </span>
                                 @endif
-                                <a href="{{ route('product.detail', [$related->slug, $related->id]) }}"
-                                    class="bg-leaf-100 p-2 rounded-full text-leaf-700 hover:bg-leaf-500 hover:text-white transition">
+                                <a href="{{ route('product.detail', [$related->slug, $related->id]) }}" class="bg-leaf-100 p-2 rounded-full text-leaf-700 hover:bg-leaf-500 hover:text-white transition">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 4v16m8-8H4"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                                     </svg>
                                 </a>
                             </div>

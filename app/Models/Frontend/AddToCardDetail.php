@@ -15,7 +15,7 @@ class AddToCardDetail extends Model
 
     public function cart()
     {
-        return $this->belongsTo(AddToCard::class);
+        return $this->belongsTo(AddtoCard::class);
     }
 
     /**
