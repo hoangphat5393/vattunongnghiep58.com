@@ -12,20 +12,17 @@
             <div class="flex items-center gap-2 text-sm text-gray-500">
                 <a href="{{ route('index') }}" class="hover:text-leaf-600">Trang chủ</a>
                 <span>/</span>
-                <span class="font-bold text-leaf-700">Danh sách sản phẩm</span>
+                <span class="font-bold text-leaf-700">Sản phẩm</span>
             </div>
         </div>
 
-        <section class="container mx-auto flex flex-col gap-8 px-4 py-8 md:flex-row">
-            <aside class="md:w-1/4">
+        <section class="container mx-auto flex flex-col gap-8 overflow-visible px-4 py-8 md:flex-row">
+            {{-- sticky: top = var(--site-header-sticky-height) trong app.css (khớp header sticky) --}}
+            <aside class="w-full shrink-0 md:sticky md:top-[var(--site-header-sticky-height)] md:z-30 md:w-1/4 md:self-start">
                 @include('frontend.product.includes.sidebar-categories')
             </aside>
 
             <div class="md:w-3/4">
-                <div class="mb-6 flex items-center justify-between">
-                    <span class="text-gray-500">Danh sách sản phẩm</span>
-                </div>
-
                 @empty(!$categories)
                     <div class="space-y-10">
                         @foreach ($categories as $item)

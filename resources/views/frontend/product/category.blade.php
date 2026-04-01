@@ -12,14 +12,14 @@
             <div class="flex flex-wrap items-center gap-2 text-sm text-gray-500">
                 <a href="{{ route('index') }}" class="hover:text-leaf-600">Trang chủ</a>
                 <span>/</span>
-                <a href="{{ route('product') }}" class="hover:text-leaf-600">Danh sách sản phẩm</a>
+                <a href="{{ route('product') }}" class="hover:text-leaf-600">Sản phẩm</a>
                 <span>/</span>
                 <span class="font-bold text-leaf-700">{{ $category->name }}</span>
             </div>
         </div>
 
-        <section class="container mx-auto flex flex-col gap-8 px-4 py-8 md:flex-row">
-            <aside class="md:w-1/4">
+        <section class="container mx-auto flex flex-col gap-8 overflow-visible px-4 py-8 md:flex-row">
+            <aside class="w-full shrink-0 md:sticky md:top-[var(--site-header-sticky-height)] md:z-30 md:w-1/4 md:self-start">
                 @include('frontend.product.includes.sidebar-categories')
             </aside>
 

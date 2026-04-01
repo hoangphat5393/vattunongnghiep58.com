@@ -11,63 +11,53 @@
     $currentSlug = request()->route('slug');
 @endphp
 
-<ul class="mb-0 space-y-3 text-left">
-    <li>
-        <a href="{{ route('product') }}" @class([
-            'flex items-start gap-2 transition',
-            'font-bold text-leaf-600' => request()->routeIs('product') && !$currentSlug,
-            'text-gray-600 hover:text-leaf-600' => !(
-                request()->routeIs('product') && !$currentSlug
-            ),
-        ])>
-            <span @class([
-                'mt-1.5 h-2 w-2 shrink-0 rounded-full',
-                'bg-leaf-500' => request()->routeIs('product') && !$currentSlug,
-                'bg-gray-300' => !(request()->routeIs('product') && !$currentSlug),
-            ])></span>
-            <span>Tất cả sản phẩm</span>
-        </a>
-    </li>
-    @foreach ($categoriesNav as $item)
-        @php
-            $isParentActive = request()->routeIs('product.category') && $currentSlug === $item->slug;
-        @endphp
+<nav class="text-left" aria-label="Danh mục sản phẩm">
+    <ul class="divide-y divide-leaf-100/90">
         <li>
-            <a href="{{ route('product.category', $item->slug) }}" title="{{ $item->name }}" @class([
-                'flex items-start gap-2 transition',
-                'font-bold text-leaf-600' => $isParentActive,
-                'text-gray-600 hover:text-leaf-600' => !$isParentActive,
+            <a href="{{ route('product') }}" @class([
+                'block py-3 text-[15px] transition',
+                'font-semibold text-leaf-700' =>
+                    request()->routeIs('product') && !$currentSlug,
+                'text-gray-700 hover:text-leaf-700' => !(
+                    request()->routeIs('product') && !$currentSlug
+                ),
             ])>
-                <span @class([
-                    'mt-1.5 h-2 w-2 shrink-0 rounded-full',
-                    'bg-leaf-500' => $isParentActive,
-                    'bg-gray-300' => !$isParentActive,
-                ])></span>
-                <span class="leading-snug">{{ $item->name }}</span>
+                Tất cả sản phẩm
             </a>
-            @if ($item->children->isNotEmpty())
-                <ul class="mt-2 ml-2 space-y-2 border-l border-leaf-100 pl-3">
-                    @foreach ($item->children as $item2)
-                        @php
-                            $isChildActive = request()->routeIs('product.category') && $currentSlug === $item2->slug;
-                        @endphp
-                        <li>
-                            <a href="{{ route('product.category', $item2->slug) }}" title="{{ $item2->name }}" @class([
-                                'flex items-start gap-2 text-sm transition',
-                                'font-bold text-leaf-600' => $isChildActive,
-                                'text-gray-600 hover:text-leaf-600' => !$isChildActive,
-                            ])>
-                                <span @class([
-                                    'mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full',
-                                    'bg-leaf-500' => $isChildActive,
-                                    'bg-gray-300' => !$isChildActive,
-                                ])></span>
-                                <span class="leading-snug">{{ $item2->name }}</span>
-                            </a>
-                        </li>
-                    @endforeach
-                </ul>
-            @endif
         </li>
-    @endforeach
-</ul>
+        @foreach ($categoriesNav as $item)
+            @php
+                $isParentActive = request()->routeIs('product.category') && $currentSlug === $item->slug;
+                $hasChildren = $item->children->isNotEmpty();
+            @endphp
+            <li>
+                <a href="{{ route('product.category', $item->slug) }}" title="{{ $item->name }}" @class([
+                    'block py-3 text-[15px] transition',
+                    'font-semibold text-leaf-700' => $isParentActive,
+                    'text-gray-800 hover:text-leaf-700' => !$isParentActive,
+                ])>
+                    {{ $item->name }}
+                </a>
+                @if ($hasChildren)
+                    {{-- Cấp 2: một vạch dọc mảnh + dòng chữ, không khối bọc --}}
+                    <ul class="mb-2 ml-1 space-y-0 border-l border-leaf-200/80 pl-3">
+                        @foreach ($item->children as $item2)
+                            @php
+                                $isChildActive = request()->routeIs('product.category') && $currentSlug === $item2->slug;
+                            @endphp
+                            <li>
+                                <a href="{{ route('product.category', $item2->slug) }}" title="{{ $item2->name }}" @if ($isChildActive) aria-current="page" @endif @class([
+                                    'block rounded-r-md py-2 pr-1 text-sm leading-snug transition',
+                                    'bg-leaf-50/90 font-semibold text-leaf-900' => $isChildActive,
+                                    'text-gray-600 hover:bg-leaf-50/50 hover:text-leaf-800' => !$isChildActive,
+                                ])>
+                                    {{ $item2->name }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </li>
+        @endforeach
+    </ul>
+</nav>

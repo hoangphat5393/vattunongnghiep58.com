@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Khoảng cách cho sidebar sticky (product): = chiều cao header sticky + nav. Chỉnh nếu đổi logo/menu. */
+@layer base {
+    :root {
+        --site-header-sticky-height: 11rem;
+    }
+}
+
 @theme {
     --font-sans: "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
@@ -19,5 +26,10 @@
     .curved-bottom {
         border-bottom-left-radius: 50% 20px;
         border-bottom-right-radius: 50% 20px;
+    }
+
+    /* Sidebar danh mục sản phẩm: chiều cao cuộn tối đa khi menu dài */
+    .max-h-product-sidebar-scroll {
+        max-height: calc(100vh - var(--site-header-sticky-height) - 1rem);
     }
 }

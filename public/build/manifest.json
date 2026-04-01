@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-BrtilOXd.css",
+    "file": "assets/app-BQIch93R.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -89,13 +89,13 @@
     "src": "resources/fontawesome_pro/webfonts/fa-v4compatibility.woff2"
   },
   "resources/js/app.js": {
-    "file": "assets/app-BEGB1IwO.js",
+    "file": "assets/app-v8mhCuj6.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
   },
   "resources/scss/style.scss": {
-    "file": "assets/style-004-sBNL.css",
+    "file": "assets/style-DUVjUNAq.css",
     "src": "resources/scss/style.scss",
     "isEntry": true,
     "name": "style",
