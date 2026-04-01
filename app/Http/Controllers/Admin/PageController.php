@@ -20,7 +20,7 @@ class PageController extends Controller
      */
     public function index(Request $request)
     {
-        $pages = Page::pages()->filter($request)->orderByDesc('sort')->paginate(20)->appends($request->all());
+        $pages = Page::pages()->with(['user'])->filter($request)->orderByDesc('sort')->paginate(20)->appends($request->all());
 
         $total_item = $pages->count();
 

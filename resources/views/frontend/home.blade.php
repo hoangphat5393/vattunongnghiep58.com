@@ -60,51 +60,31 @@
             </div>
         </section>
 
-        <section class="py-12">
-            <div class="container mx-auto px-4">
-                <h2 class="text-2xl font-bold text-center mb-10 text-leaf-900">Danh mục phổ biến</h2>
-                <div class="flex flex-wrap justify-center gap-8">
-                    <a href="{{ route('product') }}" class="group flex flex-col items-center">
-                        <div class="w-24 h-24 rounded-full bg-green-100 border-2 border-green-200 flex items-center justify-center mb-3 group-hover:border-leaf-500 group-hover:bg-white transition duration-300 overflow-hidden">
-                            <img src="{{ asset('new_template/image/Bắp Cải.jpg') }}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100" alt="Rau ăn lá" />
-                        </div>
-                        <span class="font-bold text-gray-700 group-hover:text-leaf-600">Rau ăn lá</span>
-                    </a>
-                    <a href="{{ route('product') }}" class="group flex flex-col items-center">
-                        <div class="w-24 h-24 rounded-full bg-green-100 border-2 border-green-200 flex items-center justify-center mb-3 group-hover:border-leaf-500 group-hover:bg-white transition duration-300 overflow-hidden">
-                            <img src="{{ asset('new_template/image/Rau Mồng Tơi.jpg') }}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100" alt="Rau gia vị" />
-                        </div>
-                        <span class="font-bold text-gray-700 group-hover:text-leaf-600">Rau gia vị</span>
-                    </a>
-                    <a href="{{ route('product') }}" class="group flex flex-col items-center">
-                        <div class="w-24 h-24 rounded-full bg-orange-100 border-2 border-orange-200 flex items-center justify-center mb-3 group-hover:border-orange-500 group-hover:bg-white transition duration-300">
-                            <span class="text-3xl">🌻</span>
-                        </div>
-                        <span class="font-bold text-gray-700 group-hover:text-orange-500">Hoa kiểng</span>
-                    </a>
-                    <a href="{{ route('product') }}" class="group flex flex-col items-center">
-                        <div class="w-24 h-24 rounded-full bg-blue-100 border-2 border-blue-200 flex items-center justify-center mb-3 group-hover:border-blue-500 group-hover:bg-white transition duration-300">
-                            <span class="text-3xl">✂️</span>
-                        </div>
-                        <span class="font-bold text-gray-700 group-hover:text-blue-500">Dụng cụ</span>
-                    </a>
-                    <a href="{{ route('product') }}" class="group flex flex-col items-center">
-                        <div class="w-24 h-24 rounded-full bg-purple-100 border-2 border-purple-200 flex items-center justify-center mb-3 group-hover:border-purple-500 group-hover:bg-white transition duration-300">
-                            <span class="text-3xl">💊</span>
-                        </div>
-                        <span class="font-bold text-gray-700 group-hover:text-purple-500">Thuốc BVTV</span>
-                    </a>
+        {{-- Danh mục hot: tên + ảnh từ admin (cùng nguồn với khối sản phẩm bên dưới) --}}
+        @if (!empty($home_categories) && count($home_categories))
+            <section class="py-12 md:py-16">
+                <div class="mx-auto max-w-7xl px-4">
+                    <div class="mb-10 text-center md:mb-12">
+                        <h2 class="text-2xl font-extrabold tracking-tight text-leaf-900 md:text-3xl">Danh mục phổ biến</h2>
+                        <p class="mt-2 text-sm text-gray-600 md:text-base">Chuyên mục đang được ghim nổi bật (hot)</p>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-10">
+                        @foreach ($home_categories as $hotCat)
+                            <a href="{{ route('product.category', $hotCat['slug'] ?? $hotCat['id']) }}" class="group flex max-w-[140px] flex-col items-center sm:max-w-none">
+                                <div class="mb-4 flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-2 border-leaf-100 bg-leaf-50 transition duration-300 group-hover:border-leaf-500 group-hover:shadow-md md:h-32 md:w-32">
+                                    <img src="{{ get_image($hotCat['image'] ?? '') }}" alt="{{ $hotCat['name'] }}" class="h-full w-full object-cover opacity-90 transition group-hover:scale-105 group-hover:opacity-100" loading="lazy" width="128" height="128" />
+                                </div>
+                                <span class="text-center text-sm font-bold text-gray-800 transition group-hover:text-leaf-700 md:text-base">
+                                    {{ $hotCat['name'] }}
+                                </span>
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        @endif
 
-        @php
-            $category = \App\Models\Frontend\Category::where(['status' => 1, 'hot' => 1])
-                ->orderbyDesc('sort')
-                ->get();
-        @endphp
-
-        @empty(!$category)
+        @empty(!$home_categories)
             <section class="py-16 bg-white/50 backdrop-blur-sm rounded-t-[3rem]">
                 <div class="container mx-auto px-4">
                     <div class="text-center mb-12">
@@ -113,31 +93,31 @@
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        @foreach ($category as $item)
-                            @empty(!$item->products)
-                                @foreach ($item->products as $item2)
+                        @foreach ($home_categories as $item)
+                            @empty(!$item['products'])
+                                @foreach ($item['products'] as $item2)
                                     <div class="bg-white rounded-3xl p-4 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition duration-300 border border-gray-100 relative group">
                                         <div class="h-64 rounded-2xl overflow-hidden mb-4 relative">
-                                            <a href="{{ route('product.detail', [$item2->slug, $item2->id]) }}" class="block w-full h-full">
-                                                <img src="{{ get_image($item2->image) }}" alt="{{ $item2->name }}" class="w-full h-full object-cover" />
+                                            <a href="{{ route('product.detail', [$item2['slug'], $item2['id']]) }}" class="block w-full h-full">
+                                                <img src="{{ get_image($item2['image']) }}" alt="{{ $item2['name'] }}" class="w-full h-full object-cover" />
                                             </a>
                                         </div>
                                         <h3 class="font-bold text-lg text-gray-800 mb-1 group-hover:text-leaf-600 transition line-clamp-2">
-                                            <a href="{{ route('product.detail', [$item2->slug, $item2->id]) }}">
-                                                {{ $item2->name }}
+                                            <a href="{{ route('product.detail', [$item2['slug'], $item2['id']]) }}">
+                                                {{ $item2['name'] }}
                                             </a>
                                         </h3>
                                         <div class="flex justify-between items-center mt-3">
-                                            @if ($item2->price)
+                                            @if ($item2['has_price'])
                                                 <span class="text-xl font-extrabold text-leaf-700">
-                                                    {{ number_format($item2->price, 0, ',', '.') }} đ
+                                                    {{ number_format($item2['price'], 0, ',', '.') }} đ
                                                 </span>
                                             @else
                                                 <span class="text-sm font-semibold text-leaf-700">
                                                     <a href="tel:{{ setting_option('phone') }}">Liên hệ</a>
                                                 </span>
                                             @endif
-                                            <a href="{{ route('product.detail', [$item2->slug, $item2->id]) }}" class="bg-leaf-100 p-2 rounded-full text-leaf-700 hover:bg-leaf-500 hover:text-white transition">
+                                            <a href="{{ route('product.detail', [$item2['slug'], $item2['id']]) }}" class="bg-leaf-100 p-2 rounded-full text-leaf-700 hover:bg-leaf-500 hover:text-white transition">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                                                 </svg>
@@ -158,11 +138,7 @@
             </section>
         @endempty
 
-        @php
-            $news = \App\Models\Frontend\Page::posts()->where('status', 1)->orderByDesc('sort')->limit(2)->get();
-        @endphp
-
-        @empty(!$news)
+        @empty(!$home_news)
             <section id="experience" class="py-16">
                 <div class="container mx-auto px-4">
                     <div class="flex flex-col items-center mb-12">
@@ -171,13 +147,13 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        @foreach ($news as $index => $item)
+                        @foreach ($home_news as $index => $item)
                             @php
                                 $categoryName = $index === 0 ? 'Kỹ thuật' : 'Mẹo vặt';
                                 $badgeColor = $index % 2 === 0 ? 'bg-leaf-500' : 'bg-yellow-500';
                             @endphp
                             <div class="group relative rounded-3xl overflow-hidden h-80 shadow-lg">
-                                <img src="{{ get_image($item->image) }}" alt="{{ $item->title }}" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110" />
+                                <img src="{{ get_image($item['image']) }}" alt="{{ $item['title'] }}" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110" />
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
                                 </div>
                                 <div class="absolute bottom-0 left-0 p-8 text-white">
@@ -185,12 +161,12 @@
                                         {{ $categoryName }}
                                     </span>
                                     <h3 class="text-2xl font-bold mb-2 leading-tight group-hover:text-leaf-300 transition line-clamp-2 min-h-[3.75rem]">
-                                        {{ html_entity_decode($item->title ?? ($item->name ?? '')) }}
+                                        {{ html_entity_decode($item['title']) }}
                                     </h3>
                                     <p class="text-gray-300 mb-4 line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
-                                        {!! \Illuminate\Support\Str::limit(strip_tags(html_entity_decode($item->description ?? '')), 100) !!}
+                                        {!! \Illuminate\Support\Str::limit(strip_tags(html_entity_decode($item['description'])), 100) !!}
                                     </p>
-                                    <a href="{{ route('news.detail', [$item->slug, $item->id]) }}" class="inline-flex items-center gap-2 font-bold text-leaf-400 hover:text-white transition">
+                                    <a href="{{ route('news.detail', [$item['slug'], $item['id']]) }}" class="inline-flex items-center gap-2 font-bold text-leaf-400 hover:text-white transition">
                                         Đọc thêm
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>

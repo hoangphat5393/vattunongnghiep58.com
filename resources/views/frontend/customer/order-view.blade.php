@@ -1,6 +1,6 @@
 @php
     $id = $order->cart_id ?? 0;
-    $order_details = \App\Models\Addtocard_Detail::where('cart_id', $id)->get();
+    $order_details = \App\Models\Frontend\OrderItem::where('cart_id', $id)->get();
 @endphp
 
 @foreach ($order_details as $index => $item)

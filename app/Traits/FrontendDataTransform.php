@@ -16,6 +16,7 @@ trait FrontendDataTransform
                 'id' => $category->id,
                 'name' => $category->name,
                 'slug' => $category->slug,
+                'image' => $category->image ?? null,
                 'products' => $category->products
                     ->map(function (Product $product) {
                         return $this->transformProductCard($product);

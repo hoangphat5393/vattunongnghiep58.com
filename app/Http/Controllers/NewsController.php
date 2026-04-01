@@ -22,6 +22,7 @@ class NewsController extends Controller
 
         // All news 
         $news = Page::posts()->where('status', 1)
+            ->with(['user'])
             ->orderbyDesc('sort')
             ->paginate(10);
 

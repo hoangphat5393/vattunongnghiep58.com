@@ -16,7 +16,7 @@
     
     $total_price = isset($order_detail->cart_total) ? $order_detail->cart_total : '';
     $cart_content_cart = unserialize($order_detail->cart_content);
-    $order_products = \App\Models\Addtocard_Detail::where('cart_id', $order_detail->cart_id)->get();
+    $order_products = \App\Models\Backend\OrderItem::where('cart_id', $order_detail->cart_id)->get();
     ?>
     @include('backend.partials.seo')
 @endsection

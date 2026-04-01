@@ -57,7 +57,7 @@ class PageController extends Controller
                         'products.sort'
                     );
             }])
-            ->get(['id', 'name', 'slug', 'sort', 'parent', 'status', 'hot']);
+            ->get(['id', 'name', 'slug', 'sort', 'parent', 'status', 'hot', 'image']);
 
         $this->data['home_categories'] = $this->transformHomeCategories($homeCategories);
 

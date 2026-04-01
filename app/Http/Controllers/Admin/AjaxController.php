@@ -41,15 +41,18 @@ class AjaxController extends Controller
 
     public function ajax_delete(Request $rq)
     {
+        $rq->validate([
+            'type' => 'required|string',
+            'seq_list' => 'required|array',
+            'seq_list.*' => 'integer',
+        ]);
+
         $type = $rq->type;
         $check_data = $rq->seq_list;
         $arr = array();
-        $values = "";
-        for ($i = 0; $i < count($check_data); $i++) :
-            $values .= (int)$check_data[$i] . ",";
-            $arr[] = (int)$check_data[$i];
-        endfor;
-        $groupID = substr($values, 0, -1);
+        foreach ($check_data as $id) {
+            $arr[] = (int)$id;
+        }
         switch ($type) {
 
             case 'page':
@@ -155,8 +158,8 @@ class AjaxController extends Controller
                 return 1;
                 break;
             case 'order':
-                $loadDelete = AddToCard::whereIn('cart_id', $arr)->delete();
-                $addToCardDelete = AddToCardDetail::whereIn('cart_id', $arr)->delete();
+                $loadDelete = \App\Models\Backend\Order::whereIn('cart_id', $arr)->delete();
+                $addToCardDelete = \App\Models\Backend\OrderItem::whereIn('cart_id', $arr)->delete();
                 return 1;
                 break;
             case 'contact':
@@ -206,19 +209,18 @@ class AjaxController extends Controller
 
     public function ajax_replicate(Request $rq)
     {
+        $rq->validate([
+            'type' => 'required|string',
+            'seq_list' => 'required|array',
+            'seq_list.*' => 'integer',
+        ]);
+
         $type = $rq->type;
         $check_data = $rq->seq_list;
         $arr = array();
-        $values = "";
-
-        for ($i = 0; $i < count($check_data); $i++) :
-            $values .= (int)$check_data[$i] . ",";
-            $arr[] = (int)$check_data[$i];
-        endfor;
-
-        // dd($rq, $type, $values);
-
-        // $groupID = substr($values, 0, -1);
+        foreach ($check_data as $id) {
+            $arr[] = (int)$id;
+        }
 
         if ($type == 'category-post' || $type == 'category-product') {
             $type = 'category';
@@ -415,12 +417,37 @@ class AjaxController extends Controller
     // Quick change value of data list
     public function ajax_quickchange(Request $rq)
     {
+        $rq->validate([
+            'id' => 'required|integer',
+            'model' => 'required|string',
+            'column' => 'required|string',
+            'value' => 'nullable',
+        ]);
+
         $id = $rq->id;
         $column = $rq->column;
         $value = $rq->value;
+        $modelClass = $rq->model;
 
-        // Call model
-        (new $rq->model)::where('id', $id)->update([$column => $value]);
+        // Whitelist allowed models for safety
+        $allowedModels = [
+            'App\Models\Backend\Product',
+            'App\Models\Backend\Page',
+            'App\Models\Backend\Category',
+            'App\Models\Backend\Slider',
+            'App\Models\Backend\OrderItem',
+            'App\Models\Backend\Order',
+        ];
+
+        // Whitelist allowed columns for safety
+        $allowedColumns = ['status', 'sort', 'is_home', 'is_hot', 'cart_status', 'cart_payment'];
+
+        if (in_array($modelClass, $allowedModels) && in_array($column, $allowedColumns)) {
+            (new $modelClass)::where($column == 'cart_status' || $column == 'cart_payment' ? 'cart_id' : 'id', $id)->update([$column => $value]);
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Unauthorized action'], 403);
     }
 
     public function processThemeFast(Request $request)

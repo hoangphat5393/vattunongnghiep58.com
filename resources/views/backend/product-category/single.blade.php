@@ -63,14 +63,7 @@
                             <div class="card-body">
                                 <!-- show error form -->
                                 <div class="js-validation-messages mb-2 small" role="alert"></div>
-                                {{-- <ul class="nav nav-tabs hidden" id="tabLang" role="tablist">
-                                    <li class="nav-item">
-                                        <a class="nav-link active" id="vi-tab" data-toggle="tab" href="#vi" role="tab" aria-controls="vi" aria-selected="true">Tiếng việt</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" id="en-tab" data-toggle="tab" href="#en" role="tab" aria-controls="en" aria-selected="false">Tiếng Anh</a>
-                                    </li>
-                                </ul> --}}
+
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="vi" role="tabpanel" aria-labelledby="vi-tab">
                                         <div class="form-group">
@@ -85,24 +78,24 @@
                                             <label for="description">Trích dẫn</label>
                                             <textarea id="description" name="description">{!! $description ?? '' !!}</textarea>
                                         </div>
-                                        <div class="form-group">
+                                        {{-- <div class="form-group">
                                             <label for="content">Nội dung</label>
                                             <textarea id="content" name="content">{!! $content ?? '' !!}</textarea>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                     <div class="tab-pane fade" id="en" role="tabpanel" aria-labelledby="en-tab">
-                                        <div class="form-group">
+                                        {{-- <div class="form-group">
                                             <label for="name_en">Title category</label>
                                             <input type="text" class="form-control" id="name_en" name="name_en" placeholder="Title" value="{{ $name_en ?? '' }}">
                                         </div>
                                         <div class="form-group">
                                             <label for="description_en">Description category</label>
                                             <textarea id="description_en" name="description_en">{!! $description_en ?? '' !!}</textarea>
-                                        </div>
-                                        <div class="form-group">
+                                        </div> --}}
+                                        {{-- <div class="form-group">
                                             <label for="content_en">Content</label>
                                             <textarea id="content_en" name="content_en">{!! $content_en ?? '' !!}</textarea>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                 </div>
                             </div> <!-- /.card-body -->
@@ -123,19 +116,6 @@
                                     <input type="text" class="form-control" id="sort" name="sort" value="{{ $sort ?? 0 }}">
                                 </div>
 
-                                {{-- <div class="form-group row">
-                                    <label for="recommended" class="col-md-3 text-lg-right col-form-label">Đề xuất</label>
-                                    <div class="col-md-9">
-                                        <input id="recommended" class="" type="checkbox" value="1" name="recommended" @if ($recommended == 1) checked @endif data-toggle="toggle">
-                                    </div>
-                                </div> --}}
-
-                                {{-- <div class="form-group row">
-                                    <label for="hot" class="col-md-3 text-lg-right col-form-label">Hot</label>
-                                    <div class="col-md-9">
-                                        <input id="hot" class="" type="checkbox" value="1" name="hot" @if ($hot == 1) checked @endif data-toggle="toggle">
-                                    </div>
-                                </div> --}}
                             </div>
                         </div>
                     </div> <!-- /.col-9 -->
@@ -145,11 +125,16 @@
                             <div class="col-md-12 order-last order-md-first">
                                 @include('backend.partials.action_button')
                             </div>
-                            <div class="col-md-12">
+                            {{-- <div class="col-md-12">
                                 @include('backend.partials.image', ['title' => 'Icon ', 'id' => 'icon-img', 'name' => 'icon', 'image' => $icon ?? ''])
+                            </div> --}}
+
+                            <div class="col-md-12">
+                                @include('backend.partials.image', ['title' => 'Hình ảnh', 'id' => 'img', 'name' => 'image', 'image' => $image ?? ''])
                             </div>
                         </div>
-                        @include('backend.partials.image', ['title' => 'Hình ảnh', 'id' => 'img', 'name' => 'image', 'image' => $image ?? ''])
+
+
                         {{-- @include('backend.partials.image', ['title' => 'Hình ảnh Cover', 'id' => 'cover-img', 'name' => 'cover', 'image' => $cover ?? '']) --}}
                     </div> <!-- /.col-9 -->
                 </div> <!-- /.row -->
@@ -157,7 +142,7 @@
                 {{-- SEO --}}
                 <div class="row">
                     <div class="col-12 col-md-9">
-                        @include('backend.form-seo.seo')
+                        @include('backend.partials.form-seo')
                     </div>
                 </div>
                 {{-- END SEO --}}

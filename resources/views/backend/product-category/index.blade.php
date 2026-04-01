@@ -83,7 +83,7 @@
                                             </th>
                                             <th scope="col" class="text-center" style="width:100px">STT</th>
                                             <th scope="col" class="text-center">Title</th>
-                                            <th scope="col" class="text-center">Icon</th>
+                                            <th scope="col" class="text-center">Image</th>
                                             <th scope="col" class="text-center">Date</th>
                                         </tr>
                                     </thead>

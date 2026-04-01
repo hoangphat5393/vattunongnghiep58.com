@@ -40,7 +40,7 @@ class PostController extends Controller
             'search_name' => request('search_name'),
         ];
 
-        $db = Page::posts()->select('*');
+        $db = Page::posts()->with(['user'])->select('*');
         if (request('search_name') != '') {
             $db->where('name', 'like', '%' . request('search_name') . '%');
         }

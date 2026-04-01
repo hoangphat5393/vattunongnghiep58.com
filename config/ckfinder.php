@@ -29,8 +29,8 @@ $config['authentication'] = '\App\Http\Middleware\CustomCKFinderAuth';
 /*============================ License Key ============================================*/
 // http://docs.cksource.com/ckfinder3-php/configuration.html#configuration_options_licenseKey
 
-$config['licenseName'] = 'vattunongnghiep58.com.test';
-$config['licenseKey']  = 'JV3VU4PM5K3VH634JYDF264NJGBHS';
+$config['licenseName'] = 'vattunongnghiep58.test';
+$config['licenseKey']  = 'BKCKTKA15KJT165G4S9X4K2NJB2K7';
 
 /*============================ CKFinder Internal Directory ============================*/
 // http://docs.cksource.com/ckfinder3-php/configuration.html#configuration_options_privateDir

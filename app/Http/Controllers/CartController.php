@@ -7,10 +7,11 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Models\Frontend\EmailTemplate;
 use App\Models\Frontend\ShopOrderStatus, App\Models\Frontend\ShopOrderPaymentStatus;
-use App\Models\Frontend\AddToCard, App\Models\Frontend\AddToCardDetail;
+use App\Models\Frontend\Order, App\Models\Frontend\OrderItem;
 use App\Models\Frontend\Product;
 // use App\Models\Frontend\Province
 use Cart, Auth, Exception;
+use App\Http\Requests\CheckoutRequest;
 use Lunaweb\RecaptchaV3\Facades\RecaptchaV3;
 
 
@@ -204,16 +205,16 @@ class CartController extends Controller
     public function checkPayment($cart_id)
     {
         $this->localized();
-        $this->data['cart'] = \App\Models\Frontend\Addtocard::where('cart_id', $cart_id)->first();
+        $this->data['cart'] = Order::where('cart_id', $cart_id)->first();
         // dd($cart);
         if ($this->data['cart'] && $this->data['cart']['cart_status'] == 'waiting-payment')
-            return view('frontend.cart.check-payment', $this->data);
+            return view('frontend.checkout.check-payment', $this->data);
         else
             return redirect(url('/'));
     }
 
 
-    public function checkoutConfirm(Request $request)
+    public function checkoutConfirm(CheckoutRequest $request)
     {
         // $data = $request->all();
         $data_input = $request->input('order', []);
@@ -232,12 +233,12 @@ class CartController extends Controller
                 // $mail_content = $mail_customer->text;
 
                 $data = array(
-                    'fullname' => $data_input['name'],
-                    'email' => $data_input['email'],
-                    'phone' => $data_input['phone'],
-                    'address' => $data_input['address'],
-                    'content' => $data_input['content'],
-                    'total_price' => Cart::total(),
+                    'name' => $data_input['name'],
+                    'cart_email' => $data_input['email'],
+                    'cart_phone' => $data_input['phone'],
+                    'cart_address' => $data_input['address'],
+                    'cart_note' => $data_input['content'],
+                    'cart_total' => Cart::total(),
                 );
 
                 // Mail content
@@ -251,8 +252,8 @@ class CartController extends Controller
                 // $mail_content = preg_replace($dataFind, $data, $mail_content);
 
                 // $respons = AddtoCard::updateOrCreate($data);
-                $respons = AddToCard::Create($data);
-                $id_insert = $respons->id;
+                $respons = Order::Create($data);
+                $id_insert = $respons->cart_id;
 
 
                 foreach (Cart::content() as $item) {
@@ -261,9 +262,9 @@ class CartController extends Controller
                         'product_id' => $item->id,
                         'price' => $item->price,
                         'quanlity' => $item->qty,
-                        'addtocard_id' => $id_insert
+                        'cart_id' => $id_insert
                     );
-                    AddToCardDetail::Create($cart_item);
+                    OrderItem::Create($cart_item);
                 }
 
                 Cart::destroy();
@@ -277,8 +278,8 @@ class CartController extends Controller
 
     public function completed(Request $request)
     {
-        $cart = AddToCard::find(session('cart_id'));
-        // $cart = AddToCard::find(80);
+        $cart = Order::find(session('cart_id'));
+        // $cart = Order::find(80);
         // dd($cart);
 
         if ($cart)

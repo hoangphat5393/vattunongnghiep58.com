@@ -18,7 +18,8 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::filter($request)
+        $products = Product::with(['user', 'categories'])
+            ->filter($request)
             ->orderByDesc('sort')
             ->paginate(20)
             ->appends($request->all());

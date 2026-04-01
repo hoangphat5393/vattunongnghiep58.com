@@ -50,7 +50,7 @@ class ProductCategoryController extends Controller
             $data['slug'] = Str::slug($data['name']);
         }
 
-        $data['name_en'] = $data['name'];
+        // $data['name_en'] = $data['name'];
         $data['seo_title'] = $data['seo_title'] ? $data['seo_title'] : $data['name'];
 
         // USER ID
@@ -110,7 +110,7 @@ class ProductCategoryController extends Controller
             $data['slug'] = Str::slug($data['name']);
         }
 
-        $data['name_en'] = $data['name'];
+        // $data['name_en'] = $data['name'];
 
         // id post
         $sid = $request->id ?? 0;

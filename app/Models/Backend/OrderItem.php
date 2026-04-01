@@ -1,25 +1,24 @@
 <?php
 
-namespace App\Models\Frontend;
+namespace App\Models\Backend;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class AddToCardDetail extends Model
+class OrderItem extends Model
 {
     public $timestamps = true;
-    protected $table = 'addtocard_detail';
+    protected $table = 'shop_order_items';
     protected $guarded = [];
-    // protected $fillable  = [];
 
-
-    public function cart()
+    public function order(): BelongsTo
     {
-        return $this->belongsTo(AddtoCard::class);
+        return $this->belongsTo(Order::class, 'cart_id', 'cart_id');
     }
 
     /**
-     * Get the user associated with the AddToCardDetail
+     * Get the product associated with the OrderItem
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */

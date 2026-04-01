@@ -36,7 +36,8 @@
             Tiến hành thanh toán
         </a>
 
-        <div class="mt-6">
+        {{-- Tailwind: `hidden` = display:none. Bỏ class `hidden` khi có chức năng mã giảm giá --}}
+        <div class="mt-6 hidden" aria-hidden="true">
             <h4 class="font-bold text-gray-800 mb-3 text-sm">Mã giảm giá</h4>
             <div class="flex gap-2">
                 <input type="text" placeholder="Nhập mã khuyến mãi" class="w-full pl-4 pr-12 py-3 rounded-xl border border-gray-200 focus:border-leaf-500 focus:outline-none text-sm">
