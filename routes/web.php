@@ -106,15 +106,15 @@ Route::group(['prefix' => 'cart'], function () {
     Route::get('checkout/success', 'CartController@success')->name('cart.checkout.success');
     Route::get('view/{id}', 'CartController@view')->name('cart.view');
 });
-Route::post('checkout', 'CartController@checkoutConfirm')->name('cart.checkout');
-Route::get('checkout', 'CartController@checkoutConfirm');
+Route::get('checkout', 'CartController@checkout')->name('cart.checkout');
+Route::post('checkout', 'CartController@checkoutConfirm')->name('cart.checkout.submit');
 Route::get('checkout-completed', 'CartController@completed')->name('checkout_completed');
 
 // Route::post('checkout', 'CheckoutController@submit')->name('checkout.submit');
 
 
 // Route::get('payment', 'PayPalTestController@index');
-Route::post('checkout-process', 'CartController@checkoutProcess')->name('cart_checkout.process');
+Route::post('checkout-process', '\App\Http\Controllers\CheckoutController@checkoutProcess')->name('cart_checkout.process');
 // Route::post('checkout-charge', 'PayPalTestController@charge')->name('cart.checkout.charge');
 // Route::get('payment-success/{id?}', 'PayPalTestController@paymentStrip_success');
 // Route::get('paymentsuccess', 'PayPalTestController@payment_success');

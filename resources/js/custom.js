@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (cartCount) {
                                 cartCount.innerHTML = res.data.count_cart;
                             }
-                            if (res.data.view !== '') {
+                            if (res.data.view) {
                                 const siteCart = document.querySelector('.site-cart');
                                 if (siteCart) {
                                     const headerCart = siteCart.querySelector('#header-cart');

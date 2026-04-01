@@ -1,160 +1,133 @@
-@extends('frontend.layouts.master')
-
-@section('seo')
-@endsection
-
-
-@section('content')
-    <main id="checkout_complete" class="main">
-
-        {{-- Menu --}}
-        @include('frontend.includes.menu')
-
-        {{-- Page Header Start --}}
-        {{-- <div class="container-fluid page-header py-5 wow fadeIn" data-wow-delay="0.1s">
-            <div class="container text-center">
-                <h4 class="animated slideInDown mb-3 fw-bold">Hoàn tất đặt hàng</h4>
-                <nav aria-label="breadcrumb animated slideInDown">
-                    <ol class="breadcrumb justify-content-center mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('index') }}">@lang('Home')</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">@lang('Contact completed')</li>
-                    </ol>
-                </nav>
-            </div>
-        </div> --}}
-        {{-- Page Header End --}}
-
-        {{-- Contact Start --}}
-        <div class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-md-7">
-                    <img src="{{ asset('images/icon-success.png') }}" class="img-fluid mx-auto d-block animated slideInDown " alt="Đặt hàng thành công" style="width: 80px">
-                    <h3 class="animated slideInDown fw-bold text-center mt-4 mb-5">Đặt hàng thành công</h3>
-                </div>
-                <div class="col-md-8">
-                    <div class="block-warp p-4">
-
-                        <div class="mb-3">
-                            <p>Chào anh/chị <span class="fw-700">{{ $cart->fullname }}</span></p>
-                            <p>Chúc mừng anh/chị đã đặt hàng thành công tại <span class="fw-700 text-success">{{ setting_option('webtitle') }}</span></p>
-                            <dl class="row">
-                                <dt class="col-sm-3 fw-400">Mã đơn hàng:</dt>
-                                <dd class="col-sm-9 fw-700">{{ $cart->id }}</dd>
-
-                                <dt class="col-sm-3 fw-400">Tổng thanh toán</dt>
-                                <dd class="col-sm-9 fw-700 text-red">
-                                    {{ number_format($cart->total_price, 0, ',', '.') }} đ
-                                </dd>
-
-                                <dt class="col-sm-3 fw-400">Tình trạng</dt>
-                                <dd class="col-sm-9 fw-700 text-red">
-                                    @switch($cart->status)
-                                        @case(0)
-                                            Chưa thanh toán
-                                        @break
-
-                                        @case(1)
-                                            Đã thanh toán
-                                        @break
-
-                                        @default
-                                            Đang xử lý
-                                    @endswitch
-                                </dd>
-                            </dl>
-
-                            <hr>
-
-                            <p>
-                                Cảm ơn bạn đã tin tưởng và giao dịch tại <span class="fw-700">{{ setting_option('website') }}</span><br>
-                                Cửa hàng sẽ liên hệ trong thời gian sớm nhất để xác nhận đơn hàng
-                            </p>
-
-                        </div>
-
-
-                        @if ($cart->items()->exists())
-                            <div id="collapseExample" class="row cart-detail">
-                                <div class="col-md-12 pt-sm-3">
-
-                                    <div class="table-container">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover vcenter">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col"></th>
-                                                        <th scope="col">Sản phẩm</th>
-                                                        <th scope="col" class="text-center">Số lượng</th>
-                                                        <th scope="col" class="text-center">Giá</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach ($cart->items as $item)
-                                                        @php
-                                                            $product = $item->product;
-                                                        @endphp
-                                                        <tr class="cart-items">
-                                                            <td class="cart-thumb">
-                                                                {{-- <a class="flex-shrink-0" href="{{ route('product.detail', [$product->slug, $product->id]) }}" title="Ớt Sừng Vàng Lai F1 Phi Châu">
-                                                                </a> --}}
-                                                                <img class="img-fluid item-image d-block mx-auto" src="{{ $product->image }}" alt="Ớt Sừng Vàng Lai F1 Phi Châu" width="70">
-                                                            </td>
-                                                            <td style="width: 250px">
-                                                                {{-- <a class="flex-shrink-0 item-name" href="https://vattunongnghiep58.com.test/product/ot-sung-vang-lai-f1-phi-chau-7.html" title="Ớt Sừng Vàng Lai F1 Phi Châu">Ớt Sừng Vàng Lai F1 Phi Châu</a> --}}
-                                                                {{ $product->name }}
-                                                            </td>
-                                                            <td>
-                                                                <div class="mx-auto mx-sm-0 text-center text-sm-start" style="max-width: 9rem;">
-                                                                    {{ $item->quanlity }}
-                                                                </div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <div class="text-accent">{{ number_format($item->quanlity * $product->price, 0, ',', '.') }} đ</div>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-                        <div class="row justify-content-center">
-                            <div class="col-md-8">
-                                <div class="d-flex justify-content-around">
-                                    <div class="return-btn">
-                                        <a href="{{ route('index') }}" class="btn btn-success">Tiếp tục mua hàng</a>
-                                    </div>
-                                    <div class="">
-                                        {{-- <button class="btn btn-danger" data-bs-toggle="collapse" data-bs-target="#collapseExample">Chi tiết đơn hàng</button> --}}
-                                        <button class="btn btn-danger" id="toggleButton">Chi tiết đơn hàng</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-
-
-        </div>
-        {{-- Contact End --}}
-    </main>
-@endsection
-
-
-@push('scripts')
-    <script>
-        $('#toggleButton').on('click', function() {
-            // $('#collapseExample').slideToggle();
-            $('#collapseExample').toggleClass('show');
-        });
-    </script>
-@endpush
+@extends('frontend.layouts.master')
+
+@section('seo')
+    @include('frontend.layouts.seo', ['seo_title' => 'Đặt hàng thành công'])
+@endsection
+
+@section('content')
+    @include('frontend.includes.menu')
+
+    <div class="container mx-auto px-4 py-4">
+        <div class="text-sm text-gray-500 flex items-center gap-2 flex-wrap">
+            <a href="{{ route('index') }}" class="hover:text-leaf-600">Trang chủ</a>
+            <span>/</span>
+            <span class="text-leaf-700 font-bold">Đặt hàng thành công</span>
+        </div>
+    </div>
+
+    <main class="bg-leaf-50 flex-grow pb-16">
+        <div class="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
+            @if (session('checkout_success'))
+                <div class="mb-6 rounded-xl border border-leaf-200 bg-leaf-50 px-4 py-3 text-sm text-leaf-900">
+                    {{ session('checkout_success') }}
+                </div>
+            @endif
+
+            <div class="text-center mb-8">
+                <div class="inline-flex h-16 w-16 items-center justify-center rounded-full bg-leaf-100 text-leaf-600 mb-4">
+                    <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900">Đã ghi nhận đơn hàng</h1>
+                <p class="text-gray-600 mt-2 text-sm md:text-base">Cảm ơn bạn đã đặt hàng tại {{ setting_option('webtitle') }}. Nhân viên sẽ liên hệ qua điện thoại để xác nhận và thống nhất giao hàng.</p>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-leaf-100 shadow-sm p-6 md:p-8">
+                <p class="text-gray-800 mb-6">
+                    Xin chào <span class="font-bold text-gray-900">{{ $cart->name }}</span>,
+                </p>
+
+                <dl class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm border-b border-gray-100 pb-6 mb-6">
+                    <dt class="text-gray-500 sm:col-span-1">Mã đơn hàng</dt>
+                    <dd class="font-bold text-gray-900 sm:col-span-2">#{{ $cart->cart_id }}</dd>
+
+                    <dt class="text-gray-500 sm:col-span-1">Tổng giá trị</dt>
+                    <dd class="font-bold text-leaf-700 sm:col-span-2">{!! render_price($cart->cart_total, 'VND') !!}</dd>
+
+                    <dt class="text-gray-500 sm:col-span-1">Trạng thái</dt>
+                    <dd class="font-semibold text-gray-800 sm:col-span-2">
+                        @switch($cart->cart_status ?? null)
+                            @case(0)
+                                Chờ xác nhận
+                            @break
+
+                            @case(1)
+                                Đã xác nhận
+                            @break
+
+                            @default
+                                Đang xử lý
+                        @endswitch
+                    </dd>
+                </dl>
+
+                <p class="text-gray-600 text-sm leading-relaxed mb-8">
+                    Chúng tôi sẽ liên hệ bạn trong thời gian sớm nhất. Nếu cần hỗ trợ gấp, vui lòng gọi hotline trên website.
+                </p>
+
+                @if ($cart->items()->exists())
+                    <div id="order-detail-panel" class="hidden mb-8 border border-gray-100 rounded-xl overflow-hidden">
+                        <div class="bg-gray-50 px-4 py-2 font-bold text-gray-800 text-sm">Chi tiết sản phẩm</div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="bg-leaf-50/80 text-left text-gray-700">
+                                    <tr>
+                                        <th class="py-3 px-4">Sản phẩm</th>
+                                        <th class="py-3 px-4 text-center">SL</th>
+                                        <th class="py-3 px-4 text-right">Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    @foreach ($cart->items as $item)
+                                        @php
+                                            $product = $item->product;
+                                        @endphp
+                                        @if ($product)
+                                            <tr>
+                                                <td class="py-3 px-4">
+                                                    <div class="flex items-center gap-3">
+                                                        <div class="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 shrink-0">
+                                                            @if (!empty($product->image))
+                                                                <img src="{{ get_image($product->image) }}" alt="" class="w-full h-full object-cover">
+                                                            @endif
+                                                        </div>
+                                                        <span class="font-medium text-gray-900">{{ $product->name }}</span>
+                                                    </div>
+                                                </td>
+                                                <td class="py-3 px-4 text-center">{{ $item->quanlity }}</td>
+                                                <td class="py-3 px-4 text-right font-semibold">{!! render_price(($item->price ?? $product->price) * $item->quanlity, 'VND') !!}</td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @endif
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <a href="{{ route('index') }}" class="inline-flex justify-center items-center rounded-xl bg-leaf-600 px-6 py-3 font-bold text-white shadow hover:bg-leaf-700 transition">
+                        Tiếp tục mua hàng
+                    </a>
+                    @if ($cart->items()->exists())
+                        <button type="button" id="toggle-order-detail" class="inline-flex justify-center items-center rounded-xl border-2 border-gray-200 px-6 py-3 font-bold text-gray-800 hover:border-leaf-400 transition">
+                            Xem chi tiết đơn
+                        </button>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </main>
+@endsection
+
+@push('scripts')
+    <script>
+        document.getElementById('toggle-order-detail')?.addEventListener('click', function() {
+            var p = document.getElementById('order-detail-panel');
+            if (!p) return;
+            p.classList.toggle('hidden');
+            this.textContent = p.classList.contains('hidden') ? 'Xem chi tiết đơn' : 'Ẩn chi tiết đơn';
+        });
+    </script>
+@endpush

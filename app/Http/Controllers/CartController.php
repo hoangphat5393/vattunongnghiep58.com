@@ -114,7 +114,7 @@ class CartController extends Controller
                 'error' => 0,
                 'count_cart' => Cart::count(),
                 // 'view' => view($this->templatePath . '.cart.cart-mini')->render(),
-                'msg' => 'Add to cart success',
+                'msg' => 'Đã thêm vào giỏ hàng',
             ]
         );
     }
@@ -189,15 +189,14 @@ class CartController extends Controller
 
             // dd(Cart::checkout());
 
-            if (session()->has('cart-info')) {
-                $data = session()->get('cart-info');
-                $this->data["cart_info"] = $data;
-            }
+            $this->data['cart_info'] = session()->get('cart-info', []);
 
             $this->data['seo'] = [
                 'seo_title' => 'Đặt hàng',
             ];
-            return view('frontend.cart.checkout', $this->data);
+            $this->data['carts'] = Cart::content();
+
+            return view('frontend.checkout.checkout', $this->data);
         } else
             return $this->cart();
     }
@@ -269,7 +268,8 @@ class CartController extends Controller
 
                 Cart::destroy();
 
-                return redirect()->route('checkout_completed')->with('cart_id', $id_insert);
+                return redirect()->route('checkout_completed')->with('cart_id', $id_insert)
+                    ->with('checkout_success', 'Đã ghi nhận thông tin. Chúng tôi sẽ liên hệ bạn sớm để xác nhận đơn hàng.');
             }
         } else {
             return view('errors.404');

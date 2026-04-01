@@ -251,16 +251,12 @@
 
 @push('scripts')
     <script>
-        var cart_ajax_add = "{{ route('cart.addCart') }}";
-
         document.addEventListener('DOMContentLoaded', function() {
             try {
                 var qtyInput = document.getElementById('quantity_field');
                 // ... (rest of the existing variables) ...
                 var minusBtn = document.querySelector('.quantity-btn.minus');
                 var plusBtn = document.querySelector('.quantity-btn.plus');
-                var addCartBtn = document.querySelector('.product-form__cart-add');
-                var form = document.getElementById('product_form_addCart');
 
                 var updateQty = function(delta) {
                     if (!qtyInput) return;
@@ -283,43 +279,7 @@
                     });
                 }
 
-                if (addCartBtn && form) {
-                    addCartBtn.addEventListener('click', function() {
-                        var fd = new FormData(form);
-
-                        axios({
-                                method: 'POST',
-                                url: cart_ajax_add,
-                                data: fd
-                            })
-                            .then(function(res) {
-                                if (res.data && res.data.status === 'success') {
-                                    Swal.fire({
-                                        position: 'center',
-                                        icon: 'success',
-                                        title: res.data.message || 'Đã thêm vào giỏ hàng',
-                                        timer: 1500
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        position: 'center',
-                                        icon: 'error',
-                                        title: (res.data && res.data.message) || 'Đã xảy ra lỗi, vui lòng thử lại!',
-                                        timer: 1500
-                                    });
-                                }
-                            })
-                            .catch(function(err) {
-                                console.error('Add to cart error:', err);
-                                Swal.fire({
-                                    position: 'center',
-                                    icon: 'error',
-                                    title: 'Đã xảy ra lỗi, vui lòng thử lại!',
-                                    timer: 1500
-                                });
-                            });
-                    });
-                }
+                // Thêm giỏ: resources/js/custom.js (res.data.error === 0). Không duplicate axios ở đây.
 
                 // Swiper Initialization - Thumbs Gallery Pattern
                 function initProductSwiper() {

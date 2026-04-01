@@ -1,184 +1,120 @@
-@extends('frontend.layouts.master')
-@section('seo')
-    @include('frontend.layouts.seo', $seo ?? [])
-@endsection
-
-@inject('ProductModel', 'App\Product')
-
-@push('head-style')
-    <link rel="stylesheet" href="{{ url($templateFile . '/css/cart.css?ver=1.00') }}">
-    <style>
-        .msg-error {
-            color: #f00;
-        }
-    </style>
-@endpush
-
-@php
-    // $states = \App\Models\Province::get();
-    // $countries = \App\Models\Country::get();
-
-    $carts = Cart::content();
-
-    $subtotal = 0;
-    // $auth_discount = 0;
-    foreach ($carts as $cart) {
-        $subtotal += $cart->price;
-    }
-
-    // dd(Cart::total(2));
-
-    // $variable_group = App\Models\Variable::where('status', 0)->where('parent', 0)->orderBy('stt', 'asc')->pluck('name', 'id');
-
-    // if (Auth::check()) {
-    //     extract(auth()->user()->toArray());
-    //     $auth_discount = ($subtotal * setting_cost('auth_discount')) / 100;
-    // }
-
-@endphp
-
-@section('content')
-    <div class="carts-content checkout-content">
-        <div class="cart_bg">
-            <div class="container pt-4 pb-3 py-sm-4">
-                <div class="breadcrumbs my-4">
-                    <div class="breadcrumbs mb-4">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/">Home</a></li>
-                            <li class="breadcrumb-item text-nowrap">
-                                <a href="{{ route('cart') }}">Cart</a>
-                            </li>
-                            <li class="breadcrumb-item text-nowrap active" aria-current="page">Checkout</li>
-                        </ol>
-                    </div>
-                </div>
-
-                <div class="rounded-3 shadow-lg">
-                    <form class="needs-validation " action="{{ route('cart_checkout.process') }}" method="post" id="form-checkout">
-                        @csrf
-                        <input type="hidden" name="shipping_cost" value="0">
-                        <input type="hidden" name="cart_total" value="{{ Cart::total(2) }}" data-origin="{{ Cart::total(2) }}">
-                        <input type="hidden" name="res_token" id="res_token" value="">
-
-                        <div class="row billing-fields">
-                            <div class="col-12 col-lg-8 pt-sm-3">
-
-                                {{-- CART TABLE --}}
-                                <div class="table-container bdr mb-4">
-                                    <div class="table-responsive cart-table-include">
-                                        @include($templatePath . '.cart.includes.checkout_cart_item')
-                                    </div>
-                                </div>
-
-                                {{-- PAYMENT METHOD --}}
-                                @include($templatePath . '.cart.includes.payment-method')
-
-                                {{-- CUSTOMER INFO --}}
-                                <div class="create-ac-content bg-light-gray">
-
-                                    @include($templatePath . '.cart.includes.customer-info')
-
-                                    <div class="msg-error mb-3" style="display: none;"></div>
-                                    <div class="cart-btn">
-                                        {{-- <button type="button" class="btn btn-info get_shipping_usps" title="Continue to shipping">Continue to shipping</button> --}}
-                                        {{-- <a href="{{ url('cart') }}" class="btn btn-sm btn-info mt-3" title="Continue to shipping"><i class="fas fa-arrow-left"></i>&nbsp; BACK TO CART</a> --}}
-                                    </div>
-                                </div>
-                            </div>
-
-                            {{-- SIDEBAR --}}
-                            <div class="col-12 col-lg-4 pt-sm-4 pt-md-3">
-                                <div class="cart-total bdr sticky-top">
-                                    <div class="heading">CART TOTAL</div>
-                                    <div class="body">
-                                        <div class="mb-2">
-                                            <div class="d-flex justify-content-between">
-                                                <div>Subtotal:</div>
-                                                <div class="">
-                                                    {!! render_price($subtotal) !!}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {{-- @if ($auth_discount)
-                                            <div class="mb-2">
-                                                <div class="d-flex justify-content-between">
-                                                    <div>VIP Discount ({{ setting_cost('auth_discount') }}%):</div>
-                                                    <div class="">
-                                                        {!! render_price($auth_discount) !!}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif --}}
-
-                                        <div class="mb-3 pb-3 into-money">
-                                            <div class="d-flex justify-content-between">
-                                                <p class="subtotal text-uppercase">Total:</p>
-                                                <p class="subtotal">
-                                                    {!! render_price($subtotal) !!}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <button class="btn btn-primary btn-checkout d-block w-100 mt-3 submit-confirm" value="Place order" type="button">CHECKOUT</button>
-                                    </div>
-                                </div>
-                            </div>
-                            {{-- END SIDEBAR --}}
-
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection
-
-
-
-@push('after-footer')
-    <script type="application/javascript" src = "https://checkout.stripe.com/checkout.js" > </script>
-    <script src="{{ asset('/js/jquery.validate.min.js') }}"></script>
-    <script src="{{ asset($templateFile . '/js/cart.js?ver=' . time()) }}"></script>
-
-    <script>
-        $(document).ready(function($) {
-            $('input[name="delivery"]:checked').parent().find('.ship-content').show();
-            $('input[name="payment_method"]:checked').parent().find('.payment-content').show();
-
-            $('input[name="payment_method"]').on('change', function() {
-                $('.payment-content').hide();
-                $(this).parent().find('.payment-content').show();
-            });
-
-            $('input[name="delivery"]').on('change', function() {
-                $('.ship-content').hide();
-                $(this).parent().find('.ship-content').show();
-                var val = $(this).val();
-                $('.delivery_content').hide();
-                $('.' + val + '_content').show();
-                if (val == 'pick_up') {
-                    $('.get_shipping_cost').hide();
-                    $('.submit-checkout').show();
-                    $('.shipping_cost').text(0);
-                    $('.cart_total').html('{!! render_price(Cart::total(2)) !!}');
-                    $('input[name="cart_total"]').val('{{ Cart::total(2) }}');
-                } else {
-                    $('.get_shipping_cost').show();
-                    $('.submit-checkout').hide();
-                    $('.shipping_cost').text('Calculated at next step');
-                }
-            });
-
-            $(document).on('change', '.shipping-list input', function() {
-                var price = $(this).val();
-                var total = $('input[name="cart_total"]').data('origin');
-
-                $('.shipping_cost').text('$' + price);
-                $('input[name="shipping_cost"]').val(price);
-
-                total = parseFloat(total) + parseFloat(price);
-                $('.cart_total').text('$' + total);
-                $('input[name="cart_total"]').val(total);
-            });
-        });
-    </script>
-@endpush
+@extends('frontend.layouts.master')
+@section('seo')
+    @include('frontend.layouts.seo', $seo ?? [])
+@endsection
+
+@inject('ProductModel', 'App\Models\Frontend\Product')
+
+@prepend('scripts')
+    <script src="{{ asset('/js/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset($templateFile . '/js/cart.js?ver=' . time()) }}"></script>
+@endprepend
+
+@php
+    $carts = Cart::content();
+
+    $subtotal = 0;
+    foreach ($carts as $cart) {
+        $subtotal += $cart->price * $cart->qty;
+    }
+@endphp
+
+@section('content')
+    @include('frontend.includes.menu')
+
+    <div class="container mx-auto px-4 py-4">
+        <div class="text-sm text-gray-500 flex items-center gap-2 flex-wrap">
+            <a href="{{ route('index') }}" class="hover:text-leaf-600">Trang chủ</a>
+            <span>/</span>
+            <a href="{{ route('cart') }}" class="hover:text-leaf-600">Giỏ hàng</a>
+            <span>/</span>
+            <span class="text-leaf-700 font-bold">Đặt hàng</span>
+        </div>
+    </div>
+
+    <main class="bg-leaf-50 flex-grow pb-12">
+        <div class="container mx-auto px-4 py-6 md:py-8">
+            <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">Xác nhận đơn hàng</h1>
+            <p class="text-gray-600 text-sm md:text-base mb-6 md:mb-8 max-w-2xl">Điền thông tin liên hệ bên dưới. Chúng tôi sẽ gọi điện xác nhận đơn và hướng dẫn giao hàng — không cần chọn thanh toán trực tuyến.</p>
+
+            <input type="hidden" id="checkout_cart_total_ref" value="{{ Cart::total(2) }}" data-origin="{{ Cart::total(2) }}">
+
+            <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 carts-content checkout-content">
+                <div class="lg:w-2/3 space-y-6">
+                    <div class="bg-white rounded-2xl shadow-sm border border-leaf-100 overflow-hidden">
+                        <div class="px-4 py-3 md:px-6 md:py-4 border-b border-leaf-100 bg-leaf-50/80">
+                            <h2 class="font-bold text-lg text-gray-900">Đơn hàng của bạn</h2>
+                            <p class="text-sm text-gray-500 mt-0.5">Kiểm tra sản phẩm trước khi xác nhận</p>
+                        </div>
+                        <div class="cart-table-include">
+                            @include('frontend.cart.includes.checkout_cart_item')
+                        </div>
+                    </div>
+
+                    @include('frontend.cart.includes.customer-info', ['showPayment' => false, 'contactCheckout' => true])
+
+                    <div class="msg-error mb-3 hidden rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"></div>
+                </div>
+
+                <aside class="lg:w-1/3 checkout-sidebar-include">
+                    <div class="bg-white rounded-2xl shadow-sm border border-leaf-100 p-6 lg:sticky lg:top-24">
+                        <h3 class="font-bold text-xl text-gray-900 mb-6 border-b border-gray-100 pb-4">Cộng đơn hàng</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between text-gray-700">
+                                <span>Tạm tính</span>
+                                <span class="font-bold">{!! render_price($subtotal, 'VND') !!}</span>
+                            </div>
+                            <div class="flex justify-between text-gray-700">
+                                <span>Phí vận chuyển</span>
+                                <span class="font-bold text-leaf-600">Miễn phí</span>
+                            </div>
+                            <div class="pt-4 border-t border-gray-100">
+                                <div class="flex justify-between items-center gap-2">
+                                    <span class="font-bold text-lg text-gray-900">Tổng cộng</span>
+                                    <span class="text-2xl font-extrabold text-leaf-600">{!! render_price($subtotal, 'VND') !!}</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1 text-right">Đã bao gồm VAT (nếu có)</p>
+                            </div>
+                        </div>
+
+                        <button type="button" class="submit-confirm mt-6 hidden w-full cursor-pointer rounded-xl bg-leaf-600 py-3.5 text-center text-base font-bold text-white shadow-md transition hover:bg-leaf-700 hover:shadow-lg lg:block">
+                            Gửi thông tin liên hệ
+                        </button>
+
+                        <a href="{{ route('cart') }}" class="mt-4 flex items-center justify-center gap-2 text-sm font-semibold text-gray-600 hover:text-leaf-700">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Quay lại giỏ hàng
+                        </a>
+
+                        <div class="mt-6 pt-4 border-t border-gray-100">
+                            <div class="flex items-center gap-2 text-gray-500 text-sm justify-center">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                                <span>Thông tin được mã hóa an toàn</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+@endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function($) {
+            $('.submit-confirm').on('click', function(e) {
+                e.preventDefault();
+                var $sub = $('#checkout_form').find('button[type="submit"]');
+                if ($sub.length) {
+                    $sub.trigger('click');
+                } else if (document.getElementById('checkout_form')) {
+                    document.getElementById('checkout_form').requestSubmit();
+                }
+            });
+        });
+    </script>
+@endpush

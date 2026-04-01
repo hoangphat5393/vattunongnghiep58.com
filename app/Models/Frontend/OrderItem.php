@@ -3,7 +3,6 @@
 namespace App\Models\Frontend;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderItem extends Model
@@ -17,13 +16,8 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class, 'cart_id', 'cart_id');
     }
 
-    /**
-     * Get the product associated with the OrderItem
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function product(): HasOne
+    public function product(): BelongsTo
     {
-        return $this->hasOne(Product::class, 'id', 'product_id');
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 }

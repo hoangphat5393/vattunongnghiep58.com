@@ -33,7 +33,7 @@
         </div>
 
         <a href="{{ route('cart.checkout') }}" class="cursor-pointer block w-full mt-6 bg-leaf-600 text-white text-center font-bold py-3 rounded-xl hover:bg-leaf-700 transition transform hover:-translate-y-0.5 shadow-md">
-            Tiến hành thanh toán
+            Tiến hành đặt hàng
         </a>
 
         {{-- Tailwind: `hidden` = display:none. Bỏ class `hidden` khi có chức năng mã giảm giá --}}
