@@ -1,80 +1,86 @@
-@extends('frontend.layouts.master')
-
-@section('seo')
-    @include('frontend.layouts.seo', $seo ?? [])
-@endsection
-
-@php
-    use Carbon\Carbon;
-    Carbon::setLocale('vi');
-@endphp
-
-@section('content')
-    <main id="main" class="product-category">
-        {{-- Menu --}}
-        @include('frontend.includes.menu')
-
-        <div class="container mt-4">
-            <div class="row">
-
-                <div class="col-lg-3 order-2 order-lg-1">
-                    {{-- Category --}}
-                    <div class="row main-cat mb-3">
-                        @include('frontend.includes.left_sidebar')
-                    </div>
-                </div>
-
-                @empty(!$category)
-                    <div class="col-lg-9 order-1 order-lg-2 mb-5 main-product">
-                        <div class="row mb-3">
-                            <div class="col-12">
-                                <h3>{{ $category->name }}</h3>
-
-                                <div class="row my-4">
-                                    {{-- Product item --}}
-                                    @foreach ($product as $item)
-                                        <div class="col-6 col-md-3">
-                                            <div class="product-item mb-3">
-                                                <figure class="text-center">
-                                                    <a href="{{ route('product.detail', [$item->slug, $item->id]) }}" title="{{ $item->name }}">
-                                                        <img class="w-100" src="{{ $item->image }}" alt="{{ $item->name }}">
-                                                    </a>
-                                                </figure>
-                                                <div class="product-name text-center">
-                                                    <a href="{{ route('product.detail', [$item->slug, $item->id]) }}">
-                                                        {{ $item->name }}
-                                                    </a>
-                                                </div>
-                                                <p class="text-center">
-                                                    Giá:
-                                                    @if ($item->price_type == 'price')
-                                                        <span class="price">
-                                                            {{ number_format($item->price, 0, ',', '.') }} đ
-                                                        </span>
-                                                    @else
-                                                        <span class="price">
-                                                            <a href="tel:{{ setting_option('phone') }}">Liên hệ</a>
-                                                        </span>
-                                                    @endif
-                                                </p>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                                <div class="nav-pagination">
-                                    {{ $product->links('frontend.pagination.custom') }}
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                @endempty
-            </div>
-        </div>
-    </main>
-
-@endsection
-
-
-@push('scripts')
-@endpush
+@extends('frontend.layouts.master')
+
+@section('seo')
+    @include('frontend.layouts.seo', $seo ?? [])
+@endsection
+
+@section('content')
+    <main id="main" class="product-category">
+        @include('frontend.includes.menu')
+
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex flex-wrap items-center gap-2 text-sm text-gray-500">
+                <a href="{{ route('index') }}" class="hover:text-leaf-600">Trang chủ</a>
+                <span>/</span>
+                <a href="{{ route('product') }}" class="hover:text-leaf-600">Danh sách sản phẩm</a>
+                <span>/</span>
+                <span class="font-bold text-leaf-700">{{ $category->name }}</span>
+            </div>
+        </div>
+
+        <section class="container mx-auto flex flex-col gap-8 px-4 py-8 md:flex-row">
+            <aside class="md:w-1/4">
+                @include('frontend.product.includes.sidebar-categories')
+            </aside>
+
+            <div class="md:w-3/4">
+                <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900 md:text-2xl">{{ $category->name }}</h1>
+                        @if ($category->children && $category->children->isNotEmpty())
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                @foreach ($category->children as $sub)
+                                    <a href="{{ route('product.category', $sub->slug) }}" class="inline-flex items-center rounded-full border border-leaf-200 bg-white px-3 py-1 text-sm font-semibold text-leaf-800 shadow-sm transition hover:border-leaf-400 hover:bg-leaf-50">
+                                        {{ $sub->name }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                @if ($product->count() > 0)
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        @foreach ($product as $item)
+                            <div class="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition duration-300 hover:shadow-xl">
+                                <div class="relative h-64 overflow-hidden">
+                                    <a href="{{ route('product.detail', [$item->slug, $item->id]) }}" class="block h-full w-full" title="{{ $item->name }}">
+                                        <img src="{{ get_image($item->image) }}" alt="{{ $item->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-110" loading="lazy" />
+                                    </a>
+                                </div>
+                                <div class="p-4">
+                                    <h2 class="mb-2 line-clamp-2 text-lg font-bold text-gray-900 transition group-hover:text-leaf-600">
+                                        <a href="{{ route('product.detail', [$item->slug, $item->id]) }}">
+                                            {{ $item->name }}
+                                        </a>
+                                    </h2>
+                                    <div class="flex items-center justify-between">
+                                        @if ($item->price_type == 'price')
+                                            <span class="text-xl font-extrabold text-leaf-600">
+                                                {{ number_format($item->price, 0, ',', '.') }} đ
+                                            </span>
+                                        @else
+                                            <span class="text-sm font-semibold text-leaf-600">
+                                                <a href="tel:{{ setting_option('phone') }}">Liên hệ</a>
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    {{ $product->links('frontend.pagination.tailwind') }}
+                @else
+                    <div class="rounded-2xl border border-dashed border-leaf-200 bg-white/80 px-6 py-14 text-center shadow-sm">
+                        <p class="text-lg font-semibold text-gray-800">Chưa có sản phẩm trong danh mục này</p>
+                        <p class="mt-1 text-sm text-gray-600">Bạn có thể xem các danh mục khác hoặc quay lại trang sản phẩm.</p>
+                        <a href="{{ route('product') }}" class="mt-6 inline-flex items-center justify-center rounded-xl bg-leaf-600 px-5 py-3 text-sm font-bold text-white shadow-md transition hover:bg-leaf-700">
+                            Tất cả sản phẩm
+                        </a>
+                    </div>
+                @endif
+            </div>
+        </section>
+    </main>
+@endsection

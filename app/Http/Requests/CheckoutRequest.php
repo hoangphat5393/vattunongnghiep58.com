@@ -22,14 +22,19 @@ class CheckoutRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'order.name' => 'required|string|max:200',
             'order.email' => 'required|email|max:300',
             'order.phone' => 'required|string|max:50',
             'order.address' => 'required|string',
             'order.content' => 'nullable|string',
-            'g-recaptcha-response' => 'required',
         ];
+
+        if (filled(config('recaptchav3.secret'))) {
+            $rules['g-recaptcha-response'] = 'required';
+        }
+
+        return $rules;
     }
 
     public function messages(): array

@@ -42,9 +42,10 @@
     38 => 'App\\Providers\\AuthServiceProvider',
     39 => 'App\\Providers\\EventServiceProvider',
     40 => 'App\\Providers\\RouteServiceProvider',
-    41 => 'Laravel\\Socialite\\SocialiteServiceProvider',
-    42 => 'Gornymedia\\Shortcodes\\ShortcodesServiceProvider',
-    43 => 'App\\Providers\\ShortcodeServiceProvider',
+    41 => 'App\\Providers\\WebServiceProvider',
+    42 => 'Laravel\\Socialite\\SocialiteServiceProvider',
+    43 => 'Gornymedia\\Shortcodes\\ShortcodesServiceProvider',
+    44 => 'App\\Providers\\ShortcodeServiceProvider',
   ),
   'eager' => 
   array (
@@ -73,8 +74,9 @@
     22 => 'App\\Providers\\AuthServiceProvider',
     23 => 'App\\Providers\\EventServiceProvider',
     24 => 'App\\Providers\\RouteServiceProvider',
-    25 => 'Gornymedia\\Shortcodes\\ShortcodesServiceProvider',
-    26 => 'App\\Providers\\ShortcodeServiceProvider',
+    25 => 'App\\Providers\\WebServiceProvider',
+    26 => 'Gornymedia\\Shortcodes\\ShortcodesServiceProvider',
+    27 => 'App\\Providers\\ShortcodeServiceProvider',
   ),
   'deferred' => 
   array (

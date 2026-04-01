@@ -1,23 +1,24 @@
 @extends('backend.layouts.master')
 @section('seo')
-    <?php
-    $data_seo = [
-        'title' => 'Order Detail: ' . $order_detail->cart_code . ' | E-Bike Dashboard',
-        'keywords' => setting_option('seo-keywords-add'),
-        'description' => setting_option('seo-description-add'),
-        'og_title' => 'Order Detail: ' . $order_detail->cart_code . ' | E-Bike Dashboard',
-        'og_description' => setting_option('seo-description-add'),
-        'og_url' => Request::url(),
-        'og_img' => asset('assets/images/logo_seo.png'),
-        'current_url' => Request::url(),
-        'current_url_amp' => '',
-    ];
-    $seo = WebService::getSEO($data_seo);
-    
-    $total_price = isset($order_detail->cart_total) ? $order_detail->cart_total : '';
-    $cart_content_cart = unserialize($order_detail->cart_content);
-    $order_products = \App\Models\Backend\OrderItem::where('cart_id', $order_detail->cart_id)->get();
-    ?>
+    @php
+        $code = $order_detail->cart_code ?? '#' . $order_detail->cart_id;
+        $seo = [
+            'title' => 'Đơn hàng ' . $code . ' | ' . setting_option('seo-title-add'),
+            'keywords' => setting_option('seo-keywords-add'),
+            'description' => setting_option('seo-description-add'),
+            'og_title' => 'Đơn hàng ' . $code,
+            'og_description' => setting_option('seo-description-add'),
+            'og_url' => Request::url(),
+            'og_img' => asset('assets/images/logo_seo.png'),
+            'current_url' => Request::url(),
+        ];
+        $total_price = isset($order_detail->cart_total) ? (float) $order_detail->cart_total : 0;
+        $cart_content_cart = null;
+        if (!empty($order_detail->cart_content)) {
+            $cart_content_cart = @unserialize($order_detail->cart_content);
+        }
+        $order_products = \App\Models\Backend\OrderItem::where('cart_id', $order_detail->cart_id)->get();
+    @endphp
     @include('backend.partials.seo')
 @endsection
 @section('content')
@@ -171,26 +172,32 @@
                                         <tbody>
                                             @foreach ($order_products as $key => $order_item)
                                                 @php
-                                                    $product = \App\Product::find($order_item->product_id);
+                                                    $product = \App\Models\Backend\Product::find($order_item->product_id);
+                                                    $qty = (int) ($order_item->quanlity ?? 0);
+                                                    $unitPrice = (float) ($order_item->price ?? 0);
+                                                    $lineTotal = isset($order_item->subtotal) ? (float) $order_item->subtotal : $unitPrice * $qty;
                                                 @endphp
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
                                                     <td style="border-left-color: rgb(203, 203, 203);">
-                                                        <a href="{{ route('shop.detail', $product->slug) }}" target="_blank">{{ $product->name }}</a><br />
-
+                                                        @if ($product)
+                                                            <a href="{{ route('product.detail', [$product->slug, $product->id]) }}" target="_blank" rel="noopener">{{ $product->name }}</a>
+                                                        @else
+                                                            <span class="text-muted">Sản phẩm đã xóa (ID: {{ $order_item->product_id }})</span>
+                                                        @endif
                                                     </td>
                                                     <td>
-                                                        @if ($product->image)
-                                                            <img src="{{ asset($product->image) }}" height="50" />
+                                                        @if ($product && $product->image)
+                                                            <img src="{{ get_image($product->image) }}" height="50" alt="" />
                                                         @endif
                                                     </td>
                                                     <td align="center">
-                                                        <span style="color:#F00;">{!! render_price($order_item->subtotal / $order_item->quanlity) !!}</span>
+                                                        <span style="color:#F00;">{!! render_price($qty > 0 ? $unitPrice : 0) !!}</span>
                                                     </td>
                                                     <td align="center">
-                                                        <b>{{ $order_item->quanlity }}</b>
+                                                        <b>{{ $qty }}</b>
                                                     </td>
-                                                    <td align="center"><span class="red">{!! render_price($order_item->subtotal) !!}</td>
+                                                    <td align="center"><span class="red">{!! render_price($lineTotal) !!}</span></td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -236,7 +243,7 @@
                                         <tr>
                                             <td>Ghi chú:</td>
                                             <td>
-                                                <textarea id="admin_note" name="admin_note">{!! htmlspecialchars_decode($order_detail->cart_excerpt) !!}</textarea>
+                                                <textarea id="admin_note" name="admin_note" class="form-control">{!! htmlspecialchars_decode($order_detail->cart_note ?? '') !!}</textarea>
                                             </td>
                                         </tr>
 

@@ -215,65 +215,76 @@ class CartController extends Controller
 
     public function checkoutConfirm(CheckoutRequest $request)
     {
-        // $data = $request->all();
         $data_input = $request->input('order', []);
 
-        $score = RecaptchaV3::verify($request->get('g-recaptcha-response'), 'order');
+        $score = $this->recaptchaOrderScore($request);
 
         $this->data['carts'] = Cart::content();
 
-        // dd($score);
-        if ($score > 0.7) {
-            if ($data_input && Cart::content()->isNotEmpty()) {
-
-                // dd(Cart::content(), $data_input);
-
-                // $mail_customer = EmailTemplate::where('group', 'order_admin')->first();
-                // $mail_content = $mail_customer->text;
-
-                $data = array(
-                    'name' => $data_input['name'],
-                    'cart_email' => $data_input['email'],
-                    'cart_phone' => $data_input['phone'],
-                    'cart_address' => $data_input['address'],
-                    'cart_note' => $data_input['content'],
-                    'cart_total' => Cart::total(),
-                );
-
-                // Mail content
-                // $dataFind = [
-                //     '/\{\{\$name\}\}/',
-                //     '/\{\{\$email\}\}/',
-                //     '/\{\{\$phone\}\}/',
-                //     '/\{\{\$address\}\}/',
-                //     '/\{\{\$content\}\}/',
-                // ];
-                // $mail_content = preg_replace($dataFind, $data, $mail_content);
-
-                // $respons = AddtoCard::updateOrCreate($data);
-                $respons = Order::Create($data);
-                $id_insert = $respons->cart_id;
-
-
-                foreach (Cart::content() as $item) {
-
-                    $cart_item = array(
-                        'product_id' => $item->id,
-                        'price' => $item->price,
-                        'quanlity' => $item->qty,
-                        'cart_id' => $id_insert
-                    );
-                    OrderItem::Create($cart_item);
-                }
-
-                Cart::destroy();
-
-                return redirect()->route('checkout_completed')->with('cart_id', $id_insert)
-                    ->with('checkout_success', 'Đã ghi nhận thông tin. Chúng tôi sẽ liên hệ bạn sớm để xác nhận đơn hàng.');
-            }
-        } else {
-            return view('errors.404');
+        if ($score <= 0.7) {
+            return redirect()->route('cart.checkout')
+                ->withInput()
+                ->with('checkout_recaptcha_error', 'Không xác minh bảo mật (reCAPTCHA). Vui lòng tải lại trang và thử lại.');
         }
+
+        if (! $data_input || Cart::content()->isEmpty()) {
+            return redirect()->route('cart')
+                ->with('checkout_recaptcha_error', 'Giỏ hàng trống hoặc thiếu thông tin. Vui lòng thêm sản phẩm rồi đặt lại.');
+        }
+
+        $data = array(
+            'name' => $data_input['name'],
+            'cart_email' => $data_input['email'],
+            'cart_phone' => $data_input['phone'],
+            'cart_address' => $data_input['address'],
+            'cart_note' => $data_input['content'],
+            'cart_total' => Cart::total(),
+        );
+
+        $respons = Order::Create($data);
+        $id_insert = $respons->cart_id;
+
+        foreach (Cart::content() as $item) {
+            $cart_item = array(
+                'product_id' => $item->id,
+                'price' => $item->price,
+                'quanlity' => $item->qty,
+                'cart_id' => $id_insert
+            );
+            OrderItem::Create($cart_item);
+        }
+
+        Cart::destroy();
+
+        return redirect()->route('checkout_completed')->with('cart_id', $id_insert)
+            ->with('checkout_success', 'Đã ghi nhận thông tin. Chúng tôi sẽ liên hệ bạn sớm để xác nhận đơn hàng.');
+    }
+
+    /**
+     * reCAPTCHA v3 trên localhost / domain .test thường fail → trước đây trả về view 404 nên người dùng thấy 404 tại /checkout.
+     * Nếu chưa cấuậu hình RECAPTCHAV3_SECRET thì bỏ qua (môi trường dev).
+     */
+    protected function recaptchaOrderScore(Request $request): float
+    {
+        $secret = config('recaptchav3.secret');
+        if ($secret === '' || $secret === null) {
+            return 1.0;
+        }
+
+        $token = $request->get('g-recaptcha-response');
+        if (empty($token)) {
+            return 0.0;
+        }
+
+        try {
+            $score = RecaptchaV3::verify($token, 'order');
+        } catch (\Throwable $e) {
+            report($e);
+
+            return app()->environment('local') ? 1.0 : 0.0;
+        }
+
+        return is_numeric($score) ? (float) $score : 0.0;
     }
 
     public function completed(Request $request)

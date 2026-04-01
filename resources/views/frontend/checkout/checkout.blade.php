@@ -34,6 +34,20 @@
 
     <main class="bg-leaf-50 flex-grow pb-12">
         <div class="container mx-auto px-4 py-6 md:py-8">
+            @if (session('checkout_recaptcha_error'))
+                <div class="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="alert">
+                    {{ session('checkout_recaptcha_error') }}
+                </div>
+            @endif
+            @if ($errors->any())
+                <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800" role="alert">
+                    <ul class="list-disc list-inside space-y-1">
+                        @foreach ($errors->all() as $err)
+                            <li>{{ $err }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">Xác nhận đơn hàng</h1>
             <p class="text-gray-600 text-sm md:text-base mb-6 md:mb-8 max-w-2xl">Điền thông tin liên hệ bên dưới. Chúng tôi sẽ gọi điện xác nhận đơn và hướng dẫn giao hàng — không cần chọn thanh toán trực tuyến.</p>
 
@@ -77,8 +91,11 @@
                             </div>
                         </div>
 
-                        <button type="button" class="submit-confirm mt-6 hidden w-full cursor-pointer rounded-xl bg-leaf-600 py-3.5 text-center text-base font-bold text-white shadow-md transition hover:bg-leaf-700 hover:shadow-lg lg:block">
-                            Gửi thông tin liên hệ
+                        <button type="button" class="submit-confirm mt-6 hidden w-full cursor-pointer bg-leaf-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-leaf-500/30 hover:bg-leaf-700 transition transform hover:-translate-y-1 lg:flex lg:w-full lg:items-center lg:justify-center lg:gap-2">
+                            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
+                            <span>Gửi thông tin liên hệ</span>
                         </button>
 
                         <a href="{{ route('cart') }}" class="mt-4 flex items-center justify-center gap-2 text-sm font-semibold text-gray-600 hover:text-leaf-700">

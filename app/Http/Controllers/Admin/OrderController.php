@@ -1,42 +1,41 @@
-<?php
-
-namespace App\Http\Controllers\Admin;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Pagination\Paginator;
-use App\Http\Controllers\Controller;
-use App\Models\Backend\Order, App\Models\Backend\OrderItem, App\Models\Backend\Shipping_order;
-use App\Models\Backend\ShopOrderStatus;
-use App\Models\Backend\ShopOrderPaymentStatus;
-use App\Models\Backend\WebService\WebService;
-use Auth, DB, File, Image, Config;
-
-
-class OrderController extends Controller
-{
-    public $currency,
-        $statusOrder,
-        $orderPayment;
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        // $this->statusOrder    = ShopOrderStatus::getIdAll();
-        // $this->orderPayment    = ShopOrderPaymentStatus::getIdAll();
-    }
-
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Pagination\Paginator;
+use App\Http\Controllers\Controller;
+use App\Models\Backend\Order, App\Models\Backend\OrderItem, App\Models\Backend\Shipping_order;
+use App\Models\Backend\ShopOrderStatus;
+use App\Models\Backend\ShopOrderPaymentStatus;
+use Auth, DB, File, Image, Config;
+
+
+class OrderController extends Controller
+{
+    public $currency,
+        $statusOrder,
+        $orderPayment;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        // $this->statusOrder    = ShopOrderStatus::getIdAll();
+        // $this->orderPayment    = ShopOrderPaymentStatus::getIdAll();
+    }
+
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+
     public function index()
     {
         $appends = [
@@ -121,12 +120,15 @@ class OrderController extends Controller
 
     public function orderDetail($id)
     {
-        $data['order_detail'] = Order::where('shop_orders.cart_id', $id)->first();
+        $data['order_detail'] = Order::where('cart_id', $id)->first();
         if ($data['order_detail']) {
-            // $data['order_status'] = $this->orderStatus();
-            // $data['orderPayment'] = $this->orderPayment();
-            $data['orderPayment'] = $this->orderPayment;
-            $data['statusOrder'] = $this->statusOrder;
+            $data['orderPayment'] = [0 => 'Chưa thanh toán', 1 => 'Đã thanh toán'];
+            $data['statusOrder'] = [
+                0 => 'Chờ xác nhận',
+                1 => 'Đang xử lý',
+                2 => 'Hoàn thành',
+                3 => 'Đã hủy',
+            ];
             return view('backend.orders.single', $data);
         } else {
             return view('404');
@@ -154,5 +156,5 @@ class OrderController extends Controller
             $url = route('admin.order.detail', array($cart_id));
             msg_move_page($msg, $url);
         }
-    }
-}
+    }
+}
