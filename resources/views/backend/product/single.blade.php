@@ -9,8 +9,22 @@
         if ($product_info != '') {
             extract($product_info->toArray());
         }
-        extract($product_detail->getAttributes());
-        $gallery = isset($gallery) || $gallery != '' ? unserialize($gallery) : '';
+        $attrs = $product_detail->getAttributes();
+        $galleryRaw = $attrs['gallery'] ?? null;
+        extract($attrs);
+
+        $gallery = [];
+        if (is_array($galleryRaw)) {
+            $gallery = $galleryRaw;
+        } elseif (is_string($galleryRaw) && $galleryRaw !== '') {
+            $unserialized = @unserialize($galleryRaw);
+            if ($unserialized !== false || $galleryRaw === 'b:0;') {
+                $gallery = is_array($unserialized) ? $unserialized : [];
+            } else {
+                $decoded = json_decode($galleryRaw, true);
+                $gallery = is_array($decoded) ? $decoded : [];
+            }
+        }
     }
     $title_head = $name ?? __('Add product');
 
