@@ -78,3 +78,9 @@ phpunit.xml.dist
 # *.mov
 # *.wmv
 
+
+# Laravel Boost
+.mcp.json
+boost.json
+AGENTS.md
+CLAUDE.md
