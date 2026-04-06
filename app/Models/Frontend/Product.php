@@ -4,6 +4,7 @@ namespace App\Models\Frontend;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Frontend\Category;
+use App\Models\ProductPrice;
 // use App\Models\Variable;
 // use App\Models\ProductPromotion;
 
@@ -295,6 +296,11 @@ class Product extends Model
         return $this->belongsToMany(Category::class, 'product_category', 'product_id', 'category_id');
     }
 
+    public function prices()
+    {
+        return $this->hasMany(ProductPrice::class, 'product_id', 'id')->orderBy('sort')->orderBy('id');
+    }
+
     public function brands()
     {
         return $this->belongsToMany('App\Brand', 'shop_product_brand', 'product_id', 'brand_id');

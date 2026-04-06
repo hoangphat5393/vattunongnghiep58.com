@@ -82,53 +82,68 @@
 
 @push('scripts')
     <script>
-        var checkout_form = $("#checkout_form");
+        document.addEventListener('DOMContentLoaded', function() {
+            var $ = window.jQuery || window.$;
+            if (!$ || !$.fn || typeof $.fn.validate !== 'function') {
+                return;
+            }
 
-        var error_messages = {
-            "order[name]": "Vui lòng điền tên!",
-            "order[email]": {
-                required: "Vui lòng điền địa chỉ email!",
-                email: "Vui lòng nhập địa chỉ email hợp lệ",
-            },
-            "order[phone]": {
-                required: "Vui lòng số điện thoại hợp lệ!",
-                number: "Vui lòng cung cấp số điện thoại hợp lệ!!",
-                digits: "Vui lòng cung cấp số điện thoại hợp lệ!!",
-                minlength: "Vui lòng cung cấp số điện thoại hợp lệ!!",
-            },
-            "order[address]": "Vui lòng điền địa chỉ!"
-        };
+            var checkout_form = $("#checkout_form");
+            if (!checkout_form.length) {
+                return;
+            }
 
-        checkout_form.validate({
-            onfocusout: false,
-            onkeyup: false,
-            onclick: false,
-            rules: {
-                "order[name]": "required",
+            var error_messages = {
+                "order[name]": "Vui lòng điền tên!",
                 "order[email]": {
-                    required: true,
-                    email: true,
+                    required: "Vui lòng điền địa chỉ email!",
+                    email: "Vui lòng nhập địa chỉ email hợp lệ",
                 },
                 "order[phone]": {
-                    required: true,
-                    number: true,
-                    digits: true,
-                    minlength: 10,
+                    required: "Vui lòng số điện thoại hợp lệ!",
+                    number: "Vui lòng cung cấp số điện thoại hợp lệ!!",
+                    digits: "Vui lòng cung cấp số điện thoại hợp lệ!!",
+                    minlength: "Vui lòng cung cấp số điện thoại hợp lệ!!",
                 },
-                "order[address]": "required",
-            },
-            messages: error_messages,
-            errorElement: "p",
-            errorClass: "text-red-600 text-sm mt-1.5",
-            errorPlacement: function(error, element) {
-                error.addClass("text-red-600 text-sm mt-1.5");
-                error.insertAfter(element);
-            },
-            invalidHandler: function() {
-                $("html, body").animate({
-                    scrollTop: checkout_form.offset().top - 80
-                }, 400);
-            },
+                "order[address]": "Vui lòng điền địa chỉ!"
+            };
+
+            checkout_form.validate({
+                onfocusout: false,
+                onkeyup: false,
+                onclick: false,
+                rules: {
+                    "order[name]": "required",
+                    "order[email]": {
+                        required: true,
+                        email: true,
+                    },
+                    "order[phone]": {
+                        required: true,
+                        number: true,
+                        digits: true,
+                        minlength: 10,
+                    },
+                    "order[address]": "required",
+                },
+                messages: error_messages,
+                errorElement: "p",
+                errorClass: "text-red-600 text-sm mt-1.5",
+                errorPlacement: function(error, element) {
+                    error.addClass("text-red-600 text-sm mt-1.5");
+                    error.insertAfter(element);
+                },
+                invalidHandler: function() {
+                    var el = checkout_form.get(0);
+                    if (!el || typeof el.scrollIntoView !== 'function') {
+                        return;
+                    }
+                    el.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                },
+            });
         });
     </script>
 @endpush

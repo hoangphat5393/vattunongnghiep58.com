@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Backend\Product;
 use App\Http\Requests\Admin\Product\StoreProduct;
 use App\Http\Requests\Admin\Product\UpdateProduct;
+use App\Models\ProductPrice;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
@@ -69,15 +71,21 @@ class ProductController extends Controller
         $data['user_id'] = Auth::guard('admin')->user()->id;
 
         // dd($data);
-        $product = Product::create($data);
+        $product = DB::transaction(function () use ($data, $request) {
+            $product = Product::create($data);
+            $insert_id = $product->id;
+
+            $product->update(['sort' => $insert_id]);
+
+            $category_id = $request->category_id ?? [];
+            $product->categories()->sync($category_id);
+
+            $this->syncProductPrices($product, $request);
+
+            return $product;
+        });
+
         $insert_id = $product->id;
-
-        // Update sort
-        $product->update(['sort' => $insert_id]);
-
-        // SAVE CATEGORY
-        $category_id = $request->category_id ?? [];
-        $product->categories()->sync($category_id);
 
         $save = $request->submit ?? 'apply';
         if ($save == 'apply') {
@@ -117,7 +125,7 @@ class ProductController extends Controller
      */
     public function update(UpdateProduct $request, int $id)
     {
-        $data = $request->except(['_token', '_method', 'category_id', 'created_at', 'submit', 'user_id', 'id']);
+        $data = $request->except(['_token', '_method', 'category_id', 'created_at', 'submit', 'user_id', 'id', 'prices', 'prices_default']);
 
         if ($request->slug) {
             $data['slug'] = addslashes($request->slug);
@@ -125,12 +133,15 @@ class ProductController extends Controller
             $data['slug'] = Str::slug($data['name'] ?? '');
         }
 
-        $product = Product::findOrFail($id);
-        $product->update($data);
+        DB::transaction(function () use ($data, $id, $request) {
+            $product = Product::findOrFail($id);
+            $product->update($data);
 
-        // SAVE CATEGORY
-        $category_id = $request->category_id ?? [];
-        $product->categories()->sync(is_array($category_id) ? $category_id : []);
+            $category_id = $request->category_id ?? [];
+            $product->categories()->sync(is_array($category_id) ? $category_id : []);
+
+            $this->syncProductPrices($product, $request);
+        });
 
         $save = $request->submit ?? 'apply';
         if ($save == 'apply') {
@@ -161,5 +172,65 @@ class ProductController extends Controller
     {
         // TODO: Implement import logic
         return redirect()->back()->with('success', 'Feature under development.');
+    }
+
+    protected function syncProductPrices(Product $product, Request $request): void
+    {
+        $prices = $request->input('prices', []);
+        if (!is_array($prices)) {
+            $prices = [];
+        }
+
+        $prices = array_values(array_filter($prices, function ($row) {
+            $label = is_array($row) ? ($row['label'] ?? null) : null;
+            $price = is_array($row) ? ($row['price'] ?? null) : null;
+
+            return is_string($label) && trim($label) !== '' && $price !== null && $price !== '';
+        }));
+
+        $product->prices()->delete();
+
+        if (count($prices) === 0) {
+            return;
+        }
+
+        $defaultIndex = $request->input('prices_default');
+        $defaultIndex = is_numeric($defaultIndex) ? (int) $defaultIndex : 0;
+        if (!array_key_exists($defaultIndex, $prices)) {
+            $defaultIndex = 0;
+        }
+
+        $defaultRow = null;
+
+        foreach ($prices as $i => $row) {
+            $label = trim((string) ($row['label'] ?? ''));
+            $price = (int) preg_replace('/\D+/', '', (string) ($row['price'] ?? 0));
+            $unit = isset($row['unit']) ? trim((string) $row['unit']) : null;
+            $status = isset($row['status']) ? (int) $row['status'] : 1;
+
+            $isDefault = $i === $defaultIndex;
+
+            $productPrice = ProductPrice::create([
+                'product_id' => $product->id,
+                'label' => $label,
+                'price' => max(0, $price),
+                'unit' => $unit !== '' ? $unit : null,
+                'is_default' => $isDefault,
+                'sort' => $i,
+                'status' => $status === 0 ? 0 : 1,
+            ]);
+
+            if ($productPrice->is_default) {
+                $defaultRow = $productPrice;
+            }
+        }
+
+        if ($defaultRow) {
+            $product->update([
+                'price_type' => 'price',
+                'price' => $defaultRow->price,
+                'unit' => $defaultRow->unit,
+            ]);
+        }
     }
 }

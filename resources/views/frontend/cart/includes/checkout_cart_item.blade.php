@@ -31,6 +31,17 @@
                                     <a href="{{ route('product.detail', [$product->slug, $product->id]) }}" class="font-bold text-gray-900 hover:text-leaf-600 leading-snug block">
                                         {{ $product->name }}
                                     </a>
+                                    @php
+                                        $priceLabel = data_get($cart->options, 'price_label');
+                                        $priceUnit = data_get($cart->options, 'price_unit');
+                                    @endphp
+                                    @if (!empty($priceLabel))
+                                        <div class="mt-1 text-xs font-bold text-gray-600">
+                                            <span class="px-2 py-1 rounded-full bg-gray-100 inline-block">
+                                                {{ $priceLabel }}@if (!empty($priceUnit)) / {{ $priceUnit }} @endif
+                                            </span>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </td>

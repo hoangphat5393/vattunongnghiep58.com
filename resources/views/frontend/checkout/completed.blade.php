@@ -92,7 +92,16 @@
                                                                 <img src="{{ get_image($product->image) }}" alt="" class="w-full h-full object-cover">
                                                             @endif
                                                         </div>
-                                                        <span class="font-medium text-gray-900">{{ $product->name }}</span>
+                                                        <div class="min-w-0">
+                                                            <div class="font-medium text-gray-900">{{ $product->name }}</div>
+                                                            @if (!empty($item->price_label))
+                                                                <div class="mt-1 text-xs font-bold text-gray-600">
+                                                                    <span class="px-2 py-1 rounded-full bg-gray-100 inline-block">
+                                                                        {{ $item->price_label }}@if (!empty($item->price_unit)) / {{ $item->price_unit }} @endif
+                                                                    </span>
+                                                                </div>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </td>
                                                 <td class="py-3 px-4 text-center">{{ $item->quanlity }}</td>

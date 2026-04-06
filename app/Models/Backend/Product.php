@@ -1,91 +1,188 @@
-<?php
-
-namespace App\Models\Backend;
-
-use Illuminate\Database\Eloquent\Model;
-// use Illuminate\Database\Eloquent\Casts\Attribute;
-use App\Traits\LocalizeController;
-use App\Models\ShopCategory;
-use App\Models\ShopProductAttribute;
-use Illuminate\Support\Facades\DB;
-
-// Traits
-use App\Traits\Filterable;
-
-class Product extends Model
-{
-    use LocalizeController, Filterable;
-
-    public $timestamps = true;
-    // protected $table = 'product';
-    protected $guarded = [];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        // 'options' => 'array', // change option to column want to cast to array
-        'meta' => 'array',
-        'meta_en' => 'array'
-    ];
-
-
-    public function getUser()
-    {
-        return $this->user ? $this->user->name : null;
-    }
-
-    /*user detail*/
-    public function getUserPost()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    public function categories()
-    {
-        return $this->belongsToMany(Category::class, 'product_categories', 'product_id', 'category_id');
-    }
-
-    public function filterName($query, $value)
-    {
-        if ($value) {
-            $query->where('name', 'like', '%' . $value . '%');
-        }
-    }
-
-    public function filterCategoryId($query, $value)
-    {
-        if ($value) {
-            $query->whereHas('categories', function ($q) use ($value) {
-                $q->where('id', $value);
-            });
-        }
-    }
-
-    public function listClass()
-    {
-        return array(
-            'out-product'   => 'Ngoại thất',
-            'in-product'   => 'Nội thất',
-            'engine-product'   => 'Động cơ, An toàn',
-            'operation-product'   => 'Vận hành',
-        );
-    }
-
-    // public function promotions()
-    // {
-    //     return $this->hasMany(ShopProductPromotion::class);
-    // }
-
-    // public function products()
-    // {
-    //     return $this->belongsToMany('App\Product', 'shop_product_category', 'category_id', 'product_id')->orderByDesc('shop_products.updated_at');
-    // }
-}
+<?php
+
+
+
+namespace App\Models\Backend;
+
+
+
+use Illuminate\Database\Eloquent\Model;
+
+// use Illuminate\Database\Eloquent\Casts\Attribute;
+
+use App\Traits\LocalizeController;
+
+use App\Models\ShopCategory;
+
+use App\Models\ShopProductAttribute;
+
+use App\Models\ProductPrice;
+use Illuminate\Support\Facades\DB;
+
+
+
+// Traits
+
+use App\Traits\Filterable;
+
+
+
+class Product extends Model
+
+{
+
+    use LocalizeController, Filterable;
+
+
+
+    public $timestamps = true;
+
+    // protected $table = 'product';
+
+    protected $guarded = [];
+
+
+
+    /**
+
+     * The attributes that should be cast.
+
+     *
+
+     * @var array
+
+     */
+
+    protected $casts = [
+
+        // 'options' => 'array', // change option to column want to cast to array
+
+        'meta' => 'array',
+
+        'meta_en' => 'array'
+
+    ];
+
+
+
+
+
+    public function getUser()
+
+    {
+
+        return $this->user ? $this->user->name : null;
+
+    }
+
+
+
+    /*user detail*/
+
+    public function getUserPost()
+
+    {
+
+        return $this->belongsTo(User::class, 'user_id', 'id');
+
+    }
+
+
+
+    public function user()
+
+    {
+
+        return $this->belongsTo(User::class, 'user_id', 'id');
+
+    }
+
+
+
+    public function categories()
+
+    {
+
+        return $this->belongsToMany(Category::class, 'product_categories', 'product_id', 'category_id');
+
+    }
+
+
+
+    public function prices()
+    {
+        return $this->hasMany(ProductPrice::class, 'product_id', 'id')->orderBy('sort')->orderBy('id');
+    }
+
+    public function filterName($query, $value)
+
+    {
+
+        if ($value) {
+
+            $query->where('name', 'like', '%' . $value . '%');
+
+        }
+
+    }
+
+
+
+    public function filterCategoryId($query, $value)
+
+    {
+
+        if ($value) {
+
+            $query->whereHas('categories', function ($q) use ($value) {
+
+                $q->where('id', $value);
+
+            });
+
+        }
+
+    }
+
+
+
+    public function listClass()
+
+    {
+
+        return array(
+
+            'out-product'   => 'Ngoại thất',
+
+            'in-product'   => 'Nội thất',
+
+            'engine-product'   => 'Động cơ, An toàn',
+
+            'operation-product'   => 'Vận hành',
+
+        );
+
+    }
+
+
+
+    // public function promotions()
+
+    // {
+
+    //     return $this->hasMany(ShopProductPromotion::class);
+
+    // }
+
+
+
+    // public function products()
+
+    // {
+
+    //     return $this->belongsToMany('App\Product', 'shop_product_category', 'category_id', 'product_id')->orderByDesc('shop_products.updated_at');
+
+    // }
+
+}
+

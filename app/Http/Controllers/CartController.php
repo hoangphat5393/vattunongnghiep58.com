@@ -9,6 +9,7 @@ use App\Models\Frontend\EmailTemplate;
 use App\Models\Frontend\ShopOrderStatus, App\Models\Frontend\ShopOrderPaymentStatus;
 use App\Models\Frontend\Order, App\Models\Frontend\OrderItem;
 use App\Models\Frontend\Product;
+use App\Models\ProductPrice;
 // use App\Models\Frontend\Province
 use Cart, Auth, Exception;
 use App\Http\Requests\CheckoutRequest;
@@ -51,7 +52,11 @@ class CartController extends Controller
 
     public function addCart()
     {
-        $data = request()->all();
+        $data = request()->validate([
+            'product' => ['required', 'integer'],
+            'qty' => ['required', 'integer', 'min:1'],
+            'product_price_id' => ['nullable', 'integer'],
+        ]);
 
         $product = Product::find($data['product']);
 
@@ -84,7 +89,22 @@ class CartController extends Controller
         //     }
         // }
 
-        $price = $product->price ?? '0';
+        $price = (int) ($product->price ?? 0);
+        $options = [];
+
+        if (!empty($data['product_price_id'])) {
+            $pp = ProductPrice::where('id', $data['product_price_id'])
+                ->where('product_id', $product->id)
+                ->where('status', 1)
+                ->first();
+
+            if ($pp) {
+                $price = (int) $pp->price;
+                $options['product_price_id'] = $pp->id;
+                $options['price_label'] = $pp->label;
+                $options['price_unit'] = $pp->unit;
+            }
+        }
 
         // $form_attr = ['promotion_id' => $data['promotion_id']];
         // dd($promotion, $price);
@@ -101,7 +121,7 @@ class CartController extends Controller
                 'name'    => $product->name,
                 'qty'     => $data['qty'],
                 'price'   => $price,
-                'options' => $form_attr ?? []
+                'options' => $options
             )
         );
 
@@ -245,8 +265,15 @@ class CartController extends Controller
         $id_insert = $respons->cart_id;
 
         foreach (Cart::content() as $item) {
+            $productPriceId = data_get($item->options, 'product_price_id');
+            $priceLabel = data_get($item->options, 'price_label');
+            $priceUnit = data_get($item->options, 'price_unit');
+
             $cart_item = array(
                 'product_id' => $item->id,
+                'product_price_id' => is_numeric($productPriceId) ? (int) $productPriceId : null,
+                'price_label' => is_string($priceLabel) && $priceLabel !== '' ? $priceLabel : null,
+                'price_unit' => is_string($priceUnit) && $priceUnit !== '' ? $priceUnit : null,
                 'price' => $item->price,
                 'quanlity' => $item->qty,
                 'cart_id' => $id_insert

@@ -85,7 +85,7 @@
                                         </ul>
                                     </div>
                                 @endif
-                                <div class="js-validation-messages mb-2 small" role="alert"></div>
+                                <div class="mb-2 js-validation-messages small" role="alert"></div>
 
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="vi" role="tabpanel" aria-labelledby="vi-tab">
