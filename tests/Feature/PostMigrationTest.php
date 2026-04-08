@@ -2,10 +2,9 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\Frontend\Page;
-use App\Models\Frontend\Category;
 use Illuminate\Support\Facades\Schema;
+use Tests\TestCase;
 
 class PostMigrationTest extends TestCase
 {
@@ -53,12 +52,20 @@ class PostMigrationTest extends TestCase
     public function test_post_detail_page_loads()
     {
         $post = Page::posts()->first();
-        if ($post) {
-            $response = $this->get(route('news.detail', ['slug' => $post->slug, 'id' => $post->id]));
-            $response->assertStatus(200);
-            // Verify title is displayed (proving view update worked)
-            $response->assertSee($post->title);
+
+        if (! $post) {
+            $post = new Page;
+            $post->name = 'Test Post';
+            $post->slug = 'test-post-'.time();
+            $post->type = 'post';
+            $post->status = 1;
+            $post->sort = 0;
+            $post->save();
         }
+
+        $response = $this->get(route('news.detail', ['slug' => $post->slug, 'id' => $post->id]));
+        $response->assertStatus(200);
+        $response->assertSee($post->name);
     }
 
     /**

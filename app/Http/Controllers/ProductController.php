@@ -2,23 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cookie;
-use App\Http\Filters\ProductFilter;
 use App\Models\Frontend\Category;
-
 use App\Models\Frontend\Product;
 use App\Models\ProductPrice;
-use App\Models\Frontend\Page;
-use Session, DB;
+use App\Traits\FrontendDataTransform;
+use App\Traits\LocalizeController;
 use Cart;
+use Gornymedia\Shortcodes\Facades\Shortcode;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 
 // use Carbon\Carbon;
 
 class ProductController extends Controller
 {
-    use \App\Traits\LocalizeController;
-    use \App\Traits\FrontendDataTransform;
+    use FrontendDataTransform;
+    use LocalizeController;
+
     public $data = [];
 
     // All categories
@@ -41,7 +41,7 @@ class ProductController extends Controller
             }])
             ->get(['id', 'name', 'slug', 'sort', 'parent', 'status']);
 
-        // All news 
+        // All news
         $news = Product::where('status', 1)
             ->orderbyDesc('sort')
             ->paginate(10);
@@ -65,7 +65,13 @@ class ProductController extends Controller
             return $this->categoryDetail($slug);
         }
 
-        return view('frontend.product.index', $this->data)->compileShortcodes();
+        $html = view('frontend.product.index', $this->data)->render();
+        try {
+            $html = Shortcode::compile($html);
+        } catch (\Throwable $e) {
+        }
+
+        return $html;
     }
 
     // Single category
@@ -86,8 +92,8 @@ class ProductController extends Controller
             $this->data['seo'] = [
                 'seo_title' => $category->seo_title != '' ? $category->seo_title : $category->name,
                 'seo_image' => $category->image,
-                'seo_description'   => $category->seo_description ?? '',
-                'seo_keyword'   => $category->seo_keyword ?? '',
+                'seo_description' => $category->seo_description ?? '',
+                'seo_keyword' => $category->seo_keyword ?? '',
             ];
             // return view($this->templatePath . '.product.index', $this->data);
 
@@ -96,8 +102,9 @@ class ProductController extends Controller
             //     return $this->product($product->first()->slug);
             // }
             return view('frontend.product.category', $this->data);
-        } else
+        } else {
             return view('errors.404');
+        }
         // return $this->productDetail($slug);
     }
 
@@ -106,7 +113,7 @@ class ProductController extends Controller
     {
         $product = Product::where('slug', $slug)->first();
 
-        if (!$product) {
+        if (! $product) {
             return abort(404);
         }
 
@@ -145,8 +152,8 @@ class ProductController extends Controller
         $this->data['seo'] = [
             'seo_title' => $product->seo_title ?? $product->name,
             'seo_image' => $product->image,
-            'seo_description'   => $product->seo_description ?? '',
-            'seo_keyword'   => $product->seo_keyword ?? '',
+            'seo_description' => $product->seo_description ?? '',
+            'seo_keyword' => $product->seo_keyword ?? '',
         ];
 
         return view('frontend.product.single', $this->data);
@@ -168,7 +175,7 @@ class ProductController extends Controller
         //     ->orderby('id')
         //     ->get();
 
-        if (!$product) {
+        if (! $product) {
             return response()->json(
                 [
                     'error' => 1,
@@ -179,7 +186,7 @@ class ProductController extends Controller
 
         $promotion = 0;
         $promotion_unit = '$';
-        if (!empty($list_promotion)) {
+        if (! empty($list_promotion)) {
             foreach ($list_promotion as $v) {
                 if ($data['qty'] >= $v['qty_to_promotion']) {
                     $promotion = $v['promotion'];
@@ -199,7 +206,7 @@ class ProductController extends Controller
             'unit' => $product->unit,
         ];
 
-        if (!empty($data['product_price_id'])) {
+        if (! empty($data['product_price_id'])) {
             $pp = ProductPrice::where('id', $data['product_price_id'])
                 ->where('product_id', $product->id)
                 ->where('status', 1)
@@ -213,13 +220,13 @@ class ProductController extends Controller
         }
 
         // Check product allow for sale
-        $option = array(
-            'id'      => $id,
-            'title'   => $product->name,
-            'qty'     => $data['qty'],
-            'price'   => $price,
-            'options' => $form_attr ?? []
-        );
+        $option = [
+            'id' => $id,
+            'title' => $product->name,
+            'qty' => $data['qty'],
+            'price' => $price,
+            'options' => $form_attr ?? [],
+        ];
 
         // Cart::add(
         //     array(
@@ -250,13 +257,14 @@ class ProductController extends Controller
 
         if ($option) {
             $option = json_decode($option[0], true);
-            if (!$product || ($option['id'] ?? null) != $product->id) {
+            if (! $product || ($option['id'] ?? null) != $product->id) {
                 return redirect()->route('product.detail', [$product->slug ?? '', $product->id ?? $id]);
             }
         } else {
             if ($product) {
                 return redirect()->route('product.detail', [$product->slug, $product->id]);
             }
+
             return redirect()->route('product');
         }
 
@@ -264,13 +272,13 @@ class ProductController extends Controller
             $cartOptions = [];
             $opt = $option['options'] ?? [];
             if (is_array($opt)) {
-                if (!empty($opt['product_price_id'])) {
+                if (! empty($opt['product_price_id'])) {
                     $cartOptions['product_price_id'] = $opt['product_price_id'];
                 }
-                if (!empty($opt['price_label'])) {
+                if (! empty($opt['price_label'])) {
                     $cartOptions['price_label'] = $opt['price_label'];
                 }
-                if (!empty($opt['price_unit'])) {
+                if (! empty($opt['price_unit'])) {
                     $cartOptions['price_unit'] = $opt['price_unit'];
                 }
             }
@@ -300,8 +308,9 @@ class ProductController extends Controller
             if ($product) {
                 $session_products = session()->get('products.recently_viewed');
 
-                if (!is_array($session_products) ||  array_search($product->id, $session_products) === false)
+                if (! is_array($session_products) || array_search($product->id, $session_products) === false) {
                     session()->push('products.recently_viewed', $product->id);
+                }
 
                 $this->data['product'] = $product;
                 // $this->data['related'] = Product::with('getInfo')->whereHas('getInfo', function($query) use($product){
@@ -311,8 +320,16 @@ class ProductController extends Controller
                 // dd($this->data['product']);
                 return response()->json([
                     'error' => 0,
-                    'msg'   => 'Success',
-                    'view'   => view('frontend.product.product-quick-view', ['data' => $this->data])->compileShortcodes()->render(),
+                    'msg' => 'Success',
+                    'view' => (function () {
+                        $html = view('frontend.product.product-quick-view', ['data' => $this->data])->render();
+                        try {
+                            $html = Shortcode::compile($html);
+                        } catch (\Throwable $e) {
+                        }
+
+                        return $html;
+                    })(),
                 ]);
                 // return view($this->templatePath .'.product.product-single', ['data'=>$this->data])->compileShortcodes();
             }
@@ -327,6 +344,7 @@ class ProductController extends Controller
         $lc = $this->data['lc'];
         // dd($category->products);
         $view = view('frontend.partials.product-banner-home', compact('category', 'lc'))->render();
+
         return response()->json($view);
     }
 
@@ -356,7 +374,6 @@ class ProductController extends Controller
     //         $wishlist = json_decode(\Cookie::get('wishlist'));
     //         $key = false;
 
-
     //         if ($wishlist != '')
     //             $key = array_search($id, $wishlist);
     //         if ($key !== false) {
@@ -375,8 +392,7 @@ class ProductController extends Controller
     //     return response()->json($this->data);
     // }
 
-
-    /*==================attr select=====================*/
+    /* ==================attr select===================== */
 
     public function changeAttr()
     {
@@ -390,12 +406,12 @@ class ProductController extends Controller
                 [
                     'error' => 0,
                     'show_price' => $product->showPriceDetail($data['option'])->render(),
-                    'view'  => view('frontend.product.includes.product-variations', ['product' => $product, 'attr_id' => $data['attr_id'], 'attr_list_selected' => $data['option']])->render(),
-                    'msg'   => 'Success'
+                    'view' => view('frontend.product.includes.product-variations', ['product' => $product, 'attr_id' => $data['attr_id'], 'attr_list_selected' => $data['option']])->render(),
+                    'msg' => 'Success',
                 ]
             );
         }
     }
 
-    /*==================end attr select=====================*/
+    /* ==================end attr select===================== */
 }

@@ -1,30 +1,18 @@
 <?php
 
-
-
 namespace App\Http\Controllers\Auth;
 
-
-
 use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
-
-use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
-
-use Auth, DB, Input, File, Mail, Validator;
-
-use App\Models\Frontend\User;
 use App\Models\Customer_forget_pass_otp;
-
+use App\Models\Frontend\User;
 use Carbon\Carbon;
-
-
+use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Illuminate\Http\Request;
+use Mail;
+use Validator;
 
 class ForgotPasswordController extends Controller
-
 {
-
     /*
 
     |--------------------------------------------------------------------------
@@ -45,16 +33,11 @@ class ForgotPasswordController extends Controller
 
     */
 
-
-
     use SendsPasswordResetEmails;
 
-
-
-    //xử lý quên mật khẩu
+    // xử lý quên mật khẩu
 
     public function forget()
-
     {
 
         return view('auth.passwords.forget-password');
@@ -62,16 +45,20 @@ class ForgotPasswordController extends Controller
     }
 
     public function actionForgetPassword(Request $rq)
-
     {
+        $rq->validate([
+            'email' => ['required', 'email'],
+        ]);
 
         $user = User::where('email', $rq->email)->first();
 
         if ($user) {
 
-            session_start();
+            if (session_status() !== PHP_SESSION_ACTIVE) {
+                session_start();
+            }
 
-            $customer_forget_pass_otp = new Customer_forget_pass_otp();
+            $customer_forget_pass_otp = new Customer_forget_pass_otp;
 
             $customer_forget_pass_otp->email = $rq->email;
 
@@ -83,19 +70,17 @@ class ForgotPasswordController extends Controller
 
             $customer_forget_pass_otp->save();
 
-            $_SESSION["otp_forget"] = $customer_forget_pass_otp->otp_mail;
+            $_SESSION['otp_forget'] = $customer_forget_pass_otp->otp_mail;
 
-            $_SESSION["email_forget"] = $customer_forget_pass_otp->email;
-
-
+            $_SESSION['email_forget'] = $customer_forget_pass_otp->email;
 
             $site_name = setting_option('company_name');
 
-            $data = array(
+            $data = [
 
                 'email' => $customer_forget_pass_otp->email,
 
-                'emailadmin'   => $email_admin = setting_option('email'),
+                'emailadmin' => $email_admin = setting_option('email'),
 
                 'otp' => $customer_forget_pass_otp->otp_mail,
 
@@ -105,11 +90,11 @@ class ForgotPasswordController extends Controller
 
                 'site_name' => $site_name,
 
-            );
+            ];
 
             Mail::send(
 
-                $this->templatePath . '.mail.forget-password.forget-password',
+                $this->templatePath.'.mail.forget-password.forget-password',
 
                 $data,
 
@@ -119,7 +104,7 @@ class ForgotPasswordController extends Controller
 
                     $message->to($data['email'])
 
-                        ->subject($data['otp'] . ' là mã OTP của ' . $data['site_name']);
+                        ->subject($data['otp'].' là mã OTP của '.$data['site_name']);
 
                 }
 
@@ -129,25 +114,28 @@ class ForgotPasswordController extends Controller
 
         } else {
 
-            return view('auth.passwords.forget-password')->withErrors('Email not exist.');
+            return redirect()
+                ->back()
+                ->withErrors(['email' => 'Email không tồn tại.'])
+                ->withInput();
 
         }
 
     }
 
-
-
     public function forgetPassword_step2()
-
     {
 
-        session_start();
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
 
-        if ((!isset($_SESSION["otp_forget"]) && !isset($_SESSION["email_forget"])) || $_SESSION["otp_forget"] == '' || $_SESSION["email_forget"] == '') {
+        if ((! isset($_SESSION['otp_forget']) && ! isset($_SESSION['email_forget'])) || $_SESSION['otp_forget'] == '' || $_SESSION['email_forget'] == '') {
 
-            session_unset();
-
-            session_destroy();
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_unset();
+                session_destroy();
+            }
 
             return redirect()->route('forgetPassword');
 
@@ -159,51 +147,50 @@ class ForgotPasswordController extends Controller
 
     }
 
-
-
     public function actionForgetPassword_step2(Request $rq)
-
     {
 
-        session_start();
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
 
         $customer_forget_pass_otp = Customer_forget_pass_otp::where('otp_mail', '=', $rq->otp_mail)
 
-            ->where('otp_mail', '=', $_SESSION["otp_forget"])
+            ->where('otp_mail', '=', $_SESSION['otp_forget'])
 
             ->where('status', '=', 0)
 
-            ->whereRaw("TIME_TO_SEC('" . Carbon::now() . "') - TIME_TO_SEC(created_at) < 300 ")
+            ->whereRaw("TIME_TO_SEC('".Carbon::now()."') - TIME_TO_SEC(created_at) < 300 ")
 
             ->first();
 
         if ($customer_forget_pass_otp) {
 
-            $_SESSION["otp_true"] = 1;
+            $_SESSION['otp_true'] = 1;
 
             return redirect()->route('forgetPassword_step3');
 
         } else {
 
-            return redirect()->back()->withErrors('OTP is not correct.');
+            return redirect()->back()->withErrors(['otp_mail' => 'OTP không đúng.']);
 
         }
 
     }
 
-
-
     public function forgetPassword_step3()
-
     {
 
-        session_start();
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
 
-        if ((!isset($_SESSION["otp_forget"]) && !isset($_SESSION["email_forget"]) && !isset($_SESSION["otp_true"])) || $_SESSION["otp_forget"] == '' || $_SESSION["email_forget"] == '') {
+        if ((! isset($_SESSION['otp_forget']) && ! isset($_SESSION['email_forget']) && ! isset($_SESSION['otp_true'])) || $_SESSION['otp_forget'] == '' || $_SESSION['email_forget'] == '') {
 
-            session_unset();
-
-            session_destroy();
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_unset();
+                session_destroy();
+            }
 
             return redirect()->route('forgetPassword');
 
@@ -215,17 +202,16 @@ class ForgotPasswordController extends Controller
 
     }
 
-
-
     public function actionForgetPassword_step3(Request $rq)
-
     {
 
-        session_start();
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
 
-        $customer_forget_pass_otp = Customer_forget_pass_otp::where('email', '=', $_SESSION["email_forget"])
+        $customer_forget_pass_otp = Customer_forget_pass_otp::where('email', '=', $_SESSION['email_forget'])
 
-            ->where('otp_mail', '=', $_SESSION["otp_forget"])
+            ->where('otp_mail', '=', $_SESSION['otp_forget'])
 
             ->where('status', '=', 0)
 
@@ -235,9 +221,9 @@ class ForgotPasswordController extends Controller
 
             $validator = Validator::make($rq->all(), [
 
-                'new_password'     => 'required|min:3|required_with:confirm_new_password|same:confirm_new_password',
+                'new_password' => 'required|min:3|required_with:confirm_new_password|same:confirm_new_password',
 
-                'confirm_new_password'     => 'required|min:3',
+                'confirm_new_password' => 'required|min:3',
 
             ]);
 
@@ -249,42 +235,34 @@ class ForgotPasswordController extends Controller
 
             }
 
-            $customer = User::where('email', '=', $_SESSION["email_forget"])->first();
+            $customer = User::where('email', '=', $_SESSION['email_forget'])->first();
 
             $customer->password = bcrypt($rq->new_password);
             $customer->save();
-
-
 
             $customer_forget_pass_otp->status = 1;
 
             $customer_forget_pass_otp->save();
 
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_unset();
+                session_destroy();
+            }
 
-
-            session_unset();
-
-            session_destroy();
-
-            $msg = "Mật khẩu đã được thay đổi.";
-
-            $url =  route('user.login');
-
-            if ($msg) echo "<script language='javascript'>alert('" . $msg . "');</script>";
-
-            echo "<script language='javascript'>document.location.replace('" . $url . "');</script>";
+            return redirect()
+                ->route('user.login')
+                ->with('success', 'Mật khẩu đã được thay đổi.');
 
         } else {
 
-            session_unset();
-
-            session_destroy();
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_unset();
+                session_destroy();
+            }
 
             return redirect()->route('forgetPassword');
 
         }
 
     }
-
 }
-

@@ -1,130 +1,132 @@
 <?php
 
-
-
 namespace App\Http\Controllers;
 
-
-
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-
-use App\Http\Controllers\Controller;
-
-use DB;
-
-use Auth;
-
-use Route;
-
-use App\Models\Frontend\User;
-use App\Models\Theme, App\Models\Category_Theme, App\Models\Join_Category_Theme;
-
-use App\Models\Variable_Theme;
-
-use App\Models\Theme_Join_Variable_Theme;
-
+use App\Facades\WebService;
 use App\Models\Discount_code;
-
 use App\Models\Discount_for_brand;
-
+use App\Models\Frontend\Category;
+use App\Models\Frontend\Product;
+use App\Models\Frontend\User;
+use App\Models\Join_Category_Theme;
+use App\Models\Theme;
+use App\Models\Variable_Theme;
+use App\Models\Wishlist;
+use App\Traits\LocalizeController;
 // use App\Libraries\Helpers;
 
-use App\Facades\WebService;
-
-use App\Models\Wishlist;
-
+use Auth;
 use Cart;
-
-
-
-use Illuminate\Support\Facades\Cache;
-
-use App\Http\Filters\ProductFilter;
-
-
+use DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class AjaxController extends Controller
-
 {
+    use LocalizeController;
 
-    use \App\Traits\LocalizeController;
+    public $data = [];
 
     public function post_ajax_left()
-
     {
 
-        return view('adminwp.ajax.post_ajax_left');
+        if (view()->exists('adminwp.ajax.post_ajax_left')) {
+            return view('adminwp.ajax.post_ajax_left');
+        }
+
+        abort(404);
 
     }
 
     public function cate_ajax_left()
-
     {
 
-        return view('adminwp.ajax.cate_ajax_left');
+        if (view()->exists('adminwp.ajax.cate_ajax_left')) {
+            return view('adminwp.ajax.cate_ajax_left');
+        }
+
+        abort(404);
 
     }
 
     public function process_postcontent()
-
     {
 
-        return view('adminwp.ajax.process_postcontent');
+        if (view()->exists('adminwp.ajax.process_postcontent')) {
+            return view('adminwp.ajax.process_postcontent');
+        }
+
+        abort(404);
 
     }
 
     public function customers_details()
-
     {
 
-        return view('adminwp.load.customers_details');
+        if (view()->exists('adminwp.load.customers_details')) {
+            return view('adminwp.load.customers_details');
+        }
+
+        abort(404);
 
     }
 
     public function process_order()
-
     {
 
-        return view('adminwp.ajax.process_order');
+        if (view()->exists('adminwp.ajax.process_order')) {
+            return view('adminwp.ajax.process_order');
+        }
+
+        abort(404);
 
     }
 
     public function process_discount()
-
     {
 
-        return view('adminwp.ajax.process_discount');
+        if (view()->exists('adminwp.ajax.process_discount')) {
+            return view('adminwp.ajax.process_discount');
+        }
+
+        abort(404);
 
     }
 
     public function process_discount_for_brand()
-
     {
 
-        return view('adminwp.ajax.process_discount_for_brand');
+        if (view()->exists('adminwp.ajax.process_discount_for_brand')) {
+            return view('adminwp.ajax.process_discount_for_brand');
+        }
+
+        abort(404);
 
     }
 
     public function updateStatus()
-
     {
 
-        return view('adminwp.ajax.process_status');
+        if (view()->exists('adminwp.ajax.process_status')) {
+            return view('adminwp.ajax.process_status');
+        }
+
+        abort(404);
 
     }
 
     public function updateStoreStatus()
-
     {
 
-        return view('adminwp.ajax.process_store_status');
+        if (view()->exists('adminwp.ajax.process_store_status')) {
+            return view('adminwp.ajax.process_store_status');
+        }
+
+        abort(404);
 
     }
 
     public function check_regiser(Request $rq)
-
     {
 
         $data_user = User::all();
@@ -160,7 +162,6 @@ class AjaxController extends Controller
     }
 
     public function getDistrict()
-
     {
 
         $html = '';
@@ -185,7 +186,7 @@ class AjaxController extends Controller
 
         foreach ($district as $item) {
 
-            $html .= '<option value="' . $item->name . '">' . $item->name . '</option>';
+            $html .= '<option value="'.$item->name.'">'.$item->name.'</option>';
 
         }
 
@@ -193,10 +194,7 @@ class AjaxController extends Controller
 
     }
 
-
-
     public function getWard()
-
     {
 
         $html = '';
@@ -219,7 +217,7 @@ class AjaxController extends Controller
 
         foreach ($ward as $item) {
 
-            $html .= '<option value="' . $item->name . '">' . $item->name . '</option>';
+            $html .= '<option value="'.$item->name.'">'.$item->name.'</option>';
 
         }
 
@@ -227,10 +225,7 @@ class AjaxController extends Controller
 
     }
 
-
-
     public function getFeeShipping(Request $rq)
-
     {
 
         if ($rq->data == 'ghtk') {
@@ -251,55 +246,51 @@ class AjaxController extends Controller
 
             $data_cart = $_SESSION['data_cart'];
 
-            $data = array(
+            $data = [
 
-                "pick_address" => config('app.pick_address'),
+                'pick_address' => config('app.pick_address'),
 
-                "pick_province" => config('app.pick_province'),
+                'pick_province' => config('app.pick_province'),
 
-                "pick_district" => config('app.pick_district'),
+                'pick_district' => config('app.pick_district'),
 
-                "pick_ward" => config('app.pick_ward'),
+                'pick_ward' => config('app.pick_ward'),
 
-                "pick_street" => config('app.pick_street'),
+                'pick_street' => config('app.pick_street'),
 
-                "province" => $data_cart['cart_province'],
+                'province' => $data_cart['cart_province'],
 
-                "district" => $data_cart['cart_district'],
+                'district' => $data_cart['cart_district'],
 
-                "ward" => $data_cart['cart_ward'],
+                'ward' => $data_cart['cart_ward'],
 
-                "address" => $data_cart['cart_address'],
+                'address' => $data_cart['cart_address'],
 
-                "weight" => $total_weight,
+                'weight' => $total_weight,
 
-                "value" => $data_cart['cart_total'],
+                'value' => $data_cart['cart_total'],
 
-                "transport" => "road"
+                'transport' => 'road',
 
-            );
+            ];
 
             $curl = curl_init();
 
+            curl_setopt_array($curl, [
 
-
-            curl_setopt_array($curl, array(
-
-                CURLOPT_URL => "https://services.giaohangtietkiem.vn/services/shipment/fee?" . http_build_query($data),
+                CURLOPT_URL => 'https://services.giaohangtietkiem.vn/services/shipment/fee?'.http_build_query($data),
 
                 CURLOPT_RETURNTRANSFER => true,
 
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 
-                CURLOPT_HTTPHEADER => array(
+                CURLOPT_HTTPHEADER => [
 
-                    "Token: " . config('app.api_ghtk'),
+                    'Token: '.config('app.api_ghtk'),
 
-                ),
+                ],
 
-            ));
-
-
+            ]);
 
             $response = curl_exec($curl);
 
@@ -307,9 +298,9 @@ class AjaxController extends Controller
 
             $arr = json_decode($response);
 
-            $fee_html = "+" . WebService::formatMoney12($arr->fee->fee) . '<span class="woocommerce-Price-currencySymbol">' . setting_option('currency') . '</span>';
+            $fee_html = '+'.WebService::formatMoney12($arr->fee->fee).'<span class="woocommerce-Price-currencySymbol">'.setting_option('currency').'</span>';
 
-            $arr = array(
+            $arr = [
 
                 'fee_html' => $fee_html,
 
@@ -317,7 +308,7 @@ class AjaxController extends Controller
 
                 'cart_total' => Cart::total() + $arr->fee->fee,
 
-            );
+            ];
 
             $arr_fee = json_encode($arr);
 
@@ -328,22 +319,21 @@ class AjaxController extends Controller
     }
 
     public function LoadAjaxCart()
-
     {
 
         $html = '';
 
-        $html .= '<a class="icon_cart_tbn_a action showcart" href="' . route('cart') . '" >
+        $html .= '<a class="icon_cart_tbn_a action showcart" href="'.route('cart').'" >
 
                             <span class="basel-cart-totals">
 
-                                <span class="basel-cart-number badge badge-notify my-cart-badge">' . Cart::count() . '</span>
+                                <span class="basel-cart-number badge badge-notify my-cart-badge">'.Cart::count().'</span>
 
                                 <span class="subtotal-divider">/</span>
 
                                 <span class="basel-cart-subtotal">
 
-                                   <span id="price_total_view1" class="woocommerce-Price-amount amount">' . WebService::formatMoney12(Cart::total()) . ' </span><span class="woocommerce-Price-currencySymbol">' . setting_option('currency') . '</span>
+                                   <span id="price_total_view1" class="woocommerce-Price-amount amount">'.WebService::formatMoney12(Cart::total()).' </span><span class="woocommerce-Price-currencySymbol">'.setting_option('currency').'</span>
 
                                 </span>
 
@@ -361,15 +351,15 @@ class AjaxController extends Controller
 
         if (Cart::content()->count() > 0) {
 
-            $string_json = "";
+            $string_json = '';
 
             $id_cart = 0;
 
-            $cart_items = "";
+            $cart_items = '';
 
             $url_img_sp = 'images/product/';
 
-            $html .= '<ul class="woocommerce-mini-cart cart_list product_list_widget ">';
+            $html .= '<ul class="woocommerce-mini-cart cart_list product_list_widget">';
 
             foreach (Cart::content() as $cart_items) {
 
@@ -389,9 +379,7 @@ class AjaxController extends Controller
 
                     }
 
-
-
-                    $date_now = date("Y-m-d h:i:s");
+                    $date_now = date('Y-m-d h:i:s');
 
                     $discount_for_brand = Discount_for_brand::where('brand_id', '=', $Products->id_brand)
 
@@ -407,7 +395,7 @@ class AjaxController extends Controller
 
                     } else {
 
-                        if (!empty($Products->start_event) && !empty($Products->end_event)) {
+                        if (! empty($Products->start_event) && ! empty($Products->end_event)) {
 
                             $date_start_event = $Products->start_event;
 
@@ -419,11 +407,13 @@ class AjaxController extends Controller
 
                             if (strtotime($date_now) < strtotime($date_end_event) && strtotime($date_now) > strtotime($date_start_event)) {
 
-                                if ($price_regular != "" && $price_regular > 1) : $price = $price_regular;
+                                if ($price_regular != '' && $price_regular > 1) {
+                                    $price = $price_regular;
 
-                                else : $price = $price_sale;
+                                } else {
+                                    $price = $price_sale;
 
-                                endif;
+                                }
 
                             } else {
 
@@ -437,19 +427,17 @@ class AjaxController extends Controller
 
                             $price_regular = $Products->price_promotion;
 
-                            if ($price_regular != "" && $price_regular > 1) : $price = $price_regular;
+                            if ($price_regular != '' && $price_regular > 1) {
+                                $price = $price_regular;
 
-                            else : $price = $price_sale;
+                            } else {
+                                $price = $price_sale;
 
-                            endif;
+                            }
 
                         }
 
                     }
-
-
-
-
 
                     $quantity = $cart_items->qty;
 
@@ -457,21 +445,19 @@ class AjaxController extends Controller
 
                     $money = $quantity * $price;
 
-                    $post_thumbnail_news = $url_img_sp . $Products->thubnail;
-
-
+                    $post_thumbnail_news = $url_img_sp.$Products->thubnail;
 
                     $html .= '<li class="woocommerce-mini-cart-item mini_cart_item">
 
-                                <a href="' . url('/') . '/cart/?remove=' . $id . '" class="remove remove_from_cart_button">×</a>
+                                <a href="'.url('/').'/cart/?remove='.$id.'" class="remove remove_from_cart_button">×</a>
 
-                                <a class="cart_item_title" href="' . get_permalink_by_id($cart_items->id) . '">
+                                <a class="cart_item_title" href="'.get_permalink_by_id($cart_items->id).'">
 
-                                    <img width="300" height="300" src="' . $post_thumbnail_news . '" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail wp-post-image" alt=""/>&nbsp;' . $name . '&nbsp;
+                                    <img width="300" height="300" src="'.$post_thumbnail_news.'" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail wp-post-image" alt=""/>&nbsp;'.$name.'&nbsp;
 
                                 </a>
 
-                                <span class="quantity">' . $quantity . ' × <span class="woocommerce-Price-amount amount">' . WebService::formatMoney12($price) . ' <span class="woocommerce-Price-currencySymbol"></span>' . setting_option('currency') . '</span></span>
+                                <span class="quantity">'.$quantity.' × <span class="woocommerce-Price-amount amount">'.WebService::formatMoney12($price).' <span class="woocommerce-Price-currencySymbol"></span>'.setting_option('currency').'</span></span>
 
                             </li>';
 
@@ -483,9 +469,9 @@ class AjaxController extends Controller
 
         }
 
-        $html .= '<p class="woocommerce-mini-cart__total total"><strong>Tổng tiền:</strong> <span class="woocommerce-Price-amount amount" id="price_total_view2">' . WebService::formatMoney12(Cart::total()) . '<span class="woocommerce-Price-currencySymbol">' . setting_option('currency') . '</span></span></p>
+        $html .= '<p class="woocommerce-mini-cart__total total"><strong>Tổng tiền:</strong> <span class="woocommerce-Price-amount amount" id="price_total_view2">'.WebService::formatMoney12(Cart::total()).'<span class="woocommerce-Price-currencySymbol">'.setting_option('currency').'</span></span></p>
 
-                    <p class="woocommerce-mini-cart__buttons buttons"><a href="' . url('/') . '/cart/" class="button checkout wc-forward mini-cart-checkout">Thanh toán</a></p>
+                    <p class="woocommerce-mini-cart__buttons buttons"><a href="'.url('/').'/cart/" class="button checkout wc-forward mini-cart-checkout">Thanh toán</a></p>
 
                 </div><!--widget_shopping_cart_content-->
 
@@ -500,10 +486,9 @@ class AjaxController extends Controller
     }
 
     public function updateThemeFast(Request $request)
-
     {
 
-        $id = (int)$request->id;
+        $id = (int) $request->id;
 
         $origin_price = $request->origin_price;
 
@@ -515,9 +500,9 @@ class AjaxController extends Controller
 
         $end_event = $request->end_event;
 
-        if ($id > 0) :
+        if ($id > 0) {
 
-            $data = array(
+            $data = [
 
                 'price_origin' => $origin_price,
 
@@ -529,26 +514,25 @@ class AjaxController extends Controller
 
                 'end_event' => $end_event,
 
-                'updated' => date('Y-m-d H:i:s')
+                'updated' => date('Y-m-d H:i:s'),
 
-            );
+            ];
 
-            $respons = Theme::where("id", "=", $id)->update($data);
+            $respons = Theme::where('id', '=', $id)->update($data);
 
             echo 'OK';
 
-        else :
+        } else {
 
             echo 'Lỗi';
 
-        endif;
+        }
 
         exit();
 
     }
 
     public function ajax_get_cate_on_size()
-
     {
 
         $slug = $_GET['cate_slug'];
@@ -591,73 +575,73 @@ class AjaxController extends Controller
 
             ->paginate(config('app.item_list_category_product'));
 
-        if (count($data_customers) > 0) :
+        if (count($data_customers) > 0) {
 
             $html .= '<div class="row row-listpro">';
 
             $k = 0;
 
-            $thumbnail_thumb = "";
+            $thumbnail_thumb = '';
 
-            $url_img = "";
+            $url_img = '';
 
-            $ahref = "";
+            $ahref = '';
 
-            $price_origin = "";
+            $price_origin = '';
 
-            $price_promotion = "";
+            $price_promotion = '';
 
-            foreach ($data_customers as $data_customer) :
+            foreach ($data_customers as $data_customer) {
 
                 $k++;
 
                 $url_img = 'images/product';
 
-                if (!empty($data_customer->thubnail) && $data_customer->thubnail != "") :
+                if (! empty($data_customer->thubnail) && $data_customer->thubnail != '') {
 
-                    $thumbnail_thumb = getThumbnail($url_img, $data_customer->thubnail, 350, 485, "resize");
+                    $thumbnail_thumb = getThumbnail($url_img, $data_customer->thubnail, 350, 485, 'resize');
 
-                    if (strpos($thumbnail_thumb, 'placehold') !== false) :
+                    if (strpos($thumbnail_thumb, 'placehold') !== false) {
 
-                        $thumbnail_thumb = $url_img . $thumbnail_thumb;
+                        $thumbnail_thumb = $url_img.$thumbnail_thumb;
 
-                    endif;
+                    }
 
-                else :
+                } else {
 
-                    $thumbnail_thumb = "https://dummyimage.com/350x485/000/fff";
+                    $thumbnail_thumb = 'https://dummyimage.com/350x485/000/fff';
 
-                endif;
+                }
 
-                if (!empty($data_customer->price_origin) &&  $data_customer->price_origin > 0) :
+                if (! empty($data_customer->price_origin) && $data_customer->price_origin > 0) {
 
-                    $price_origin = number_format($data_customer->price_origin) . " đ ";
+                    $price_origin = number_format($data_customer->price_origin).' đ ';
 
-                else :
+                } else {
 
-                    $price_origin = "";
+                    $price_origin = '';
 
-                endif;
+                }
 
-                if (!empty($data_customer->price_promotion) &&  $data_customer->price_promotion > 0) :
+                if (! empty($data_customer->price_promotion) && $data_customer->price_promotion > 0) {
 
-                    $price_promotion = number_format($data_customer->price_promotion) . " đ ";
+                    $price_promotion = number_format($data_customer->price_promotion).' đ ';
 
-                else :
+                } else {
 
-                    $price_promotion = "Liên hệ";
+                    $price_promotion = 'Liên hệ';
 
-                endif;
+                }
 
-                $html .= '<div id="theme_cate_' . $k . '" class="item_product_list col-lg-4 col-md-4 col-sm-6 col-xs-6 item-page-category-product" data-open="0" data-id="' . $data_customer->id . '" data-parent="' . $data_customer->categoryParent . '" data-cate="' . $id_category . '">
+                $html .= '<div id="theme_cate_'.$k.'" class="item_product_list col-lg-4 col-md-4 col-sm-6 col-xs-6 item-page-category-product" data-open="0" data-id="'.$data_customer->id.'" data-parent="'.$data_customer->categoryParent.'" data-cate="'.$id_category.'">
 
                   <div class="product-item">
 
                       <div class="item-thumb">
 
-                          <a class="zoom" href="' . route('tintuc.details', array($data_customer->categorySlug, $data_customer->slug)) . '">
+                          <a class="zoom" href="'.route('tintuc.details', [$data_customer->categorySlug, $data_customer->slug]).'">
 
-                              <img src="' . $thumbnail_thumb . '" alt="' . $data_customer->thubnail_alt . '">
+                              <img src="'.$thumbnail_thumb.'" alt="'.$data_customer->thubnail_alt.'">
 
                           </a>
 
@@ -667,15 +651,15 @@ class AjaxController extends Controller
 
                           <h3 class="titleProduct">
 
-                              <a href="' . route('tintuc.details', array($data_customer->categorySlug, $data_customer->slug)) . '">' . $data_customer->title . '</a>
+                              <a href="'.route('tintuc.details', [$data_customer->categorySlug, $data_customer->slug]).'">'.$data_customer->title.'</a>
 
                           </h3>
 
-                          <div class="product_price flex">
+                          <div class="flex product_price">
 
-                              <span class="price_sale">' . $price_promotion . '</span>
+                              <span class="price_sale">'.$price_promotion.'</span>
 
-                              <span class="current_price">' . $price_origin . '</span>
+                              <span class="current_price">'.$price_origin.'</span>
 
                           </div>
 
@@ -685,13 +669,13 @@ class AjaxController extends Controller
 
               </div>';
 
-            endforeach;
+            }
 
             $html .= '</div><!--row-listpro-->
 
-            <div class="page_navi clear">' . $data_customers->links() . '</div><!--page_navi-->';
+            <div class="page_navi clear">'.$data_customers->links().'</div><!--page_navi-->';
 
-        else :
+        } else {
 
             $html .= '<div class="alert alert-danger">
 
@@ -699,118 +683,113 @@ class AjaxController extends Controller
 
            </div>';
 
-        endif;
+        }
 
         return $html;
 
     }
 
     public function update_new_item_status(Request $request)
-
     {
 
-        if (isset($request['check']) && $request['sid'] != "") :
+        if (isset($request['check']) && $request['sid'] != '') {
 
             $status = $request['check'];
 
-            $postID = (int)$request['sid'];
+            $postID = (int) $request['sid'];
 
-            if ($postID > 0) :
+            if ($postID > 0) {
 
-                $respons1 = Theme::where("id", "=", $postID)->update(array('item_new' => $status));
+                $respons1 = Theme::where('id', '=', $postID)->update(['item_new' => $status]);
 
-                echo "OK";
+                echo 'OK';
 
-            else :
+            } else {
 
-                echo "Lỗi";
+                echo 'Lỗi';
 
-            endif;
+            }
 
-        endif;
+        }
 
     }
 
     public function update_process_flash_sale(Request $request)
-
     {
 
-        if (isset($request['check']) && $request['sid'] != "") :
+        if (isset($request['check']) && $request['sid'] != '') {
 
             $status = $request['check'];
 
-            $postID = (int)$request['sid'];
+            $postID = (int) $request['sid'];
 
-            if ($postID > 0) :
+            if ($postID > 0) {
 
-                $respons1 = Theme::where("id", "=", $postID)->update(array('flash_sale' => $status));
+                $respons1 = Theme::where('id', '=', $postID)->update(['flash_sale' => $status]);
 
-                echo "OK";
+                echo 'OK';
 
-            else :
+            } else {
 
-                echo "Lỗi";
+                echo 'Lỗi';
 
-            endif;
+            }
 
-        endif;
+        }
 
     }
 
     public function update_process_sale_top_week(Request $request)
-
     {
 
-        if (isset($request['check']) && $request['sid'] != "") :
+        if (isset($request['check']) && $request['sid'] != '') {
 
             $status = $request['check'];
 
-            $postID = (int)$request['sid'];
+            $postID = (int) $request['sid'];
 
-            if ($postID > 0) :
+            if ($postID > 0) {
 
-                $respons1 = Theme::where("id", "=", $postID)->update(array('sale_top_week' => $status));
+                $respons1 = Theme::where('id', '=', $postID)->update(['sale_top_week' => $status]);
 
-                echo "OK";
+                echo 'OK';
 
-            else :
+            } else {
 
-                echo "Lỗi";
+                echo 'Lỗi';
 
-            endif;
+            }
 
-        endif;
+        }
 
     }
 
     public function update_process_propose(Request $request)
-
     {
 
-        if (isset($request['check']) && $request['sid'] != "") :
+        if (isset($request['check']) && $request['sid'] != '') {
 
             $status = $request['check'];
 
-            $postID = (int)$request['sid'];
+            $postID = (int) $request['sid'];
 
-            if ($postID > 0) :
+            if ($postID > 0) {
 
-                $respons1 = Theme::where("id", "=", $postID)->update(array('propose' => $status));
+                $respons1 = Theme::where('id', '=', $postID)->update(['propose' => $status]);
 
-                echo "OK";
+                echo 'OK';
 
-            else :
+            } else {
 
-                echo "Lỗi";
+                echo 'Lỗi';
 
-            endif;
+            }
 
-        endif;
+        }
 
     }
 
     public function postToWishList(Request $rq)
-
     {
 
         $id_product = $rq->id_product;
@@ -835,7 +814,7 @@ class AjaxController extends Controller
 
         } else {
 
-            $wish = new Wishlist();
+            $wish = new Wishlist;
 
             $wish->id_product = $id_product;
 
@@ -853,10 +832,7 @@ class AjaxController extends Controller
 
     }
 
-
-
     public function checkDiscountCode(Request $rq)
-
     {
 
         $code = $rq->code_discount;
@@ -885,7 +861,7 @@ class AjaxController extends Controller
 
                 if ($cate) {
 
-                    $html_cate = "";
+                    $html_cate = '';
 
                     foreach ($cate as $item_cate) {
 
@@ -915,7 +891,7 @@ class AjaxController extends Controller
 
         if ($checkcode) {
 
-            $date_now = date("Y-m-d h:i:s");
+            $date_now = date('Y-m-d h:i:s');
 
             if (strtotime($date_now) < strtotime($checkcode->expired)) {
 
@@ -955,13 +931,13 @@ class AjaxController extends Controller
 
                         }
 
-                        $arr = array(
+                        $arr = [
 
                             'price_discount' => $price_discount_total,
 
-                            'discount' => $discount
+                            'discount' => $discount,
 
-                        );
+                        ];
 
                         $arr_discount = json_encode($arr);
 
@@ -999,13 +975,13 @@ class AjaxController extends Controller
 
                     }
 
-                    $arr = array(
+                    $arr = [
 
                         'price_discount' => $price_discount_total,
 
-                        'discount' => $discount
+                        'discount' => $discount,
 
-                    );
+                    ];
 
                     $arr_discount = json_encode($arr);
 
@@ -1032,42 +1008,41 @@ class AjaxController extends Controller
     }
 
     public function loadVariable()
-
     {
 
-        $result = "";
+        $result = '';
 
-        $child_parent = array();
+        $child_parent = [];
 
-        $slug_variable_parrent = "";
+        $slug_variable_parrent = '';
 
-        $group_child = array();
+        $group_child = [];
 
-        $html_col_header = "";
+        $html_col_header = '';
 
         $datas = json_decode(stripslashes($_POST['data']));
 
-        $id_key_parent = "";
+        $id_key_parent = '';
 
         $count_item = count($datas);
 
-        if ($datas && count($datas) > 0) :
+        if ($datas && count($datas) > 0) {
 
             $mh = 0;
 
-            for ($i = 0; $i < count($datas); $i++) :
+            for ($i = 0; $i < count($datas); $i++) {
 
                 $mh++;
 
-                $variable_child = "";
+                $variable_child = '';
 
-                $key_child = "";
+                $key_child = '';
 
-                $array_child = array();
+                $array_child = [];
 
-                $variable_id = (int)$datas[$i];
+                $variable_id = (int) $datas[$i];
 
-                if ($variable_id > 0) :
+                if ($variable_id > 0) {
 
                     $variables = Variable_Theme::where('variable_themeID', $variable_id)
 
@@ -1075,7 +1050,7 @@ class AjaxController extends Controller
 
                         ->first();
 
-                    if ($variables) :
+                    if ($variables) {
 
                         $slug_variable_parrent = $variables->variable_theme_slug;
 
@@ -1085,53 +1060,53 @@ class AjaxController extends Controller
 
                             ->get();
 
-                        if ($variable_childs) :
+                        if ($variable_childs) {
 
-                            $html_col_header .= '<div class="table-cell readonly">' . $variables->variable_theme_name . '</div>';
+                            $html_col_header .= '<div class="table-cell readonly">'.$variables->variable_theme_name.'</div>';
 
-                            $id_key_parent .= $variables->variable_themeID . ",";
+                            $id_key_parent .= $variables->variable_themeID.',';
 
-                            foreach ($variable_childs as $variable_child) :
+                            foreach ($variable_childs as $variable_child) {
 
                                 $key_child = $variable_child->variable_theme_slug;
 
-                                //$array_key[$key_child]=array($variable_child->variable_theme_name);
+                                // $array_key[$key_child]=array($variable_child->variable_theme_name);
 
-                                $array_child[$key_child] = $variable_child->variable_theme_name . "_" . $variable_child->variable_themeID;
+                                $array_child[$key_child] = $variable_child->variable_theme_name.'_'.$variable_child->variable_themeID;
 
                                 $group_child = $array_child;
 
-                            endforeach;
+                            }
 
-                        endif;
+                        }
 
-                    endif;
+                    }
 
-                endif;
+                }
 
                 $child_parent[$slug_variable_parrent] = $group_child;
 
-            endfor;
+            }
 
-            //print_r($child_parent);
+            // print_r($child_parent);
 
             $array_fitters = variations($child_parent);
 
-            if ($array_fitters && count($array_fitters) > 0) :
+            if ($array_fitters && count($array_fitters) > 0) {
 
                 $id_key_parent = substr($id_key_parent, 0, -1);
 
-                //print_r($array_fitters);
+                // print_r($array_fitters);
 
-                $result .= '<input type="hidden" name="parent_variable_group" value="' . $id_key_parent . '"/>
+                $result .= '<input type="hidden" name="parent_variable_group" value="'.$id_key_parent.'"/>
 
                     <div class="edit-main variation-table">
 
                         <div class="table-header">
 
-                            <input type="hidden" name="number_parent_variable" id="number_parent_variable" value="' . $mh . '"/>
+                            <input type="hidden" name="number_parent_variable" id="number_parent_variable" value="'.$mh.'"/>
 
-                            ' . $html_col_header . '
+                            '.$html_col_header.'
 
                             <div class="table-cells">
 
@@ -1145,23 +1120,23 @@ class AjaxController extends Controller
 
                         <div class="table-body">';
 
-                $explode_ex = array();
+                $explode_ex = [];
 
-                for ($m = 0; $m < count($array_fitters); $m++) :
+                for ($m = 0; $m < count($array_fitters); $m++) {
 
                     $result .= '<div class="table-row">';
 
                     $k = 0;
 
-                    foreach ($array_fitters[$m] as $key => $value) :
+                    foreach ($array_fitters[$m] as $key => $value) {
 
                         $k++;
 
-                        $explode_ex = explode("_", $value);
+                        $explode_ex = explode('_', $value);
 
-                        $result .= '<div class="table-cell readonly">' . $explode_ex[0] . '</div><input type="hidden" name="variable_' . $m . $k . '" value="' . $explode_ex[1] . '">';
+                        $result .= '<div class="table-cell readonly">'.$explode_ex[0].'</div><input type="hidden" name="variable_'.$m.$k.'" value="'.$explode_ex[1].'">';
 
-                    endforeach;
+                    }
 
                     $result .= '<div class="table-cells">
 
@@ -1169,7 +1144,7 @@ class AjaxController extends Controller
 
                                             <div class="anhduong-input__prefix">₫<span class="anhduong-input__prefix-split"></span><!----><!----></div>
 
-                                            <input type="text"  class="anhduong-input__input" name="price_aviable_' . $m . '">
+                                            <input type="text"  class="anhduong-input__input" name="price_aviable_'.$m.'">
 
                                         </div>
 
@@ -1181,13 +1156,13 @@ class AjaxController extends Controller
 
                                                     <div class="text_input_file_image_variable">
 
-                                                        <input class="myfile_gallery_store_select" type="text" value="" size="50" placeholder="Hình ảnh" name="text_upload_gallery_variable_' . $m . '">
+                                                        <input class="myfile_gallery_store_select" type="text" value="" size="50" placeholder="Hình ảnh" name="text_upload_gallery_variable_'.$m.'">
 
                                                     </div>
 
                                                     <div class="mybutton_upload_img">
 
-                                                        <input class="upload_gallery_variable_select" type="file"  id="upload_gallery_variable_' . $m . '" name="upload_gallery_variable_' . $m . '">UP
+                                                        <input class="upload_gallery_variable_select" type="file"  id="upload_gallery_variable_'.$m.'" name="upload_gallery_variable_'.$m.'">UP
 
                                                     </div>
 
@@ -1201,98 +1176,97 @@ class AjaxController extends Controller
 
                                 </div>';
 
-                endfor;
+                }
 
-                $result .= '<input type="hidden" name="count_item_list" value="' . $m . '"/>
+                $result .= '<input type="hidden" name="count_item_list" value="'.$m.'"/>
 
                         </div>
 
                     </div>';
 
-            else :
+            } else {
 
-                $result = "";
+                $result = '';
 
-            endif;
+            }
 
-        else :
+        } else {
 
-            $result = "";
+            $result = '';
 
-        endif;
+        }
 
         return $result;
 
     }
 
-
-
-    public function searchSelect(Request $request, ProductFilter $filter)
-
+    public function searchSelect(Request $request)
     {
 
         $this->localized();
 
-        $keyword = $request->keyword;
+        $keyword = trim((string) $request->keyword);
 
-        if ($keyword != '') {
-
-            $data['city'] = \App\Models\Province::where('name', 'like', '%' . $keyword . '%')->get();
-
-            $data['districts'] = \App\Models\District::where('name', 'like', '%' . $keyword . '%')->get();
-
-
+        if ($keyword !== '') {
 
             $data['keyword'] = $request->keyword;
 
-            $data['products'] = \App\Product::filter($filter)
-
-                ->where('status', 0)
-
-                ->limit(10)->get();
-
-
-
-            $data['categories_place'] = \App\ProductCategory::whereIn('categoryID', [5, 27, 6, 30, 9])->get();
-
-
-
             $type = $request->type;
 
-            if ($type == 'mua_ban')
+            $data['slug'] = null;
+            try {
+                if ($type == 'mua_ban') {
+                    $data['slug'] = route('product.category', 'nha-dat-ban');
+                } elseif ($type == 'cho_thue') {
+                    $data['slug'] = route('product.category');
+                } elseif ($type == 'du_an') {
+                    $data['slug'] = route('project.category');
+                } else {
+                    $data['slug'] = route('search');
+                }
+            } catch (\Throwable $e) {
+                $data['slug'] = url('/search');
+            }
 
-                $data['slug'] = route('product.category', 'nha-dat-ban');
+            $data['city'] = collect();
+            $data['districts'] = collect();
+            if (Schema::hasTable('province')) {
+                $data['city'] = DB::table('province')
+                    ->where('name', 'like', '%'.$keyword.'%')
+                    ->limit(10)
+                    ->get();
+            }
+            if (Schema::hasTable('district')) {
+                $data['districts'] = DB::table('district')
+                    ->where('name', 'like', '%'.$keyword.'%')
+                    ->limit(10)
+                    ->get();
+            }
 
-            elseif ($type == 'cho_thue')
+            $data['products'] = Product::query()
+                ->where('status', 1)
+                ->where('name', 'like', '%'.$keyword.'%')
+                ->limit(10)
+                ->get();
 
-                $data['slug'] = route('product.category');
+            $data['categories_place'] = Category::query()
+                ->where('name', 'like', '%'.$keyword.'%')
+                ->limit(10)
+                ->get();
 
-            elseif ($type == 'du_an')
+            if (view()->exists('theme.layout.search-item')) {
+                $view = view('theme.layout.search-item', compact('data'))->render();
 
-                $data['slug'] = route('project.category');
+                return response()->json($view);
+            }
 
-            else
-
-                $data['slug'] = route('search');
-
-
-
-
-
-            // Cache::put('search-data', $data);
-
-            $view = view('theme.layout.search-item', compact('data'))->render();
-
-            return response()->json($view);
-
+            return response()->json('');
         }
 
+        return response()->json('');
     }
 
-
-
     public function inputSearchText($type, Request $request)
-
     {
 
         if ($type == 'street') {
@@ -1303,11 +1277,22 @@ class AjaxController extends Controller
 
             $this->data['type'] = $type;
 
-            $this->data['streets'] = \App\Models\Street::distinct()->where('name', 'like', "%" . $keyword . "%")
+            $streets = collect();
+            if (Schema::hasTable('street')) {
+                $streets = DB::table('street')
+                    ->distinct()
+                    ->where('name', 'like', '%'.$keyword.'%')
+                    ->where('district_id', $district)
+                    ->pluck('name');
+            }
 
-                ->where('district_id', $district)->get('name');
+            $this->data['streets'] = $streets;
 
-            $this->data['view'] = view('theme.dangtin.form.search-input-item', ['data' => $this->data])->render();
+            if (view()->exists('theme.dangtin.form.search-input-item')) {
+                $this->data['view'] = view('theme.dangtin.form.search-input-item', ['data' => $this->data])->render();
+            } else {
+                $this->data['view'] = '';
+            }
 
         }
 
@@ -1316,6 +1301,4 @@ class AjaxController extends Controller
         return response()->json($this->data);
 
     }
-
 }
-

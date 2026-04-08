@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Frontend\Page;
 use App\Models\Frontend\Category;
+use App\Models\Frontend\Page;
 // use App\Models\Frontend\Post;
-use DB;
+use App\Traits\LocalizeController;
+use Gornymedia\Shortcodes\Facades\Shortcode;
 
 class NewsController extends Controller
 {
-    use \App\Traits\LocalizeController;
+    use LocalizeController;
 
     public $data = [];
 
@@ -20,7 +20,7 @@ class NewsController extends Controller
         // All category
         // $categories = Category::where(['status' => 1, 'type' => 'post', 'parent' => 0])->get();
 
-        // All news 
+        // All news
         $news = Page::posts()->where('status', 1)
             ->with(['user'])
             ->orderbyDesc('sort')
@@ -39,7 +39,13 @@ class NewsController extends Controller
         // extra data
         $this->data['feature_news'] = $feature_news;
 
-        return view('frontend.news.index', $this->data)->compileShortcodes();
+        $html = view('frontend.news.index', $this->data)->render();
+        try {
+            $html = Shortcode::compile($html);
+        } catch (\Throwable $e) {
+        }
+
+        return $html;
     }
 
     // Single category
@@ -114,8 +120,8 @@ class NewsController extends Controller
         $this->data['seo'] = [
             'seo_title' => $news->seo_title != '' ? $news->seo_title : $news->title,
             'seo_image' => $news->image,
-            'seo_description'   => $news->seo_description ?? '',
-            'seo_keyword'   => $news->seo_keyword ?? '',
+            'seo_description' => $news->seo_description ?? '',
+            'seo_keyword' => $news->seo_keyword ?? '',
         ];
 
         return view('frontend.news.single', $this->data);

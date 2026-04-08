@@ -2,11 +2,9 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Tests\TestCase;
 
 class SystemHealthTest extends TestCase
 {
@@ -19,7 +17,7 @@ class SystemHealthTest extends TestCase
             DB::connection()->getPdo();
             $this->assertTrue(true);
         } catch (\Exception $e) {
-            $this->fail('Database connection failed: ' . $e->getMessage());
+            $this->fail('Database connection failed: '.$e->getMessage());
         }
     }
 
@@ -28,7 +26,7 @@ class SystemHealthTest extends TestCase
      */
     public function test_critical_tables_exist()
     {
-        $tables = ['permissions', 'permission_role', 'roles', 'users', 'admins'];
+        $tables = ['settings', 'pages', 'categories', 'products', 'users', 'roles', 'permissions', 'role_user', 'permission_role'];
         foreach ($tables as $table) {
             $this->assertTrue(Schema::hasTable($table), "Table '$table' does not exist.");
         }

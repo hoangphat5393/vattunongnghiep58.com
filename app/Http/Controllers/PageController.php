@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\View;
 use App\Models\Frontend\Category;
 use App\Models\Frontend\Page;
 use App\Models\Frontend\Product;
+use App\Traits\FrontendDataTransform;
+use App\Traits\LocalizeController;
 use Gornymedia\Shortcodes\Facades\Shortcode;
-use Carbon\Carbon, Cart, Auth;
+use Illuminate\Support\Facades\View;
 
 class PageController extends Controller
 {
-    use \App\Traits\LocalizeController;
-    use \App\Traits\FrontendDataTransform;
+    use FrontendDataTransform;
+    use LocalizeController;
 
     public $data = [];
 
@@ -76,24 +77,28 @@ class PageController extends Controller
         $this->data['seo'] = [
             'seo_title' => $page->seo_title != '' ? $page->seo_title : $page->title,
             'seo_image' => $page->image,
-            'seo_description'   => $page->seo_description ?? '',
-            'seo_keyword'   => $page->seo_keyword ?? '',
+            'seo_description' => $page->seo_description ?? '',
+            'seo_keyword' => $page->seo_keyword ?? '',
         ];
 
-        return view('frontend.home', $this->data)->compileShortcodes();
+        $html = view('frontend.home', $this->data)->render();
+        try {
+            $html = Shortcode::compile($html);
+        } catch (\Throwable $e) {
+        }
+
+        return $html;
     }
 
     public function page($slug)
     {
 
         $this->localized();
-        if ('home' == $slug || 'trangchu' == $slug) {
+        if ($slug == 'home' || $slug == 'trangchu') {
             return $this->index();
         }
 
-
         $page = Page::pages()->where('slug', $slug)->first();
-
 
         if ($page) {
             // if ($page->template == 'project')
@@ -111,8 +116,8 @@ class PageController extends Controller
             $this->data['seo'] = [
                 'seo_title' => $page->seo_title != '' ? $page->seo_title : $page->title,
                 'seo_image' => $page->image,
-                'seo_description'   => $page->seo_description ?? '',
-                'seo_keyword'   => $page->seo_keyword ?? '',
+                'seo_description' => $page->seo_description ?? '',
+                'seo_keyword' => $page->seo_keyword ?? '',
             ];
 
             $this->data['page'] = $page;
@@ -125,12 +130,24 @@ class PageController extends Controller
                     ->limit(4)
                     ->get();
             }
-            $templateName = 'frontend.page.' . $slug;
+            $templateName = 'frontend.page.'.$slug;
 
             if (View::exists($templateName)) {
-                return view($templateName,  $this->data)->compileShortcodes();
+                $html = view($templateName, $this->data)->render();
+                try {
+                    $html = Shortcode::compile($html);
+                } catch (\Throwable $e) {
+                }
+
+                return $html;
             } else {
-                return view('frontend.page.index', ['data' => $this->data])->compileShortcodes();
+                $html = view('frontend.page.index', ['data' => $this->data])->render();
+                try {
+                    $html = Shortcode::compile($html);
+                } catch (\Throwable $e) {
+                }
+
+                return $html;
             }
         } else {
             return view('errors.404');
@@ -167,11 +184,12 @@ class PageController extends Controller
 
     public function listLocation()
     {
-        $data = array(
-            'mienbac'   => 'Miền Bắc',
-            'mientrung'   => 'Miền Trung',
-            'miennam'   => 'Miền Nam'
-        );
+        $data = [
+            'mienbac' => 'Miền Bắc',
+            'mientrung' => 'Miền Trung',
+            'miennam' => 'Miền Nam',
+        ];
+
         return $data;
     }
 }
