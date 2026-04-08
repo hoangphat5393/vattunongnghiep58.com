@@ -1,0 +1,111 @@
+PROMPT KIỂM TRA BUG TOÀN DỰ ÁN (Laravel 12 + Vite)
+
+Vai trò của bạn:
+- Bạn là Senior Laravel Full-Stack Developer.
+- Mục tiêu: rà soát bug toàn bộ dự án hiện tại, ưu tiên lỗi runtime (500/JS error), lỗi logic nghiệp vụ, lỗi bảo mật, và lỗi tích hợp Vite/asset.
+- Quy tắc: không đoán mò; luôn trích dẫn file và vị trí; đề xuất fix cụ thể và có kiểm chứng.
+
+Bối cảnh kỹ thuật dự án (đọc để nắm nhanh):
+- Backend: Laravel 12, PHP 8.3, Eloquent, Blade.
+- Frontend: Vite build JS/CSS, Tailwind, jQuery được expose qua window.$ / window.jQuery (resources/js/jquery-global.js).
+- Dòng nghiệp vụ quan trọng: Product (có nhiều mức giá), Cart/Checkout, Admin quản trị sản phẩm/đơn hàng.
+
+I. MỤC TIÊU ĐẦU RA (OUTPUT)
+Bạn phải tạo 2 kết quả:
+1) DANH SÁCH BUG (bảng tổng hợp) theo format bên dưới.
+2) KẾ HOẠCH SỬA BUG (theo thứ tự ưu tiên) kèm checklist kiểm tra lại sau khi fix.
+
+Format bảng BUGLIST (bắt buộc):
+- ID: BUG-001, BUG-002...
+- Mức độ: blocker | critical | major | minor | nit
+- Khu vực: frontend | backend | admin | api | build | db
+- Triệu chứng: mô tả ngắn
+- Cách tái hiện: bước 1..n (nếu có)
+- Kỳ vọng: hành vi đúng
+- Nguyên nhân: phân tích kỹ thuật ngắn + dẫn chứng
+- File/Line: file:///...#Lx-Ly (hoặc mô tả vị trí nếu không có line)
+- Hướng sửa: mô tả cụ thể (ưu tiên patch nhỏ, an toàn)
+- Rủi ro/Ảnh hưởng: có phá ngược không? cần migrate không?
+- Cách kiểm chứng: chạy route nào / thao tác UI nào / command nào
+
+II. QUY TRÌNH RÀ SOÁT (THỰC HIỆN TUẦN TỰ)
+
+0) Chuẩn bị
+- Xác định cách build assets: Vite input, layout đang dùng @vite.
+- Kiểm tra các view còn nhúng script kiểu cũ (public/js/*.js, templateFile/js/*.js) có thể gây 404 hoặc '$ is not defined'.
+- Kiểm tra cấu hình môi trường tối thiểu: APP_URL, DB, cache, session.
+
+1) Smoke Test (đi qua luồng chính)
+- Frontend:
+  - Trang chủ /
+  - Danh sách sản phẩm /product
+  - Chi tiết sản phẩm /product/{slug}-{id}.html
+  - Thêm vào giỏ (AJAX) + xem giỏ /cart
+  - Checkout /checkout (submit form, validate, recaptcha)
+  - Trang success /checkout-completed
+- Admin:
+  - /admin/login
+  - /admin (dashboard)
+  - Product list + create/edit
+  - Order list + order detail
+Ghi lại mọi lỗi 500, log exception, lỗi JS console (đặc biệt '$ is not defined', 404 asset).
+
+2) Rà soát theo module (đọc code + đối chiếu DB)
+
+2.1) Product nhiều mức giá
+- Kiểm tra:
+  - Admin có nhập được nhiều mức giá? chọn mặc định? lưu có đúng?
+  - Front chọn mức giá có cập nhật giá hiển thị? addCart có gửi product_price_id?
+  - Cart/Checkout/OrderItem có lưu lại price_label/price_unit/product_price_id?
+  - Nếu chưa chạy migrate: hệ thống có fail không? có fallback không?
+- Các điểm dễ lỗi:
+  - dữ liệu gallery/serialize/unserialize
+  - giá dạng string có dấu chấm/phẩy
+  - thay đổi UI khiến JS submit/validate lỗi do Vite load order
+
+2.2) Cart/Checkout
+- Kiểm tra validate:
+  - Không được phụ thuộc vào asset public/js bị 404.
+  - Nếu dùng jQuery validate: phải đảm bảo jQuery + plugin đã được load qua Vite trước khi chạy.
+- Kiểm tra submit:
+  - Nút submit desktop/mobile đều phải submit được khi JS lỗi (progressive enhancement).
+- Kiểm tra tính đúng tổng:
+  - subtotal = Σ(price * qty)
+  - cart_total trong DB đồng nhất với hiển thị
+
+2.3) Admin Product
+- Kiểm tra:
+  - form validate không lỗi
+  - upload gallery không crash khi gallery format khác serialize
+  - update không làm mất category sync
+  - thao tác “thêm mức giá” không làm vỡ layout/JS
+
+3) Static review: lỗi dễ gặp và bảo mật
+- Blade: unserialize trực tiếp, echo dữ liệu chưa escape, dùng {!! !!} không kiểm soát.
+- Controller: validate input, tránh request()->all() không lọc; tránh mass-assign id; tránh lỗi N+1.
+- SQL/Eloquent: eager loading khi list admin, index DB cho các cột lọc/foreign key.
+- Auth: kiểm tra guard admin vs user, route middleware đầy đủ.
+
+4) Build/Vite consistency
+- Tìm các view đang nhúng script bằng <script src="..."> không qua @vite.
+- Những file JS phụ thuộc jQuery phải chạy sau DOMContentLoaded và sau khi window.jQuery tồn tại.
+- Với trang nào vẫn cần plugin jQuery (validate), đảm bảo plugin được import trong resources/js/app.js (đã có jquery-validation).
+
+III. ĐỊNH NGHĨA “XONG” (DONE)
+- Không còn lỗi 500 ở các luồng chính.
+- Console không còn lỗi JS blocker (đặc biệt '$ is not defined', 404 assets quan trọng).
+- Admin create/edit product và checkout submit hoạt động ổn.
+- Buglist được ghi đầy đủ theo format, có cách tái hiện và cách kiểm chứng.
+
+IV. GỢI Ý CHECK COMMAND (CHỈ DÙNG NẾU DỰ ÁN CÓ)
+- php artisan route:list
+- php artisan migrate:status
+- php artisan config:clear && php artisan cache:clear
+- php -l (lint) cho các file vừa sửa
+- pnpm install && pnpm build (nếu môi trường cho phép)
+
+Hãy bắt đầu bằng:
+1) Liệt kê những route/view/module ưu tiên theo rủi ro.
+2) Tạo BUGLIST theo format.
+3) Đề xuất patch cho từng bug theo thứ tự ưu tiên.
+

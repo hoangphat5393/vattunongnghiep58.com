@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Frontend\User, App\Models\Frontend\Customer;
+use App\Models\Frontend\Product;
 
 use Auth, Cart, Validator, Redirect, Hash, Mail, DB, Input, File;
 use Illuminate\Http\Request;
@@ -70,7 +71,7 @@ class CustomerController extends Controller
         else
             $remember_me = false;
 
-        $check_user = \App\User::where('email', $request->email)->first();
+        $check_user = User::where('email', $request->email)->first();
         if ($check_user != '' && $check_user->status == 0) {
             if (Auth::attempt($login, $remember_me)) {
                 return response()->json([
@@ -410,7 +411,7 @@ class CustomerController extends Controller
             'phone' => $rq->phone,
             'full_phone' => $rq->full_phone,
         );
-        $respons = (new \App\User)->find($id)->update($data);
+        $respons = (new User)->find($id)->update($data);
         $msg = "Thông tin tài khoản đã được cập nhật";
         $url =  route('customer.profile');
         msg_move_page($msg, $url);
@@ -419,14 +420,14 @@ class CustomerController extends Controller
     public function myPost()
     {
         $this->localized();
-        $this->data['products'] = \App\Product::where('user_id', auth()->user()->id)->orderbyDesc('id')->paginate(10);
+        $this->data['products'] = Product::where('user_id', auth()->user()->id)->orderbyDesc('id')->paginate(10);
 
         return view('theme.customer.my-post', ['data' => $this->data]);
     }
 
     public function deletePost($id)
     {
-        $db = \App\Product::where('id', $id)->where('user_id', auth()->user()->id)->first();
+        $db = Product::where('id', $id)->where('user_id', auth()->user()->id)->first();
         if ($db->delete()) {
             \App\Models\ThemeInfo::where('theme_id', $id)->delete();
             \App\Models\Join_Category_Theme::where('theme_id', $id)->delete();
@@ -495,7 +496,7 @@ class CustomerController extends Controller
             $wishlist = json_decode(\Cookie::get('wishlist'));
 
             if ($wishlist != '') {
-                $this->data['wishlist'] = \App\Product::whereIn('id', $wishlist)->get();
+                $this->data['wishlist'] = Product::whereIn('id', $wishlist)->get();
                 // dd($this->data['wishlist']);
             }
             return view($this->templatePath . '.customer.wishlist', ['data' => $this->data]);

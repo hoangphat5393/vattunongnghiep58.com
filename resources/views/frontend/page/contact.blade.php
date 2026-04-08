@@ -215,19 +215,23 @@
                 axios({
                         method: 'POST',
                         url: contact_form.getAttribute('action'),
-                        data: fdnew
+                        data: fdnew,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
                     })
                     .then(res => {
                         if (res.data.status === 'success') {
-                            if (contactSuccess) {
-                                window.location.replace(contactSuccess);
-                            }
+                            const redirect = res.data.redirect || contactSuccess;
+                            if (redirect) window.location.replace(redirect);
                         } else {
                             showError(res.data.message || 'Đã xảy ra lỗi, vui lòng thử lại!');
                         }
                     })
-                    .catch(() => {
-                        showError('Đã xảy ra lỗi, vui lòng thử lại!');
+                    .catch((err) => {
+                        const msg = err?.response?.data?.message;
+                        showError(msg || 'Đã xảy ra lỗi, vui lòng thử lại!');
                     });
             });
         }

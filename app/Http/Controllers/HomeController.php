@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
+use App\Models\Frontend\User;
 use Auth, Route, Redirect, DB, Hash, Input, Validator, Mail;
 use Illuminate\Http\Request;
 use App\Models\Frontend\Page, App\Models\Sponser;
@@ -43,7 +43,7 @@ class HomeController extends Controller
         $user = new User();
         $user->name = $request['name'];
         $user->email = $request['email'];
-        $user->password = $request['password']->password;
+        $user->password = Hash::make($request['password']);
         $user->status = $request['acess_user_create_user'];
 
 

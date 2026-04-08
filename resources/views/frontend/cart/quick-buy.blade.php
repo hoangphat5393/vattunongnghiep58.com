@@ -73,12 +73,12 @@
                                                                         $image = $product->image;
                                                                     }
                                                                 @endphp
-                                                                <a class="flex-shrink-0" href="{{ route('game.detail', $product->slug) }}" title="{{ $product->name }}">
+                                                                <a class="flex-shrink-0" href="{{ route('product.detail', [$product->slug, $product->id]) }}" title="{{ $product->name }}">
                                                                     <img class="img-fluid item-image d-block mx-auto" src="{{ $image }}" alt="{{ $product->name }}">
                                                                 </a>
                                                             </td>
                                                             <td style="width: 250px">
-                                                                <a class="flex-shrink-0 item-name" href="{{ route('game.detail', $product->slug) }}" title="{{ $product->name }}">{{ $product->name }}</a>
+                                                                <a class="flex-shrink-0 item-name" href="{{ route('product.detail', [$product->slug, $product->id]) }}" title="{{ $product->name }}">{{ $product->name }}</a>
                                                             </td>
                                                             <td>
                                                                 {!! render_price($product->price) !!}
@@ -167,8 +167,6 @@
 
 @push('after-footer')
     <script type="application/javascript" src = "https://checkout.stripe.com/checkout.js" > </script>
-    <script src="{{ asset('/js/jquery.validate.min.js') }}"></script>
-    <script src="{{ asset($templateFile . '/js/cart.js?ver=' . time()) }}"></script>
     <script>
         var strip_key = '{{ config('services.stripe')['key'] }}';
         jQuery(document).ready(function($) {

@@ -544,11 +544,8 @@ class Product extends Model
     /*user detail*/
 
     public function getUser()
-
     {
-
-        return $this->hasOne(\App\User::class, 'id', 'user_id');
-
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 
     /*theme info*/

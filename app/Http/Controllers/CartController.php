@@ -354,6 +354,11 @@ class CartController extends Controller
         }
     }
 
+    public function quickBuyConfirm()
+    {
+        return redirect()->route('cart.checkout');
+    }
+
     // public function forgetCartSession()
     // {
     //     session()->forget('cart_code');

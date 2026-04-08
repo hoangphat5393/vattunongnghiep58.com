@@ -12,7 +12,7 @@
 
     @php
 
-        $product = \App\Product::find($item->product_id);
+        $product = \App\Models\Frontend\Product::find($item->product_id);
 
     @endphp
 

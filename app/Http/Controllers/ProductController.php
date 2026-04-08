@@ -8,8 +8,10 @@ use App\Http\Filters\ProductFilter;
 use App\Models\Frontend\Category;
 
 use App\Models\Frontend\Product;
+use App\Models\ProductPrice;
 use App\Models\Frontend\Page;
 use Session, DB;
+use Cart;
 
 // use Carbon\Carbon;
 
@@ -152,10 +154,14 @@ class ProductController extends Controller
 
     public function getBuyNow()
     {
-        $data = request()->all();
+        $data = request()->validate([
+            'product' => ['required', 'integer'],
+            'qty' => ['required', 'integer', 'min:1'],
+            'product_price_id' => ['nullable', 'integer'],
+        ]);
 
         $id = $data['product'];
-        $product = Product::select('id', 'name', 'unit', 'price', 'stock')->find($id);
+        $product = Product::select('id', 'name', 'slug', 'unit', 'price', 'stock')->find($id);
 
         // $list_promotion = \App\Models\ShopProductPromotion::where('shop_product_id', $product->id)
         //     ->orderby('qty_to_promotion')
@@ -185,9 +191,26 @@ class ProductController extends Controller
         // $variables = \App\Variable::where('status', 0)->where('parent', 0)->orderBy('stt', 'asc')->get();
         // $attr = $data['option'] ?? '';
 
-        $price = $product->price;
+        $price = (int) ($product->price ?? 0);
 
-        $form_attr = ['promotion' => $promotion, 'promotion_unit' => $promotion_unit, 'unit' => $product->unit];
+        $form_attr = [
+            'promotion' => $promotion,
+            'promotion_unit' => $promotion_unit,
+            'unit' => $product->unit,
+        ];
+
+        if (!empty($data['product_price_id'])) {
+            $pp = ProductPrice::where('id', $data['product_price_id'])
+                ->where('product_id', $product->id)
+                ->where('status', 1)
+                ->first();
+            if ($pp) {
+                $price = (int) $pp->price;
+                $form_attr['product_price_id'] = $pp->id;
+                $form_attr['price_label'] = $pp->label;
+                $form_attr['price_unit'] = $pp->unit;
+            }
+        }
 
         // Check product allow for sale
         $option = array(
@@ -215,6 +238,7 @@ class ProductController extends Controller
             [
                 'error' => 0,
                 'msg' => 'Success',
+                'redirect' => route('shop.buyNow', $id),
             ]
         );
     }
@@ -226,25 +250,42 @@ class ProductController extends Controller
 
         if ($option) {
             $option = json_decode($option[0], true);
-            if ($option['id'] != $product->id)
-                return redirect()->route('game.detail', $product->slug);
-        } else
-            return redirect()->route('game.detail', $product->slug);
+            if (!$product || ($option['id'] ?? null) != $product->id) {
+                return redirect()->route('product.detail', [$product->slug ?? '', $product->id ?? $id]);
+            }
+        } else {
+            if ($product) {
+                return redirect()->route('product.detail', [$product->slug, $product->id]);
+            }
+            return redirect()->route('product');
+        }
 
         if ($product) {
-            $this->data['product'] = $product;
-
-            $this->data['seo'] = [
-                'seo_title' => 'Mua ngay - ' . $product->name,
-            ];
-            if (session()->has('cart-info')) {
-                $data = session()->get('cart-info');
-                $this->data["cart_info"] = $data;
+            $cartOptions = [];
+            $opt = $option['options'] ?? [];
+            if (is_array($opt)) {
+                if (!empty($opt['product_price_id'])) {
+                    $cartOptions['product_price_id'] = $opt['product_price_id'];
+                }
+                if (!empty($opt['price_label'])) {
+                    $cartOptions['price_label'] = $opt['price_label'];
+                }
+                if (!empty($opt['price_unit'])) {
+                    $cartOptions['price_unit'] = $opt['price_unit'];
+                }
             }
 
-            // dd($this->data);
-            // return view($this->templatePath . '.cart.quick-buy', $this->data);
-            return view('frontend.cart.quick-buy', $this->data);
+            Cart::add([
+                'id' => $product->id,
+                'name' => $product->name,
+                'qty' => (int) ($option['qty'] ?? 1),
+                'price' => (int) ($option['price'] ?? ($product->price ?? 0)),
+                'options' => $cartOptions,
+            ]);
+
+            session()->forget('option');
+
+            return redirect()->route('cart.checkout');
         }
     }
 

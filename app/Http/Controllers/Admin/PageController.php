@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\Page\UpdatePage;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 
@@ -40,7 +41,7 @@ class PageController extends Controller
      */
     public function store(StorePage $request)
     {
-        $data = $request->except(['created_at', 'submit']);
+        $data = $request->except(['created_at', 'submit', 'id']);
 
         if ($request->slug) {
             $data['slug'] = addslashes($request->slug);
@@ -50,7 +51,9 @@ class PageController extends Controller
         $data['seo_title'] = $data['seo_title'] ? $data['seo_title'] : $data['name'];
 
         // ADMIN ID
-        $data['user_id'] = Auth::guard('admin')->user()->id;
+        if (Schema::hasTable('pages') && Schema::hasColumn('pages', 'user_id')) {
+            $data['user_id'] = Auth::guard('admin')->user()->id;
+        }
 
         // dd($data);
         $response = Page::create($data);
@@ -96,7 +99,7 @@ class PageController extends Controller
      */
     public function update(UpdatePage $request, Page $page)
     {
-        $data = request()->except(['created_at', 'submit', 'user_id']);
+        $data = request()->except(['created_at', 'submit', 'user_id', 'id']);
 
         if ($request->slug) {
             $data['slug'] = addslashes($request->slug);
@@ -107,7 +110,8 @@ class PageController extends Controller
         $page = Page::findOrFail($request->id);
         $page->update($data);
 
-        if ($request->submit_form == 'apply') {
+        $save = $request->submit ?? 'apply';
+        if ($save == 'apply') {
             $msg = "Page has been updated successfully";
             $url = route('admin.page.edit', array($request->id));
             msg_move_page($msg, $url);

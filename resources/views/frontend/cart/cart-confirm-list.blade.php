@@ -49,7 +49,7 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($carts as $cart)
-                                                @php $product = \App\Product::find($cart->id); @endphp
+                                                @php $product = \App\Models\Frontend\Product::find($cart->id); @endphp
                                                 @if (!empty($product))
                                                     <tr class="cart-items cart__row_item">
                                                         <td class="cart-thumb">
@@ -337,8 +337,6 @@
 
 @push('after-footer')
     <script type="application/javascript" src = "https://checkout.stripe.com/checkout.js" > </script>
-    <script src="{{ asset('/js/jquery.validate.min.js') }}"></script>
-    <script src="{{ asset($templateFile . '/js/cart.js?ver=' . time()) }}"></script>
 
     <script>
         var strip_key = '{{ config('services.stripe')['key'] }}';
