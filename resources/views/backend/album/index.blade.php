@@ -108,7 +108,7 @@
                                                     <input type="text" id="sort" class="form-control quick_change_value text-center" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" value="{{ $item->sort }}" reload-on-change>
                                                 </td>
                                                 <td class="text-center">
-                                                    [Ablum id="{{ $item->id }}" items="{{ $item->items->count() }}"]
+                                                    [Album id="{{ $item->id }}" items="{{ $item->items->count() }}"]
                                                 </td>
                                                 <td class="text-center">
                                                     <a class="row-title fw-bold" href="{{ route('admin.album.edit', $item->id) }}">

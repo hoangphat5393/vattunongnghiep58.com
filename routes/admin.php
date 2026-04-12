@@ -1,13 +1,12 @@
 <?php
 
 // use CodeZero\LocalizedRoutes\Middleware\SetLocale;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Artisan;
 
 // use App\Http\Controllers\Admin\PageController;
 // use App\Http\Controllers\Admin\AlbumController;
-
 
 // Route xử lý cho admin
 
@@ -22,6 +21,7 @@ Route::namespace('Admin')->group(function () {
 
     Route::get('cc', function () {
         Artisan::call('optimize:clear');
+
         // return "Cache cleared successfully!";
         return redirect()->route('admin.dashboard');
     });
@@ -96,7 +96,7 @@ Route::namespace('Admin')->group(function () {
             // Route::get('', 'AlbumItemController@index')->name('albums.albumItem.index');
             Route::get('{id}', 'AlbumItemController@show')->name('albums.albumItem.show');
             Route::get('{id}/edit', 'AlbumItemController@edit')->name('admin.albumItem.edit');
-            Route::put('{post}', 'AlbumItemController@update')->name('admin.albumItem.update');
+            Route::put('{id}', 'AlbumItemController@update')->name('admin.albumItem.update');
             Route::delete('{id}', 'AlbumItemController@destroy')->name('admin.albumItem.destroy');
 
             // Other method
@@ -105,9 +105,9 @@ Route::namespace('Admin')->group(function () {
 
         Route::get('album-library', 'AlbumController@library')->name('admin.album.library');
 
-        Route::get('album/{ablum_id}/album_item/create', 'AlbumItemController@create')->name('admin.album.albumItem.create');
-        Route::post('album/{ablum_id}/album_item', 'AlbumItemController@store')->name('admin.album.albumItem.store');
-        Route::post('album/{ablum_id}/storeMultiple', 'AlbumItemController@storeMultiple')->name('admin.album.storeMultiple');
+        Route::get('album/{album_id}/album_item/create', 'AlbumItemController@create')->name('admin.album.albumItem.create');
+        Route::post('album/{album_id}/album_item', 'AlbumItemController@store')->name('admin.album.albumItem.store');
+        Route::post('album/{album_id}/storeMultiple', 'AlbumItemController@storeMultiple')->name('admin.album.storeMultiple');
 
         $admin_module = ['contact', 'email-template', 'album', 'page', 'post', 'product'];
         $modules_with_category = ['product'];
@@ -119,55 +119,53 @@ Route::namespace('Admin')->group(function () {
         foreach ($admin_module as $item) {
 
             // Module data
-            $prefix_controller = ucfirst(Str::camel($item)) . 'Controller'; // postController
+            $prefix_controller = ucfirst(Str::camel($item)).'Controller'; // postController
             // $prefix_name = 'admin.' . Str::camel($item); // admin.post
             // $prefix_name = 'admin.' . Str::snake($item, '-'); // admin.post
-            $prefix_name = 'admin.' . $item; // admin.post
+            $prefix_name = 'admin.'.$item; // admin.post
 
             // List / index
-            Route::get($item, $prefix_controller . '@index')->name($prefix_name . '.index');
+            Route::get($item, $prefix_controller.'@index')->name($prefix_name.'.index');
 
             // Create
-            Route::get($item . '/create', $prefix_controller . '@create')->name($prefix_name . '.create');
-            Route::post($item, $prefix_controller . '@store')->name($prefix_name . '.store');
+            Route::get($item.'/create', $prefix_controller.'@create')->name($prefix_name.'.create');
+            Route::post($item, $prefix_controller.'@store')->name($prefix_name.'.store');
 
             // Show
-            Route::get($item . '/{id}', $prefix_controller . '@show')->name($prefix_name . '.show');
+            Route::get($item.'/{id}', $prefix_controller.'@show')->name($prefix_name.'.show');
 
             // Edit
-            Route::get($item . '/{id}/edit', $prefix_controller . '@edit')->name($prefix_name . '.edit');
-            Route::put($item . '/{id}', $prefix_controller . '@update')->name($prefix_name . '.update');
+            Route::get($item.'/{id}/edit', $prefix_controller.'@edit')->name($prefix_name.'.edit');
+            Route::put($item.'/{id}', $prefix_controller.'@update')->name($prefix_name.'.update');
 
             // Delete
-            Route::delete($item . '/{id}', $prefix_controller . '@destroy')->name($prefix_name . '.destroy');
-
+            Route::delete($item.'/{id}', $prefix_controller.'@destroy')->name($prefix_name.'.destroy');
 
             // Module Category
             if (in_array($item, $modules_with_category)) {
-                $prefix_controller = ucfirst(Str::camel($item)) . 'CategoryController'; // postCategoryController
+                $prefix_controller = ucfirst(Str::camel($item)).'CategoryController'; // postCategoryController
                 // $prefix_category_name = 'admin.' . Str::camel($item) . 'Category'; // admin.product.category
-                $prefix_category_name = 'admin.' . $item . '-category'; // admin.product.category
-
+                $prefix_category_name = 'admin.'.$item.'-category'; // admin.product.category
 
                 // List / index
-                Route::get($item . '-category', $prefix_controller . '@index')->name($prefix_category_name . '.index');
+                Route::get($item.'-category', $prefix_controller.'@index')->name($prefix_category_name.'.index');
 
                 // Create
-                Route::get($item . '-category/create', $prefix_controller . '@create')->name($prefix_category_name . '.create');
-                Route::post($item . '-category', $prefix_controller . '@store')->name($prefix_category_name . '.store');
+                Route::get($item.'-category/create', $prefix_controller.'@create')->name($prefix_category_name.'.create');
+                Route::post($item.'-category', $prefix_controller.'@store')->name($prefix_category_name.'.store');
 
                 // Show
-                Route::get($item . '-category/{id}', $prefix_controller . '@show')->name($prefix_category_name . '.show');
+                Route::get($item.'-category/{id}', $prefix_controller.'@show')->name($prefix_category_name.'.show');
 
                 // Edit
-                Route::get($item . '-category/{id}/edit', $prefix_controller . '@edit')->name($prefix_category_name . '.edit');
-                Route::put($item . '-category/{id}', $prefix_controller . '@update')->name($prefix_category_name . '.update');
+                Route::get($item.'-category/{id}/edit', $prefix_controller.'@edit')->name($prefix_category_name.'.edit');
+                Route::put($item.'-category/{id}', $prefix_controller.'@update')->name($prefix_category_name.'.update');
 
                 // if ($item == 'post')
                 //     dd($prefix_controller, $item . '-category', $prefix_category_name . '.destroy');
 
                 // Delete
-                Route::delete($item . '-category/{id}', $prefix_controller . '@destroy')->name($prefix_category_name . '.destroy');
+                Route::delete($item.'-category/{id}', $prefix_controller.'@destroy')->name($prefix_category_name.'.destroy');
             }
 
             // // Product
@@ -205,7 +203,6 @@ Route::namespace('Admin')->group(function () {
             Route::post('delete', 'AdminMenuController@deleteList')->name('admin.admin-menu.destroy');
             Route::post('update_sort', 'AdminMenuController@updateSort')->name('admin.admin-menu.update_sort');
         });
-
 
         // Setting | Theme-option
         Route::group(['prefix' => 'theme-option'], function () {

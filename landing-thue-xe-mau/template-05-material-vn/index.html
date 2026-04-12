@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thuê Xe 24/7 — Mẫu Material Design 3</title>
+    <meta
+      name="description"
+      content="Landing page thuê xe kiểu Việt Nam theo Material Design 3 (Material Web): form đặt xe, Zalo/hotline, bảng giá."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" src="https://unpkg.com/@material/web/all.js?module"></script>
+    <style>
+      :root {
+        color-scheme: light;
+        --container: 1120px;
+        --bg: #f7f7fb;
+        --text: #0b1220;
+        --muted: rgba(11, 18, 32, 0.72);
+        --stroke: rgba(11, 18, 32, 0.1);
+        --shadow: 0 22px 60px rgba(2, 6, 23, 0.12);
+        --brand: #0d6efd;
+        --brand2: #22c55e;
+
+        --md-sys-color-primary: var(--brand);
+        --md-sys-color-secondary: var(--brand2);
+        --md-sys-color-surface: #ffffff;
+        --md-sys-color-surface-container: #ffffff;
+        --md-sys-color-on-surface: #0b1220;
+        --md-sys-color-outline: rgba(11, 18, 32, 0.24);
+        --md-sys-shape-corner-extra-small: 14px;
+        --md-sys-shape-corner-small: 16px;
+        --md-sys-shape-corner-medium: 18px;
+        --md-sys-shape-corner-large: 22px;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Be Vietnam Pro', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial;
+        color: var(--text);
+        background:
+          radial-gradient(900px 520px at 15% 0%, rgba(13, 110, 253, 0.16), transparent 60%),
+          radial-gradient(900px 520px at 90% 10%, rgba(34, 197, 94, 0.14), transparent 60%),
+          linear-gradient(180deg, #ffffff, var(--bg));
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .container {
+        max-width: var(--container);
+        margin: 0 auto;
+        padding: 0 18px;
+      }
+
+      .top {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.82);
+        border-bottom: 1px solid rgba(11, 18, 32, 0.08);
+      }
+
+      .top-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 0;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+      }
+
+      .mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
+        background:
+          radial-gradient(18px 18px at 25% 30%, rgba(255, 255, 255, 0.7), transparent 60%),
+          linear-gradient(135deg, var(--brand), var(--brand2));
+        box-shadow: 0 18px 44px rgba(13, 110, 253, 0.16);
+      }
+
+      .nav {
+        display: none;
+        gap: 14px;
+        font-weight: 800;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      @media (min-width: 900px) {
+        .nav {
+          display: flex;
+        }
+      }
+
+      .hero {
+        padding: 26px 0 18px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+        align-items: start;
+      }
+
+      @media (min-width: 980px) {
+        .grid {
+          grid-template-columns: 1.05fr 0.95fr;
+          gap: 20px;
+        }
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(13, 110, 253, 0.18);
+        background: rgba(13, 110, 253, 0.08);
+        color: rgba(13, 61, 152, 0.95);
+        font-weight: 900;
+        font-size: 12px;
+        width: fit-content;
+      }
+
+      h1 {
+        margin: 12px 0 10px;
+        font-size: clamp(28px, 4vw, 48px);
+        line-height: 1.06;
+        letter-spacing: -0.03em;
+      }
+
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        font-weight: 600;
+        line-height: 1.75;
+        max-width: 64ch;
+      }
+
+      .hero-media {
+        margin-top: 14px;
+        border-radius: 22px;
+        border: 1px solid rgba(11, 18, 32, 0.1);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        background: #ffffff;
+      }
+
+      .hero-media img {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+        display: block;
+      }
+
+      .hero-media .meta {
+        padding: 12px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .hero-media .meta b {
+        letter-spacing: -0.02em;
+      }
+
+      .hero-media .meta span {
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      .panel {
+        border-radius: 22px;
+        border: 1px solid rgba(11, 18, 32, 0.1);
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .panel-head {
+        padding: 14px 14px;
+        border-bottom: 1px solid rgba(11, 18, 32, 0.08);
+        background:
+          radial-gradient(420px 220px at 15% 0%, rgba(13, 110, 253, 0.12), transparent 60%),
+          radial-gradient(420px 220px at 85% 0%, rgba(34, 197, 94, 0.12), transparent 60%);
+      }
+
+      .panel-head strong {
+        display: block;
+        font-size: 14px;
+        letter-spacing: -0.02em;
+      }
+
+      .panel-head small {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .panel-body {
+        padding: 14px 14px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .fields {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      @media (min-width: 640px) {
+        .fields {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      md-outlined-text-field,
+      md-outlined-select {
+        width: 100%;
+      }
+
+      md-filled-button,
+      md-outlined-button,
+      md-text-button {
+        --md-filled-button-container-shape: 14px;
+        --md-outlined-button-container-shape: 14px;
+        --md-text-button-container-shape: 14px;
+      }
+
+      .row-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .price {
+        border-radius: 14px;
+        border: 1px solid rgba(11, 18, 32, 0.1);
+        background: rgba(11, 18, 32, 0.03);
+        padding: 10px 12px;
+        display: inline-flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+
+      .price strong {
+        font-weight: 900;
+        letter-spacing: -0.02em;
+      }
+
+      .price span {
+        color: var(--muted);
+        font-weight: 800;
+        font-size: 12px;
+      }
+
+      .section {
+        padding: 18px 0;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+
+      .section-head h2 {
+        margin: 0;
+        font-size: 18px;
+        letter-spacing: -0.02em;
+      }
+
+      .section-head p {
+        margin: 0;
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      @media (min-width: 860px) {
+        .cards {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      .card {
+        border-radius: 22px;
+        border: 1px solid rgba(11, 18, 32, 0.1);
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .card img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        display: block;
+      }
+
+      .card .body {
+        padding: 14px 14px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .card b {
+        letter-spacing: -0.02em;
+      }
+
+      .card span {
+        color: var(--muted);
+        font-weight: 700;
+        line-height: 1.7;
+      }
+
+      .sticky {
+        position: sticky;
+        bottom: 0;
+        z-index: 30;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(11, 18, 32, 0.08);
+      }
+
+      .sticky-inner {
+        padding: 10px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .sticky-inner small {
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto !important;
+          transition: none !important;
+          animation: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="container">
+        <div class="top-inner">
+          <a class="brand" href="#top">
+            <span class="mark" aria-hidden="true"></span>
+            <span>Thuê Xe 24/7</span>
+          </a>
+          <nav class="nav" aria-label="Điều hướng">
+            <a href="#dichvu">Dịch vụ</a>
+            <a href="#banggia">Bảng giá</a>
+            <a href="#datxe">Đặt xe</a>
+          </nav>
+          <div style="display: inline-flex; gap: 10px; align-items: center">
+            <md-outlined-button href="tel:0900000000">Hotline</md-outlined-button>
+            <md-filled-button id="zaloBtnTop">Zalo</md-filled-button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="container">
+          <div class="grid">
+            <div>
+              <div class="pill">Material Design 3 • UI hiện đại • Chuẩn nội dung thuê xe VN</div>
+              <h1>Thuê xe sân bay, nội thành, đi tỉnh — báo giá nhanh qua Zalo</h1>
+              <p class="lead">
+                Template này dùng Material Web (Material Design 3). Phù hợp demo cho khách lựa chọn
+                phong cách: bo góc, spacing thoáng, form “mượt” và CTA rõ ràng.
+              </p>
+
+              <div class="hero-media" aria-label="Hình ảnh xe">
+                <img
+                  src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1400&q=70"
+                  alt="Xe dịch vụ"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="meta">
+                  <b>Chốt nhanh</b>
+                  <span>Hotline + Zalo • Không phí ẩn</span>
+                </div>
+              </div>
+            </div>
+
+            <section class="panel" id="datxe" aria-label="Form đặt xe">
+              <div class="panel-head">
+                <strong>Nhận báo giá</strong>
+                <small>Nhập tuyến và thời gian để nhận chi phí tham khảo</small>
+              </div>
+              <div class="panel-body">
+                <div class="fields">
+                  <md-outlined-text-field id="pickup" label="Điểm đón" required></md-outlined-text-field>
+                  <md-outlined-text-field id="dropoff" label="Điểm trả" required></md-outlined-text-field>
+                  <md-outlined-text-field id="start" label="Ngày/giờ đón" type="datetime-local" required></md-outlined-text-field>
+                  <md-outlined-select id="carType" label="Loại xe" required>
+                    <md-select-option aria-label="blank"></md-select-option>
+                    <md-select-option selected value="4"><div slot="headline">4 chỗ</div></md-select-option>
+                    <md-select-option value="7"><div slot="headline">7 chỗ</div></md-select-option>
+                    <md-select-option value="16"><div slot="headline">16 chỗ</div></md-select-option>
+                    <md-select-option value="vip"><div slot="headline">VIP</div></md-select-option>
+                  </md-outlined-select>
+                </div>
+
+                <div class="row-actions">
+                  <div class="price" aria-live="polite">
+                    <strong id="price">—</strong>
+                    <span>tham khảo</span>
+                  </div>
+                  <div style="display: inline-flex; gap: 10px; align-items: center; flex-wrap: wrap">
+                    <md-outlined-button href="tel:0900000000">Gọi ngay</md-outlined-button>
+                    <md-filled-button id="submitBtn">Gửi qua Zalo</md-filled-button>
+                  </div>
+                </div>
+
+                <div style="color: var(--muted); font-weight: 700; line-height: 1.7; font-size: 13px">
+                  Đây là mẫu UI. Khi tích hợp thật, nút “Gửi” có thể gọi API/CRM thay vì mở Zalo.
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="dichvu">
+        <div class="container">
+          <div class="section-head">
+            <h2>Dịch vụ phổ biến</h2>
+            <p>Tập trung nhu cầu thực tế</p>
+          </div>
+          <div class="cards">
+            <article class="card">
+              <img
+                src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=70"
+                alt="Đưa đón sân bay"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="body">
+                <b>Đưa đón sân bay</b>
+                <span>Theo dõi chuyến bay, đón đúng cửa, hỗ trợ hành lý.</span>
+                <md-filled-button class="pick" data-dropoff="Sân bay Tân Sơn Nhất">Đặt sân bay</md-filled-button>
+              </div>
+            </article>
+            <article class="card">
+              <img
+                src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=1200&q=70"
+                alt="Đi tỉnh"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="body">
+                <b>Đi tỉnh / 1 chiều</b>
+                <span>Đi Vũng Tàu, Đà Lạt, Miền Tây… báo giá rõ theo tuyến.</span>
+                <md-filled-button class="pick" data-dropoff="Đà Lạt">Đặt đi tỉnh</md-filled-button>
+              </div>
+            </article>
+            <article class="card">
+              <img
+                src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=1200&q=70"
+                alt="Thuê theo giờ"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="body">
+                <b>Thuê theo giờ</b>
+                <span>Công tác, gặp đối tác, chờ đợi linh hoạt, có VAT theo yêu cầu.</span>
+                <md-filled-button class="pick" data-dropoff="Q.1, TP.HCM">Đặt theo giờ</md-filled-button>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="banggia">
+        <div class="container">
+          <div class="section-head">
+            <h2>Bảng giá tham khảo</h2>
+            <p>Giá thực tế phụ thuộc tuyến/khung giờ</p>
+          </div>
+          <div class="cards">
+            <article class="card">
+              <img
+                src="https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=1200&q=70"
+                alt="Xe 4 chỗ"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="body">
+                <b>4 chỗ</b>
+                <span>Từ 290.000đ/chuyến nội thành (tham khảo).</span>
+              </div>
+            </article>
+            <article class="card">
+              <img
+                src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=70"
+                alt="Xe 7 chỗ"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="body">
+                <b>7 chỗ</b>
+                <span>Từ 390.000đ/chuyến nội thành (tham khảo).</span>
+              </div>
+            </article>
+            <article class="card">
+              <img
+                src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1200&q=70"
+                alt="Xe VIP"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="body">
+                <b>VIP</b>
+                <span>Từ 890.000đ/chuyến (tham khảo).</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section class="sticky" aria-label="Thanh CTA">
+      <div class="container">
+        <div class="sticky-inner">
+          <div>
+            <b style="letter-spacing: -0.02em">Cần xe gấp?</b>
+            <small>Gọi hotline hoặc nhắn Zalo để chốt xe nhanh</small>
+          </div>
+          <div style="display: inline-flex; gap: 10px; align-items: center">
+            <md-outlined-button href="tel:0900000000">Gọi ngay</md-outlined-button>
+            <md-filled-button id="zaloBtnBottom">Zalo</md-filled-button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script type="module">
+      const formatVnd = (value) =>
+        new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+
+      const basePriceByType = {
+        4: 290000,
+        7: 390000,
+        16: 650000,
+        vip: 890000,
+      };
+
+      const getHourSurcharge = (date) => {
+        const hour = date.getHours();
+        if (hour >= 22 || hour < 6) {
+          return 1.15;
+        }
+        if (hour >= 6 && hour < 9) {
+          return 1.08;
+        }
+        if (hour >= 16 && hour < 19) {
+          return 1.08;
+        }
+        return 1;
+      };
+
+      const pickup = document.getElementById('pickup');
+      const dropoff = document.getElementById('dropoff');
+      const start = document.getElementById('start');
+      const carType = document.getElementById('carType');
+      const priceEl = document.getElementById('price');
+
+      const updatePrice = () => {
+        const type = carType.value || '4';
+        const base = basePriceByType[type] ?? 0;
+        const dateValue = start.value ? new Date(start.value) : null;
+        const multiplier = dateValue ? getHourSurcharge(dateValue) : 1;
+        const estimate = Math.round((base * multiplier) / 1000) * 1000;
+        priceEl.textContent = base ? formatVnd(estimate) : '—';
+      };
+
+      pickup.addEventListener('input', updatePrice);
+      dropoff.addEventListener('input', updatePrice);
+      start.addEventListener('input', updatePrice);
+      carType.addEventListener('change', updatePrice);
+      updatePrice();
+
+      const openZalo = (message) => {
+        const text = encodeURIComponent(message);
+        window.open(`https://zalo.me/0900000000?text=${text}`, '_blank', 'noopener,noreferrer');
+      };
+
+      document.getElementById('zaloBtnTop').addEventListener('click', () =>
+        openZalo('Mình cần thuê xe, nhờ tư vấn giúp.')
+      );
+      document.getElementById('zaloBtnBottom').addEventListener('click', () =>
+        openZalo('Mình cần thuê xe, nhờ tư vấn giúp.')
+      );
+
+      document.getElementById('submitBtn').addEventListener('click', () => {
+        const p = (pickup.value || '').trim() || 'Chưa nhập';
+        const d = (dropoff.value || '').trim() || 'Chưa nhập';
+        const t = start.value || '';
+        const type = carType.value || '4';
+        openZalo(`Yêu cầu thuê xe%0A- Điểm đón: ${p}%0A- Điểm trả: ${d}%0A- Thời gian: ${t}%0A- Loại xe: ${type}`);
+      });
+
+      const preset = (to) => {
+        pickup.value = 'TP.HCM';
+        dropoff.value = to;
+        updatePrice();
+        document.getElementById('datxe').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+
+      const pickButtons = Array.from(document.querySelectorAll('.pick'));
+      for (const btn of pickButtons) {
+        btn.addEventListener('click', () => preset(btn.dataset.dropoff));
+      }
+    </script>
+  </body>
+</html>

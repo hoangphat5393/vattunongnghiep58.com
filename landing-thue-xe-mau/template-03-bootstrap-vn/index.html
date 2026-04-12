@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thuê Xe Doanh Nghiệp — Mẫu Bootstrap</title>
+    <meta
+      name="description"
+      content="Landing page mẫu thuê xe cho doanh nghiệp: tuyến cố định, đưa đón nhân sự, VAT, hợp đồng, SLA."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --brand: #ff7a00;
+      }
+
+      body {
+        font-family: 'Be Vietnam Pro', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial;
+        background: #0b0f17;
+        color: rgba(255, 255, 255, 0.92);
+      }
+
+      .hero {
+        background:
+          radial-gradient(900px 420px at 15% 10%, rgba(255, 122, 0, 0.3), transparent 60%),
+          radial-gradient(900px 420px at 85% 5%, rgba(13, 110, 253, 0.22), transparent 60%),
+          linear-gradient(180deg, #070a10, #0b0f17);
+      }
+
+      .surface {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+      }
+
+      .btn-brand {
+        --bs-btn-bg: var(--brand);
+        --bs-btn-border-color: var(--brand);
+        --bs-btn-hover-bg: #e56d00;
+        --bs-btn-hover-border-color: #e56d00;
+        --bs-btn-active-bg: #cf6100;
+        --bs-btn-active-border-color: #cf6100;
+        --bs-btn-color: #111827;
+      }
+
+      .text-muted2 {
+        color: rgba(255, 255, 255, 0.72) !important;
+      }
+
+      .sticky-cta {
+        position: sticky;
+        bottom: 0;
+        z-index: 1030;
+        background: rgba(11, 15, 23, 0.86);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg surface sticky-top">
+      <div class="container py-2">
+        <a class="navbar-brand fw-black d-flex align-items-center gap-2 text-white" href="#top">
+          <span
+            class="d-inline-flex align-items-center justify-content-center rounded-3"
+            style="width: 38px; height: 38px; background: var(--brand); color: #0b0f17"
+            aria-hidden="true"
+            >CR</span
+          >
+          <span>CorpRide</span>
+        </a>
+        <button
+          class="navbar-toggler bg-light"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#nav"
+          aria-controls="nav"
+          aria-expanded="false"
+          aria-label="Mở menu"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="nav">
+          <ul class="navbar-nav ms-auto fw-semibold">
+            <li class="nav-item">
+              <a class="nav-link text-white-50" href="#goi">Gói dịch vụ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white-50" href="#khach">Khách hàng</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white-50" href="#lienhe">Liên hệ</a>
+            </li>
+          </ul>
+          <div class="d-flex gap-2 ms-lg-3 mt-3 mt-lg-0">
+            <a class="btn btn-outline-light fw-bold" href="tel:0900000000">
+              <i class="bi bi-telephone-fill me-1"></i> Hotline
+            </a>
+            <button class="btn btn-brand fw-black" type="button" data-bs-toggle="modal" data-bs-target="#callbackModal">
+              Yêu cầu gọi lại
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero py-4 py-lg-5" id="top">
+      <div class="container">
+        <div class="row g-4 align-items-start">
+          <div class="col-lg-7">
+            <div
+              class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill surface fw-bold text-muted2"
+            >
+              <i class="bi bi-building-check"></i>
+              <span>Hợp đồng • VAT • SLA • Tuyến cố định</span>
+            </div>
+            <h1 class="mt-3 fw-black display-6 text-white">
+              Thuê xe cho doanh nghiệp: quản trị chi phí rõ ràng, vận hành ổn định
+            </h1>
+            <p class="mt-2 text-muted2 fw-semibold">
+              Phù hợp đưa đón nhân sự, khách VIP, công tác liên tỉnh. Có đối soát theo kỳ, báo cáo theo
+              chuyến, hỗ trợ 24/7.
+            </p>
+
+            <img
+              class="img-fluid rounded-4 border border-secondary mt-3"
+              src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1400&q=70"
+              alt="Dịch vụ thuê xe cho doanh nghiệp"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="d-flex flex-wrap gap-2 mt-3">
+              <a class="btn btn-brand btn-lg fw-black" href="#lienhe">Nhận báo giá</a>
+              <a class="btn btn-outline-light btn-lg fw-black" href="#goi">Xem gói</a>
+            </div>
+
+            <div class="row g-2 mt-3">
+              <div class="col-6 col-md-4">
+                <div class="surface rounded-4 p-3 h-100">
+                  <div class="fw-black text-white">SLA 15 phút</div>
+                  <div class="small text-muted2 fw-semibold">Xử lý đổi xe/phát sinh</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="surface rounded-4 p-3 h-100">
+                  <div class="fw-black text-white">VAT đầy đủ</div>
+                  <div class="small text-muted2 fw-semibold">HĐ, biên bản, đối soát</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="surface rounded-4 p-3 h-100">
+                  <div class="fw-black text-white">Báo cáo</div>
+                  <div class="small text-muted2 fw-semibold">Theo tuyến/tháng</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-5" id="lienhe">
+            <div class="surface rounded-4 p-4">
+              <div class="d-flex align-items-start justify-content-between gap-3">
+                <div>
+                  <h2 class="h5 mb-1 fw-black text-white">Nhận báo giá nhanh</h2>
+                  <div class="text-muted2 fw-semibold small">Gửi thông tin cơ bản để tư vấn</div>
+                </div>
+                <span class="badge rounded-pill text-bg-warning fw-black">Ưu đãi hợp đồng</span>
+              </div>
+
+              <img
+                class="img-fluid rounded-4 border border-secondary mt-3"
+                src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=70"
+                alt="Xe dịch vụ đưa đón"
+                loading="lazy"
+                decoding="async"
+              />
+
+              <form class="mt-3" id="corpForm">
+                <div class="row g-2">
+                  <div class="col-12">
+                    <label class="form-label fw-bold text-muted2" for="company">Công ty</label>
+                    <input class="form-control bg-transparent text-white border-secondary" id="company" name="company" required />
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label fw-bold text-muted2" for="phone">Số điện thoại</label>
+                    <input
+                      class="form-control bg-transparent text-white border-secondary"
+                      id="phone"
+                      name="phone"
+                      inputmode="tel"
+                      required
+                    />
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label fw-bold text-muted2" for="package">Gói dịch vụ</label>
+                    <select class="form-select bg-transparent text-white border-secondary" id="package" name="package" required>
+                      <option value="fixed">Tuyến cố định (tháng)</option>
+                      <option value="hourly">Thuê theo giờ/ngày</option>
+                      <option value="vip">Đưa đón VIP</option>
+                    </select>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="form-label fw-bold text-muted2" for="cars">Số xe dự kiến</label>
+                    <select class="form-select bg-transparent text-white border-secondary" id="cars" name="cars" required>
+                      <option value="1">1 xe</option>
+                      <option value="2">2 xe</option>
+                      <option value="3">3 xe</option>
+                      <option value="5">5+ xe</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <div class="text-muted2 small fw-semibold" id="hint" aria-live="polite"></div>
+                  </div>
+                  <div class="col-12">
+                    <div class="d-flex justify-content-end gap-2 flex-wrap">
+                      <button class="btn btn-outline-light fw-black" type="button" data-bs-toggle="modal" data-bs-target="#callbackModal">
+                        Gọi lại
+                      </button>
+                      <button class="btn btn-brand fw-black" type="submit">
+                        Gửi yêu cầu <i class="bi bi-send-fill ms-1"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+
+              <div class="mt-3 small text-muted2 fw-semibold">
+                Đây là mẫu UI. Khi tích hợp thật, form sẽ gửi về CRM/Backend để chốt tuyến và điều khoản.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="py-4" id="goi">
+      <div class="container">
+        <div class="d-flex align-items-baseline justify-content-between gap-2 flex-wrap">
+          <h2 class="h5 fw-black mb-0 text-white">Gói dịch vụ</h2>
+          <div class="text-muted2 small fw-semibold">Chốt nhanh theo nhu cầu vận hành</div>
+        </div>
+        <div class="row g-3 mt-1">
+          <div class="col-md-4">
+            <div class="surface rounded-4 p-4 h-100">
+              <img
+                class="img-fluid rounded-3 mb-3"
+                src="https://images.unsplash.com/photo-1493238792000-8113da705763?auto=format&fit=crop&w=1200&q=70"
+                alt="Tuyến cố định đưa đón"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-arrow-repeat fs-4" style="color: var(--brand)"></i>
+                <div class="fw-black text-white">Tuyến cố định (tháng)</div>
+              </div>
+              <div class="mt-2 text-muted2 fw-semibold">
+                Chốt tuyến + giờ + số xe. Đối soát theo kỳ, báo cáo theo chuyến.
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="surface rounded-4 p-4 h-100">
+              <img
+                class="img-fluid rounded-3 mb-3"
+                src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=1200&q=70"
+                alt="Thuê xe theo giờ cho công tác"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-clock-history fs-4 text-primary"></i>
+                <div class="fw-black text-white">Thuê theo giờ/ngày</div>
+              </div>
+              <div class="mt-2 text-muted2 fw-semibold">
+                Linh hoạt theo lịch công tác, có phương án thay thế khi phát sinh.
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="surface rounded-4 p-4 h-100">
+              <img
+                class="img-fluid rounded-3 mb-3"
+                src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=1200&q=70"
+                alt="Đưa đón VIP"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-star-fill fs-4 text-warning"></i>
+                <div class="fw-black text-white">Đưa đón VIP</div>
+              </div>
+              <div class="mt-2 text-muted2 fw-semibold">
+                Xe cao cấp, tài xế chuẩn tác phong, theo dõi chuyến bay.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-4" id="khach">
+      <div class="container">
+        <div class="d-flex align-items-baseline justify-content-between gap-2 flex-wrap">
+          <h2 class="h5 fw-black mb-0 text-white">Khách hàng nói gì</h2>
+          <div class="text-muted2 small fw-semibold">Carousel Bootstrap</div>
+        </div>
+
+        <div id="carousel" class="carousel slide mt-2" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <div class="surface rounded-4 p-4">
+                <div class="fw-semibold" style="line-height: 1.8">
+                  “Đối soát rõ ràng theo tháng, xe đến đúng giờ, xử lý phát sinh nhanh.”
+                </div>
+                <div class="mt-3 d-flex align-items-center justify-content-between">
+                  <div class="text-muted2 fw-bold">HR • Công ty A</div>
+                  <div class="text-warning fw-black"><i class="bi bi-star-fill me-1"></i>4.9</div>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <div class="surface rounded-4 p-4">
+                <div class="fw-semibold" style="line-height: 1.8">
+                  “Tuyến sân bay có thay đổi, bên dịch vụ chủ động điều xe. Có VAT đầy đủ.”
+                </div>
+                <div class="mt-3 d-flex align-items-center justify-content-between">
+                  <div class="text-muted2 fw-bold">Admin • Công ty B</div>
+                  <div class="text-warning fw-black"><i class="bi bi-star-fill me-1"></i>5.0</div>
+                </div>
+              </div>
+            </div>
+            <div class="carousel-item">
+              <div class="surface rounded-4 p-4">
+                <div class="fw-semibold" style="line-height: 1.8">
+                  “Xe sạch, tài xế lịch sự. Gói tuyến cố định giúp kiểm soát chi phí rất tốt.”
+                </div>
+                <div class="mt-3 d-flex align-items-center justify-content-between">
+                  <div class="text-muted2 fw-bold">Ops • Công ty C</div>
+                  <div class="text-warning fw-black"><i class="bi bi-star-fill me-1"></i>4.8</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Trước</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Sau</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div class="sticky-cta">
+      <div class="container py-2">
+        <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+          <div class="fw-semibold">
+            <div class="fw-black text-white">Cần báo giá hợp đồng?</div>
+            <div class="small text-muted2">Nhấn “Yêu cầu gọi lại” để tư vấn viên liên hệ</div>
+          </div>
+          <div class="d-flex gap-2">
+            <a class="btn btn-outline-light fw-black" href="tel:0900000000">
+              <i class="bi bi-telephone-fill me-1"></i> Gọi
+            </a>
+            <button class="btn btn-brand fw-black" type="button" data-bs-toggle="modal" data-bs-target="#callbackModal">
+              Yêu cầu gọi lại
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="callbackModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border border-secondary">
+          <div class="modal-header border-secondary">
+            <h2 class="modal-title h6 fw-black">Yêu cầu gọi lại</h2>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+          </div>
+          <div class="modal-body">
+            <form id="callbackForm">
+              <div class="row g-2">
+                <div class="col-12">
+                  <label class="form-label fw-bold text-muted2" for="cbName">Họ tên</label>
+                  <input class="form-control bg-transparent text-white border-secondary" id="cbName" required />
+                </div>
+                <div class="col-12">
+                  <label class="form-label fw-bold text-muted2" for="cbPhone">Số điện thoại</label>
+                  <input class="form-control bg-transparent text-white border-secondary" id="cbPhone" inputmode="tel" required />
+                </div>
+                <div class="col-12">
+                  <label class="form-label fw-bold text-muted2" for="cbNote">Nhu cầu</label>
+                  <input class="form-control bg-transparent text-white border-secondary" id="cbNote" required />
+                </div>
+                <div class="col-12 d-flex justify-content-end gap-2 flex-wrap">
+                  <button type="button" class="btn btn-outline-light fw-black" data-bs-dismiss="modal">Hủy</button>
+                  <button type="submit" class="btn btn-brand fw-black">Gửi</button>
+                </div>
+              </div>
+            </form>
+            <div class="mt-3 small text-muted2 fw-semibold">
+              Mẫu UI. Khi tích hợp thật, form sẽ đẩy vào CRM hoặc gửi email cho sales.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+      <div
+        id="toastOk"
+        class="toast align-items-center text-bg-dark border-0"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div class="toast-body fw-semibold" id="toastText">Đã ghi nhận yêu cầu.</div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Đóng"></button>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const form = document.getElementById('corpForm');
+      const hint = document.getElementById('hint');
+      const pkg = document.getElementById('package');
+      const cars = document.getElementById('cars');
+
+      const updateHint = () => {
+        const p = pkg.value;
+        const c = cars.value;
+        const lines = {
+          fixed: `Gợi ý: chuẩn bị tuyến/giờ cố định và số xe (${c}) để chốt báo giá theo tháng.`,
+          hourly: `Gợi ý: cho biết lịch công tác và nhu cầu xe (${c}) để tối ưu chi phí.`,
+          vip: `Gợi ý: cho biết khung giờ, điểm đón/trả, yêu cầu VIP và số xe (${c}).`,
+        };
+        hint.textContent = lines[p] ?? '';
+      };
+
+      pkg.addEventListener('change', updateHint);
+      cars.addEventListener('change', updateHint);
+      updateHint();
+
+      const toast = bootstrap.Toast.getOrCreateInstance(document.getElementById('toastOk'), {
+        delay: 2800,
+      });
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        document.getElementById('toastText').textContent = 'Đã ghi nhận yêu cầu. Sales sẽ liên hệ.';
+        toast.show();
+        form.reset();
+        updateHint();
+      });
+
+      const callbackForm = document.getElementById('callbackForm');
+      callbackForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        document.getElementById('toastText').textContent = `Đã gửi (mẫu). Sẽ gọi: ${document.getElementById('cbPhone').value}`;
+        toast.show();
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('callbackModal')).hide();
+        callbackForm.reset();
+      });
+    </script>
+  </body>
+</html>

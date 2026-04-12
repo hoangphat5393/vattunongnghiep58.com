@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thuê Xe Sân Bay & Nội Thành — Mẫu Bootstrap</title>
+    <meta
+      name="description"
+      content="Landing page mẫu thuê xe chuẩn thị trường Việt Nam: hotline/Zalo, đặt nhanh, báo giá tham khảo."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --brand: #d11f2a;
+        --brand2: #0d6efd;
+      }
+
+      body {
+        font-family: 'Be Vietnam Pro', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial;
+        background: #f7f7fb;
+      }
+
+      .hero {
+        background:
+          radial-gradient(900px 420px at 15% 10%, rgba(209, 31, 42, 0.18), transparent 60%),
+          radial-gradient(900px 420px at 85% 5%, rgba(13, 110, 253, 0.18), transparent 60%),
+          linear-gradient(180deg, #ffffff, #f7f7fb);
+      }
+
+      .brand-pill {
+        background: rgba(209, 31, 42, 0.08);
+        border: 1px solid rgba(209, 31, 42, 0.18);
+        color: #8b0f16;
+      }
+
+      .card-soft {
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        box-shadow: 0 18px 50px rgba(2, 6, 23, 0.08);
+      }
+
+      .btn-brand {
+        --bs-btn-bg: var(--brand);
+        --bs-btn-border-color: var(--brand);
+        --bs-btn-hover-bg: #b81620;
+        --bs-btn-hover-border-color: #b81620;
+        --bs-btn-active-bg: #a1141c;
+        --bs-btn-active-border-color: #a1141c;
+        --bs-btn-color: #fff;
+      }
+
+      .badge-zalo {
+        background: rgba(13, 110, 253, 0.1);
+        color: #0b4db8;
+        border: 1px solid rgba(13, 110, 253, 0.16);
+      }
+
+      .sticky-cta {
+        position: sticky;
+        bottom: 0;
+        z-index: 1030;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(15, 23, 42, 0.08);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+      <div class="container py-2">
+        <a class="navbar-brand fw-black d-flex align-items-center gap-2" href="#top">
+          <span
+            class="d-inline-flex align-items-center justify-content-center rounded-3 text-white"
+            style="width: 38px; height: 38px; background: var(--brand)"
+            aria-hidden="true"
+            >RC</span
+          >
+          <span>Thuê Xe 24/7</span>
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#nav"
+          aria-controls="nav"
+          aria-expanded="false"
+          aria-label="Mở menu"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="nav">
+          <ul class="navbar-nav ms-auto fw-semibold">
+            <li class="nav-item">
+              <a class="nav-link" href="#dichvu">Dịch vụ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#banggia">Bảng giá</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#faq">FAQ</a>
+            </li>
+          </ul>
+          <div class="d-flex gap-2 ms-lg-3 mt-3 mt-lg-0">
+            <a class="btn btn-outline-primary fw-bold" href="tel:0900000000">
+              <i class="bi bi-telephone-fill me-1"></i> Hotline
+            </a>
+            <a class="btn btn-brand fw-bold" href="#datxe">
+              <i class="bi bi-lightning-charge-fill me-1"></i> Đặt xe ngay
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero py-4 py-lg-5" id="top">
+      <div class="container">
+        <div class="row g-4 align-items-start">
+          <div class="col-lg-7">
+            <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill brand-pill fw-bold">
+              <i class="bi bi-shield-check"></i>
+              <span>Xe đời mới • Tài xế lịch sự • Không phí ẩn</span>
+            </div>
+            <h1 class="mt-3 fw-black display-6">
+              Thuê xe sân bay, nội thành, đi tỉnh — báo giá nhanh trong vài phút
+            </h1>
+            <p class="mt-2 text-secondary fw-semibold">
+              Tối ưu cho khách Việt: có hotline + Zalo, form gọn, nội dung rõ ràng. Nhập điểm đón/trả
+              và thời gian để nhận chi phí tham khảo.
+            </p>
+            <div class="d-flex flex-wrap gap-2 mt-3">
+              <a class="btn btn-brand btn-lg fw-black" href="#datxe">
+                Nhận báo giá <i class="bi bi-arrow-right-short ms-1"></i>
+              </a>
+              <a class="btn btn-outline-dark btn-lg fw-black" href="#banggia">Xem bảng giá</a>
+              <a class="btn btn-outline-primary btn-lg fw-black" href="#" id="zaloLink">
+                <span class="badge badge-zalo rounded-pill me-1">Zalo</span>
+                Nhắn Zalo
+              </a>
+            </div>
+
+            <div class="row g-2 mt-3">
+              <div class="col-6 col-md-3">
+                <div class="bg-white rounded-4 p-3 border">
+                  <div class="fw-black">4.9/5</div>
+                  <div class="small text-secondary fw-semibold">Đánh giá</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="bg-white rounded-4 p-3 border">
+                  <div class="fw-black">15–30p</div>
+                  <div class="small text-secondary fw-semibold">Xác nhận</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="bg-white rounded-4 p-3 border">
+                  <div class="fw-black">24/7</div>
+                  <div class="small text-secondary fw-semibold">Hỗ trợ</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="bg-white rounded-4 p-3 border">
+                  <div class="fw-black">VAT</div>
+                  <div class="small text-secondary fw-semibold">Theo yêu cầu</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-5" id="datxe">
+            <div class="card card-soft rounded-4">
+              <div class="card-body p-4">
+                <div class="d-flex align-items-start justify-content-between gap-3">
+                  <div>
+                    <h2 class="h5 mb-1 fw-black">Nhận báo giá</h2>
+                    <div class="text-secondary fw-semibold small">Gửi thông tin cơ bản để tư vấn nhanh</div>
+                  </div>
+                  <span class="badge rounded-pill text-bg-warning fw-black">Giảm 10% (khách mới)</span>
+                </div>
+
+                <img
+                  class="img-fluid rounded-4 border mt-3"
+                  src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=70"
+                  alt="Xe sạch, nội thất rộng rãi"
+                  loading="lazy"
+                  decoding="async"
+                />
+
+                <form class="mt-3" id="quoteForm">
+                  <div class="row g-2">
+                    <div class="col-12">
+                      <label class="form-label fw-bold" for="pickup">Điểm đón</label>
+                      <input class="form-control" id="pickup" name="pickup" placeholder="VD: Q.1, TP.HCM" required />
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label fw-bold" for="dropoff">Điểm trả</label>
+                      <input
+                        class="form-control"
+                        id="dropoff"
+                        name="dropoff"
+                        placeholder="VD: Sân bay Tân Sơn Nhất"
+                        required
+                      />
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label fw-bold" for="start">Ngày/giờ đón</label>
+                      <input class="form-control" id="start" name="start" type="datetime-local" required />
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label fw-bold" for="carType">Loại xe</label>
+                      <select class="form-select" id="carType" name="carType" required>
+                        <option value="4">4 chỗ</option>
+                        <option value="7">7 chỗ</option>
+                        <option value="16">16 chỗ</option>
+                        <option value="vip">VIP</option>
+                      </select>
+                    </div>
+                    <div class="col-12">
+                      <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+                        <div class="bg-light border rounded-3 px-3 py-2">
+                          <div class="small text-secondary fw-semibold">Chi phí tham khảo</div>
+                          <div class="fw-black" id="price">—</div>
+                        </div>
+                        <button class="btn btn-brand fw-black" type="submit">
+                          Gửi yêu cầu <i class="bi bi-send-fill ms-1"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+
+                <div class="mt-3 small text-secondary fw-semibold">
+                  Bằng việc gửi yêu cầu, bạn đồng ý để tư vấn viên liên hệ qua điện thoại/Zalo.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="py-4" id="dichvu">
+      <div class="container">
+        <div class="d-flex align-items-baseline justify-content-between gap-2 flex-wrap">
+          <h2 class="h5 fw-black mb-0">Dịch vụ phổ biến</h2>
+          <div class="text-secondary small fw-semibold">Phù hợp hành vi tìm kiếm ở Việt Nam</div>
+        </div>
+        <div class="row g-3 mt-1">
+          <div class="col-md-4">
+            <div class="bg-white border rounded-4 p-4 h-100">
+              <img
+                class="img-fluid rounded-3 mb-3"
+                src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=70"
+                alt="Đưa đón sân bay"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-airplane-engines fs-4 text-primary"></i>
+                <div class="fw-black">Đưa đón sân bay</div>
+              </div>
+              <div class="mt-2 text-secondary fw-semibold">
+                Theo dõi chuyến bay, đón đúng giờ, hỗ trợ hành lý.
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="bg-white border rounded-4 p-4 h-100">
+              <img
+                class="img-fluid rounded-3 mb-3"
+                src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=70"
+                alt="Thuê xe đi tỉnh"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-geo-alt fs-4 text-danger"></i>
+                <div class="fw-black">Đi tỉnh / 1 chiều</div>
+              </div>
+              <div class="mt-2 text-secondary fw-semibold">
+                Đi Vũng Tàu, Đà Lạt, Miền Tây… giá rõ theo tuyến.
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="bg-white border rounded-4 p-4 h-100">
+              <img
+                class="img-fluid rounded-3 mb-3"
+                src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=1200&q=70"
+                alt="Thuê xe theo giờ"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-briefcase fs-4 text-dark"></i>
+                <div class="fw-black">Thuê theo giờ</div>
+              </div>
+              <div class="mt-2 text-secondary fw-semibold">
+                Công tác, gặp đối tác, chờ đợi linh hoạt, có hóa đơn.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-4" id="banggia">
+      <div class="container">
+        <div class="d-flex align-items-baseline justify-content-between gap-2 flex-wrap">
+          <h2 class="h5 fw-black mb-0">Bảng giá tham khảo</h2>
+          <div class="text-secondary small fw-semibold">Giá thực tế phụ thuộc tuyến/khung giờ</div>
+        </div>
+        <div class="row g-3 mt-1">
+          <div class="col-md-4">
+            <div class="bg-white border rounded-4 p-4 h-100">
+              <img
+                class="img-fluid rounded-3 mb-3"
+                src="https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=1200&q=70"
+                alt="Xe 4 chỗ"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="fw-black">4 chỗ</div>
+                <span class="badge text-bg-light border fw-black">Sedan</span>
+              </div>
+              <div class="mt-2">
+                <div class="fw-black fs-4">290.000đ</div>
+                <div class="text-secondary fw-semibold">Nội thành (từ)</div>
+              </div>
+              <div class="mt-3 small text-secondary fw-semibold">
+                Bao gồm tài xế • Chưa gồm phí cầu đường/bến bãi (nếu có)
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="bg-white border rounded-4 p-4 h-100">
+              <img
+                class="img-fluid rounded-3 mb-3"
+                src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=70"
+                alt="Xe 7 chỗ"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="fw-black">7 chỗ</div>
+                <span class="badge text-bg-light border fw-black">SUV/MPV</span>
+              </div>
+              <div class="mt-2">
+                <div class="fw-black fs-4">390.000đ</div>
+                <div class="text-secondary fw-semibold">Nội thành (từ)</div>
+              </div>
+              <div class="mt-3 small text-secondary fw-semibold">Phù hợp gia đình • cốp rộng</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="bg-white border rounded-4 p-4 h-100">
+              <img
+                class="img-fluid rounded-3 mb-3"
+                src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1200&q=70"
+                alt="Xe VIP"
+                loading="lazy"
+                decoding="async"
+              />
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="fw-black">VIP</div>
+                <span class="badge text-bg-warning fw-black">Xe sang</span>
+              </div>
+              <div class="mt-2">
+                <div class="fw-black fs-4">890.000đ</div>
+                <div class="text-secondary fw-semibold">Theo chuyến (từ)</div>
+              </div>
+              <div class="mt-3 small text-secondary fw-semibold">
+                Tài xế chuẩn tác phong • ưu tiên trải nghiệm
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-4" id="faq">
+      <div class="container">
+        <div class="d-flex align-items-baseline justify-content-between gap-2 flex-wrap">
+          <h2 class="h5 fw-black mb-0">Câu hỏi thường gặp</h2>
+          <div class="text-secondary small fw-semibold">Giải đáp nhanh trước khi đặt</div>
+        </div>
+
+        <div class="accordion mt-2" id="faqAcc">
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q1">
+                Giá có phí ẩn không?
+              </button>
+            </h3>
+            <div id="q1" class="accordion-collapse collapse show" data-bs-parent="#faqAcc">
+              <div class="accordion-body text-secondary fw-semibold">
+                Không. Bên tư vấn sẽ báo rõ chi phí theo tuyến + phí phát sinh (nếu có) như cầu đường, bến bãi.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q2">
+                Có xuất hóa đơn VAT không?
+              </button>
+            </h3>
+            <div id="q2" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+              <div class="accordion-body text-secondary fw-semibold">
+                Có thể xuất VAT theo yêu cầu (tùy gói). Vui lòng ghi chú trong yêu cầu để được tư vấn.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#q3">
+                Đặt qua Zalo như thế nào?
+              </button>
+            </h3>
+            <div id="q3" class="accordion-collapse collapse" data-bs-parent="#faqAcc">
+              <div class="accordion-body text-secondary fw-semibold">
+                Nhấn nút “Nhắn Zalo”, hệ thống sẽ mở liên kết Zalo kèm nội dung mẫu. Tư vấn viên xác nhận lại tuyến và giờ.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="sticky-cta">
+      <div class="container py-2">
+        <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+          <div class="fw-semibold">
+            <div class="fw-black">Cần xe gấp?</div>
+            <div class="small text-secondary">Gọi hotline hoặc nhắn Zalo để chốt xe nhanh</div>
+          </div>
+          <div class="d-flex gap-2">
+            <a class="btn btn-outline-primary fw-black" href="tel:0900000000">
+              <i class="bi bi-telephone-fill me-1"></i> Gọi ngay
+            </a>
+            <a class="btn btn-brand fw-black" href="#datxe">
+              <i class="bi bi-lightning-charge-fill me-1"></i> Đặt xe
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
+      <div
+        id="toastOk"
+        class="toast align-items-center text-bg-dark border-0"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <div class="d-flex">
+          <div class="toast-body fw-semibold" id="toastText">Đã gửi yêu cầu.</div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Đóng"></button>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      const formatVnd = (value) =>
+        new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+
+      const basePriceByType = {
+        4: 290000,
+        7: 390000,
+        16: 650000,
+        vip: 890000,
+      };
+
+      const getHourSurcharge = (date) => {
+        const hour = date.getHours();
+        if (hour >= 22 || hour < 6) {
+          return 1.15;
+        }
+        if (hour >= 6 && hour < 9) {
+          return 1.08;
+        }
+        if (hour >= 16 && hour < 19) {
+          return 1.08;
+        }
+        return 1;
+      };
+
+      const priceEl = document.getElementById('price');
+      const carTypeEl = document.getElementById('carType');
+      const startEl = document.getElementById('start');
+      const form = document.getElementById('quoteForm');
+
+      const updatePrice = () => {
+        const type = carTypeEl.value;
+        const base = basePriceByType[type] ?? 0;
+        const dateValue = startEl.value ? new Date(startEl.value) : null;
+        const multiplier = dateValue ? getHourSurcharge(dateValue) : 1;
+        const estimate = Math.round((base * multiplier) / 1000) * 1000;
+        priceEl.textContent = base ? formatVnd(estimate) : '—';
+      };
+
+      carTypeEl.addEventListener('change', updatePrice);
+      startEl.addEventListener('change', updatePrice);
+      updatePrice();
+
+      const toast = bootstrap.Toast.getOrCreateInstance(document.getElementById('toastOk'), {
+        delay: 2800,
+      });
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const data = new FormData(form);
+        const pickup = data.get('pickup');
+        document.getElementById('toastText').textContent = `Đã gửi yêu cầu. Điểm đón: ${pickup}`;
+        toast.show();
+        form.reset();
+        updatePrice();
+      });
+
+      document.getElementById('zaloLink').addEventListener('click', (e) => {
+        e.preventDefault();
+        const message = encodeURIComponent('Mình cần thuê xe, nhờ tư vấn giúp.');
+        window.open(`https://zalo.me/0900000000?text=${message}`, '_blank', 'noopener,noreferrer');
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thuê Xe 24/7 — Mẫu Shoelace UI</title>
+    <meta
+      name="description"
+      content="Landing page thuê xe kiểu Việt Nam, dùng Shoelace UI (Web Components): form đặt xe, Zalo, bảng giá và hình ảnh."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/themes/light.css"
+    />
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/shoelace.js"
+    ></script>
+    <style>
+      :root {
+        --container: 1120px;
+        --brand: #d11f2a;
+        --brand2: #0d6efd;
+        --bg: #f7f7fb;
+        --text: #0b1220;
+        --muted: rgba(11, 18, 32, 0.72);
+        --stroke: rgba(11, 18, 32, 0.1);
+        --shadow: 0 22px 60px rgba(2, 6, 23, 0.12);
+      }
+
+      body {
+        margin: 0;
+        font-family: 'Be Vietnam Pro', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial;
+        background:
+          radial-gradient(900px 520px at 15% 0%, rgba(209, 31, 42, 0.14), transparent 60%),
+          radial-gradient(900px 520px at 90% 10%, rgba(13, 110, 253, 0.12), transparent 60%),
+          linear-gradient(180deg, #ffffff, var(--bg));
+        color: var(--text);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .container {
+        max-width: var(--container);
+        margin: 0 auto;
+        padding: 0 18px;
+      }
+
+      .bar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.82);
+        border-bottom: 1px solid rgba(11, 18, 32, 0.08);
+      }
+
+      .bar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 0;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+      }
+
+      .brand-mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 14px;
+        background:
+          radial-gradient(18px 18px at 25% 30%, rgba(255, 255, 255, 0.7), transparent 60%),
+          linear-gradient(135deg, var(--brand), var(--brand2));
+        box-shadow: 0 18px 44px rgba(209, 31, 42, 0.18);
+      }
+
+      .links {
+        display: none;
+        gap: 14px;
+        font-weight: 800;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      @media (min-width: 900px) {
+        .links {
+          display: flex;
+        }
+      }
+
+      .hero {
+        padding: 26px 0 18px;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+        align-items: start;
+      }
+
+      @media (min-width: 980px) {
+        .hero-grid {
+          grid-template-columns: 1.05fr 0.95fr;
+          gap: 20px;
+        }
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(209, 31, 42, 0.18);
+        background: rgba(209, 31, 42, 0.08);
+        color: rgba(139, 15, 22, 0.95);
+        font-weight: 900;
+        font-size: 12px;
+        width: fit-content;
+      }
+
+      h1 {
+        margin: 12px 0 10px;
+        font-size: clamp(28px, 4vw, 48px);
+        line-height: 1.06;
+        letter-spacing: -0.03em;
+      }
+
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        font-weight: 600;
+        line-height: 1.75;
+        max-width: 64ch;
+      }
+
+      .hero-media {
+        margin-top: 14px;
+        border-radius: 18px;
+        border: 1px solid rgba(11, 18, 32, 0.1);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        background: #ffffff;
+      }
+
+      .hero-media img {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+        display: block;
+      }
+
+      .hero-media .meta {
+        padding: 12px 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .hero-media .meta b {
+        letter-spacing: -0.02em;
+      }
+
+      .hero-media .meta span {
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      .card {
+        border-radius: 18px;
+        border: 1px solid rgba(11, 18, 32, 0.1);
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .card-head {
+        padding: 14px 14px;
+        border-bottom: 1px solid rgba(11, 18, 32, 0.08);
+        background:
+          radial-gradient(420px 220px at 15% 0%, rgba(209, 31, 42, 0.12), transparent 60%),
+          radial-gradient(420px 220px at 85% 0%, rgba(13, 110, 253, 0.12), transparent 60%);
+      }
+
+      .card-head strong {
+        display: block;
+        font-size: 14px;
+        letter-spacing: -0.02em;
+      }
+
+      .card-head small {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .card-body {
+        padding: 14px 14px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      @media (min-width: 640px) {
+        .grid2 {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .row-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .price {
+        border-radius: 14px;
+        border: 1px solid rgba(11, 18, 32, 0.1);
+        background: rgba(11, 18, 32, 0.03);
+        padding: 10px 12px;
+        display: inline-flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+
+      .price strong {
+        font-weight: 900;
+        letter-spacing: -0.02em;
+      }
+
+      .price span {
+        color: var(--muted);
+        font-weight: 800;
+        font-size: 12px;
+      }
+
+      .section {
+        padding: 18px 0;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+
+      .section-head h2 {
+        margin: 0;
+        font-size: 18px;
+        letter-spacing: -0.02em;
+      }
+
+      .section-head p {
+        margin: 0;
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      @media (min-width: 860px) {
+        .cards {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      .photo {
+        width: 100%;
+        height: 150px;
+        border-radius: 14px;
+        object-fit: cover;
+        display: block;
+        border: 1px solid rgba(11, 18, 32, 0.08);
+      }
+
+      .mini {
+        display: grid;
+        gap: 10px;
+      }
+
+      .mini b {
+        letter-spacing: -0.02em;
+      }
+
+      .mini span {
+        color: var(--muted);
+        font-weight: 700;
+        line-height: 1.7;
+      }
+
+      .sticky {
+        position: sticky;
+        bottom: 0;
+        z-index: 30;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(11, 18, 32, 0.08);
+      }
+
+      .sticky-inner {
+        padding: 10px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .sticky-inner small {
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      sl-button::part(base) {
+        font-weight: 900;
+      }
+
+      sl-button.brand::part(base) {
+        background: var(--brand);
+        border-color: var(--brand);
+        color: #ffffff;
+      }
+
+      sl-button.brand::part(base):hover {
+        background: #b81620;
+        border-color: #b81620;
+      }
+
+      sl-button.outline::part(base) {
+        background: rgba(255, 255, 255, 0.92);
+        border-color: rgba(11, 18, 32, 0.16);
+        color: var(--text);
+      }
+
+      sl-input::part(base),
+      sl-select::part(combobox) {
+        border-radius: 14px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          scroll-behavior: auto !important;
+          transition: none !important;
+          animation: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="bar">
+      <div class="container">
+        <div class="bar-inner">
+          <a class="brand" href="#top">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span>Thuê Xe 24/7</span>
+          </a>
+          <nav class="links" aria-label="Điều hướng">
+            <a href="#dichvu">Dịch vụ</a>
+            <a href="#banggia">Bảng giá</a>
+            <a href="#datxe">Đặt xe</a>
+          </nav>
+          <div style="display: inline-flex; gap: 10px; align-items: center">
+            <sl-button class="outline" href="tel:0900000000">
+              <span slot="prefix">☎</span>
+              Hotline
+            </sl-button>
+            <sl-button class="brand" id="zaloBtnTop">
+              <span slot="prefix">💬</span>
+              Zalo
+            </sl-button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="container">
+          <div class="hero-grid">
+            <div>
+              <div class="pill">Xe đời mới • Tài xế lịch sự • Báo giá rõ ràng</div>
+              <h1>Thuê xe sân bay, nội thành, đi tỉnh — chốt nhanh qua Zalo</h1>
+              <p class="lead">
+                Mẫu này dùng Shoelace UI (Web Components) nên giao diện hiện đại mà vẫn “đúng kiểu”
+                landing thuê xe ở Việt Nam: hotline, Zalo, tuyến phổ biến, giá tham khảo.
+              </p>
+
+              <div class="hero-media" aria-label="Hình ảnh xe">
+                <img
+                  src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1400&q=70"
+                  alt="Xe dịch vụ"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div class="meta">
+                  <b>Đón đúng giờ</b>
+                  <span>Hỗ trợ 24/7 • Không phí ẩn</span>
+                </div>
+              </div>
+            </div>
+
+            <section class="card" id="datxe" aria-label="Form đặt xe">
+              <div class="card-head">
+                <strong>Nhận báo giá</strong>
+                <small>Gửi thông tin cơ bản để tư vấn viên xác nhận</small>
+              </div>
+              <div class="card-body">
+                <div class="grid2">
+                  <sl-input id="pickup" label="Điểm đón" placeholder="VD: Q.1, TP.HCM" required></sl-input>
+                  <sl-input id="dropoff" label="Điểm trả" placeholder="VD: Sân bay Tân Sơn Nhất" required></sl-input>
+                </div>
+                <div class="grid2">
+                  <sl-input id="start" label="Ngày/giờ đón" type="datetime-local" required></sl-input>
+                  <sl-select id="carType" label="Loại xe" value="4">
+                    <sl-option value="4">4 chỗ</sl-option>
+                    <sl-option value="7">7 chỗ</sl-option>
+                    <sl-option value="16">16 chỗ</sl-option>
+                    <sl-option value="vip">VIP</sl-option>
+                  </sl-select>
+                </div>
+
+                <div class="row-actions">
+                  <div class="price" aria-live="polite">
+                    <strong id="price">—</strong>
+                    <span>tham khảo</span>
+                  </div>
+                  <div style="display: inline-flex; gap: 10px; align-items: center">
+                    <sl-button class="outline" id="callBtn">
+                      <span slot="prefix">☎</span>
+                      Gọi
+                    </sl-button>
+                    <sl-button class="brand" id="submitBtn">
+                      <span slot="prefix">⚡</span>
+                      Gửi
+                    </sl-button>
+                  </div>
+                </div>
+
+                <div style="color: var(--muted); font-weight: 700; line-height: 1.7; font-size: 13px">
+                  Nhấn “Gửi” để mở Zalo kèm nội dung mẫu. Khi tích hợp thật, nút này có thể gọi API/CRM.
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="dichvu">
+        <div class="container">
+          <div class="section-head">
+            <h2>Dịch vụ phổ biến</h2>
+            <p>Đi đúng nhu cầu khách Việt</p>
+          </div>
+          <div class="cards">
+            <sl-card class="mini">
+              <img
+                class="photo"
+                slot="image"
+                src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=70"
+                alt="Đưa đón sân bay"
+                loading="lazy"
+                decoding="async"
+              />
+              <b>Đưa đón sân bay</b>
+              <span>Theo dõi chuyến bay, hỗ trợ hành lý, đón đúng cửa.</span>
+              <sl-button class="brand" slot="footer" id="bookAirport">Đặt sân bay</sl-button>
+            </sl-card>
+
+            <sl-card class="mini">
+              <img
+                class="photo"
+                slot="image"
+                src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=1200&q=70"
+                alt="Đi tỉnh"
+                loading="lazy"
+                decoding="async"
+              />
+              <b>Đi tỉnh / 1 chiều</b>
+              <span>Đi Vũng Tàu, Đà Lạt, Miền Tây… báo giá rõ theo tuyến.</span>
+              <sl-button class="brand" slot="footer" id="bookProvince">Đặt đi tỉnh</sl-button>
+            </sl-card>
+
+            <sl-card class="mini">
+              <img
+                class="photo"
+                slot="image"
+                src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=1200&q=70"
+                alt="Thuê xe theo giờ"
+                loading="lazy"
+                decoding="async"
+              />
+              <b>Thuê theo giờ</b>
+              <span>Công tác, gặp đối tác, chờ đợi linh hoạt, có VAT theo yêu cầu.</span>
+              <sl-button class="brand" slot="footer" id="bookHourly">Đặt theo giờ</sl-button>
+            </sl-card>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="banggia">
+        <div class="container">
+          <div class="section-head">
+            <h2>Bảng giá tham khảo</h2>
+            <p>Giá thực tế phụ thuộc tuyến/khung giờ</p>
+          </div>
+          <div class="cards">
+            <sl-card class="mini">
+              <img
+                class="photo"
+                slot="image"
+                src="https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=1200&q=70"
+                alt="Xe 4 chỗ"
+                loading="lazy"
+                decoding="async"
+              />
+              <b>4 chỗ</b>
+              <span>Từ 290.000đ/chuyến nội thành (tham khảo).</span>
+            </sl-card>
+
+            <sl-card class="mini">
+              <img
+                class="photo"
+                slot="image"
+                src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=70"
+                alt="Xe 7 chỗ"
+                loading="lazy"
+                decoding="async"
+              />
+              <b>7 chỗ</b>
+              <span>Từ 390.000đ/chuyến nội thành (tham khảo).</span>
+            </sl-card>
+
+            <sl-card class="mini">
+              <img
+                class="photo"
+                slot="image"
+                src="https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1200&q=70"
+                alt="Xe VIP"
+                loading="lazy"
+                decoding="async"
+              />
+              <b>VIP</b>
+              <span>Từ 890.000đ/chuyến (tham khảo).</span>
+            </sl-card>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section class="sticky" aria-label="Thanh CTA">
+      <div class="container">
+        <div class="sticky-inner">
+          <div>
+            <b style="letter-spacing: -0.02em">Cần xe gấp?</b>
+            <small>Gọi hotline hoặc nhắn Zalo để chốt xe nhanh</small>
+          </div>
+          <div style="display: inline-flex; gap: 10px; align-items: center">
+            <sl-button class="outline" href="tel:0900000000">
+              <span slot="prefix">☎</span>
+              Gọi ngay
+            </sl-button>
+            <sl-button class="brand" id="zaloBtnBottom">
+              <span slot="prefix">💬</span>
+              Zalo
+            </sl-button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <sl-alert variant="success" duration="2800" closable id="okToast">
+      <sl-icon slot="icon" name="check2-circle"></sl-icon>
+      <strong id="toastTitle">Đã gửi yêu cầu</strong>
+      <div id="toastDesc">Tư vấn viên sẽ liên hệ trong ít phút.</div>
+    </sl-alert>
+
+    <script type="module">
+      const formatVnd = (value) =>
+        new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+
+      const basePriceByType = {
+        4: 290000,
+        7: 390000,
+        16: 650000,
+        vip: 890000,
+      };
+
+      const getHourSurcharge = (date) => {
+        const hour = date.getHours();
+        if (hour >= 22 || hour < 6) {
+          return 1.15;
+        }
+        if (hour >= 6 && hour < 9) {
+          return 1.08;
+        }
+        if (hour >= 16 && hour < 19) {
+          return 1.08;
+        }
+        return 1;
+      };
+
+      const pickup = document.getElementById('pickup');
+      const dropoff = document.getElementById('dropoff');
+      const start = document.getElementById('start');
+      const carType = document.getElementById('carType');
+      const priceEl = document.getElementById('price');
+      const okToast = document.getElementById('okToast');
+
+      const updatePrice = () => {
+        const type = carType.value;
+        const base = basePriceByType[type] ?? 0;
+        const dateValue = start.value ? new Date(start.value) : null;
+        const multiplier = dateValue ? getHourSurcharge(dateValue) : 1;
+        const estimate = Math.round((base * multiplier) / 1000) * 1000;
+        priceEl.textContent = base ? formatVnd(estimate) : '—';
+      };
+
+      carType.addEventListener('sl-change', updatePrice);
+      start.addEventListener('sl-change', updatePrice);
+      updatePrice();
+
+      const openZalo = (message) => {
+        const text = encodeURIComponent(message);
+        window.open(`https://zalo.me/0900000000?text=${text}`, '_blank', 'noopener,noreferrer');
+      };
+
+      const showOk = (title, desc) => {
+        document.getElementById('toastTitle').textContent = title;
+        document.getElementById('toastDesc').textContent = desc;
+        okToast.toast();
+      };
+
+      document.getElementById('callBtn').addEventListener('click', () => {
+        window.location.href = 'tel:0900000000';
+      });
+
+      const submit = () => {
+        const p = pickup.value?.trim() || 'Chưa nhập';
+        const d = dropoff.value?.trim() || 'Chưa nhập';
+        const t = start.value || '';
+        const type = carType.value;
+        const message = `Yêu cầu thuê xe%0A- Điểm đón: ${p}%0A- Điểm trả: ${d}%0A- Thời gian: ${t}%0A- Loại xe: ${type}`;
+        showOk('Đã ghi nhận', `Mở Zalo để chốt: ${p} → ${d}`);
+        openZalo(message);
+      };
+
+      document.getElementById('submitBtn').addEventListener('click', submit);
+      document.getElementById('zaloBtnTop').addEventListener('click', () =>
+        openZalo('Mình cần thuê xe, nhờ tư vấn giúp.')
+      );
+      document.getElementById('zaloBtnBottom').addEventListener('click', () =>
+        openZalo('Mình cần thuê xe, nhờ tư vấn giúp.')
+      );
+
+      const preset = (to) => {
+        pickup.value = 'TP.HCM';
+        dropoff.value = to;
+        showOk('Đã điền mẫu', `Điểm trả: ${to}`);
+        document.getElementById('datxe').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+
+      document.getElementById('bookAirport').addEventListener('click', () => preset('Sân bay Tân Sơn Nhất'));
+      document.getElementById('bookProvince').addEventListener('click', () => preset('Đà Lạt'));
+      document.getElementById('bookHourly').addEventListener('click', () => preset('Q.1, TP.HCM'));
+    </script>
+  </body>
+</html>

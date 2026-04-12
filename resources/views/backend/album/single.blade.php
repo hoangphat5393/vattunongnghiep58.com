@@ -236,7 +236,7 @@
 
         function storeFileUrls(fileUrls, parent_id) {
             axios
-                .post(`admin/album/${parent_id}/storeMultiple`, {
+                .post(`{{ url('/admin/album') }}/${parent_id}/storeMultiple`, {
                     fileUrls: fileUrls
                 })
                 .then(response => {
@@ -264,7 +264,7 @@
             $('.update-item').addClass("d-none");
 
             if (parent_id) {
-                axios.get(`admin/album/${parent_id}/album_item/create`)
+                axios.get(`{{ url('/admin/album') }}/${parent_id}/album_item/create`)
                     .then((res) => {
                         if (res.data.view != "") {
                             $("#albumItemModal .modal-body").html(res.data.view);
@@ -329,7 +329,7 @@
 
                     if (from.valid()) {
                         var dataString = from.serialize();
-                        axios.post(`admin/album/${parent_id}/album_item`, dataString)
+                        axios.post(`{{ url('/admin/album') }}/${parent_id}/album_item`, dataString)
                             .then((res) => {
                                 if (res.data.view != "") {
                                     // $('#inserSlider form')[0].reset();
@@ -354,7 +354,7 @@
                 parent = $(this).data("parent");
 
             if (id) {
-                axios.get(`admin/album_item/${id}/edit`)
+                axios.get(`{{ url('/admin/album_item') }}/${id}/edit`)
                     .then((res) => {
                         if (res.data.view != "") {
 
@@ -405,7 +405,7 @@
 
             if (from.valid()) {
                 var dataString = from.serialize();
-                axios.put(`admin/album_item/${id}`, dataString)
+                axios.put(`{{ url('/admin/album_item') }}/${id}`, dataString)
                     .then((res) => {
                         if (res.data.view != "") {
                             // $('#inserSlider form')[0].reset();
