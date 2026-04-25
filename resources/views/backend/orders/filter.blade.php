@@ -20,9 +20,9 @@
     <!-- Content Header (Page header) -->
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Filter Orders</h1>
+                    <h3 class="mb-0">Filter Orders</h3>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
@@ -39,7 +39,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
+                    <div class="mb-4 card card-primary card-outline">
                         <div class="card-header">
                             <h3 class="card-title">Filter Orders</h3>
                         </div> <!-- /.card-header -->
@@ -71,9 +71,11 @@
                             </div>
                             <br />
                             <div class="clearfix">
-                                <div class="float-end">
-                                    {!! $data_order->links() !!}
-                                </div>
+                                @if (false)
+                                    <div class="float-end">
+                                        {!! $data_order->links() !!}
+                                    </div>
+                                @endif
                             </div>
                             <br />
                             <div class="table-responsive">
@@ -136,10 +138,15 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div> <!-- /.card-body -->
+
+                        @if (false)
                             <div class="float-end">
                                 {!! $data_order->links() !!}
                             </div>
-                        </div> <!-- /.card-body -->
+                        @endif
+
+                        {{ $data_order->links('backend.pagination.custom') }}
                     </div><!-- /.card -->
                 </div> <!-- /.col -->
             </div> <!-- /.row -->

@@ -60,8 +60,9 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6">
+                    <h3 class="mb-0">{{ $title_head }}</h3>
                 </div><!-- /.col -->
-                <div class="col-sm-12">
+                <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                         <li class="breadcrumb-item active">{{ $title_head }}</li>
@@ -83,7 +84,7 @@
                 @csrf
                 <div class="row">
                     <div class="col-md-9">
-                        <div class="card">
+                        <div class="mb-4 card card-primary card-outline">
                             <div class="card-header">
                                 <h3 class="card-title">{{ $title_head }}</h3>
                             </div> <!-- /.card-header -->
@@ -103,8 +104,8 @@
 
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="vi" role="tabpanel" aria-labelledby="vi-tab">
-                                        <div class="form-group">
-                                            <label for="slug">Slug</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="slug" class="form-label">Slug</label>
                                             <input type="text" class="form-control slug_slugify" id="slug" name="slug" placeholder="Slug" value="{{ $slug ?? '' }}">
                                             @if ($id > 0)
                                                 <p><b style="color: #0000cc;">Link:</b>
@@ -113,8 +114,8 @@
                                             @endif
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="title">Tên sản phẩm</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="title" class="form-label">Tên sản phẩm</label>
                                             <input type="text" class="form-control title_slugify" id="title" name="name" placeholder="Tiêu đề" value="{{ $name ?? '' }}">
                                         </div>
                                         <hr>
@@ -127,13 +128,11 @@
                                     </div>
                                 </div>
 
-                                {{-- Gallery --}}
-                                @include('backend.partials.galleries', ['gallery_images' => $gallery ?? ''])
-                                {{-- End Gallery --}}
+
 
                                 <div class="form-group col-lg-6">
                                     <div class="row">
-                                        <label for="sort" class="title_txt col-form-label col-md-4 px-md-1">Độ ưu tiên</label>
+                                        <label for="sort" class="form-label title_txt col-form-label col-md-4 px-md-1">Độ ưu tiên</label>
                                         <div class="col-md-6">
                                             <input type="text" name="sort" id="sort" value="{{ $sort ?? '' }}" class="form-control">
                                         </div>
@@ -141,6 +140,10 @@
                                 </div>
                             </div> <!-- /.card-body -->
                         </div><!-- /.card -->
+
+                        {{-- Gallery --}}
+                        @include('backend.partials.galleries', ['gallery_images' => $gallery ?? ''])
+                        {{-- End Gallery --}}
 
                         @include('backend.product.includes.price_stock', ['price_type' => $price_type])
                     </div>

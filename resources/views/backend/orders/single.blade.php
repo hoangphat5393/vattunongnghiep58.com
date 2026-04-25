@@ -25,9 +25,9 @@
     <!-- Content Header (Page header) -->
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Order Detail: {{ $order_detail->cart_code }}</h1>
+                    <h3 class="mb-0">Order Detail: {{ $order_detail->cart_code }}</h3>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
@@ -48,7 +48,7 @@
                     <input type="hidden" name="cart_id" value="{{ $order_detail->cart_id }}">
                     <input type="hidden" name="cart_code" value="{{ $order_detail->cart_code }}">
                     <div class="col-12">
-                        <div class="card">
+                        <div class="mb-4 card card-primary card-outline">
                             <div class="card-header">
                                 <h3 class="card-title">Thông tin khách hàng</h3>
                             </div> <!-- /.card-header -->
@@ -134,7 +134,7 @@
                         </div><!-- /.card -->
                     </div>
                     <div class="col-12">
-                        <div class="card">
+                        <div class="mb-4 card card-primary card-outline">
                             <div class="card-header">
                                 <h3 class="card-title">Chi tiết đơn hàng</h3>
                             </div> <!-- /.card-header -->

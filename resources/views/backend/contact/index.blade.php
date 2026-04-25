@@ -45,11 +45,11 @@
                 <div class="col-md-12">
 
                     {{-- card --}}
-                    <div class="card mb-4">
+                    <div class="mb-4 card card-primary card-outline">
 
                         {{-- card-header --}}
                         <div class="card-header">
-                            <h3 class="card-title">{{ $title_head }} List</h3>
+                            <h3 class="card-title">{{ $title_head }} @lang('admin.list')</h3>
                         </div>
 
                         {{-- card-body --}}
@@ -65,6 +65,12 @@
                                             </button>
                                         </div>
                                     </form>
+                                </div>
+                            </div>
+
+                            <div class="my-4 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <b>@lang('admin.total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> {{ $title_head }}
                                 </div>
                             </div>
 

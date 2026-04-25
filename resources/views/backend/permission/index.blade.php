@@ -20,14 +20,14 @@
     <!-- Content Header (Page header) -->
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">List Permission</h1>
+                    <h3 class="mb-0">{{ $title_head }}</h3>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">List Users</li>
+                        <li class="breadcrumb-item active">{{ $title_head }}</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -35,20 +35,23 @@
     </div>
     <!-- /.content-header -->
     <!-- Main content -->
-    <section class="app-content">
+    <div class="app-content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
+                    <div class="mb-4 card card-primary card-outline">
                         <div class="card-header">
-                            <h3 class="card-title">List Users</h3>
+                            <h3 class="card-title">{{ $title_head }} @lang('admin.list')</h3>
                         </div> <!-- /.card-header -->
                         <div class="card-body">
                             <div class="d-flex flex-column flex-lg-row align-items-center justify-content-between">
                                 @include('backend.partials.button_add', ['type' => 'permission', 'route' => route('admin.permission.create')])
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center my-4">
+                            <div class="my-4 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <b>@lang('admin.total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> {{ $title_head }}
+                                </div>
                                 {{-- <div class="float-start">
                                     <b>@lang('admin.Total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.Permissions')
                                 </div>
@@ -89,7 +92,7 @@
                                                 <td>{{ $data->slug }}</td>
                                                 <td>
                                                     @php
-                                                        $permissions = '';
+                                                        $httpUriHtml = '';
                                                         if ($data->http_uri) {
                                                             $methods = array_map(function ($value) {
                                                                 $route = explode('::', $value);
@@ -103,10 +106,10 @@
                                                                 }
                                                                 return $methodStyle . ' <code>' . $route[1] . '</code>';
                                                             }, explode(',', $data->http_uri));
-                                                            $permissions = implode('<br>', $methods);
+                                                            $httpUriHtml = implode('<br>', $methods);
                                                         }
                                                     @endphp
-                                                    {!! $permissions !!}
+                                                    {!! $httpUriHtml !!}
                                                 </td>
                                                 <td>
                                                     <a href="{{ route('admin.permission.edit', $data->id) }}" class="btn btn-primary btn-sm"><i class="fa fa-pen"></i> Edit</a>
@@ -122,11 +125,13 @@
                                 </table>
                             </div>
                         </div> <!-- /.card-body -->
+
+                        {{ $permissions->links('backend.pagination.custom') }}
                     </div><!-- /.card -->
                 </div> <!-- /.col -->
             </div> <!-- /.row -->
         </div> <!-- /.container-fluid -->
-        </div>
+    </div>
     @endsection
 
     @push('scripts')

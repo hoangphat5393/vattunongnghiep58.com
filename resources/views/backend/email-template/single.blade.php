@@ -41,8 +41,9 @@
     <!-- Content Header (Page header) -->
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-6">
+                    <h3 class="mb-0">{{ $title_head }}</h3>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
@@ -65,10 +66,10 @@
                 @csrf
                 <input type="hidden" name="id" value="{{ $id ?? 0 }}">
                 <div class="row">
-                    <div class="col-9">
-                        <div class="card">
+                    <div class="col-md-9">
+                        <div class="mb-4 card card-primary card-outline">
                             <div class="card-header">
-                                <h4>{{ $title_head }}</h4>
+                                <h3 class="card-title">{{ $title_head }}</h3>
                             </div> <!-- /.card-header -->
                             <div class="card-body">
                                 <!-- show error form -->
@@ -86,8 +87,8 @@
                                 <div class="tab-content">
 
                                     <div class="tab-pane fade active show" id="pills-vi" role="tabpanel" aria-labelledby="vi-tab">
-                                        <div class="form-group">
-                                            <label for="name">Tiêu đề</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="name" class="form-label">Tiêu đề</label>
                                             <input type="text" class="form-control title_slugify" id="name" name="name" placeholder="Tiêu đề" value="{{ $name ?? '' }}">
                                         </div>
                                         @php
@@ -123,7 +124,7 @@
                             </div> <!-- /.card-body -->
                         </div><!-- /.card -->
                     </div> <!-- /.col-9 -->
-                    <div class="col-3">
+                    <div class="col-md-3">
                         @include('backend.partials.action_button')
                     </div> <!-- /.col-9 -->
                 </div> <!-- /.row -->

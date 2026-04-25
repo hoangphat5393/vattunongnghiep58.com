@@ -48,7 +48,7 @@
                 <div class="col-md-12">
 
                     {{-- card --}}
-                    <div class="card card-primary card-outline mb-4">
+                    <div class="mb-4 card card-primary card-outline">
 
                         {{-- header --}}
                         <div class="card-header">
@@ -73,9 +73,9 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center my-4">
+                            <div class="my-4 d-flex justify-content-between align-items-center">
                                 <div>
-                                    <b>@lang('admin.total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.news')
+                                    <b>@lang('admin.total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.page')
                                 </div>
                             </div>
 

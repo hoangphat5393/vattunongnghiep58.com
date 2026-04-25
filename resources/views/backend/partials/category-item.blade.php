@@ -18,9 +18,9 @@
                 <input type="checkbox" class="category_item_input" name="category_id[]" value="{{ $category->id }}" id="checkbox_cmc_{{ $category->id }}" {{ $checked }}>
                 <span>{{ $category->name }}</span>
             </label>
-            @if ($category->children($category_type)->get())
+            @if ($category->children()->exists())
                 @include('backend.partials.category-item', [
-                    'categories' => $category->children($category_type)->get(),
+                    'categories' => $category->children()->get(),
                     'level' => $level + 1,
                 ])
             @endif

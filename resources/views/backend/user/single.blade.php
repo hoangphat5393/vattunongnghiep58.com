@@ -67,7 +67,7 @@
                 <input type="hidden" name="id" value="{{ $id }}">
 
                 <div class="row">
-                    <div class="col-9">
+                    <div class="col-md-9">
 
                         <div class="card card-primary card-outline mb-4">
 
@@ -95,33 +95,33 @@
 
                                         <div class="row g-3 mb-3">
                                             <div class="col-md-6">
-                                                <label for="name">@lang('admin.name')</label>
+                                                <label for="name" class="form-label">@lang('admin.name')</label>
                                                 <input type="text" class="form-control" id="name" name="name" placeholder="@lang('admin.name')" value="{{ old('name', $name ?? '') }}">
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="name">@lang('admin.username')</label>
+                                                <label for="name" class="form-label">@lang('admin.username')</label>
                                                 <input type="text" class="form-control" id="name" name="name" placeholder="@lang('admin.username')" value="{{ $username ?? '' }}" readonly>
                                             </div>
                                         </div>
 
                                         <div class="mb-3">
-                                            <label for="post_title">@lang('admin.email')</label>
+                                            <label for="post_title" class="form-label">@lang('admin.email')</label>
                                             <input type="text" class="form-control" id="post_title" name="email" placeholder="@lang('admin.email')" value="{{ old('email', $email ?? '') }}">
                                         </div>
 
                                         @if ($id)
                                             <div class="mb-3">
-                                                <label for="check_pass">@lang('admin.change password')</label>
+                                                <label for="check_pass" class="form-label">@lang('admin.change password')</label>
                                                 <input type="checkbox" name="check_pass" id="check_pass" value="1">
                                             </div>
                                         @endif
                                         <div class="wrap-pass" {{ $id == 0 ? 'style=display:block' : '' }}>
                                             <div class="mb-3">
-                                                <label for="password">@lang('admin.password')</label>
+                                                <label for="password" class="form-label">@lang('admin.password')</label>
                                                 <input type="password" class="form-control" id="password" name="password" placeholder="@lang('admin.password')" autocomplete="off">
                                             </div>
                                             <div class="mb-3">
-                                                <label for="repassword">@lang('admin.confirm password')</label>
+                                                <label for="repassword" class="form-label">@lang('admin.confirm password')</label>
                                                 <input type="password" class="form-control" id="repassword" name="password_confirmation" placeholder="@lang('admin.confirm password')" autocomplete="off" value="">
                                             </div>
                                         </div>
@@ -135,7 +135,7 @@
                                                     }
                                                 }
                                             @endphp
-                                            <label for="post_description">@lang('admin.roles')</label>
+                                            <label for="post_description" class="form-label">@lang('admin.roles')</label>
                                             <select name="roles[]" multiple class="form-control select2">
                                                 {{-- <option value=""></option> --}}
                                                 @if (isset($all_roles) && is_array($all_roles))
@@ -153,7 +153,7 @@
                         </div><!-- /.card -->
                     </div> <!-- /.col-9 -->
 
-                    <div class="col-3">
+                    <div class="col-md-3">
                         @include('backend.partials.action_button')
                     </div> <!-- /.col-9 -->
                 </div> <!-- /.row -->

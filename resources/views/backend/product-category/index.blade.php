@@ -1,7 +1,7 @@
 @extends('backend.layouts.master')
 @section('seo')
     @php
-        $title_head = 'Sản phẩm';
+        $title_head = 'Danh mục sản phẩm';
         $seo = [
             'title' => $title_head . ' | ' . setting_option('seo-title-add'),
             'keywords' => setting_option('seo-keywords-add'),
@@ -21,8 +21,9 @@
     <!-- Content Header (Page header) -->
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-6">
+                    <h3 class="mb-0">{{ $title_head }}</h3>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
@@ -40,10 +41,10 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
+                    <div class="mb-4 card card-primary card-outline">
 
                         <div class="card-header">
-                            <h5>Danh sách thể loại sản phẩm</h5>
+                            <h3 class="card-title">{{ $title_head }} @lang('admin.list')</h3>
                         </div>
 
                         <div class="card-body">
@@ -53,10 +54,12 @@
 
                                 <div class="float-end mt-3 mt-lg-0">
                                     <form method="GET" action="" id="frm-filter-post" class="form-inline">
-                                        <input type="text" class="form-control" name="search_name" id="search_name" placeholder="@lang('admin.Keyword')" value="{{ request('search_name') }}">
-                                        <button type="submit" class="btn btn-primary ms-2" aria-label="@lang('admin.Search')">
-                                            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                                        </button>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="search_name" id="search_name" placeholder="@lang('admin.keyword')" value="{{ request('search_name') }}">
+                                            <button type="submit" class="btn btn-outline-primary" aria-label="@lang('admin.search')">
+                                                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -65,9 +68,11 @@
                                 <div class="float-start">
                                     <b>@lang('admin.Total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.category')
                                 </div>
-                                <div class="float-end">
-                                    {!! $categories->links() !!}
-                                </div>
+                                @if (false)
+                                    <div class="float-end">
+                                        {!! $categories->links() !!}
+                                    </div>
+                                @endif
                             </div>
 
                             <div class="table-responsive">
@@ -94,10 +99,16 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div> <!-- /.card-body -->
+
+                        @if (false)
                             <div class="float-end">
                                 {!! $categories->links() !!}
                             </div>
-                        </div> <!-- /.card-body -->
+                        @endif
+
+                        {{-- card-footer --}}
+                        {{ $categories->links('backend.pagination.custom') }}
                     </div><!-- /.card -->
                 </div><!-- /.col -->
             </div><!-- /.row -->

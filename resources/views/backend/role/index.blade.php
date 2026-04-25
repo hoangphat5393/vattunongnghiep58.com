@@ -1,7 +1,7 @@
 @extends('backend.layouts.master')
 @section('seo')
     @php
-        $title_head = __('admin.List permission');
+        $title_head = __('admin.roles');
         $seo = [
             'title' => $title_head . ' | ' . setting_option('seo-title-add'),
             'keywords' => setting_option('seo-keywords-add'),
@@ -20,14 +20,14 @@
     <!-- Content Header (Page header) -->
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">List Users</h1>
+                    <h3 class="mb-0">{{ $title_head }}</h3>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">List Users</li>
+                        <li class="breadcrumb-item active">{{ $title_head }}</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -39,9 +39,9 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
+                    <div class="mb-4 card card-primary card-outline">
                         <div class="card-header">
-                            <h3 class="card-title">List Users</h3>
+                            <h3 class="card-title">{{ $title_head }} @lang('admin.list')</h3>
                         </div> <!-- /.card-header -->
 
                         <div class="card-body">
@@ -49,7 +49,10 @@
                                 @include('backend.partials.button_add', ['type' => 'role', 'route' => route('admin.role.create')])
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center my-4">
+                            <div class="my-4 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <b>@lang('admin.total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> {{ $title_head }}
+                                </div>
                                 {{-- <div class="float-start">
                                     <b>@lang('admin.Total')</b>: <span class="bold" style="color: red; font-weight: bold;">{{ $total_item ?? 0 }}</span> @lang('admin.Users')
                                 </div>
@@ -113,6 +116,8 @@
                                 </table>
                             </div>
                         </div> <!-- /.card-body -->
+
+                        {{ $roles->links('backend.pagination.custom') }}
                     </div><!-- /.card -->
                 </div> <!-- /.col -->
             </div> <!-- /.row -->

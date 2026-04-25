@@ -53,8 +53,9 @@
     <!-- Content Header (Page header) -->
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-6">
+                    <h3 class="mb-0">{{ $title_head }}</h3>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
@@ -78,15 +79,15 @@
                 <input type="hidden" name="id" value="{{ $id ?? 0 }}">
                 <div class="row">
                     <div class="col-md-9">
-                        <div class="card">
+                        <div class="mb-4 card card-primary card-outline">
                             <div class="card-header">
-                                <h3 class="text-capitalize">{{ $title_head }}</h3>
+                                <h3 class="card-title">{{ $title_head }}</h3>
                             </div>
                             <div class="card-body">
                                 {{-- show error form --}}
                                 <div class="js-validation-messages mb-2 small" role="alert"></div>
-                                <div class="form-group">
-                                    <label for="slug">Slug</label>
+                                <div class="mb-3 form-group">
+                                    <label for="slug" class="form-label">Slug</label>
                                     <input type="text" class="form-control slug_slugify" id="slug" name="slug" placeholder="Slug" value="{{ $slug ?? '' }}">
                                     @if ($id > 0 && ($slug ?? '') !== '')
                                         <p><b style="color: #0000cc;">Link:</b>
@@ -104,30 +105,30 @@
                                 </ul> --}}
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="vi" role="tabpanel" aria-labelledby="vi-tab">
-                                        <div class="form-group">
-                                            <label for="name">@lang('admin.Title')</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="name" class="form-label">@lang('admin.Title')</label>
                                             <input type="text" class="form-control title_slugify" id="name" name="title" placeholder="@lang('admin.Title')" value="{{ $title ?? '' }}">
                                         </div>
-                                        <div class="form-group">
-                                            <label for="description">@lang('admin.Description')</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="description" class="form-label">@lang('admin.Description')</label>
                                             <textarea id="description" name="description">{!! $description ?? '' !!}</textarea>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="content">@lang('admin.Content')</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="content" class="form-label">@lang('admin.Content')</label>
                                             <textarea id="content" name="content">{!! $content ?? '' !!}</textarea>
                                         </div>
                                     </div>
                                     <div class="tab-pane fade" id="en" role="tabpanel" aria-labelledby="en-tab">
-                                        <div class="form-group">
-                                            <label for="name_en">@lang('admin.Title')</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="name_en" class="form-label">@lang('admin.Title')</label>
                                             <input type="text" class="form-control" id="name_en" name="name_en" placeholder="Title" value="{{ $name_en ?? '' }}">
                                         </div>
-                                        <div class="form-group">
-                                            <label for="description_en">@lang('admin.Description')</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="description_en" class="form-label">@lang('admin.Description')</label>
                                             <textarea id="description_en" name="description_en">{!! $description_en ?? '' !!}</textarea>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="content_en">@lang('admin.Content')</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="content_en" class="form-label">@lang('admin.Content')</label>
                                             <textarea id="content_en" name="content_en">{!! $content_en ?? '' !!}</textarea>
                                         </div>
                                     </div>
@@ -135,13 +136,13 @@
                             </div> <!-- /.card-body -->
                         </div><!-- /.card -->
 
-                        <div class="card">
+                        <div class="mb-4 card card-primary card-outline">
                             <div class="card-header">
-                                <h5>@lang('Infomation')</h5>
+                                <h3 class="card-title">@lang('Infomation')</h3>
                             </div>
                             <div class="card-body">
-                                <div class="form-group">
-                                    <label for="sort" class="col-form-label text-lg-right">@lang('Sort')</label>
+                                <div class="mb-3 form-group">
+                                    <label for="sort" class="form-label col-form-label text-lg-right">@lang('Sort')</label>
                                     <input type="text" class="form-control" id="sort" name="sort" value="{{ $sort ?? 0 }}">
                                 </div>
                             </div>

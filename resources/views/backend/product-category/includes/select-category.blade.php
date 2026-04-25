@@ -22,9 +22,9 @@
         @if ($categories->count() > 0)
             @foreach ($categories as $category)
                 <option value="{{ $category->id }}" {{ $parent == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                @if ($category->children('product')->get())
+                @if ($category->children()->exists())
                     @include('backend.product-category.includes.select-category', [
-                        'data' => $category->children('product')->whereNot('id', $id)->get(),
+                        'data' => $category->children()->when(isset($id), fn ($q) => $q->whereNot('id', $id))->get(),
                         'data_type' => 'option',
                         'parent' => $parent,
                         'slit' => '-----',
@@ -36,9 +36,9 @@
 @else
     @foreach ($data as $item)
         <option value="{{ $item->id }}" {{ $parent == $item->id ? 'selected' : '' }}>{!! $slit !!} {{ $item->name }}</option>
-        @if ($item->children('product')->get())
+        @if ($item->children()->exists())
             @include('backend.product-category.includes.select-category', [
-                'data' => $item->children('product')->whereNot('id', $id)->get(),
+                'data' => $item->children()->when(isset($id), fn ($q) => $q->whereNot('id', $id))->get(),
                 'data_type' => 'option',
                 'parent' => $parent,
                 'slit' => $slit . '-----',

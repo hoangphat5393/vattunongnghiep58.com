@@ -35,8 +35,9 @@
     <!-- Content Header (Page header) -->
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-6">
+                    <h3 class="mb-0">{{ $title_head }}</h3>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
@@ -58,10 +59,10 @@
                 @csrf
                 <input type="hidden" name="id" value="{{ $id ?? 0 }}">
                 <div class="row">
-                    <div class="col-9">
-                        <div class="card">
+                    <div class="col-md-9">
+                        <div class="mb-4 card card-primary card-outline">
                             <div class="card-header">
-                                <h4>{{ $title_head }}</h4>
+                                <h3 class="card-title">{{ $title_head }}</h3>
                             </div> <!-- /.card-header -->
                             <div class="card-body">
                                 <!-- show error form -->
@@ -82,30 +83,30 @@
                                 </ul>
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="vi" role="tabpanel" aria-labelledby="vi-tab">
-                                        <div class="form-group">
-                                            <label for="name">@lang('admin.Name')</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="name" class="form-label">@lang('admin.Name')</label>
                                             <input type="text" class="form-control title_slugify" id="name" name="name" value="{{ $name ?? '' }}">
                                         </div>
 
                                     </div>
                                     <div class="tab-pane fade" id="en" role="tabpanel" aria-labelledby="en-tab">
-                                        <div class="form-group">
-                                            <label for="name_en">@lang('admin.Name')</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="name_en" class="form-label">@lang('admin.Name')</label>
                                             <input type="text" class="form-control title_slugify" id="name_en" name="name_en" value="{{ $name_en ?? '' }}">
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="slug">Slug</label>
+                                <div class="mb-3 form-group">
+                                    <label for="slug" class="form-label">Slug</label>
                                     <input type="text" class="form-control" id="slug" name="slug" value="{{ $slug ?? '' }}">
                                 </div>
-                                <div class="form-group">
+                                <div class="mb-3 form-group">
                                     @php
                                         $old_http_uri = isset($http_uri) && $http_uri != '' ? explode(',', $http_uri) : [];
                                     @endphp
 
-                                    <label for="post_description">HTTP PATH</label>
+                                    <label for="post_description" class="form-label">HTTP PATH</label>
                                     <select name="http_uri[]" id="admin_level" class="form-control select2" multiple="multiple" onautocomplete="off">
                                         <option value=""></option>
                                         @foreach ($routeAdmin as $route)
@@ -117,7 +118,7 @@
                             </div> <!-- /.card-body -->
                         </div><!-- /.card -->
                     </div> <!-- /.col-9 -->
-                    <div class="col-3">
+                    <div class="col-md-3">
                         @include('backend.partials.action_button')
                     </div> <!-- /.col-9 -->
                 </div> <!-- /.row -->

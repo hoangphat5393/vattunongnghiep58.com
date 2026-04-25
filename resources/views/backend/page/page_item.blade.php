@@ -9,11 +9,11 @@
             </td>
 
             <td class="text-center">
-                <input type="text" id="sort" class="form-control quick_change_value text-center" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" value="{{ $item->sort }}" reload-on-change>
+                <input type="text" id="sort" class="text-center form-control quick_change_value" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" value="{{ $item->sort }}" reload-on-change>
             </td>
 
             <td class="title">
-                <a class="row-title " href="{{ route('admin.page.edit', [$item->id]) }}">
+                <a class="row-title" href="{{ route('admin.page.edit', [$item->id]) }}">
                     <div>
                         <strong style="color: #056FAD;">
                             {{ $item->name }}
@@ -38,7 +38,7 @@
             </td>
             <td class="text-center">
                 @if ($item->user)
-                    <div class="w-fit-content mx-auto">{{ $item->user->name }}</div>
+                    <div class="mx-auto w-fit-content">{{ $item->user->name }}</div>
                 @endif
             </td>
             <td class="text-center">

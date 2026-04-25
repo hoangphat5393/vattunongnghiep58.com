@@ -69,7 +69,7 @@
                     <div class="col-md-9">
 
                         {{-- card --}}
-                        <div class="card card-primary card-outline mb-4">
+                        <div class="mb-4 card card-primary card-outline">
 
                             {{-- header --}}
                             <div class="card-header">
@@ -80,7 +80,7 @@
                             <div class="card-body">
 
                                 {{-- show error form --}}
-                                <div class="js-validation-messages mb-2 small" role="alert"></div>
+                                <div class="mb-2 js-validation-messages small" role="alert"></div>
 
                                 <div class="mb-3">
                                     <label for="slug" class="form-label">@lang('admin.slug')</label>
@@ -137,8 +137,8 @@
                                     </div> --}}
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="show_promotion" class="title_txt">Template</label>
+                                <div class="mb-3 form-group">
+                                    <label for="show_promotion" class="form-label">Template</label>
                                     <select name="template" class="form-control">
                                         <option value="none" {{ $template == 'none' ? 'selected' : '' }}>@lang('admin.None')</option>
                                         <option value="page" {{ $template == 'page' ? 'selected' : '' }}>@lang('admin.Page')</option>

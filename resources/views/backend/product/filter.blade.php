@@ -20,9 +20,9 @@
     <!-- Content Header (Page header) -->
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-6">
-                    <h1 class="m-0 text-dark">Lọc sản phẩm</h1>
+                    <h3 class="mb-0">Lọc sản phẩm</h3>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
@@ -39,7 +39,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
+                    <div class="mb-4 card card-primary card-outline">
                         <div class="card-header">
                             <h3 class="card-title">Lọc sản phẩm</h3>
                         </div> <!-- /.card-header -->
@@ -78,9 +78,11 @@
                                 <div class="float-start" style="font-size: 17px;">
                                     <b>Tổng</b>: <span class="bold" style="color: red; font-weight: bold;">{{ $total_item }}</span> sản phẩm
                                 </div>
-                                <div class="float-end">
-                                    {!! $data_product->appends(request()->except('page'))->links() !!}
-                                </div>
+                                @if (false)
+                                    <div class="float-end">
+                                        {!! $data_product->appends(request()->except('page'))->links() !!}
+                                    </div>
+                                @endif
                             </div>
                             <br />
                             <div class="table-responsive">
@@ -139,10 +141,15 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div> <!-- /.card-body -->
+
+                        @if (false)
                             <div class="float-end">
                                 {!! $data_product->appends(request()->except('page'))->links() !!}
                             </div>
-                        </div> <!-- /.card-body -->
+                        @endif
+
+                        {{ $data_product->appends(request()->except('page'))->links('backend.pagination.custom') }}
                     </div><!-- /.card -->
                 </div> <!-- /.col -->
             </div> <!-- /.row -->

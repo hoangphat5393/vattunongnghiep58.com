@@ -33,8 +33,9 @@
     <!-- Content Header (Page header) -->
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row mb-2">
+            <div class="row">
                 <div class="col-sm-6">
+                    <h3 class="mb-0">{{ $title_head }}</h3>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
@@ -58,9 +59,9 @@
                 <input type="hidden" name="id" value="{{ $id ?? 0 }}">
                 <div class="row">
                     <div class="col-md-9">
-                        <div class="card">
+                        <div class="mb-4 card card-primary card-outline">
                             <div class="card-header">
-                                <h4>{{ $title_head }}</h4>
+                                <h3 class="card-title">{{ $title_head }}</h3>
                             </div> <!-- /.card-header -->
                             <div class="card-body">
                                 <!-- show error form -->
@@ -75,20 +76,20 @@
                                 </ul> --}}
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="vi" role="tabpanel" aria-labelledby="vi-tab">
-                                        <div class="form-group">
-                                            <label for="name">Tiêu đề</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="name" class="form-label">Tiêu đề</label>
                                             <input type="text" class="form-control title_slugify" id="name" name="name" placeholder="Tiêu đề" value="{{ $name ?? '' }}" disabled>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="sort" class="email">Email</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="sort" class="form-label email">Email</label>
                                             <input type="text" name="email" id="email" value="{{ $email ?? '' }}" class="form-control" disabled>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="sort" class="phone">Điện thoại</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="sort" class="form-label phone">Điện thoại</label>
                                             <input type="text" name="phone" id="phone" value="{{ $phone ?? 0 }}" class="form-control" disabled>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="content">Nội dung</label>
+                                        <div class="mb-3 form-group">
+                                            <label for="content" class="form-label">Nội dung</label>
                                             <textarea id="content" name="content" disabled>{!! $content ?? '' !!}</textarea>
                                         </div>
                                     </div>
@@ -108,8 +109,8 @@
                                     </div> --}}
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="sort" class="title_txt">Sắp xếp (Tăng dần)</label>
+                                <div class="mb-3 form-group">
+                                    <label for="sort" class="form-label title_txt">Sắp xếp (Tăng dần)</label>
                                     <input type="text" name="sort" id="sort" value="{{ $sort ?? 0 }}" class="form-control">
                                 </div>
 

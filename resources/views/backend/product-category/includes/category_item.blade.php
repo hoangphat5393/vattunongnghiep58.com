@@ -26,13 +26,13 @@
 
             <td class="text-center">
 
-                <input type="text" id="sort" class="form-control quick_change_value text-center" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" value="{{ $item->sort }}" reload-on-change>
+                <input type="text" id="sort" class="text-center form-control quick_change_value" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" value="{{ $item->sort }}" reload-on-change>
 
             </td>
 
             <td class="title">
 
-                <a class="row-title " href="{{ route('admin.product-category.edit', [$item->id]) }}">
+                <a class="row-title" href="{{ route('admin.product-category.edit', [$item->id]) }}">
 
                     <div>
 
@@ -70,9 +70,9 @@
 
         </tr>
 
-        @if (count($item->children('product')->get()) > 0)
+        @if ($item->children()->exists())
             @include('backend.product-category.includes.category_item', [
-                'categories' => $item->children('product')->get(),
+                'categories' => $item->children()->get(),
             
                 'level' => $level + 1,
             ])

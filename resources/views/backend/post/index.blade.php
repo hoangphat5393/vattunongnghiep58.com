@@ -21,7 +21,10 @@
     <!-- Content Header (Page header) -->
     <div class="app-content-header">
         <div class="container-fluid">
-            <div class="row mb-2 justify-content-end">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h3 class="mb-0">{{ $title_head }}</h3>
+                </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
@@ -38,9 +41,9 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
+                    <div class="mb-4 card card-primary card-outline">
                         <div class="card-header">
-                            <h3>{{ $title_head }}</h3>
+                            <h3 class="card-title">{{ $title_head }} @lang('admin.list')</h3>
                         </div> <!-- /.card-header -->
                         <div class="card-body">
 
@@ -57,8 +60,12 @@
                                                 <option value="{{ $item->id }}" {{ request('category_id') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                             @endforeach
                                         </select> --}}
-                                        <input type="text" class="form-control" name="search_name" id="search_name" placeholder="@lang('admin.Keyword')" value="{{ request('search_name') }}">
-                                        <button type="submit" class="btn btn-primary ml-2">@lang('admin.Search')</button>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="search_name" id="search_name" placeholder="@lang('admin.keyword')" value="{{ request('search_name') }}">
+                                            <button type="submit" class="btn btn-outline-primary" aria-label="@lang('admin.search')">
+                                                <i class="fa-regular fa-magnifying-glass"></i> @lang('admin.search')
+                                            </button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -67,9 +74,11 @@
                                 <div class="float-start">
                                     <b>@lang('admin.Total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.News')
                                 </div>
-                                <div class="float-end">
-                                    {!! $data->links() !!}
-                                </div>
+                                @if (false)
+                                    <div class="float-end">
+                                        {!! $data->links() !!}
+                                    </div>
+                                @endif
                             </div>
 
                             <div class="table-responsive">
@@ -146,10 +155,15 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="float-end">
-                                {!! $data->links() !!}
-                            </div>
+                            @if (false)
+                                <div class="float-end">
+                                    {!! $data->links() !!}
+                                </div>
+                            @endif
                         </div> <!-- /.card-body -->
+
+                        {{-- card-footer --}}
+                        {{ $data->links('backend.pagination.custom') }}
                     </div>
                 </div>
             </div>

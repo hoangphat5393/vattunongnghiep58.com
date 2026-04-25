@@ -23,11 +23,12 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6">
+                    <h3 class="mb-0">{{ $title_head }}</h3>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Product</li>
+                        <li class="breadcrumb-item active">{{ $title_head }}</li>
                     </ol>
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -40,15 +41,15 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
+                    <div class="mb-4 card card-primary card-outline">
                         <div class="card-header">
-                            <h3 class="card-title">@lang('admin.Products')</h3>
+                            <h3 class="card-title">{{ $title_head }} @lang('admin.list')</h3>
                         </div> <!-- /.card-header -->
                         <div class="card-body">
 
-                            <div class="d-flex justify-content-between mb-3">
+                            <div class="mb-3 d-flex justify-content-between">
                                 @include('backend.partials.button_add_delete', ['type' => 'product', 'route' => route('admin.product.create')])
-                                <div class="float-end mt-3 mt-lg-0">
+                                <div class="mt-3 float-end mt-lg-0">
                                     <form method="GET" action="" id="frm-filter-post" class="d-flex align-items-center">
                                         @php
                                             $categories = App\Models\Backend\Category::select('id', 'name')->orderByDesc('sort')->get();
@@ -67,12 +68,9 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex align-items-center justify-content-between my-4">
+                            <div class="my-4 d-flex align-items-center justify-content-between">
                                 <div>
                                     <b>@lang('admin.Total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.Products')
-                                </div>
-                                <div class="float-end">
-                                    {!! $products->links() !!}
                                 </div>
                             </div>
 
@@ -105,7 +103,7 @@
                                                     </div>
                                                 </td>
                                                 <td class="text-center">
-                                                    <input type="text" id="sort" class="form-control quick_change_value text-center" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" value="{{ $item->sort }}" reload-on-change>
+                                                    <input type="text" id="sort" class="text-center form-control quick_change_value" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" value="{{ $item->sort }}" reload-on-change>
                                                 </td>
                                                 <td>
                                                     <a class="row-title me-3" href="{{ route('admin.product.edit', [$item->id]) }}">
@@ -140,10 +138,15 @@
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="float-end">
-                                {!! $products->links() !!}
-                            </div>
+                            @if (false)
+                                <div class="float-end">
+                                    {!! $products->links() !!}
+                                </div>
+                            @endif
                         </div> <!-- /.card-body -->
+
+                        {{-- card-footer --}}
+                        {{ $products->links('backend.pagination.custom') }}
                     </div><!-- /.card -->
                 </div> <!-- /.col -->
             </div> <!-- /.row -->

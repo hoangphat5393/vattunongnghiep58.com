@@ -53,7 +53,7 @@
 
                         {{-- card-header --}}
                         <div class="card-header">
-                            <h3 class="card-title">List</h3>
+                            <h3 class="card-title">{{ $title_head }} @lang('admin.list')</h3>
                         </div>
 
                         {{-- card-body --}}
@@ -127,11 +127,16 @@
                                 </table>
                             </div>
 
-                            <div class="float-end">
-                                {!! $album->links() !!}
-                            </div>
+                            @if (false)
+                                <div class="float-end">
+                                    {!! $album->links() !!}
+                                </div>
+                            @endif
 
                         </div> <!-- /.card-body -->
+
+                        {{-- card-footer --}}
+                        {{ $album->links('backend.pagination.custom') }}
                     </div><!-- /.card -->
                 </div> <!-- /.col -->
             </div> <!-- /.row -->
