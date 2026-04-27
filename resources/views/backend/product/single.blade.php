@@ -163,7 +163,7 @@
                                         $array_checked = isset($product_detail) ? $product_detail->categories->pluck('id')->toArray() : [];
                                         $category_type = 'product';
                                     @endphp
-                                    @include('backend.partials.category-item')
+                                    @include('backend.partials.category-item', ['categories' => $categoryTree ?? collect(), 'childrenMap' => $childrenMap ?? collect()])
                                 </div>
                             </div>
                         </div>

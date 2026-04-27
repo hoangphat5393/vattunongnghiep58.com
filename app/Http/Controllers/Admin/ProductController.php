@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Backend\Product;
 use App\Http\Requests\Admin\Product\StoreProduct;
 use App\Http\Requests\Admin\Product\UpdateProduct;
+use App\Models\Backend\Category;
+use App\Models\Backend\Product;
 use App\Models\ProductPrice;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +15,18 @@ use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    private function buildCategoryTreeData(): array
+    {
+        $categories = Category::query()
+            ->orderByDesc('sort')
+            ->get(['id', 'name', 'parent', 'sort']);
+
+        $childrenMap = $categories->groupBy('parent');
+        $categoryTree = $childrenMap->get(0, collect());
+
+        return [$categoryTree, $childrenMap];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -36,7 +48,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('backend.product.single');
+        [$categoryTree, $childrenMap] = $this->buildCategoryTreeData();
+
+        return view('backend.product.single', compact('categoryTree', 'childrenMap'));
     }
 
     /**
@@ -60,7 +74,7 @@ class ProductController extends Controller
 
         $data['seo_title'] = $data['seo_title'] ? $data['seo_title'] : $data['name'];
 
-        //xử lý gallery
+        // xử lý gallery
         // $galleries = $request->gallery ?? '';
         // if ($galleries != '') {
         //     $galleries = array_filter($galleries);
@@ -89,8 +103,8 @@ class ProductController extends Controller
 
         $save = $request->submit ?? 'apply';
         if ($save == 'apply') {
-            $msg = "Product has been created successfully";
-            $url = route('admin.product.edit', array($insert_id));
+            $msg = 'Product has been created successfully';
+            $url = route('admin.product.edit', [$insert_id]);
             msg_move_page($msg, $url);
         } else {
             return redirect(route('admin.product.index'));
@@ -103,6 +117,7 @@ class ProductController extends Controller
     public function show(Product $product, int $id)
     {
         $product = $product::find($id);
+
         return view('backend.product.show', compact('product'));
     }
 
@@ -114,7 +129,9 @@ class ProductController extends Controller
         $product = $product::findorfail($id);
 
         if ($product) {
-            return view('backend.product.single', compact('product'));
+            [$categoryTree, $childrenMap] = $this->buildCategoryTreeData();
+
+            return view('backend.product.single', compact('product', 'categoryTree', 'childrenMap'));
         } else {
             return view('404');
         }
@@ -145,7 +162,7 @@ class ProductController extends Controller
 
         $save = $request->submit ?? 'apply';
         if ($save == 'apply') {
-            $msg = "Product has been updated successfully";
+            $msg = 'Product has been updated successfully';
             $url = route('admin.product.edit', [$id]);
             msg_move_page($msg, $url);
         } else {
@@ -177,7 +194,7 @@ class ProductController extends Controller
     protected function syncProductPrices(Product $product, Request $request): void
     {
         $prices = $request->input('prices', []);
-        if (!is_array($prices)) {
+        if (! is_array($prices)) {
             $prices = [];
         }
 
@@ -196,7 +213,7 @@ class ProductController extends Controller
 
         $defaultIndex = $request->input('prices_default');
         $defaultIndex = is_numeric($defaultIndex) ? (int) $defaultIndex : 0;
-        if (!array_key_exists($defaultIndex, $prices)) {
+        if (! array_key_exists($defaultIndex, $prices)) {
             $defaultIndex = 0;
         }
 

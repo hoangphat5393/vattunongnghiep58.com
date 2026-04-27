@@ -162,6 +162,45 @@ class ProductCategoryCategoryTreeViewsTest extends TestCase
         }
     }
 
+    public function test_backend_category_tree_views_do_not_query_children_in_blade(): void
+    {
+        $bladeFiles = [
+            base_path('resources/views/backend/product-category/includes/select-category.blade.php'),
+            base_path('resources/views/backend/product-category/includes/category_item.blade.php'),
+            base_path('resources/views/backend/partials/category-item.blade.php'),
+            base_path('resources/views/backend/setting/includes/category_items.blade.php'),
+        ];
+
+        foreach ($bladeFiles as $path) {
+            $contents = file_get_contents($path);
+            $this->assertNotFalse($contents);
+
+            $this->assertStringNotContainsString('children()->', $contents);
+            $this->assertStringNotContainsString('children()', $contents);
+        }
+
+        $selectContents = file_get_contents(
+            base_path('resources/views/backend/product-category/includes/select-category.blade.php')
+        );
+        $this->assertNotFalse($selectContents);
+
+        $this->assertStringNotContainsString('App\\Models\\Backend\\Category::where', $selectContents);
+
+        $partialContents = file_get_contents(
+            base_path('resources/views/backend/partials/category-item.blade.php')
+        );
+        $this->assertNotFalse($partialContents);
+
+        $this->assertStringNotContainsString('App\\Models\\Backend\\Category::where', $partialContents);
+
+        $settingCategoryContents = file_get_contents(
+            base_path('resources/views/backend/setting/includes/category_items.blade.php')
+        );
+        $this->assertNotFalse($settingCategoryContents);
+
+        $this->assertStringNotContainsString('App\\Models\\Backend\\Category::where', $settingCategoryContents);
+    }
+
     public function test_permission_index_does_not_override_permissions_paginator_variable(): void
     {
         $path = base_path('resources/views/backend/permission/index.blade.php');

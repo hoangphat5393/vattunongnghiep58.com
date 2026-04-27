@@ -1,8 +1,6 @@
 @php
     $level = $level ?? 0;
-    if ($level == 0) {
-        $categories = App\Models\Backend\Category::where('parent', 0)->orderByDesc('sort')->get();
-    }
+    $categories = $categories ?? collect();
 @endphp
 
 <ul id="muti_menu_post" class="muti_menu_right_category">
@@ -18,9 +16,12 @@
                 <input type="checkbox" class="category_item_input" name="category_id[]" value="{{ $category->id }}" id="checkbox_cmc_{{ $category->id }}" {{ $checked }}>
                 <span>{{ $category->name }}</span>
             </label>
-            @if ($category->children()->exists())
+            @php
+                $children = isset($childrenMap) ? $childrenMap->get($category->id, collect()) : collect();
+            @endphp
+            @if ($children->isNotEmpty())
                 @include('backend.partials.category-item', [
-                    'categories' => $category->children()->get(),
+                    'categories' => $children,
                     'level' => $level + 1,
                 ])
             @endif

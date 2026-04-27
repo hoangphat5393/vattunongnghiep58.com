@@ -70,10 +70,12 @@
 
         </tr>
 
-        @if ($item->children()->exists())
+        @php
+            $children = isset($childrenMap) ? $childrenMap->get($item->id, collect()) : collect();
+        @endphp
+        @if ($children->isNotEmpty())
             @include('backend.product-category.includes.category_item', [
-                'categories' => $item->children()->get(),
-            
+                'categories' => $children,
                 'level' => $level + 1,
             ])
         @endif

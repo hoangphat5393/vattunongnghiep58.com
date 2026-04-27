@@ -138,7 +138,12 @@
                                                         <div class="accordion-section-content ">
                                                             <div class="inside">
                                                                 <div class="customlinkdiv" id="customlinkdiv">
-                                                                    @include('backend.setting.includes.category_items', ['type' => 'post'])
+                                                                    @include('backend.setting.includes.category_items', [
+                                                                        'type' => 'post',
+                                                                        'parent_id' => 0,
+                                                                        'categories' => $categoryTree ?? collect(),
+                                                                        'childrenMap' => $childrenMap ?? collect(),
+                                                                    ])
                                                                 </div>
                                                                 <p class="button-controls">
                                                                     <a href="#" class="button-secondary submit-add-to-menu right add_menu_item">Add menu item</a>

@@ -1,8 +1,8 @@
 @php
-    if (!isset($parent_id)) {
-        $parent_id = 0;
-    }
-    $categories = \App\Models\Backend\Category::where('parent', $parent_id)->orderByDesc('sort')->get();
+    $parent_id = $parent_id ?? 0;
+    $space = $space ?? '';
+    $childrenMap = $childrenMap ?? collect();
+    $categories = $categories ?? $childrenMap->get($parent_id, collect());
 @endphp
 @if (count($categories) > 0)
     @foreach ($categories as $category)
@@ -23,8 +23,17 @@
                 <input type="hidden" class="item-type-{{ $category->id }}" value="category">
             </label>
         </div>
-        @if (count($category->children) > 0)
-            @include('backend.setting.includes.category_items', ['parent_id' => $category->id, 'space' => '-----'])
+        @php
+            $children = $childrenMap->get($category->id, collect());
+        @endphp
+        @if ($children->isNotEmpty())
+            @include('backend.setting.includes.category_items', [
+                'parent_id' => $category->id,
+                'categories' => $children,
+                'childrenMap' => $childrenMap,
+                'space' => $space . '-----',
+                'type' => $type ?? null,
+            ])
         @endif
     @endforeach
 @endif

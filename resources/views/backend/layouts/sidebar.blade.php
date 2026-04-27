@@ -146,9 +146,21 @@
                             {{-- LEvel 1 --}}
 
                             @if (!empty($menus[$level0->id]) && $level0->hidden == 0)
-                                <li class="nav-item">
+                                @php
+                                    $currentUrl = url()->current();
 
-                                    <a href="#" class="nav-link">
+                                    $isMenuOpen = collect($menus[$level0->id])->contains(function ($level1) use ($AdminMenu, $currentUrl) {
+                                        if (! $level1->uri || ! Route::has($level1->uri)) {
+                                            return false;
+                                        }
+
+                                        return $AdminMenu::checkUrlIsChild($currentUrl, route($level1->uri));
+                                    });
+                                @endphp
+
+                                <li class="nav-item {{ $isMenuOpen ? 'menu-open' : '' }}">
+
+                                    <a href="#" class="nav-link {{ $isMenuOpen ? 'active' : '' }}">
 
                                         <i class="nav-icon {{ $level0->icon }}"></i>
 
@@ -165,7 +177,12 @@
                                         @foreach ($menus[$level0->id] as $level1)
                                             <li class="nav-item">
 
-                                                <a href="{{ $level1->uri ? route($level1->uri) : '#' }}" class="nav-link {{ $AdminMenu::checkUrlIsChild(url()->current(), route($level1->uri)) ? 'active' : '' }}">
+                                                @php
+                                                    $level1Url = $level1->uri && Route::has($level1->uri) ? route($level1->uri) : '#';
+                                                    $level1Active = $level1Url !== '#' && $AdminMenu::checkUrlIsChild($currentUrl, $level1Url);
+                                                @endphp
+
+                                                <a href="{{ $level1Url }}" class="nav-link {{ $level1Active ? 'active' : '' }}">
 
                                                     <i class="nav-icon {{ $level1->icon }}"></i>
 
