@@ -84,3 +84,5 @@ phpunit.xml.dist
 boost.json
 AGENTS.md
 CLAUDE.md
+
+graphify-out/
