@@ -40,7 +40,6 @@ class AlbumItemController extends Controller
             'view' => view('backend.album.includes.form', $dataResponse)->render(),
 
         ]);
-
     }
 
     /**
@@ -58,7 +57,6 @@ class AlbumItemController extends Controller
 
         if ($last_item && empty($data['sort'])) {
             $data['sort'] = (int) $last_item->sort + 1;
-
         }
 
         // dd($request->all(), $album_id, $data);
@@ -76,7 +74,6 @@ class AlbumItemController extends Controller
         $view = view('backend.album.includes.album-items', ['album_items' => $album_items])->render();
 
         return response()->json(['view' => $view]);
-
     }
 
     /**
@@ -119,11 +116,9 @@ class AlbumItemController extends Controller
                 'view' => view('backend.album.includes.form', $dataResponse)->render(),
 
             ]);
-
         }
 
         return response('404 data Not Found');
-
     }
 
     /**
@@ -148,7 +143,6 @@ class AlbumItemController extends Controller
         $view = view('backend.album.includes.album-items', ['album_items' => $album_items])->render();
 
         return response()->json(['view' => $view]);
-
     }
 
     /**
@@ -173,13 +167,10 @@ class AlbumItemController extends Controller
             $view = view('backend.album.includes.album-items', ['album_items' => $album_items, 'album_id' => $album_id])->render();
 
             return response()->json(['view' => $view]);
-
         } else {
 
             return response('404 data Not Found');
-
         }
-
     }
 
     public function ajaxUpdateSort(Request $request)
@@ -204,13 +195,10 @@ class AlbumItemController extends Controller
             }
 
             return response()->json(['Update success' => true]);
-
         } else {
 
             return response('404 data Not Found');
-
         }
-
     }
 
     /**
@@ -294,7 +282,6 @@ class AlbumItemController extends Controller
             // Trả về phản hồi JSON
 
             return response()->json($response);
-
         } catch (\Exception $e) {
 
             // Trả về lỗi nếu có vấn đề khi lưu
@@ -318,9 +305,6 @@ class AlbumItemController extends Controller
             ];
 
             return response()->json($response);
-
         }
-
     }
-
 }
