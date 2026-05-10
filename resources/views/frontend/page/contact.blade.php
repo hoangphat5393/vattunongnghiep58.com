@@ -23,7 +23,7 @@
 
 
 @section('content')
-    <main id="main" class="contact">
+    <div id="main" class="contact">
         @include('frontend.includes.menu')
 
         <div class="container mx-auto px-4 py-4">
@@ -135,7 +135,7 @@
                 <iframe src="{{ setting_option('google_map') }}" width="100%" height="100%" class="contact-map-frame" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </div>
-    </main>
+    </div>
 @endsection
 
 @push('scripts')

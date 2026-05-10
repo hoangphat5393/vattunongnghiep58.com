@@ -5,7 +5,7 @@
 @endphp
 
 @if ($data_type == '')
-    <select class="custom-select me-2" name="parent">
+    <select class="form-select me-2" name="parent">
         <option value="0">== Không có ==</option>
         @php
             $rootCategories = isset($childrenMap) ? $childrenMap->get(0, collect()) : collect();

@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <main class="bg-leaf-50 flex-grow">
+    <div class="bg-leaf-50 flex-grow">
         <div class="container mx-auto px-4 py-8">
             @if ($carts->count())
                 <h1 class="text-3xl font-extrabold text-gray-900 mb-8">Giỏ hàng của bạn</h1>
@@ -39,7 +39,7 @@
                 </div>
             @endif
         </div>
-    </main>
+    </div>
 @endsection
 
 @push('scripts')

@@ -1,0 +1,686 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/**
+ * Standalone styles for the frontend header/menu extracted from:
+ * - resources/css/app.css (@theme leaf palette, sticky header var context)
+ * - resources/views/frontend/layouts/header.blade.php (Tailwind utility markup)
+ *
+ * Dùng cho `demo.html` (mở được cả `file://`): subset utility khớp markup header production.
+ * Bản dùng Tailwind v4 trong trình duyệt: `demo-tailwind-v4.html` + `js/tailwind-4.2.js` (cần HTTP).
+ */
+
+:root {
+    --font-sans: "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --color-leaf-50: #f4fbe9;
+    --color-leaf-100: #e5f4c7;
+    --color-leaf-200: #d3eea2;
+    --color-leaf-300: #bee778;
+    --color-leaf-400: #a3dd52;
+    --color-leaf-500: #7cc72f;
+    --color-leaf-600: #5ca91d;
+    --color-leaf-700: #3c7c16;
+    --color-leaf-800: #275514;
+    --color-leaf-900: #16350b;
+    --site-header-sticky-height: 11rem;
+}
+
+/* --- Layout utilities (subset used by header) --- */
+
+.hidden {
+    display: none !important;
+}
+
+.fixed {
+    position: fixed;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.relative {
+    position: relative;
+}
+
+.sticky {
+    position: sticky;
+}
+
+.inset-0 {
+    inset: 0;
+}
+
+.top-0 {
+    top: 0;
+}
+
+.right-0 {
+    right: 0;
+}
+
+.left-0 {
+    left: 0;
+}
+
+.left-3 {
+    left: 0.75rem;
+}
+
+.top-3 {
+    top: 0.75rem;
+}
+
+.z-40 {
+    z-index: 40;
+}
+
+.z-50 {
+    z-index: 50;
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.mx-8 {
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+.mb-10 {
+    margin-bottom: 2.5rem;
+}
+
+.m-0 {
+    margin: 0;
+}
+
+.mt-auto {
+    margin-top: auto;
+}
+
+.mb-8 {
+    margin-bottom: 2rem;
+}
+
+.flex {
+    display: flex;
+}
+
+.inline-flex {
+    display: inline-flex;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.h-20 {
+    height: 5rem;
+}
+
+.h-8 {
+    height: 2rem;
+}
+
+.h-6 {
+    height: 1.5rem;
+}
+
+.h-5 {
+    height: 1.25rem;
+}
+
+.h-3 {
+    height: 0.75rem;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.w-8 {
+    width: 2rem;
+}
+
+.w-6 {
+    width: 1.5rem;
+}
+
+.w-5 {
+    width: 1.25rem;
+}
+
+.w-3 {
+    width: 0.75rem;
+}
+
+.w-64 {
+    width: 16rem;
+}
+
+.w-auto {
+    width: auto;
+}
+
+.max-w-lg {
+    max-width: 32rem;
+}
+
+.max-w-2xl {
+    max-width: 42rem;
+}
+
+.max-w-3xl {
+    max-width: 48rem;
+}
+
+.flex-1 {
+    flex: 1 1 0%;
+}
+
+.shrink-0 {
+    flex-shrink: 0;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.gap-4 {
+    gap: 1rem;
+}
+
+.gap-3 {
+    gap: 0.75rem;
+}
+
+.gap-8 {
+    gap: 2rem;
+}
+
+.space-y-3>*+* {
+    margin-top: 0.75rem;
+}
+
+.space-y-4>*+* {
+    margin-top: 1rem;
+}
+
+.rounded {
+    border-radius: 0.25rem;
+}
+
+.rounded-full {
+    border-radius: 9999px;
+}
+
+.rounded-md {
+    border-radius: 0.375rem;
+}
+
+.border-0 {
+    border-width: 0;
+}
+
+.border-2 {
+    border-width: 2px;
+    border-style: solid;
+}
+
+.border-b {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #e5e7eb;
+}
+
+.border-b-2 {
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+}
+
+.border-t {
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: #e5e7eb;
+}
+
+.border-white {
+    border-color: #fff;
+}
+
+.border-leaf-100 {
+    border-color: var(--color-leaf-100);
+}
+
+.border-leaf-500 {
+    border-color: var(--color-leaf-500);
+}
+
+.bg-white {
+    background-color: #fff;
+}
+
+.bg-leaf-50 {
+    background-color: var(--color-leaf-50);
+}
+
+.bg-leaf-100 {
+    background-color: var(--color-leaf-100);
+}
+
+.bg-leaf-200 {
+    background-color: var(--color-leaf-200);
+}
+
+.bg-orange-500 {
+    background-color: #f97316;
+}
+
+.bg-black {
+    background-color: #000;
+}
+
+.bg-opacity-50 {
+    --tw-bg-opacity: 0.5;
+}
+
+.bg-black.bg-opacity-50 {
+    background-color: rgb(0 0 0 / var(--tw-bg-opacity, 0.5));
+}
+
+.bg-white\/80 {
+    background-color: rgb(255 255 255 / 0.8);
+}
+
+.bg-white\/50 {
+    background-color: rgb(255 255 255 / 0.5);
+}
+
+.bg-transparent {
+    background-color: transparent;
+}
+
+.bg-leaf-50\/50 {
+    background-color: rgb(244 251 233 / 0.5);
+}
+
+.bg-yellow-100 {
+    background-color: #fef9c3;
+}
+
+.text-yellow-600 {
+    color: #ca8a04;
+}
+
+.object-contain {
+    object-fit: contain;
+}
+
+.p-1 {
+    padding: 0.25rem;
+}
+
+.p-2 {
+    padding: 0.5rem;
+}
+
+.p-5 {
+    padding: 1.25rem;
+}
+
+.px-2 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.py-1 {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.py-2 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.py-3 {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+.pl-5 {
+    padding-left: 1.25rem;
+}
+
+.pl-10 {
+    padding-left: 2.5rem;
+}
+
+.pr-4 {
+    padding-right: 1rem;
+}
+
+.pb-4 {
+    padding-bottom: 1rem;
+}
+
+.pb-16 {
+    padding-bottom: 4rem;
+}
+
+.pt-4 {
+    padding-top: 1rem;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.no-underline {
+    text-decoration: none;
+}
+
+.list-decimal {
+    list-style-type: decimal;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+.text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.font-extrabold {
+    font-weight: 800;
+}
+
+.leading-none {
+    line-height: 1;
+}
+
+.leading-relaxed {
+    line-height: 1.625;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.tracking-widest {
+    letter-spacing: 0.1em;
+}
+
+.text-gray-400 {
+    color: #9ca3af;
+}
+
+.text-gray-500 {
+    color: #6b7280;
+}
+
+.text-gray-600 {
+    color: #4b5563;
+}
+
+.text-gray-700 {
+    color: #374151;
+}
+
+.text-gray-800 {
+    color: #1f2937;
+}
+
+.text-gray-900 {
+    color: #111827;
+}
+
+.text-leaf-500 {
+    color: var(--color-leaf-500);
+}
+
+.text-leaf-600 {
+    color: var(--color-leaf-600);
+}
+
+.text-leaf-700 {
+    color: var(--color-leaf-700);
+}
+
+.text-leaf-800 {
+    color: var(--color-leaf-800);
+}
+
+.text-leaf-900 {
+    color: var(--color-leaf-900);
+}
+
+.shadow-2xl {
+    box-shadow:
+        0 25px 50px -12px rgb(0 0 0 / 0.25);
+}
+
+.pointer-events-none {
+    pointer-events: none;
+}
+
+.transition {
+    transition-property:
+        color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
+        backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.transition-opacity {
+    transition-property: opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+}
+
+.transition-transform {
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+}
+
+.duration-300 {
+    transition-duration: 300ms;
+}
+
+.ease-in-out {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.backdrop-blur-md {
+    backdrop-filter: blur(12px);
+}
+
+.backdrop-blur-sm {
+    backdrop-filter: blur(4px);
+}
+
+.transform {
+    transform: translateZ(0);
+}
+
+.-translate-x-full {
+    transform: translateX(-100%);
+}
+
+.outline-none:focus,
+.focus\:outline-none:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+.focus\:border-leaf-500:focus {
+    border-color: var(--color-leaf-500);
+}
+
+.container {
+    width: 100%;
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* group-hover:text-leaf-500 on title span */
+.group:hover .group-hover\:text-leaf-500 {
+    color: var(--color-leaf-500);
+}
+
+.hover\:text-leaf-500:hover {
+    color: var(--color-leaf-500);
+}
+
+.hover\:text-leaf-600:hover {
+    color: var(--color-leaf-600);
+}
+
+.hover\:bg-leaf-50:hover {
+    background-color: var(--color-leaf-50);
+}
+
+.hover\:bg-leaf-200:hover {
+    background-color: var(--color-leaf-200);
+}
+
+.hover\:text-red-500:hover {
+    color: #ef4444;
+}
+
+/* Header typography */
+header {
+    font-family: var(--font-sans);
+}
+
+header a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.border-b.border-leaf-100,
+.border-leaf-100 {
+    border-color: var(--color-leaf-100);
+}
+
+/* md breakpoint = 768px (Tailwind default) */
+
+/* md:hidden — visible below md, hidden from md up */
+.md\:hidden {
+    display: block;
+}
+
+#mobile-menu-btn.md\:hidden {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (min-width: 768px) {
+    .md\:hidden {
+        display: none !important;
+    }
+}
+
+/* hidden md:flex — hidden by default, flex from md up */
+@media (min-width: 768px) {
+    .hidden.md\:flex {
+        display: flex !important;
+    }
+
+    .hidden.md\:block {
+        display: block !important;
+    }
+}
+
+/* hidden md:flex — stay hidden below md ( .hidden wins until md) */
+@media (max-width: 767.98px) {
+    .hidden.md\:flex {
+        display: none !important;
+    }
+
+    .hidden.md\:block {
+        display: none !important;
+    }
+}
+
+/* Desktop nav: same as hidden md:flex */
+@media (min-width: 768px) {
+    nav.hidden.md\:flex {
+        display: flex !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    nav.hidden.md\:flex {
+        display: none !important;
+    }
+}
+
+/* SVG stroke */
+header svg {
+    display: block;
+}
+
+.border-gray-200 {
+    border-color: #e5e7eb;
+}
+
+.bg-black\/50 {
+    background-color: rgb(0 0 0 / 0.5);
+}
+
+/* Z-index overlay/drawer: dùng menu-custom.css (đi kèm demo) để trùng với resources/css/app.css */

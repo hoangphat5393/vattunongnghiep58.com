@@ -256,10 +256,16 @@ abstract class TestCase extends BaseTestCase
             Schema::create('menu_items', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('menu_id')->nullable();
+                $table->text('slug')->nullable();
                 $table->string('label')->nullable();
                 $table->string('link')->nullable();
+                $table->text('image')->nullable();
                 $table->unsignedBigInteger('parent')->default(0);
                 $table->integer('sort')->default(0);
+                $table->string('class')->nullable();
+                $table->integer('depth')->default(0);
+                $table->string('rel', 10)->nullable();
+                $table->string('target', 10)->nullable();
                 $table->timestamps();
             });
         }

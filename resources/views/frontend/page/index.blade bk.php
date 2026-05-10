@@ -7,7 +7,7 @@
 @endsection
 
 @section('content')
-<main id="about">
+<div id="about">
     <section class="block10">
         <div class="mainBanner">
             <div class="container main-menu">
@@ -40,7 +40,7 @@
 
     {{-- Subscribe --}}
     @include('frontend.includes.subscribe')
-</main>
+</div>
 @endsection
 
 

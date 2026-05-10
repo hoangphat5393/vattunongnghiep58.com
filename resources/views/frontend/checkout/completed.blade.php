@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    <main class="bg-leaf-50 flex-grow pb-16">
+    <div class="bg-leaf-50 flex-grow pb-16">
         <div class="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
             @if (session('checkout_success'))
                 <div class="mb-6 rounded-xl border border-leaf-200 bg-leaf-50 px-4 py-3 text-sm text-leaf-900">
@@ -97,7 +97,9 @@
                                                             @if (!empty($item->price_label))
                                                                 <div class="mt-1 text-xs font-bold text-gray-600">
                                                                     <span class="px-2 py-1 rounded-full bg-gray-100 inline-block">
-                                                                        {{ $item->price_label }}@if (!empty($item->price_unit)) / {{ $item->price_unit }} @endif
+                                                                        {{ $item->price_label }}@if (!empty($item->price_unit))
+                                                                            / {{ $item->price_unit }}
+                                                                        @endif
                                                                     </span>
                                                                 </div>
                                                             @endif
@@ -127,7 +129,7 @@
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 @endsection
 
 @push('scripts')

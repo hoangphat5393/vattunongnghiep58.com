@@ -8,7 +8,7 @@
 @endphp
 
 @section('content')
-    <main id="about">
+    <div id="about">
         @include('frontend.includes.menu')
 
         <div class="bg-leaf-50 font-sans text-gray-800 relative overflow-hidden">
@@ -294,7 +294,7 @@
                 </p>
             </div>
         </section>
-    </main>
+    </div>
 @endsection
 
 

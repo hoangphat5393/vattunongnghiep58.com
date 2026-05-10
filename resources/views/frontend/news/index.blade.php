@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <main class="flex-grow container mx-auto px-4 py-8">
+    <div class="flex-grow container mx-auto px-4 py-8">
         <div class="flex flex-col md:flex-row gap-8">
             <aside class="md:w-1/4 order-2 md:order-1">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-leaf-100 sticky top-24 mb-8">
@@ -41,20 +41,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     @foreach ($news as $item)
                         @php $cdt = new Carbon($item->created_at); @endphp
-                        <article
-                            class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 flex flex-col h-full border border-gray-100">
+                        <article class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 flex flex-col h-full border border-gray-100">
                             <div class="h-52 overflow-hidden relative">
-                                <a href="{{ route('news.detail', [$item->slug, $item->id]) }}"
-                                    title="{{ $item->title }}">
-                                    <img src="{{ get_image($item->image) }}" alt="{{ $item->title }}"
-                                        class="w-full h-full object-cover hover:scale-110 transition duration-500">
+                                <a href="{{ route('news.detail', [$item->slug, $item->id]) }}" title="{{ $item->title }}">
+                                    <img src="{{ get_image($item->image) }}" alt="{{ $item->title }}" class="w-full h-full object-cover hover:scale-110 transition duration-500">
                                 </a>
                             </div>
                             <div class="p-6 flex flex-col flex-grow">
-                                <h3
-                                    class="font-bold text-xl text-gray-900 mb-3 hover:text-leaf-600 transition line-clamp-2">
-                                    <a href="{{ route('news.detail', [$item->slug, $item->id]) }}"
-                                        title="{{ $item->title }}">
+                                <h3 class="font-bold text-xl text-gray-900 mb-3 hover:text-leaf-600 transition line-clamp-2">
+                                    <a href="{{ route('news.detail', [$item->slug, $item->id]) }}" title="{{ $item->title }}">
                                         {{ $item->title }}
                                     </a>
                                 </h3>
@@ -65,8 +60,7 @@
                                     <span class="text-xs text-gray-400">
                                         {{ $cdt->format('d-m-Y') }}
                                     </span>
-                                    <a href="{{ route('news.detail', [$item->slug, $item->id]) }}"
-                                        class="text-leaf-600 font-bold text-sm hover:underline">Đọc tiếp →</a>
+                                    <a href="{{ route('news.detail', [$item->slug, $item->id]) }}" class="text-leaf-600 font-bold text-sm hover:underline">Đọc tiếp →</a>
                                 </div>
                             </div>
                         </article>
@@ -78,5 +72,5 @@
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 @endsection

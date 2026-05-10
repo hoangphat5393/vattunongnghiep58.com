@@ -159,11 +159,19 @@
     <script type="text/javascript">
         $(function() {
 
-            editorQuote('description');
-            editorQuote('description_en');
+            if ($('#description').length) {
+                editorQuote('description');
+            }
+            if ($('#description_en').length) {
+                editorQuote('description_en');
+            }
 
-            editor('content');
-            editor('content_en');
+            if ($('#content').length) {
+                editor('content');
+            }
+            if ($('#content_en').length) {
+                editor('content_en');
+            }
 
             //Date range picker
             // $('#reservationdate').datetimepicker({

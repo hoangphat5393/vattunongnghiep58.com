@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <main id="main" class="product-category">
+    <div id="main" class="product-category">
         @include('frontend.includes.menu')
 
         <div class="container mx-auto px-4 py-4">
@@ -82,5 +82,5 @@
                 @endif
             </div>
         </section>
-    </main>
+    </div>
 @endsection

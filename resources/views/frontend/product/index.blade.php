@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <main id="main">
+    <div id="main">
         @include('frontend.includes.menu')
 
         <div class="container mx-auto px-4 py-4">
@@ -67,5 +67,5 @@
                 @endempty
             </div>
         </section>
-    </main>
+    </div>
 @endsection

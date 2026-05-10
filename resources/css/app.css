@@ -33,3 +33,30 @@
         max-height: calc(100vh - var(--site-header-sticky-height) - 1rem);
     }
 }
+
+/*
+ * Mobile off-canvas (header.blade.php): stacking must not depend only on Tailwind z-[…] classes.
+ * If those utilities are missing from a build, z-index stays auto and <main> (later in the DOM)
+ * paints above fixed overlay/panel — menu appears "behind" the page.
+ */
+#mobile-menu-overlay {
+    z-index: 99998 !important;
+}
+
+#mobile-menu {
+    z-index: 99999 !important;
+    font-family: var(--font-sans);
+    border-right: 1px solid #e5e7eb;
+}
+
+#mobile-menu a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Desktop menu cấp 2: định vị + hiện/ẩn dùng utility Tailwind trên header (group / group-hover / group-[.is-open]). */
+
+@layer components {
+    .nav-mobile-details[open] .nav-mobile-details-chevron {
+        transform: rotate(180deg);
+    }
+}

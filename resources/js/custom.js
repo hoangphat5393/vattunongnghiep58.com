@@ -271,6 +271,47 @@ document.addEventListener('DOMContentLoaded', () => {
             overlay.addEventListener('click', closeMenu);
         }
 
+        const navDropdownRoots = document.querySelectorAll('[data-nav-dropdown]');
+        const closeAllNavDropdowns = () => {
+            navDropdownRoots.forEach((root) => {
+                root.classList.remove('is-open');
+                const toggle = root.querySelector('[data-nav-dropdown-toggle]');
+                if (toggle) {
+                    toggle.setAttribute('aria-expanded', 'false');
+                }
+            });
+        };
+
+        navDropdownRoots.forEach((root) => {
+            const toggle = root.querySelector('[data-nav-dropdown-toggle]');
+            if (!toggle) {
+                return;
+            }
+
+            toggle.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                const willOpen = !root.classList.contains('is-open');
+                closeAllNavDropdowns();
+                if (willOpen) {
+                    root.classList.add('is-open');
+                    toggle.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('[data-nav-dropdown]')) {
+                closeAllNavDropdowns();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeAllNavDropdowns();
+            }
+        });
+
         const urlParams = new URLSearchParams(window.location.search);
         const query = urlParams.get('keyword') || urlParams.get('q');
 

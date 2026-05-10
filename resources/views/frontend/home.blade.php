@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <main id="main">
+    <div id="main">
         @include('frontend.includes.menu')
 
         <section class="relative py-12 md:py-20 overflow-hidden">
@@ -179,5 +179,5 @@
                 </div>
             </section>
         @endempty
-    </main>
+    </div>
 @endsection

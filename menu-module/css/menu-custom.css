@@ -1,0 +1,280 @@
+/**
+ * CSS tùy chỉnh (mirror phần cuối resources/css/app.css + chỉnh layout header).
+ * Dùng cùng menu.css cho bản demo mở file:// — không phụ thuộc Tailwind browser fetch.
+ */
+
+#mobile-menu-overlay {
+    z-index: 99998 !important;
+}
+
+#mobile-menu {
+    z-index: 99999 !important;
+    font-family: var(--font-sans, "Nunito", system-ui, sans-serif);
+    border-right: 1px solid #e5e7eb;
+}
+
+/**
+ * Drawer mobile: bản demo dùng subset CSS (không có Tailwind preflight) nên <a> mặc định
+ * thành link xanh + gạch chân. Các rule sau khớp giao diện trang chủ (hover nền leaf-50, chữ leaf-600).
+ */
+#mobile-menu a {
+    text-decoration: none;
+    color: #374151;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#mobile-menu a.text-leaf-600 {
+    color: var(--color-leaf-600, #5ca91d);
+}
+
+#mobile-menu a:not(.text-leaf-600):hover,
+#mobile-menu a:not(.text-leaf-600):focus-visible {
+    background-color: var(--color-leaf-50, #f4fbe9);
+    color: var(--color-leaf-600, #5ca91d);
+}
+
+#mobile-menu a.text-leaf-600:hover,
+#mobile-menu a.text-leaf-600:focus-visible {
+    background-color: var(--color-leaf-50, #f4fbe9);
+    color: var(--color-leaf-600, #5ca91d);
+}
+
+#mobile-menu #close-menu-btn {
+    margin: 0;
+    padding: 0.25rem;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 0.375rem;
+    color: #6b7280;
+}
+
+#mobile-menu #close-menu-btn:hover,
+#mobile-menu #close-menu-btn:focus-visible {
+    color: #ef4444;
+}
+
+/* Tránh logo + chữ bị co/chồng khi cột giữa (search) ẩn trên mobile */
+header .container>.flex.justify-between>a.flex.items-center,
+header .container>.flex.justify-between>a.group {
+    flex-shrink: 0;
+}
+
+header .container>.flex.justify-between>.flex.items-center.gap-4 {
+    flex-shrink: 0;
+}
+
+/* Khối hero preview trong demo (tách khỏi utility menu.css) */
+.vt-demo-hero {
+    position: relative;
+    overflow: hidden;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+    .vt-demo-hero {
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+    }
+}
+
+.vt-demo-hero__blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(0);
+}
+
+.vt-demo-hero__blob--g {
+    width: 24rem;
+    height: 24rem;
+    background-color: #86efac;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+}
+
+.vt-demo-hero__blob--y {
+    width: 20rem;
+    height: 20rem;
+    background-color: #fef08a;
+    bottom: 0;
+    right: 0;
+    transform: translate(33%, 33%);
+}
+
+.vt-demo-hero__copy {
+    width: 100%;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .vt-demo-hero__copy {
+        width: 50%;
+        text-align: left;
+    }
+}
+
+.vt-demo-hero__copy h1 {
+    margin: 0 0 1.5rem;
+    font-size: 2.25rem;
+    line-height: 1.15;
+    font-weight: 800;
+    color: #111827;
+}
+
+@media (min-width: 768px) {
+    .vt-demo-hero__copy h1 {
+        font-size: 3.75rem;
+    }
+}
+
+.vt-demo-hero__copy .vt-gradient {
+    background: linear-gradient(to right, var(--color-leaf-600, #5ca91d), #eab308);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.vt-demo-hero__copy p {
+    margin: 0 0 2rem;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: #4b5563;
+}
+
+.vt-demo-hero__inner {
+    position: relative;
+    z-index: 10;
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 3rem;
+}
+
+@media (min-width: 768px) {
+    .vt-demo-hero__inner {
+        flex-direction: row;
+    }
+}
+
+.vt-demo-hero__media {
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .vt-demo-hero__media {
+        width: 50%;
+    }
+}
+
+.vt-demo-hero__figure {
+    position: relative;
+}
+
+.vt-demo-hero__figure::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    background: var(--color-leaf-200, #d3eea2);
+    transform: rotate(6deg) scale(0.95);
+    opacity: 0.5;
+    z-index: 0;
+}
+
+.vt-demo-hero__img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: 28rem;
+    object-fit: cover;
+    border-radius: 2rem;
+    border: 4px solid #fff;
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    transform: rotate(-3deg);
+}
+
+.vt-demo-hero__badge {
+    position: absolute;
+    bottom: -1.5rem;
+    left: -1.5rem;
+    z-index: 2;
+    background: #fff;
+    padding: 1rem;
+    border-radius: 1rem;
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+}
+
+.vt-demo-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    padding: 1rem 2rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    background: linear-gradient(to right, var(--color-leaf-500, #7cc72f), var(--color-leaf-600, #5ca91d));
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+.vt-demo-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 1rem 2rem;
+    font-weight: 700;
+    color: var(--color-leaf-700, #3c7c16);
+    text-decoration: none;
+    background: #fff;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.vt-demo-cats {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 3rem 1rem;
+    text-align: center;
+}
+
+.vt-demo-cats__grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.vt-demo-cat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 140px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.vt-demo-cat__img {
+    width: 7rem;
+    height: 7rem;
+    border-radius: 9999px;
+    object-fit: cover;
+    border: 2px solid var(--color-leaf-100, #e5f4c7);
+    background: var(--color-leaf-50, #f4fbe9);
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+    .vt-demo-cat__img {
+        width: 8rem;
+        height: 8rem;
+    }
+}

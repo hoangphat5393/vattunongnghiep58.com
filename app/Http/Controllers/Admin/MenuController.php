@@ -51,7 +51,6 @@ class MenuController extends Controller
         $menu = Menu::create(['name' => $request->input('menuname')]);
 
         return response()->json(['resp' => $menu->id]);
-
     }
 
     /**
@@ -105,9 +104,7 @@ class MenuController extends Controller
                 // }
 
                 $menuitem->save();
-
             }
-
         } else {
 
             $menuitem = MenuItems::find($request->input('id'));
@@ -129,9 +126,7 @@ class MenuController extends Controller
             // }
 
             $menuitem->save();
-
         }
-
     }
 
     /**
@@ -149,13 +144,10 @@ class MenuController extends Controller
             Menu::destroy($id);
 
             return response()->json(['message' => 'you delete this item']);
-
         } else {
 
             return response()->json(['message' => 'You have to delete all items first', 'error' => 1]);
-
         }
-
     }
 
     public function generatemenucontrol(Request $request)
@@ -186,15 +178,12 @@ class MenuController extends Controller
                 // }
 
                 $menuitem->save();
-
             }
-
         }
 
         // return json_encode(array("resp" => 1));
 
         return response()->json(['resp' => 1]);
-
     }
 
     /**
@@ -205,21 +194,31 @@ class MenuController extends Controller
 
     public function menuItemStore(Request $request, string $menu)
     {
+        $menuId = (int) $menu;
 
         $menuitem = new MenuItems;
 
         $menuitem->label = $request->input('labelmenu');
 
-        $menuitem->slug = $request->input('slug');
+        $menuitem->slug = $request->input('slug') ?? $request->input('slugmenu');
 
         $menuitem->link = $request->input('linkmenu');
 
-        $menuitem->menu_id = $menu;
+        $menuitem->menu_id = $menuId;
 
-        $menuitem->sort = MenuItems::getNextSortRoot($menu);
+        $menuitem->sort = MenuItems::getNextSortRoot($menuId);
+
+        if ($request->filled('targetmenu')) {
+            $menuitem->target = $request->input('targetmenu');
+        }
+
+        if ($request->filled('relmenu')) {
+            $menuitem->rel = $request->input('relmenu');
+        }
 
         $menuitem->save();
 
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -253,9 +252,7 @@ class MenuController extends Controller
                 // }
 
                 $menuitem->save();
-
             }
-
         } else {
 
             $menuitem = MenuItems::find($request->input('id'));
@@ -277,9 +274,7 @@ class MenuController extends Controller
             // }
 
             $menuitem->save();
-
         }
-
     }
 
     /**
@@ -289,7 +284,6 @@ class MenuController extends Controller
     {
 
         MenuItems::destroy($child_id);
-
     }
 
     // admin/updateUrl
@@ -316,10 +310,8 @@ class MenuController extends Controller
                 'link' => str_replace($old_url, $url, $record->link),
 
             ]);
-
         }
 
         return 'Update successful';
-
     }
 }

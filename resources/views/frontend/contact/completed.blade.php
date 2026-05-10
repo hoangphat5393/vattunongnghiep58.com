@@ -8,7 +8,7 @@
 
 
 @section('content')
-    <main id="main" class="contact-completed">
+    <div id="main" class="contact-completed">
         @include('frontend.includes.menu')
 
         <div class="container mx-auto px-4 py-4">
@@ -67,5 +67,5 @@
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 @endsection
