@@ -1,8 +1,9 @@
 @php
     $currentUrl = url()->current();
+    $hasSelectedMenu = !empty($indmenu);
 @endphp
 
-<div id="hwpwrap">
+<div id="hwpwrap" class="admin-menu-builder">
     <div class="custom-wp-admin wp-admin wp-core-ui js menu-max-depth-0 nav-menus-php auto-fold admin-bar">
         <div id="wpwrap">
             <div id="wpcontent">
@@ -10,25 +11,33 @@
                     <div id="wpbody-content">
                         <div class="wrap">
                             <div class="manage-menus">
-                                <form method="get" action="{{ $currentUrl }}">
-                                    <label for="menu" class="selected-menu">Select the menu you want to edit:</label>
-                                    <select name="menu" class="">
-                                        <option value="0">Select menu</option>
-                                        @if ($menulist->count() > 0)
-                                            @foreach ($menulist as $item)
-                                                <option value="{{ $item->id }}" @if (request('menu') == $item->id) selected @endif>{{ $item->name }}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                    <span class="submit-btn">
-                                        <input type="submit" class="button-secondary" value="Choose">
-                                    </span>
-                                    <span class="add-new-menu-action"> or <a href="{{ $currentUrl }}?action=edit&menu=0">Create new menu</a>. </span>
+                                <form method="get" action="{{ $currentUrl }}" class="row g-2 align-items-center">
+                                    <label for="menu" class="col-lg-auto col-form-label fw-semibold mb-0">Select the menu you want to edit:</label>
+                                    <div class="col-lg-4 col-xl-3">
+                                        <select id="menu" name="menu" class="form-select">
+                                            <option value="0">Select menu</option>
+                                            @if ($menulist->count() > 0)
+                                                @foreach ($menulist as $item)
+                                                    <option value="{{ $item->id }}" @if (request('menu') == $item->id) selected @endif>{{ $item->name }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-auto">
+                                        <button type="submit" class="btn btn-outline-primary">
+                                            <i class="fa-solid fa-check me-1" aria-hidden="true"></i>Choose
+                                        </button>
+                                    </div>
+                                    <div class="col-lg-auto">
+                                        <a class="btn btn-link px-0" href="{{ $currentUrl }}?action=edit&menu=0">
+                                            <i class="fa-solid fa-plus me-1" aria-hidden="true"></i>Create new menu
+                                        </a>
+                                    </div>
                                 </form>
                             </div>
 
-                            <div id="nav-menus-frame">
-                                @if (request()->has('menu') && !empty(request()->input('menu')))
+                            <div id="nav-menus-frame" class="menu-builder-frame @if ($hasSelectedMenu) has-selected-menu @else is-create-menu @endif">
+                                @if ($hasSelectedMenu)
                                     <div id="menu-settings-column" class="metabox-holder">
 
                                         <div class="clearfix"></div>
@@ -91,7 +100,7 @@
                                                                     </p> --}}
 
                                                                     <p class="button-controls">
-                                                                        <a href="#" class="button-secondary submit-add-to-menu right add_custom_menu">Add menu item</a>
+                                                                        <a href="#" class="btn btn-outline-primary btn-sm button-secondary submit-add-to-menu right add_custom_menu">Add menu item</a>
                                                                         <span class="spinner" id="spincustomu"></span>
                                                                     </p>
 
@@ -109,7 +118,7 @@
                                                                     @include('backend.setting.includes.page_items')
                                                                 </div>
                                                                 <p class="button-controls">
-                                                                    <a href="#" class="button-secondary submit-add-to-menu right add_menu_item">Add menu item</a>
+                                                                    <a href="#" class="btn btn-outline-primary btn-sm button-secondary submit-add-to-menu right add_menu_item">Add menu item</a>
                                                                     <span class="spinner" id="spincustomu"></span>
                                                                 </p>
                                                             </div>
@@ -125,7 +134,7 @@
                                                                     @include('backend.setting.includes.works_items')
                                                                 </div>
                                                                 <p class="button-controls">
-                                                                    <a href="#" class="button-secondary submit-add-to-menu right add_menu_item">Add menu item</a>
+                                                                    <a href="#" class="btn btn-outline-primary btn-sm button-secondary submit-add-to-menu right add_menu_item">Add menu item</a>
                                                                     <span class="spinner" id="spincustomu"></span>
                                                                 </p>
                                                             </div>
@@ -146,7 +155,7 @@
                                                                     ])
                                                                 </div>
                                                                 <p class="button-controls">
-                                                                    <a href="#" class="button-secondary submit-add-to-menu right add_menu_item">Add menu item</a>
+                                                                    <a href="#" class="btn btn-outline-primary btn-sm button-secondary submit-add-to-menu right add_menu_item">Add menu item</a>
                                                                     <span class="spinner" id="spincustomu"></span>
                                                                 </p>
                                                             </div>
@@ -178,37 +187,33 @@
                                     <div id="menu-management">
                                         <form id="update-nav-menu" action="" method="post" enctype="multipart/form-data">
                                             <div class="menu-edit">
-                                                <div id="nav-menu-header">
-                                                    <div class="major-publishing-actions d-flex justify-content-between">
+                                                <div id="nav-menu-header" class="menu-edit-toolbar">
+                                                    <div class="major-publishing-actions row g-2 align-items-end">
 
-                                                        <label class="menu-name-label howto open-label mb-0" for="menu-name">
-                                                            <span>Name</span>
-                                                            <input name="menu-name" id="menu-name" type="text" class="menu-name regular-text menu-item-textbox" title="Enter menu name" value="@if ($indmenu) {{ $indmenu->name }} @endif">
+                                                        <label class="menu-name-label howto open-label mb-0 col-12 col-xl" for="menu-name">
+                                                            <span class="form-label fw-semibold mb-1">Menu name</span>
+                                                            <input name="menu-name" id="menu-name" type="text" class="form-control menu-name regular-text menu-item-textbox" title="Enter menu name" value="@if ($indmenu) {{ $indmenu->name }} @endif">
                                                             <input type="hidden" id="idmenu" value="{{ $indmenu->id ?? '' }}" />
                                                         </label>
 
-                                                        <div class="d-flex justify-content-end">
+                                                        <div class="col-12 col-xl-auto d-flex flex-wrap justify-content-start justify-content-xl-end gap-2">
                                                             {{-- <div class="me-auto p-2 bd-highlight">Flex item</div> --}}
                                                             @if ($indmenu)
                                                                 <div class="publishing-action">
-                                                                    <a href="javascript:void(0)" onclick="replicate_menu_id('menuwp','{{ $indmenu->id }}')" name="save_menu" id="save_menu_header" class="button button-primary menu-copy me-3">
+                                                                    <a href="javascript:void(0)" onclick="replicate_menu_id('menuwp','{{ $indmenu->id }}')" name="save_menu" id="save_menu_header" class="btn btn-outline-secondary button button-primary menu-copy">
                                                                         @lang('admin.Copy')
                                                                     </a>
                                                                 </div>
                                                             @endif
 
-                                                            @if (request()->has('action'))
+                                                            @if (!$hasSelectedMenu)
                                                                 <div class="publishing-action">
-                                                                    <a onclick="createnewmenu()" name="save_menu" id="save_menu_header" class="button button-primary menu-save">Create menu</a>
-                                                                </div>
-                                                            @elseif(request()->has('menu'))
-                                                                <div class="publishing-action">
-                                                                    <a onclick="getmenus()" name="save_menu" id="save_menu_header" class="button button-primary menu-save">Save menu</a>
-                                                                    <span class="spinner" id="spincustomu2"></span>
+                                                                    <a onclick="createnewmenu()" name="save_menu" id="save_menu_header" class="btn btn-primary button button-primary menu-save">Create menu</a>
                                                                 </div>
                                                             @else
                                                                 <div class="publishing-action">
-                                                                    <a onclick="createnewmenu()" name="save_menu" id="save_menu_header" class="button button-primary menu-save">Create menu</a>
+                                                                    <a onclick="getmenus()" name="save_menu" id="save_menu_header" class="btn btn-primary button button-primary menu-save">Save menu</a>
+                                                                    <span class="spinner" id="spincustomu2"></span>
                                                                 </div>
                                                             @endif
                                                         </div>
@@ -216,16 +221,16 @@
                                                 </div>
                                                 <div id="post-body">
                                                     <div id="post-body-content">
-                                                        @if (request()->has('menu'))
-                                                            <h3>Menu Structure</h3>
-                                                            <div class="drag-instructions post-body-plain">
+                                                        @if ($hasSelectedMenu)
+                                                            <h4 class="h5 mb-2">Menu Structure</h4>
+                                                            <div class="drag-instructions post-body-plain alert alert-info py-2">
                                                                 <p>
                                                                     Place each item in the order you prefer. Click on the arrow to the right of the item to display more configuration options.
                                                                 </p>
                                                             </div>
                                                         @else
-                                                            <h3>Menu Creation</h3>
-                                                            <div class="drag-instructions post-body-plain">
+                                                            <h4 class="h5 mb-2">Menu Creation</h4>
+                                                            <div class="drag-instructions post-body-plain alert alert-secondary py-2">
                                                                 <p>
                                                                     Please enter the name and select "Create menu" button
                                                                 </p>
@@ -328,7 +333,7 @@
                                                                                 <span class="meta-sep hide-if-no-js"> | </span>
                                                                                 <a class="item-cancel submitcancel hide-if-no-js button-secondary" id="cancel-{{ $m->id }}" href="{{ $currentUrl }}?edit-menu-item={{ $m->id }}&cancel=1424297719#menu-item-settings-{{ $m->id }}">Cancel</a>
                                                                                 <span class="meta-sep hide-if-no-js"> | </span>
-                                                                                <a onclick="getmenus()" class="button button-primary updatemenu" id="update-{{ $m->id }}" href="javascript:void(0)">Update item</a>
+                                                                                <a onclick="getmenus()" class="btn btn-primary btn-sm button button-primary updatemenu" id="update-{{ $m->id }}" href="javascript:void(0)">Update item</a>
                                                                             </div>
                                                                         </div>
                                                                         <ul class="menu-item-transport"></ul>
@@ -341,27 +346,23 @@
                                                 </div>
 
                                                 <div id="nav-menu-footer" class="">
-                                                    <div class="major-publishing-actions d-flex justify-content-between">
-                                                        @if (request()->has('action'))
+                                                    <div class="major-publishing-actions d-flex flex-column flex-lg-row gap-3 justify-content-between align-items-lg-center">
+                                                        @if (!$hasSelectedMenu)
                                                             <div class="publishing-action">
-                                                                <a onclick="createnewmenu()" name="save_menu" id="save_menu_header" class="button button-primary menu-save">Create menu</a>
-                                                            </div>
-                                                        @elseif(request()->has('menu'))
-                                                            <div class="">
-                                                                <span class="delete-action">
-                                                                    <a class="submitdelete deletion menu-delete" onclick="deletemenu()" href="javascript:void(9)">Delete menu</a>
-                                                                </span>
-                                                                <span class="delete-action">
-                                                                    <a href="javascript:void(0)" onclick="delete_menu_id()" class="submitdelete deletion menu-delete ms-3">Delete menu & items</a>
-                                                                </span>
-                                                            </div>
-                                                            <div class="publishing-action">
-                                                                <a onclick="getmenus()" name="save_menu" id="save_menu_header" class="button button-primary menu-save">Save menu</a>
-                                                                <span class="spinner" id="spincustomu2"></span>
+                                                                <a onclick="createnewmenu()" name="save_menu" id="save_menu_header" class="btn btn-primary button button-primary menu-save">Create menu</a>
                                                             </div>
                                                         @else
+                                                            <div class="">
+                                                                <span class="delete-action">
+                                                                    <a class="btn btn-outline-danger btn-sm submitdelete deletion menu-delete" onclick="deletemenu()" href="javascript:void(9)">Delete menu</a>
+                                                                </span>
+                                                                <span class="delete-action">
+                                                                    <a href="javascript:void(0)" onclick="delete_menu_id()" class="btn btn-outline-danger btn-sm submitdelete deletion menu-delete ms-2">Delete menu & items</a>
+                                                                </span>
+                                                            </div>
                                                             <div class="publishing-action">
-                                                                <a onclick="createnewmenu()" name="save_menu" id="save_menu_header" class="button button-primary menu-save">Create menu</a>
+                                                                <a onclick="getmenus()" name="save_menu" id="save_menu_header" class="btn btn-primary button button-primary menu-save">Save menu</a>
+                                                                <span class="spinner" id="spincustomu2"></span>
                                                             </div>
                                                         @endif
                                                     </div>

@@ -1,7 +1,6 @@
 /**
- * Extracted from resources/views/frontend/layouts/header.blade.php (@push scripts)
- * and duplicated in resources/js/custom.js (DOMContentLoaded IIFE).
- * Opens/closes the off-canvas drawer + dimmed overlay.
+ * Mở/đóng drawer mobile + overlay (mirror resources/js/custom.js cùng đoạn với mobile menu).
+ * Dropdown desktop: dùng thêm `js/desktop-nav-dropdown.js` (class `is-open` trên [data-nav-dropdown]).
  */
 document.addEventListener('DOMContentLoaded', function () {
     var btn = document.getElementById('mobile-menu-btn');

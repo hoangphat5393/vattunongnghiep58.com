@@ -80,22 +80,31 @@ class MenuController extends Controller
     {
 
         $arraydata = $request->input('arraydata');
+        $menuId = (int) $id;
 
         if (is_array($arraydata)) {
 
             foreach ($arraydata as $value) {
 
-                $menuitem = MenuItems::find($value['id']);
+                $menuitem = MenuItems::where('menu_id', $menuId)->find($value['id']);
+
+                if (! $menuitem) {
+                    continue;
+                }
 
                 $menuitem->label = $value['label'] ?? '';
 
-                $menuitem->image = $value['image'];
+                $menuitem->image = $value['image'] ?? null;
 
                 $menuitem->slug = $value['slug'] ?? '';
 
                 $menuitem->link = $value['link'] ?? '';
 
                 $menuitem->class = $value['class'] ?? '';
+
+                $menuitem->target = $value['target'] ?? null;
+
+                $menuitem->rel = $value['rel'] ?? null;
 
                 // if (config('menu.use_roles')) {
 
@@ -107,7 +116,11 @@ class MenuController extends Controller
             }
         } else {
 
-            $menuitem = MenuItems::find($request->input('id'));
+            $menuitem = MenuItems::where('menu_id', $menuId)->find($request->input('id'));
+
+            if (! $menuitem) {
+                return response()->json(['message' => 'Menu item not found'], 404);
+            }
 
             $menuitem->label = $request->input('label');
 
@@ -117,7 +130,11 @@ class MenuController extends Controller
 
             $menuitem->link = $request->input('url');
 
-            $menuitem->class = $request->input('clases');
+            $menuitem->class = $request->input('clases', $request->input('classes'));
+
+            $menuitem->target = $request->input('target');
+
+            $menuitem->rel = $request->input('rel');
 
             // if (config('menu.use_roles')) {
 
@@ -163,7 +180,11 @@ class MenuController extends Controller
 
             foreach ($request->input('arraydata') as $value) {
 
-                $menuitem = MenuItems::find($value['id']);
+                $menuitem = MenuItems::where('menu_id', $menu->id)->find($value['id']);
+
+                if (! $menuitem) {
+                    continue;
+                }
 
                 $menuitem->parent = $value['parent'];
 
@@ -224,26 +245,35 @@ class MenuController extends Controller
     /**
      * Update the specified menuitem in storage.
      */
-    public function updateitem(Request $request)
+    public function updateitem(Request $request, string $menu)
     {
 
         $arraydata = $request->input('arraydata');
+        $menuId = (int) $menu;
 
         if (is_array($arraydata)) {
 
             foreach ($arraydata as $value) {
 
-                $menuitem = MenuItems::find($value['id']);
+                $menuitem = MenuItems::where('menu_id', $menuId)->find($value['id']);
+
+                if (! $menuitem) {
+                    continue;
+                }
 
                 $menuitem->label = $value['label'] ?? '';
 
-                $menuitem->image = $value['image'];
+                $menuitem->image = $value['image'] ?? null;
 
                 $menuitem->slug = $value['slug'] ?? '';
 
                 $menuitem->link = $value['link'] ?? '';
 
                 $menuitem->class = $value['class'] ?? '';
+
+                $menuitem->target = $value['target'] ?? null;
+
+                $menuitem->rel = $value['rel'] ?? null;
 
                 // if (config('menu.use_roles')) {
 
@@ -255,7 +285,11 @@ class MenuController extends Controller
             }
         } else {
 
-            $menuitem = MenuItems::find($request->input('id'));
+            $menuitem = MenuItems::where('menu_id', $menuId)->find($request->input('id'));
+
+            if (! $menuitem) {
+                return response()->json(['message' => 'Menu item not found'], 404);
+            }
 
             $menuitem->label = $request->input('label');
 
@@ -265,7 +299,11 @@ class MenuController extends Controller
 
             $menuitem->link = $request->input('url');
 
-            $menuitem->class = $request->input('class');
+            $menuitem->class = $request->input('class', $request->input('classes'));
+
+            $menuitem->target = $request->input('target');
+
+            $menuitem->rel = $request->input('rel');
 
             // if (config('menu.use_roles')) {
 
@@ -283,7 +321,13 @@ class MenuController extends Controller
     public function destroyitemmenu(Request $request, int $id, $child_id)
     {
 
-        MenuItems::destroy($child_id);
+        $deleted = MenuItems::where('menu_id', $id)->whereKey($child_id)->delete();
+
+        if (! $deleted) {
+            return response()->json(['message' => 'Menu item not found'], 404);
+        }
+
+        return response()->json(['success' => true]);
     }
 
     // admin/updateUrl

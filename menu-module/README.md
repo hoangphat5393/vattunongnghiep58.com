@@ -4,116 +4,102 @@ Bản tách / mirror giao diện Laravel. Thư mục này **không** thay thế 
 
 ## Đồng bộ gần đây (cùng logic production)
 
-| Chủ đề                                  | Trong project                                                                        | Trong `menu-module`                                      |
-| --------------------------------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------- |
-| Offcanvas **ngoài** `<header>`          | `header.blade.php`: đóng `</header>` rồi mới `#mobile-menu-overlay` + `#mobile-menu` | `html/header.html`, `demo.html`, `html/header.blade.php` |
-| **Z-index** cố định cho overlay / panel | `resources/css/app.css` (`#mobile-menu-overlay` 99998, `#mobile-menu` 99999)         | Cuối `css/menu.css` (cùng rule cho `demo.html`)          |
-| Nền overlay                             | Class `bg-black/50`                                                                  | `menu.css`: `.bg-black\/50` + class trên HTML            |
-| Drawer markup                           | `flex h-full w-full flex-col p-5`, viền `border-gray-200`                            | Giữ nguyên trong HTML mirror                             |
-| `includes/menu.blade.php`               | Chỉ comment — không còn `<div></div>` rỗng                                           | README: menu thật nằm ở `layouts.header`                 |
+| Chủ đề                                  | Trong project                                                                                                         | Trong `menu-module`                                                                                                   |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Offcanvas **ngoài** `<header>`          | `header.blade.php`: đóng `</header>` rồi mới `#mobile-menu-overlay` + `#mobile-menu`                                  | `html/header.html`, `demo.html`, `html/header.blade.php`                                                              |
+| **Dropdown desktop** (cấp 2)            | `header.blade.php`: `[data-nav-dropdown]`, nút `[data-nav-dropdown-toggle]`, panel `group-hover` + `group-[.is-open]` | `index.html` (utility đủ); `demo.html` / `html/header.html` (class panel `vt-nav-dropdown-panel` + `menu-custom.css`) |
+| **Mobile accordion**                    | `<details class="nav-mobile-details">` + chevron                                                                      | Giống trong các file HTML / Blade mirror                                                                              |
+| **Z-index** cố định cho overlay / panel | `resources/css/app.css` (`#mobile-menu-overlay` 99998, `#mobile-menu` 99999)                                          | Cuối `css/menu-custom.css` (cùng rule cho demo)                                                                       |
+| JS dropdown + drawer                    | `resources/js/custom.js` (mobile + `[data-nav-dropdown]`)                                                             | `js/mobile-menu.js` + **`js/desktop-nav-dropdown.js`** (chỉ dropdown; giữ đúng logic toggle / Escape / click ngoài)   |
+| `includes/menu.blade.php`               | Legacy / comment                                                                                                      | README: menu thật nằm ở `layouts.header`                                                                              |
 
 ## Entry point trong project gốc
 
-| Thành phần                             | Đường dẫn                                                                                                                                          |
-| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Blade header (desktop + mobile drawer) | `resources/views/frontend/layouts/header.blade.php`                                                                                                |
-| Layout include header                  | `resources/views/frontend/layouts/master.blade.php` (`@include('frontend.layouts.header')`)                                                        |
-| Trang chủ                              | `resources/views/frontend/home.blade.php` — menu chính ở `layouts.header`; `frontend/includes/menu.blade.php` là include legacy (không output DOM) |
-| Theme màu + font (Tailwind v4)         | `resources/css/app.css` (`@theme` — palette `leaf`, `--font-sans` Nunito)                                                                          |
-| JS mobile menu + sync từ khóa URL      | `resources/js/custom.js` (IIFE trong `DOMContentLoaded`, ~248–283)                                                                                 |
-| Script inline (trùng logic)            | Cuối `header.blade.php` — `@push('scripts')` (cùng logic với `custom.js`)                                                                          |
+| Thành phần                                      | Đường dẫn                                                                                               |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Blade header (desktop dropdown + mobile drawer) | `resources/views/frontend/layouts/header.blade.php`                                                     |
+| Layout include                                  | `resources/views/frontend/layouts/master.blade.php` (`@include('frontend.layouts.header')`)             |
+| Theme + chevron `<details>`                     | `resources/css/app.css` (`@layer components` — `.nav-mobile-details[open] .nav-mobile-details-chevron`) |
+| JS (mobile + dropdown + keyword sync)           | `resources/js/custom.js` (IIFE `DOMContentLoaded`)                                                      |
 
-**Ghi chú:** Trên production, mobile menu listener có thể được đăng ký **hai lần** (Blade `@push` + `custom.js` qua Vite). Module tách chỉ một bản trong `js/mobile-menu.js` cho demo.
+**Ghi chú:** Trên production, listener có thể chạy **hai lần** nếu vừa có logic trong Blade `@push` vừa bundle Vite. Module tách: một file `mobile-menu.js`, một file `desktop-nav-dropdown.js`.
 
-## Phụ thuộc thực tế (dependency graph)
+## Phụ thuộc (dependency graph)
 
 ### CSS
 
-- **Production:** Tailwind CSS v4 qua Vite (`@vite` → `resources/css/app.css` + plugin `@tailwindcss/vite`). Các class utility trên header (`bg-white/80`, `leaf-*`, `md:*`, …) được biên dịch từ đây; **không** có Bootstrap/Swiper cho riêng header này.
-- **Standalone (`menu-module`):** `css/menu.css` — utility + biến giống `@theme` trong `app.css`, **cộng** rule `#mobile-menu-overlay` / `#mobile-menu` (giống cuối `app.css`). Font Nunito: Google Fonts trong `demo.html`.
+- **Production:** Tailwind v4 qua Vite (`resources/css/app.css`).
+- **Standalone (`demo.html`):** `css/menu.css` (subset utility) + `css/menu-custom.css` (z-index drawer, hero demo, **`.vt-nav-dropdown-panel`**, chevron mobile).
 
 ### JavaScript
 
-- **Production:** `resources/js/app.js` → `custom.js` (jQuery, axios, …) — phần **chỉ liên quan menu** là đoạn mở/đóng drawer và đồng bộ `?keyword=` / `?q=` vào ô tìm.
-- **Không có:** mega menu, dropdown Bootstrap, offcanvas Bootstrap, Swiper cho header, sticky logic thêm (header dùng `position: sticky` + class Tailwind).
+- **Production:** `resources/js/app.js` → `custom.js`.
+- **Module:** `js/mobile-menu.js`, `js/desktop-nav-dropdown.js`, `js/menu.js` (sync `?keyword=` / `?q=`).
 
 ### Asset
 
-- **Logo production:** `get_image(setting_option('logo') ?: 'upload/images/logo/logo.png')` — ưu tiên CSDL, không cấu hình thì dùng file tĩnh **`public/upload/images/logo/logo.png`** (đặt ảnh PNG vào đây).
-- **Demo HTML (`demo.html`, …):** `../public/upload/images/logo/logo.png` (cùng file với trên khi mở demo từ disk).
-- **Icon:** SVG **inline** trong Blade (hamburger, đóng, tìm kiếm, giỏ); không dùng file icon riêng cho header.
-
-### Menu dữ liệu (Laravel)
-
-- Model: `App\Models\Frontend\Menu::byName('Menu-main')` với quan hệ `items`.
-- Blade lặp `@foreach ($headerMenu->items as $item)` cho desktop + mobile.
+- **Logo module:** `assets/images/logo.svg` (demo / index dùng file này).
+- **Production:** `get_image(setting_option('logo') …)` — thường `public/upload/images/logo/logo.png`.
 
 ## Cấu trúc thư mục
 
 ```
 menu-module/
-├── index.html                # Entry: `js/tailwind-4.2.js` + `menu-custom.css` (HTTP). `file://` → dùng demo.html
-├── demo.html                 # Portable: css/menu.css + menu-custom.css (file:// OK)
-├── demo-tailwind-v4.html     # Tailwind v4 browser + menu-custom.css (cần HTTP)
+├── index.html              # Tailwind v4 browser (HTTP): utility đầy đủ, dropdown giống production
+├── demo.html               # file:// OK: menu.css + menu-custom.css; panel dropdown = .vt-nav-dropdown-panel
 ├── README.md
 ├── html/
-│   ├── header.blade.php   # Bản sao Blade từ project (để tham chiếu / copy tay vào views)
-│   ├── header.html        # HTML tĩnh mẫu (menu giống screenshot)
-│   └── mobile-menu.html   # Fragment overlay + drawer (tùy chọn include)
+│   ├── header.blade.php    # Bản sao Blade từ resources/views/frontend/layouts/header.blade.php
+│   ├── header.html         # HTML tĩnh (../assets/…); subset panel
+│   └── mobile-menu.html    # Fragment overlay + drawer
 ├── css/
-│   ├── menu.css           # Subset utility (không cần Tailwind browser)
-│   ├── menu-custom.css    # Z-index drawer, hero demo, fix logo/shrink — dùng chung cả hai demo
-│   └── vendor/            # Rỗng — header không dùng Bootstrap/Swiper
+│   ├── menu.css
+│   ├── menu-custom.css
+│   └── vendor/
 ├── js/
-│   ├── tailwind-4.2.js    # @tailwindcss/browser v4 — dùng cho demo-tailwind-v4.html
-│   ├── menu.js            # Sync query string → input tìm kiếm
-│   ├── mobile-menu.js     # Mở/đóng mobile drawer + overlay
-│   └── vendor/            # Rỗng
+│   ├── tailwind-4.2.js     # @tailwindcss/browser — cho index.html
+│   ├── menu.js
+│   ├── mobile-menu.js
+│   └── desktop-nav-dropdown.js   # Toggle class is-open (đồng bộ custom.js)
 └── assets/
-    ├── images/logo.svg
-    ├── icons/             # Rỗng (icon = inline SVG trong HTML)
-    └── fonts/             # Rỗng (Nunito từ Google Fonts trong demo)
+    └── images/
 ```
 
 ## Cách chạy demo
 
-1. **`index.html`:** `js/tailwind-4.2.js` + khối `type="text/tailwindcss"` (`@import` + `@theme` leaf) + `css/menu-custom.css` — mở qua **HTTP** (vd. `npx --yes serve .` trong `menu-module/`). Trên **`file://`** import Tailwind thường lỗi → dùng **`demo.html`**.
-2. **`demo.html` (khuyến nghị cho `file://`):** `menu.css` + `menu-custom.css`, không script Tailwind browser.
-3. **`demo-tailwind-v4.html`:** giống `index.html` (cùng stack Tailwind browser + `menu-custom.css`); giữ để tham chiếu tên file riêng nếu cần.
-4. Thu nhỏ &lt; 768px: hamburger, overlay, drawer; ≥ 768px: tìm kiếm + nav ngang.
-5. `?keyword=test` trên URL — `js/menu.js` đồng bộ ô tìm kiếm.
+1. **`demo.html`:** `menu.css` + `menu-custom.css` — mở trực tiếp (`file://`). Desktop: hover hoặc nút mũi tên mở dropdown; mobile: `<details>` mở nhóm con.
+2. **`index.html`:** `tailwind-4.2.js` + block `type="text/tailwindcss"` + `menu-custom.css` — cần **HTTP** (vd. `npx --yes serve .` trong `menu-module/`). Class dropdown trùng Blade production (`group-hover:` + `group-[.is-open]:`).
+3. Thu nhỏ &lt; 768px: hamburger, overlay, drawer; ≥ 768px: tìm kiếm + nav + dropdown.
+4. `?keyword=` — `js/menu.js`.
 
-## Cách import vào project khác
+## Import vào project khác
 
-### Chỉ HTML/CSS/JS (static)
+### Static
 
-**Cách A — Giống dự án Vật Tư (Tailwind v4):** xem `demo-tailwind-v4.html`: copy `js/tailwind-4.2.js` (hoặc CDN `@tailwindcss/browser`), markup từ `html/header.html`, `<script type="text/tailwindcss">` với `@import "tailwindcss"` + `@theme` (palette `leaf`), link `css/menu-custom.css` (z-index `#mobile-menu*`, hero tùy chọn), Google Fonts Nunito; cuối body: `tailwind-4.2.js` → block `text/tailwindcss` → `mobile-menu.js` → `menu.js`.
+- **Có Tailwind v4 browser:** theo `index.html` (script order: `tailwind-4.2.js` → `text/tailwindcss` → `mobile-menu.js` → `desktop-nav-dropdown.js` → `menu.js`).
+- **Không Tailwind browser:** theo `demo.html`: hai file CSS + `mobile-menu.js` + `desktop-nav-dropdown.js` + `menu.js`.
 
-**Cách B — Không Tailwind browser:** copy `css/menu.css`, `css/menu-custom.css`, `js/menu.js`, `js/mobile-menu.js`, `assets/`, link cả hai CSS + font, script như `demo.html`.
+### Laravel
 
-### Laravel / Blade
-
-1. Giữ nguyên `@include('frontend.layouts.header')` trong master **hoặc** copy nội dung từ `html/header.blade.php` vào component của bạn.
-2. Tiếp tục `@vite(['resources/css/app.css', ...])` — Tailwind cover utility; **giữ** block z-index `#mobile-menu*` trong `app.css` khi dùng Blade header hiện tại.
-3. Nếu bỏ script inline trong Blade, thêm vào bundle Vite: import `./mobile-menu-logic` (tách từ `js/mobile-menu.js`) và import `menu.js` tương ứng để tránh trùng listener.
+Giữ `@vite` + Blade `layouts/header.blade.php`; logic đã nằm trong `custom.js`. Nếu tách script khỏi Blade, import hai module tương ứng trong bundle để tránh đăng ký trùng.
 
 ## File entry chính
 
-| Mục đích                      | File                                                                              |
-| ----------------------------- | --------------------------------------------------------------------------------- |
-| Demo portable (`file://`)     | `index.html` hoặc `demo.html`                                                     |
-| Demo Tailwind v4 (HTTP)       | `demo-tailwind-v4.html`                                                           |
-| Tích hợp Laravel (tham chiếu) | `html/header.blade.php` + `resources/views/frontend/layouts/master.blade.php` gốc |
-| Style static / không Vite     | `css/menu.css` + `css/menu-custom.css`                                            |
-| Hành vi menu                  | `js/mobile-menu.js` + `js/menu.js`                                                |
+| Mục đích                  | File                                                              |
+| ------------------------- | ----------------------------------------------------------------- |
+| Demo portable (`file://`) | `demo.html`                                                       |
+| Demo Tailwind v4 (HTTP)   | `index.html`                                                      |
+| Blade tham chiếu          | `html/header.blade.php`                                           |
+| Style static              | `css/menu.css` + `css/menu-custom.css`                            |
+| Hành vi                   | `js/mobile-menu.js` + `js/desktop-nav-dropdown.js` + `js/menu.js` |
 
 ## Cách menu hoạt động (tóm tắt)
 
-1. **Sticky header:** class `sticky top-0 z-50` (+ nền mờ `backdrop-blur-md`, `bg-white/80`).
-2. **Desktop (≥768px):** `hidden md:flex` hiện form tìm kiếm và `nav`; nút hamburger và panel `md:hidden`.
-3. **Mobile:** Drawer `#mobile-menu` **sau** `</header>` (tránh lỗi nền trong suốt / khối đen khi `backdrop-blur` trên `<header>`). `fixed` trái, mặc định `-translate-x-full`; mở/đóng như trên; z-index cố định trong `app.css` (Laravel) và `menu-custom.css` (demo/module).
-4. **Giỏ hàng:** `#CartCountDot` là chấm cam cố định trên icon (project gốc không có script đổi trạng thái dot theo `CartCountDot`; logic giỏ khác dùng `#CartCount` ở layout cũ).
+1. **Sticky header:** `sticky top-0 z-50`, nền `backdrop-blur-md`, **`overflow-visible`** để panel dropdown không bị cắt.
+2. **Desktop:** Mục có con: `data-nav-dropdown` + link chính + nút `data-nav-dropdown-toggle`; panel hiện khi **hover** nhóm hoặc khi **click** toggle (class `is-open`); đóng khi click ngoài hoặc Escape.
+3. **Mobile:** Drawer sau `</header>`; mục có con = `<details class="nav-mobile-details">` + link “Tất cả …”.
+4. **Giỏ:** `#CartCountDot` — chấm cố định (logic đếm giỏ nằm nơi khác trên site).
 
 ---
 
-_Cập nhật định kỳ theo `resources/views/frontend/layouts/header.blade.php` và `resources/css/app.css`._
+_Cập nhật theo `resources/views/frontend/layouts/header.blade.php`, `resources/css/app.css`, `resources/js/custom.js`._

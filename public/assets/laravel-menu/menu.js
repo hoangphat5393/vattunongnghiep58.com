@@ -364,7 +364,7 @@ function createnewmenu() {
         axios
             .post(`admin/menu`, data)
             .then((response) => {
-                window.location = menuwr + '?menu=' + response.resp;
+                window.location = menuwr + '?menu=' + response.data.resp;
             })
             .catch((e) => console.error(e));
     } else {

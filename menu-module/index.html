@@ -13,7 +13,7 @@
 </head>
 
 <body class="m-0 min-h-screen bg-leaf-50 font-sans text-gray-800">
-    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-leaf-100">
+    <header class="overflow-visible bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-leaf-100">
         <div class="container mx-auto px-4 py-3">
             <div class="flex justify-between items-center">
                 <button type="button" id="mobile-menu-btn" class="md:hidden shrink-0 text-leaf-700 focus:outline-none"
@@ -63,12 +63,45 @@
                 </div>
             </div>
 
-            <nav class="mt-4 hidden justify-center gap-8 font-bold text-gray-600 md:flex" aria-label="Menu chính">
-                <a href="#" class="border-b-2 border-leaf-500 text-leaf-600">Trang chủ</a>
-                <a href="#" class="transition hover:text-leaf-600">Sản phẩm</a>
-                <a href="#" class="transition hover:text-leaf-600">Tin tức nông nghiệp</a>
-                <a href="#" class="transition hover:text-leaf-600">Giới thiệu</a>
-                <a href="#" class="transition hover:text-leaf-600">Liên hệ</a>
+            <nav class="hidden justify-center gap-6 pt-1 md:flex md:flex-wrap" aria-label="Menu chính">
+                <a href="index.html"
+                    class="inline-flex items-center border-b-2 border-leaf-500 pb-1 font-bold text-leaf-600 no-underline transition">Trang
+                    chủ</a>
+                <div class="group relative font-bold text-gray-600" data-nav-dropdown>
+                    <div class="flex items-center gap-0.5">
+                        <a href="#"
+                            class="inline-flex items-center border-b-2 border-transparent pb-1 no-underline text-gray-600 transition hover:text-leaf-600">Sản
+                            phẩm</a>
+                        <button type="button"
+                            class="nav-desktop-dropdown-toggle rounded p-1 text-leaf-700 transition hover:bg-leaf-50 hover:text-leaf-600 focus:outline-none"
+                            data-nav-dropdown-toggle aria-expanded="false" aria-haspopup="true"
+                            aria-controls="nav-sub-demo-idx" aria-label="Mở menu con Sản phẩm">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="nav-sub-demo-idx" role="menu"
+                        class="invisible absolute left-0 top-full z-[70] mt-0.5 min-w-48 origin-top scale-95 rounded-lg border border-leaf-100 bg-white py-2 opacity-0 shadow-lg transition duration-150 ease-out group-hover:visible group-hover:scale-100 group-hover:opacity-100 group-[.is-open]:visible group-[.is-open]:scale-100 group-[.is-open]:opacity-100">
+                        <a href="#" role="menuitem"
+                            class="block px-4 py-2 text-sm font-bold text-gray-700 no-underline transition hover:bg-leaf-50 hover:text-leaf-600">Hạt
+                            giống</a>
+                        <a href="#" role="menuitem"
+                            class="block px-4 py-2 text-sm font-bold text-gray-700 no-underline transition hover:bg-leaf-50 hover:text-leaf-600">Phân
+                            bón</a>
+                    </div>
+                </div>
+                <a href="#"
+                    class="inline-flex items-center border-b-2 border-transparent pb-1 font-bold text-gray-600 no-underline transition hover:text-leaf-600">Tin
+                    tức nông nghiệp</a>
+                <a href="#"
+                    class="inline-flex items-center border-b-2 border-transparent pb-1 font-bold text-gray-600 no-underline transition hover:text-leaf-600">Giới
+                    thiệu</a>
+                <a href="#"
+                    class="inline-flex items-center border-b-2 border-transparent pb-1 font-bold text-gray-600 no-underline transition hover:text-leaf-600">Liên
+                    hệ</a>
             </nav>
         </div>
     </header>
@@ -91,13 +124,32 @@
                     </svg>
                 </button>
             </div>
-            <div class="flex flex-col space-y-4 font-bold text-gray-600">
-                <a href="#"
+            <div class="flex flex-col space-y-2 font-bold text-gray-600">
+                <a href="index.html"
                     class="block rounded-md px-2 py-2 font-bold no-underline transition bg-leaf-50 text-leaf-600">Trang
                     chủ</a>
-                <a href="#"
-                    class="block rounded-md px-2 py-2 font-bold no-underline text-gray-700 transition hover:bg-leaf-50 hover:text-leaf-600">Sản
-                    phẩm</a>
+                <details class="nav-mobile-details rounded-md border border-gray-100 bg-white">
+                    <summary
+                        class="flex cursor-pointer list-none items-center justify-between gap-2 px-2 py-2 font-bold text-gray-800 marker:hidden [&::-webkit-details-marker]:hidden">
+                        <span>Sản phẩm</span>
+                        <svg class="nav-mobile-details-chevron h-4 w-4 shrink-0 text-leaf-600 transition-transform"
+                            fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </summary>
+                    <div class="space-y-1 border-t border-gray-100 px-2 pb-2 pt-1">
+                        <a href="#"
+                            class="block rounded-md px-2 py-1.5 text-sm font-bold text-leaf-700 no-underline transition hover:bg-leaf-50">Tất
+                            cả Sản phẩm</a>
+                        <a href="#"
+                            class="block rounded-md px-2 py-1.5 text-sm font-bold text-gray-700 no-underline transition hover:bg-leaf-50 hover:text-leaf-600">Hạt
+                            giống</a>
+                        <a href="#"
+                            class="block rounded-md px-2 py-1.5 text-sm font-bold text-gray-700 no-underline transition hover:bg-leaf-50 hover:text-leaf-600">Phân
+                            bón</a>
+                    </div>
+                </details>
                 <a href="#"
                     class="block rounded-md px-2 py-2 font-bold no-underline text-gray-700 transition hover:bg-leaf-50 hover:text-leaf-600">Tin
                     tức nông nghiệp</a>
@@ -114,8 +166,9 @@
     </div>
 
     <main id="main-content">
-        <section class="relative overflow-hidden py-12 md:py-20">
+        <section class="vt-demo-hero-bg relative overflow-hidden py-12 md:py-20">
             <div class="vt-demo-hero__blob vt-demo-hero__blob--g"></div>
+            <div class="vt-demo-hero__blob vt-demo-hero__blob--y"></div>
             <div class="vt-demo-hero__inner">
                 <div class="vt-demo-hero__copy">
                     <h1>
@@ -128,7 +181,12 @@
                     </p>
                     <div class="flex flex-col gap-4 md:flex-row">
                         <a href="#" class="vt-demo-btn-primary">Khám phá ngay</a>
-                        <a href="#" class="vt-demo-btn-secondary">Xem video hướng dẫn</a>
+                        <a href="#" class="vt-demo-btn-secondary">
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <path d="M8 5v14l11-7L8 5z" />
+                            </svg>
+                            Xem video hướng dẫn
+                        </a>
                     </div>
                 </div>
                 <div class="vt-demo-hero__media">
@@ -176,10 +234,12 @@
             <p class="max-w-2xl leading-relaxed">
                 <strong>index.html</strong> dùng <code>js/tailwind-4.2.js</code> + <code>@import "tailwindcss"</code> +
                 <code>@theme</code> (palette <code>leaf-*</code>) và <code>css/menu-custom.css</code> (z-index drawer,
-                hero <code>.vt-demo-*</code>). Mở qua <strong>HTTP</strong> (vd. <code>npx --yes serve .</code> trong
-                <code>menu-module</code>). Trên <code>file://</code> import Tailwind thường bị chặn → dùng
+                hero <code>.vt-demo-*</code>). Menu desktop có <strong>dropdown cấp 2</strong> (hover + nút mũi tên,
+                class <code>is-open</code>) giống <code>layouts/header.blade.php</code>; script
+                <code>js/desktop-nav-dropdown.js</code> đồng bộ với <code>resources/js/custom.js</code>. Mở qua
+                <strong>HTTP</strong> (vd. <code>npx --yes serve .</code>). Trên <code>file://</code> → dùng
                 <a class="font-semibold text-leaf-700 hover:text-leaf-600" href="demo.html">demo.html</a>
-                (<code>menu.css</code> + <code>menu-custom.css</code>, không cần script).
+                (<code>menu.css</code> + subset + <code>menu-custom.css</code>).
             </p>
             <p class="mt-4"><a class="font-semibold text-leaf-700 hover:text-leaf-600"
                     href="index.html?keyword=hạt%20giống">Thử ?keyword=</a> — <code>js/menu.js</code></p>
@@ -199,7 +259,7 @@
                     <code>public/upload/images/logo/logo.png</code> + cấu hình CSDL.
                 </li>
                 <li>Cuối <code>&lt;body&gt;</code>: <code>tailwind-4.2.js</code> → khối <code>text/tailwindcss</code> →
-                    <code>mobile-menu.js</code> → <code>menu.js</code>.
+                    <code>mobile-menu.js</code> → <code>desktop-nav-dropdown.js</code> → <code>menu.js</code>.
                 </li>
                 <li>Laravel: dùng Blade header + Vite <code>app.css</code>; rule z-index
                     <code>#mobile-menu-overlay</code> / <code>#mobile-menu</code> trong <code>app.css</code>.
@@ -228,6 +288,7 @@
         }
     </script>
     <script src="js/mobile-menu.js"></script>
+    <script src="js/desktop-nav-dropdown.js"></script>
     <script src="js/menu.js"></script>
 </body>
 

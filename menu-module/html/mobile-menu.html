@@ -1,5 +1,4 @@
-<!-- Fragment: giống phần sau </header> trong header.blade.php / header.html.
-     Không đặt trong <header> có backdrop-blur (lỗi compositor trên Chrome). -->
+<!-- Fragment: overlay + drawer sau </header> — đồng bộ header.blade.php (có <details> cho mục có con). -->
 <div id="mobile-menu-overlay" class="fixed inset-0 hidden bg-black/50 transition-opacity duration-300"
     aria-hidden="true"></div>
 
@@ -18,25 +17,39 @@
                 </svg>
             </button>
         </div>
-        <div class="flex flex-col space-y-4 font-bold text-gray-600">
+        <div class="flex flex-col space-y-2 font-bold text-gray-600">
             <a href="#"
-                class="block rounded-md px-2 py-2 font-bold no-underline transition text-leaf-600 bg-leaf-50">Trang
+                class="block rounded-md px-2 py-2 font-bold no-underline transition bg-leaf-50 text-leaf-600">Trang
                 chủ</a>
-            <a href="#"
-                class="block rounded-md px-2 py-2 font-bold no-underline text-gray-700 transition hover:bg-leaf-50 hover:text-leaf-600">Sản
-                phẩm</a>
+            <details class="nav-mobile-details rounded-md border border-gray-100 bg-white">
+                <summary
+                    class="flex cursor-pointer list-none items-center justify-between gap-2 px-2 py-2 font-bold text-gray-800">
+                    <span>Sản phẩm</span>
+                    <svg class="nav-mobile-details-chevron h-4 w-4 shrink-0 text-leaf-600 transition-transform"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </summary>
+                <div class="space-y-1 border-t border-gray-100 px-2 pb-2 pt-1">
+                    <a href="#"
+                        class="block rounded-md px-2 py-1.5 text-sm font-bold text-leaf-700 no-underline transition hover:bg-leaf-50">Tất
+                        cả Sản phẩm</a>
+                    <a href="#"
+                        class="block rounded-md px-2 py-1.5 text-sm font-bold text-gray-700 no-underline transition hover:bg-leaf-50 hover:text-leaf-600">Hạt
+                        giống</a>
+                    <a href="#"
+                        class="block rounded-md px-2 py-1.5 text-sm font-bold text-gray-700 no-underline transition hover:bg-leaf-50 hover:text-leaf-600">Phân
+                        bón</a>
+                </div>
+            </details>
             <a href="#"
                 class="block rounded-md px-2 py-2 font-bold no-underline text-gray-700 transition hover:bg-leaf-50 hover:text-leaf-600">Tin
-                tức nông
-                nghiệp</a>
-            <a href="#"
-                class="block rounded-md px-2 py-2 font-bold no-underline text-gray-700 transition hover:bg-leaf-50 hover:text-leaf-600">Giới
-                thiệu</a>
+                tức</a>
             <a href="#"
                 class="block rounded-md px-2 py-2 font-bold no-underline text-gray-700 transition hover:bg-leaf-50 hover:text-leaf-600">Liên
                 hệ</a>
         </div>
-        <div class="mt-auto border-t border-gray-200 pt-4 text-center text-xs text-gray-400">&copy; 2026 Vật Tư 58
-            (demo)</div>
+        <div class="mt-auto border-t border-gray-200 pt-4 text-center text-xs text-gray-400">&copy; 2026 (fragment)
+        </div>
     </div>
 </div>

@@ -3,7 +3,7 @@
     $currentUrl = url()->current();
 @endphp
 
-<header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-leaf-100">
+<header class="overflow-visible bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-leaf-100">
     <div class="container mx-auto px-4 py-3">
         <div class="flex justify-between items-center">
             <button type="button" id="mobile-menu-btn" class="md:hidden text-leaf-700 focus:outline-none" aria-controls="mobile-menu" aria-label="Mở menu">
@@ -50,16 +50,45 @@
             </div>
         </div>
 
-        <nav class="hidden md:flex justify-center mt-4 gap-8 font-bold text-gray-600">
+        <nav class="hidden justify-center gap-6 pt-1 md:flex md:flex-wrap" aria-label="Menu chính">
             @if ($headerMenu)
                 @foreach ($headerMenu->items as $item)
                     @php
                         $itemUrl = $item->link;
-                        $isActive = $currentUrl === $itemUrl;
+                        $hasChildren = $item->child->isNotEmpty();
+                        $isChildActive = $hasChildren && $item->child->contains(fn($child) => $currentUrl === $child->link);
+                        $isActive = $currentUrl === $itemUrl || $isChildActive;
                     @endphp
-                    <a href="{{ $itemUrl }}" class="{{ $isActive ? 'text-leaf-600 border-b-2 border-leaf-500' : 'hover:text-leaf-600 transition' }}">
-                        {{ $item->label }}
-                    </a>
+                    @if ($hasChildren)
+                        <div class="group relative font-bold text-gray-600" data-nav-dropdown>
+                            <div class="flex items-center gap-0.5">
+                                <a href="{{ $itemUrl }}" class="inline-flex items-center border-b-2 border-transparent pb-1 no-underline transition {{ $isActive ? 'border-leaf-500 text-leaf-600' : 'text-gray-600 hover:text-leaf-600' }}">
+                                    {{ $item->label }}
+                                </a>
+                                <button type="button" class="nav-desktop-dropdown-toggle rounded p-1 text-leaf-700 transition hover:bg-leaf-50 hover:text-leaf-600 focus:outline-none" data-nav-dropdown-toggle aria-expanded="false" aria-haspopup="true" aria-controls="nav-sub-{{ $item->id }}" aria-label="Mở menu con {{ $item->label }}">
+                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div id="nav-sub-{{ $item->id }}" role="menu"
+                                class="invisible absolute left-0 top-full z-[70] mt-0.5 min-w-48 origin-top scale-95 rounded-lg border border-leaf-100 bg-white py-2 opacity-0 shadow-lg transition duration-150 ease-out group-hover:visible group-hover:scale-100 group-hover:opacity-100 group-[.is-open]:visible group-[.is-open]:scale-100 group-[.is-open]:opacity-100">
+                                @foreach ($item->child as $child)
+                                    @php
+                                        $childUrl = $child->link;
+                                        $childActive = $currentUrl === $childUrl;
+                                    @endphp
+                                    <a href="{{ $childUrl }}" role="menuitem" class="block px-4 py-2 text-sm font-bold no-underline transition {{ $childActive ? 'bg-leaf-50 text-leaf-600' : 'text-gray-700 hover:bg-leaf-50 hover:text-leaf-600' }}">
+                                        {{ $child->label }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        <a href="{{ $itemUrl }}" class="inline-flex items-center border-b-2 border-transparent pb-1 font-bold no-underline transition {{ $isActive ? 'border-leaf-500 text-leaf-600' : 'text-gray-600 hover:text-leaf-600' }}">
+                            {{ $item->label }}
+                        </a>
+                    @endif
                 @endforeach
             @endif
         </nav>
@@ -79,16 +108,43 @@
                 </svg>
             </button>
         </div>
-        <div class="flex flex-col space-y-4 font-bold text-gray-600">
+        <div class="flex flex-col space-y-2 font-bold text-gray-600">
             @if ($headerMenu)
                 @foreach ($headerMenu->items as $item)
                     @php
                         $itemUrl = $item->link;
-                        $isActive = $currentUrl === $itemUrl;
+                        $hasChildren = $item->child->isNotEmpty();
+                        $isChildActive = $hasChildren && $item->child->contains(fn($child) => $currentUrl === $child->link);
+                        $isActive = $currentUrl === $itemUrl || $isChildActive;
                     @endphp
-                    <a href="{{ $itemUrl }}" class="block rounded-md px-2 py-2 font-bold no-underline transition {{ $isActive ? 'bg-leaf-50 text-leaf-600' : 'text-gray-700 hover:bg-leaf-50 hover:text-leaf-600' }}">
-                        {{ $item->label }}
-                    </a>
+                    @if ($hasChildren)
+                        <details class="nav-mobile-details rounded-md border border-gray-100 bg-white">
+                            <summary class="flex cursor-pointer list-none items-center justify-between gap-2 px-2 py-2 font-bold text-gray-800 marker:hidden [&::-webkit-details-marker]:hidden">
+                                <span class="{{ $isActive ? 'text-leaf-600' : '' }}">{{ $item->label }}</span>
+                                <svg class="nav-mobile-details-chevron h-4 w-4 shrink-0 text-leaf-600 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </summary>
+                            <div class="space-y-1 border-t border-gray-100 px-2 pb-2 pt-1">
+                                <a href="{{ $itemUrl }}" class="block rounded-md px-2 py-1.5 text-sm font-bold no-underline text-leaf-700 transition hover:bg-leaf-50">
+                                    Tất cả {{ $item->label }}
+                                </a>
+                                @foreach ($item->child as $child)
+                                    @php
+                                        $childUrl = $child->link;
+                                        $childActive = $currentUrl === $childUrl;
+                                    @endphp
+                                    <a href="{{ $childUrl }}" class="block rounded-md px-2 py-1.5 text-sm font-bold no-underline transition {{ $childActive ? 'bg-leaf-50 text-leaf-600' : 'text-gray-700 hover:bg-leaf-50 hover:text-leaf-600' }}">
+                                        {{ $child->label }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </details>
+                    @else
+                        <a href="{{ $itemUrl }}" class="block rounded-md px-2 py-2 font-bold no-underline transition {{ $isActive ? 'bg-leaf-50 text-leaf-600' : 'text-gray-700 hover:bg-leaf-50 hover:text-leaf-600' }}">
+                            {{ $item->label }}
+                        </a>
+                    @endif
                 @endforeach
             @endif
         </div>
@@ -98,36 +154,3 @@
         </div>
     </div>
 </div>
-
-@push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var btn = document.getElementById('mobile-menu-btn');
-            var menu = document.getElementById('mobile-menu');
-            var overlay = document.getElementById('mobile-menu-overlay');
-            var closeBtn = document.getElementById('close-menu-btn');
-
-            if (!btn || !menu || !overlay || !closeBtn) {
-                return;
-            }
-
-            var openMenu = function() {
-                overlay.classList.remove('hidden');
-                setTimeout(function() {
-                    menu.classList.remove('-translate-x-full');
-                }, 10);
-            };
-
-            var closeMenu = function() {
-                menu.classList.add('-translate-x-full');
-                setTimeout(function() {
-                    overlay.classList.add('hidden');
-                }, 300);
-            };
-
-            btn.addEventListener('click', openMenu);
-            closeBtn.addEventListener('click', closeMenu);
-            overlay.addEventListener('click', closeMenu);
-        });
-    </script>
-@endpush

@@ -79,6 +79,27 @@ header .container>.flex.justify-between>.flex.items-center.gap-4 {
     }
 }
 
+/**
+ * Nền hero: gradient nhẹ mint → kem/vàng (đồng bộ giao diện trang chủ / screenshot).
+ * Dùng chung demo.html (menu.css) và index.html (Tailwind + file này).
+ */
+.vt-demo-hero-bg {
+    background: linear-gradient(105deg,
+            #ecfdf5 0%,
+            #f4fbe9 32%,
+            #fefce8 58%,
+            #fffbeb 88%,
+            #fef9c3 100%);
+}
+
+.vt-demo-hero-bg .vt-demo-hero__blob--g {
+    opacity: 0.42;
+}
+
+.vt-demo-hero-bg .vt-demo-hero__blob--y {
+    opacity: 0.38;
+}
+
 .vt-demo-hero__blob {
     position: absolute;
     border-radius: 9999px;
@@ -236,7 +257,13 @@ header .container>.flex.justify-between>.flex.items-center.gap-4 {
     color: var(--color-leaf-700, #3c7c16);
     text-decoration: none;
     background: #fff;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.08);
+}
+
+.vt-demo-btn-secondary svg {
+    flex-shrink: 0;
+    color: var(--color-leaf-600, #5ca91d);
 }
 
 .vt-demo-cats {
@@ -277,4 +304,55 @@ header .container>.flex.justify-between>.flex.items-center.gap-4 {
         width: 8rem;
         height: 8rem;
     }
+}
+
+/* --- Desktop dropdown (demo.html / html/header.html — subset không dùng Tailwind browser) --- */
+[data-nav-dropdown].group {
+    position: relative;
+}
+
+.vt-nav-dropdown-panel {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    z-index: 70;
+    margin-top: 0.125rem;
+    min-width: 12rem;
+    padding: 0.5rem 0;
+    background: #fff;
+    border: 1px solid var(--color-leaf-100, #e5f4c7);
+    border-radius: 0.5rem;
+    box-shadow:
+        0 10px 15px -3px rgb(0 0 0 / 0.1),
+        0 4px 6px -4px rgb(0 0 0 / 0.1);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-2px);
+    transition:
+        opacity 150ms ease-out,
+        transform 150ms ease-out,
+        visibility 150ms ease-out;
+}
+
+.vt-nav-dropdown-panel a {
+    text-decoration: none;
+}
+
+[data-nav-dropdown].group:hover .vt-nav-dropdown-panel,
+[data-nav-dropdown].group.is-open .vt-nav-dropdown-panel {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.nav-mobile-details summary {
+    list-style: none;
+}
+
+.nav-mobile-details summary::-webkit-details-marker {
+    display: none;
+}
+
+.nav-mobile-details[open] .nav-mobile-details-chevron {
+    transform: rotate(180deg);
 }
