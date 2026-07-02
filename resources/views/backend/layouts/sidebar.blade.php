@@ -67,7 +67,7 @@
 
                 {{-- begin::Brand Text --}}
 
-                <span class="brand-text fw-light">GetAZ</span>
+                <span class="brand-text fw-light">{{ setting_option('webtitle') ?: 'Admin' }}</span>
 
             </a>
 
@@ -83,7 +83,7 @@
 
         <div class="sidebar-wrapper">
 
-            <nav class="mt-2">
+            <nav class="mt-2" aria-label="Main navigation">
 
 
 
@@ -150,7 +150,7 @@
                                     $currentUrl = url()->current();
 
                                     $isMenuOpen = collect($menus[$level0->id])->contains(function ($level1) use ($AdminMenu, $currentUrl) {
-                                        if (! $level1->uri || ! Route::has($level1->uri)) {
+                                        if (!$level1->uri || !Route::has($level1->uri)) {
                                             return false;
                                         }
 

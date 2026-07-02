@@ -3,6 +3,8 @@
 
 <head>
 
+    @include('backend.partials.admin-theme-init')
+
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     {{-- begin::Primary Meta Tags --}}
@@ -38,8 +40,10 @@
 
     @yield('seo')
 
-    {{-- begin::Fonts --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
     <link rel="stylesheet" href="{{ asset('assets/admin/css/index.css') }}" />
+
+    <link rel="preload" href="{{ asset('assets/admin/css/adminlte.min.css') }}" as="style" />
 
     {{-- begin::Third Party Plugin(OverlayScrollbars) — aligned with new-admin-ui @2.11.0 --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
@@ -50,7 +54,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
 
     {{-- AdminLTE v4 CSS --}}
-    <link rel="stylesheet" href="{{ asset('assets/admin/css/adminlte.css?ver=' . time()) }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/adminlte.min.css') }}?ver={{ time() }}">
 
     {{-- <link rel="stylesheet" href="{{ asset('assets/plugin/datetimepicker/jquery.datetimepicker.min.css') }}"> --}}
 
@@ -113,7 +117,7 @@
     <script src="{{ asset('assets/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
     {{-- AdminLTE v4 JS --}}
-    <script src="{{ asset('assets/admin/js/adminlte.js?ver=' . time()) }}"></script>
+    <script src="{{ asset('assets/admin/js/adminlte.min.js') }}?ver={{ time() }}"></script>
 
     {{-- OPTIONAL SCRIPTS --}}
 

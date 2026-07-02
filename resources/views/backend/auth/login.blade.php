@@ -2,23 +2,28 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    @include('backend.partials.admin-theme-init')
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
     <title>Đăng nhập quản trị — {{ setting_option('webtitle') }}</title>
 
     <link rel="icon" type="image/png" sizes="16x16" href="{{ get_image(setting_option('favicon_16')) }}">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
     <link rel="stylesheet" href="{{ asset('assets/admin/css/index.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="{{ asset('assets/fontawesome_pro/css/all.min.css') }}">
+    <link rel="preload" href="{{ asset('assets/admin/css/adminlte.min.css') }}" as="style" />
     <link rel="stylesheet" href="{{ asset('assets/admin/css/adminlte.min.css') }}?ver={{ config('app.asset_version', '1') }}">
 </head>
 
-{{-- AdminLTE v4 login v2 pattern (new-admin-ui/dist/examples/login-v2.html), Font Awesome icons --}}
-
 <body class="login-page bg-body-secondary">
-    <div class="login-box">
+    <main class="login-box">
         <div class="card card-outline card-primary shadow-sm">
             <div class="card-header">
                 <a href="{{ route('admin.login') }}" class="link-dark text-center d-block text-decoration-none">
@@ -46,7 +51,7 @@
                             <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" placeholder="" required autocomplete="current-password">
                             <label for="password">{{ __('Password') }}</label>
                         </div>
-                        <span class="input-group-text btn-show-pass" role="button" tabindex="0" title="Hiện/ẩn mật khẩu"><i class="fa-solid fa-eye" aria-hidden="true"></i></span>
+                        <span class="input-group-text btn-show-pass" role="button" tabindex="0" title="Hiện/ẩn mật khẩu" aria-label="Hiện hoặc ẩn mật khẩu"><i class="fa-solid fa-eye" aria-hidden="true"></i></span>
                     </div>
                     @error('password')
                         <div class="text-danger small mb-2">{{ $message }}</div>
@@ -68,14 +73,18 @@
                 </form>
             </div>
         </div>
-    </div>
+    </main>
 
     <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('assets/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('assets/admin/js/adminlte.min.js') }}"></script>
     <script>
         $(function() {
-            $('.btn-show-pass').on('click', function() {
+            $('.btn-show-pass').on('click keydown', function(e) {
+                if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') {
+                    return;
+                }
+                e.preventDefault();
                 var $input = $(this).closest('.input-group').find('input[name="password"]');
                 var $icon = $(this).find('i');
                 if ($input.attr('type') === 'password') {

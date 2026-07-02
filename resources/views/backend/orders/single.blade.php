@@ -27,13 +27,13 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">Order Detail: {{ $order_detail->cart_code }}</h3>
+                    <h1 class="mb-0">Order Detail: {{ $order_detail->cart_code }}</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-end">
+                    <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                         <li class="breadcrumb-item active">Order Detail: {{ $order_detail->cart_code }}</li>
-                    </ol>
+                    </ol></nav>
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->

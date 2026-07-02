@@ -1,5 +1,8 @@
 # Admin UI Upgrade Plan
 
+> **Phiên bản mục tiêu:** AdminLTE **4.1.0** (`new-admin-ui/`)  
+> **Cập nhật lần cuối:** 2026-07-02
+
 ## 1. Current system
 
 - Laravel project using Blade
@@ -8,7 +11,7 @@
 
 ## 2. New UI
 
-- Nguồn: `new-admin-ui/` (AdminLTE v4, bản build trong `dist/`)
+- Nguồn: `new-admin-ui/` (AdminLTE v4.1, bản build trong `dist/`)
 - HTML/CSS/JS thuần; shell trùng cấu trúc với app hiện tại (`app-wrapper`, `app-header`, `app-sidebar`, `app-main`)
 
 ## 3. Goals
@@ -32,66 +35,59 @@
 | Footer                    | `backend/layouts/footer.blade.php`                          |
 | Dashboard                 | `backend/home.blade.php`                                    |
 | Layout tối giản           | `backend/layouts/empty.blade.php`                           |
+| Theme init                | `backend/partials/admin-theme-init.blade.php`               |
 
-Các module (user, product, orders, …) đã dùng pattern AdminLTE v4 (`app-content-header`, `app-content`, `card`); không bắt buộc đổi HTML từng file trừ khi cần chỉnh riêng từng màn.
+## 6. Đã thực hiện
 
-## 6. Đã thực hiện (cập nhật)
+### 6.1 Assets AdminLTE 4.1.0
 
-### 6.1 Assets AdminLTE
+- Build `new-admin-ui` (`npm run build`) → sync `dist/css`, `dist/js`, `dist/assets` vào `public/assets/admin/`
+- Xác nhận: `adminlte.min.js` header **v4.1.0** (thay thế rc7 cũ)
+- **Không** deploy `dist/pages/` demo lên URL production
 
-- Đồng bộ file build từ `new-admin-ui/dist/` vào `public/assets/admin/`:
-    - `css/` — `adminlte.css`, `adminlte.min.css`, RTL, source maps
-    - `js/` — `adminlte.js`, `adminlte.min.js`, source maps
-- Ảnh demo trong `dist/assets/img` đã copy sang `public/assets/admin/assets/img/` (nếu trùng tên sẽ ghi đè)
+### 6.2 Layout shell (4.1)
 
-### 6.2 `master.blade.php`
+- `master.blade.php`, `empty.blade.php`:
+  - `@include('backend.partials.admin-theme-init')` — chống flash theme (`lte-theme`)
+  - Font **Source Sans 3** (CDN), preload `adminlte.min.css`
+  - OverlayScrollbars 2.11, Bootstrap Icons 1.13.1
+  - `adminlte.min.js` 4.1 (ColorMode bundled)
+- `nav.blade.php`:
+  - Bỏ demo messages/notifications + **navbar-search** (dead widget)
+  - **Color mode** light/dark/auto (`data-bs-theme-value`)
+  - User menu thật (Auth admin), đổi mật khẩu + đăng xuất
+  - `aria-label` cho nút icon
+- `sidebar.blade.php`: brand = `setting_option('webtitle')`, `aria-label` nav
+- `footer.blade.php`: copyright + tên site
 
-- Thêm meta theo template mới: `color-scheme`, `theme-color` (light/dark), `supported-color-schemes`, viewport có `user-scalable=yes`
-- OverlayScrollbars: nâng từ bản local 2.10.1 → **CDN 2.11.0** (khớp `new-admin-ui`)
-- Thêm **Bootstrap Icons 1.13.1** (CDN) — icon `bi-*` trên navbar/dashboard; trước đó thiếu link trong layout chính
-- Giữ nguyên: jQuery, Bootstrap bundle, Font Awesome Pro, plugin (Select2, Flatpickr, CKEditor, …), `@stack`, CSRF, favicon
-- Script khởi tạo OverlayScrollbars cho `.sidebar-wrapper`: **không bật trên mobile** (`innerWidth <= 992`) để tránh xung đột cảm ứng, giống demo mới
+### 6.3 Auth
 
-### 6.3 `empty.blade.php`
+- `auth/login.blade.php`: theme init, `<main>`, Bootstrap Icons, a11y password toggle
 
-- Cùng hướng xử lý: OverlayScrollbars 2.11 CDN, Bootstrap Icons, meta tương tự, scrollbar init có check mobile
+### 6.4 Module & a11y sweep
 
-### 6.4 `footer.blade.php`
+- ~30 trang: tiêu đề `h3` → **`h1`** trong `app-content-header`
+- Breadcrumb bọc `<nav aria-label="breadcrumb">`
+- `admin-menu.blade.php`: `section.content` → `app-content-header` + `app-content`
+- `partials/breadcrumbs.blade.php`: active item không còn link, `aria-current="page"`
 
-- Copyright năm cập nhật theo template (2014–2026)
+### 6.5 Trước đó (v4.0)
 
-### 6.5 Module User + bộ lọc tìm kiếm
-
-- `backend/user/index.blade.php`: nút lọc chỉ còn **icon Font Awesome** `fa-solid fa-magnifying-glass`, có `aria-label`; bảng thêm `table-hover` (giống demo bảng AdminLTE).
-- `backend/product/index.blade.php`: nút `@lang('admin.Search')` đổi thành icon + `aria-label`; bảng thêm `table-hover`.
-- `backend/product/filter.blade.php`, `backend/orders/filter.blade.php`: nút "Tìm kiếm" → icon + `aria-label`.
-- `backend/orders/filter.blade.php`: thay `<section class="content">` bằng `<div class="app-content">` cho đồng bộ AdminLTE v4.
-- `backend/product-category/index.blade.php`: nút tìm kiếm → icon FA; sửa **lỗi typo** `</div>/.row -->` (thiếu `<!--`) khiến chuỗi `<!-- /.row -->` hiện trên trang; bỏ `</section>` thừa; dòng tổng dùng `@lang('admin.category')` thay vì `admin.News`; `ml-2` → `ms-2`; thêm `table-hover`.
-
-### 6.6 Đăng nhập admin (login v2)
-
-- `backend/auth/login.blade.php`: bỏ theme cũ `assets/login/*`; dùng **`login-page` + `login-box` + `card card-outline card-primary`** như `new-admin-ui/dist/examples/login-v2.html`.
-- Asset: `index.css`, Font Awesome Pro, `adminlte.min.css`; script: jQuery, Bootstrap bundle, `adminlte.min.js`.
-- Form: `form-floating` + `input-group-text`, icon **Font Awesome** (`fa-envelope`, mắt ẩn/hiện mật khẩu).
-- Thêm checkbox **Ghi nhớ đăng nhập** (`name="remember"`) — tương thích `AuthenticatesUsers` của Laravel, **không** đổi `LoginController`.
-- Route / method POST / field `email`, `password` giữ như cũ.
-
-### 6.8 `public/assets/css/style_admin.css`
-
-- Viết lại gọn: bỏ reset HTML/Bootstrap trùng (normalize cũ, `ol/ul` global, `a` màu #3097d1, utility trùng `.p-0`/`.g-*`/`.mh-100`/`.text-white`), bỏ `body.push`/`body.fixed` không dùng, bỏ `@keyframes button-loading-spinner` không tham chiếu.
-- Đã **bỏ** `.fl`/`.fr`/`.l`/`.r`/`.clear` — toàn bộ view backend chuyển sang utility Bootstrap 5: `float-start`, `float-end`, `clearfix` (và `d-flex flex-wrap gap-2` cho partial nút thay cho `d-flex fl`).
-- Giữ phần **đặc thù CMS**: upload/gallery/biến thể, `#table_index`, Select2, tagsinput, loading spinner, menu đa cấp `#muti_menu_post`, v.v.
-- Dùng **`var(--bs-*)`** (màu link, danger, border, primary cho tiêu đề cột bảng) để khớp theme AdminLTE mới.
-
-### 6.7 Chưa đổi (có thể làm sau)
-
-- `nav.blade.php`, `sidebar.blade.php` — menu động, không đổi logic.
-- Form user chi tiết (`user/single.blade.php`) — có thể nâng `form-select` / floating labels sau nếu cần.
+- Login v2, `style_admin.css` tinh gọn, icon search FA, `table-hover`, orders filter `app-content`
 
 ## 7. Progress
 
-- [x] Layout (`master`, `empty`, assets AdminLTE)
-- [x] Sidebar — giữ logic; không thay cấu trúc HTML cốt lõi
-- [x] Dashboard — đã tương thích từ trước; chỉ hưởng lợi CSS/JS mới + Bootstrap Icons
-- [x] User module — đồng bộ nút tìm kiếm (icon FA) + `table-hover` trên danh sách
-- [x] Login admin — theo pattern `login-v2` (AdminLTE v4), icon Font Awesome
+- [x] Assets AdminLTE **4.1.0**
+- [x] Layout (`master`, `empty`, `nav`, `sidebar`, `footer`, theme init)
+- [x] Color mode (light/dark/auto)
+- [x] Login admin
+- [x] Page titles h1 + breadcrumb a11y
+- [x] `admin-menu` layout v4
+- [x] Tests admin (17 passed)
+
+## 8. Có thể làm sau (tùy chọn)
+
+- Nâng Bootstrap local lên **5.3.8** (khớp AdminLTE 4.1 compile)
+- Form user/product: `form-floating` toàn bộ
+- Dashboard widgets: dữ liệu thật thay placeholder demo
+

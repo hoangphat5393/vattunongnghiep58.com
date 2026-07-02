@@ -22,13 +22,13 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">Lọc sản phẩm</h3>
+                    <h1 class="mb-0">Lọc sản phẩm</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-end">
+                    <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                         <li class="breadcrumb-item active">Lọc sản phẩm</li>
-                    </ol>
+                    </ol></nav>
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->

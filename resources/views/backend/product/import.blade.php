@@ -25,10 +25,10 @@
                     <h1 class="m-0 text-dark">Xử lý data</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-end">
+                    <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                         <li class="breadcrumb-item active">Xử lý data</li>
-                    </ol>
+                    </ol></nav>
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->

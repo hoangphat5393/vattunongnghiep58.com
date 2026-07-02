@@ -3,6 +3,8 @@
 
 <head>
 
+    @include('backend.partials.admin-theme-init')
+
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     {{-- begin::Primary Meta Tags --}}
@@ -33,8 +35,11 @@
 
     @yield('seo')
 
-    {{-- begin::Fonts --}}
+    {{-- begin::Fonts (AdminLTE 4.1 — Source Sans 3) --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
     <link rel="stylesheet" href="{{ asset('assets/admin/css/index.css') }}" />
+
+    <link rel="preload" href="{{ asset('assets/admin/css/adminlte.min.css') }}" as="style" />
 
     {{-- begin::Third Party Plugin(OverlayScrollbars) — aligned with new-admin-ui @2.11.0 --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />

@@ -1,13 +1,8 @@
 <footer class="app-footer">
-    {{-- begin::To the end --}}
-    <div class="float-end d-none d-sm-inline">Anything you want</div>
-    {{-- end::To the end --}}
-    {{-- begin::Copyright --}}
+    <div class="float-end d-none d-sm-inline">{{ setting_option('webtitle') }}</div>
     <strong>
-        Copyright &copy; 2014-2026&nbsp;
-        {{-- <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>. --}}
-        <a href="https://adminlte.io" class="text-decoration-none">AdminLTE.io</a>.
+        Copyright &copy; 2014-{{ date('Y') }}&nbsp;
+        <a href="{{ route('index') }}" class="text-decoration-none" target="_blank" rel="noopener">{{ setting_option('webtitle') ?: config('app.name') }}</a>.
     </strong>
     All rights reserved.
-    {{-- end::Copyright --}}
 </footer>

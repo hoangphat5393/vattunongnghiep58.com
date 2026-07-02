@@ -28,7 +28,17 @@
         $id = empty($id) ? 0 : $id;
     @endphp
 
-    <section class="content">
+    <div class="app-content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h1 class="mb-0">{{ $title_head }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-content">
         <div class="container-fluid pt-3">
             <div class="row">
 
@@ -288,123 +298,123 @@
                 </div>
             </div>
         </div>
-        </div>
-        </div>
+    </div>
+    </div>
 
-    @endsection
+@endsection
 
 
-    @push('scripts')
-        {{-- Ediable     --}}
-        <script src="{{ asset('assets/plugin/nestable/jquery.nestable.min.js') }}"></script>
-        <script src="{{ asset('assets/plugin/iconpicker/fontawesome-iconpicker.min.js') }}"></script>
+@push('scripts')
+    {{-- Ediable     --}}
+    <script src="{{ asset('assets/plugin/nestable/jquery.nestable.min.js') }}"></script>
+    <script src="{{ asset('assets/plugin/iconpicker/fontawesome-iconpicker.min.js') }}"></script>
 
-        <script type="text/javascript">
-            $('.remove_menu').click(function(event) {
-                var id = $(this).data('id');
-                const swalWithBootstrapButtons = Swal.mixin({
-                    customClass: {
-                        confirmButton: 'btn btn-success',
-                        cancelButton: 'btn btn-danger'
-                    },
-                    buttonsStyling: true,
-                })
+    <script type="text/javascript">
+        $('.remove_menu').click(function(event) {
+            var id = $(this).data('id');
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: true,
+            })
 
-                swalWithBootstrapButtons.fire({
-                    title: '{{ __('action.delete_confirm') }}',
-                    text: "",
-                    type: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: '{{ __('action.confirm_yes') }}',
-                    confirmButtonColor: "#DD6B55",
-                    cancelButtonText: '{{ __('action.confirm_no') }}',
-                    reverseButtons: true,
+            swalWithBootstrapButtons.fire({
+                title: '{{ __('action.delete_confirm') }}',
+                text: "",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '{{ __('action.confirm_yes') }}',
+                confirmButtonColor: "#DD6B55",
+                cancelButtonText: '{{ __('action.confirm_no') }}',
+                reverseButtons: true,
 
-                    preConfirm: function() {
-                        return new Promise(function(resolve) {
-                            $.ajax({
-                                method: 'post',
-                                url: '{{ $urlDeleteItem ?? '' }}',
-                                data: {
-                                    id: id,
-                                    _token: '{{ csrf_token() }}',
-                                },
-                                success: function(data) {
-                                    if (data.error == 1) {
-                                        alertMsg('error', 'Cancelled', data.msg);
-                                        return;
-                                    } else {
-                                        alertMsg('success', 'Success');
-                                        window.location.replace('{{ route('admin.admin-menu.index') }}');
-                                    }
-
+                preConfirm: function() {
+                    return new Promise(function(resolve) {
+                        $.ajax({
+                            method: 'post',
+                            url: '{{ $urlDeleteItem ?? '' }}',
+                            data: {
+                                id: id,
+                                _token: '{{ csrf_token() }}',
+                            },
+                            success: function(data) {
+                                if (data.error == 1) {
+                                    alertMsg('error', 'Cancelled', data.msg);
+                                    return;
+                                } else {
+                                    alertMsg('success', 'Success');
+                                    window.location.replace('{{ route('admin.admin-menu.index') }}');
                                 }
-                            });
+
+                            }
                         });
-                    }
-
-                }).then((result) => {
-                    if (result.value) {
-                        alertMsg('success', '{{ __('action.delete_confirm_deleted_msg') }}', '{{ __('action.delete_confirm_deleted') }}');
-                    } else if (
-                        // Read more about handling dismissals
-                        result.dismiss === Swal.DismissReason.cancel
-                    ) {
-                        // swalWithBootstrapButtons.fire(
-                        //   'Cancelled',
-                        //   'Your imaginary file is safe :)',
-                        //   'error'
-                        // )
-                    }
-                })
-
-            });
-
-            $('#menu-sort').nestable();
-            $('.menu-sort-save').click(function() {
-                $('#loading').show();
-                var serialize = $('#menu-sort').nestable('serialize');
-                var menu = JSON.stringify(serialize);
-                $.ajax({
-                        url: '{{ route('admin.admin-menu.update_sort') }}',
-                        type: 'POST',
-                        dataType: 'json',
-                        data: {
-                            _token: '{{ csrf_token() }}',
-                            menu: menu
-                        },
-                    })
-                    .done(function(data) {
-                        $('#loading').hide();
-                        if (data.error == 0) {
-                            location.reload();
-                        } else {
-                            alertMsg('error', data.msg, 'Cancelled');
-                        }
-                        //console.log(data);
                     });
+                }
+
+            }).then((result) => {
+                if (result.value) {
+                    alertMsg('success', '{{ __('action.delete_confirm_deleted_msg') }}', '{{ __('action.delete_confirm_deleted') }}');
+                } else if (
+                    // Read more about handling dismissals
+                    result.dismiss === Swal.DismissReason.cancel
+                ) {
+                    // swalWithBootstrapButtons.fire(
+                    //   'Cancelled',
+                    //   'Your imaginary file is safe :)',
+                    //   'error'
+                    // )
+                }
+            })
+
+        });
+
+        $('#menu-sort').nestable();
+        $('.menu-sort-save').click(function() {
+            $('#loading').show();
+            var serialize = $('#menu-sort').nestable('serialize');
+            var menu = JSON.stringify(serialize);
+            $.ajax({
+                    url: '{{ route('admin.admin-menu.update_sort') }}',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        menu: menu
+                    },
+                })
+                .done(function(data) {
+                    $('#loading').hide();
+                    if (data.error == 0) {
+                        location.reload();
+                    } else {
+                        alertMsg('error', data.msg, 'Cancelled');
+                    }
+                    //console.log(data);
+                });
+        });
+
+
+        $(document).ready(function() {
+
+            $('.active-item').parents('li').removeClass('dd-collapsed');
+            //icon picker
+            $('.icp-auto').iconpicker({
+                // placement: 'bottomRight',
+                animation: false
             });
 
-
-            $(document).ready(function() {
-
-                $('.active-item').parents('li').removeClass('dd-collapsed');
-                //icon picker
-                $('.icp-auto').iconpicker({
-                    // placement: 'bottomRight',
-                    animation: false
-                });
-
-                $('.iconpicker-item').on('click', function(e) {
-                    e.preventDefault();
-                    //do other stuff when a click happens
-                });
-
-                $('.icp').on('iconpickerSelected', function(e) {
-                    $('.lead .picker-target').get(0).className = 'picker-target ' +
-                        e.iconpickerInstance.options.iconBaseClass + ' ' +
-                        e.iconpickerInstance.options.fullClassFormatter(e.iconpickerValue);
-                });
+            $('.iconpicker-item').on('click', function(e) {
+                e.preventDefault();
+                //do other stuff when a click happens
             });
-        </script>
-    @endpush
+
+            $('.icp').on('iconpickerSelected', function(e) {
+                $('.lead .picker-target').get(0).className = 'picker-target ' +
+                    e.iconpickerInstance.options.iconBaseClass + ' ' +
+                    e.iconpickerInstance.options.fullClassFormatter(e.iconpickerValue);
+            });
+        });
+    </script>
+@endpush

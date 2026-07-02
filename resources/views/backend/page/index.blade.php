@@ -25,13 +25,13 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">{{ $title_head }}</h3>
+                    <h1 class="mb-0">{{ $title_head }}</h1>
                 </div>
                 <div class="col-sm-6">
-                    <ol class="breadcrumb float-sm-end">
+                    <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                         <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
-                    </ol>
+                    </ol></nav>
                 </div>
             </div>
         </div>
