@@ -18,9 +18,13 @@ class MenuController extends Controller
 
         $menulist = Menu::get();
 
-        $indmenu = Menu::find($request->menu);
+        $indmenu = $request->filled('menu') && (int) $request->menu > 0
+            ? Menu::find((int) $request->menu)
+            : null;
 
-        $menus = MenuItems::where('menu_id', $request->menu)->orderBy('sort', 'asc')->get();
+        $menus = $indmenu
+            ? MenuItems::where('menu_id', $indmenu->id)->orderBy('sort', 'asc')->get()
+            : collect();
 
         $categories = Category::query()
             ->orderByDesc('sort')
@@ -144,6 +148,8 @@ class MenuController extends Controller
 
             $menuitem->save();
         }
+
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -169,8 +175,11 @@ class MenuController extends Controller
 
     public function generatemenucontrol(Request $request)
     {
-
         $menu = Menu::find($request->input('idmenu'));
+
+        if (! $menu) {
+            return response()->json(['message' => 'Menu not found'], 404);
+        }
 
         $menu->name = $request->input('menuname');
 
@@ -313,6 +322,8 @@ class MenuController extends Controller
 
             $menuitem->save();
         }
+
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -339,7 +350,7 @@ class MenuController extends Controller
 
         $old_url = 'http://onehealth.foundation.test/'; // domain cũ
 
-        $url = url('/').'/'; // Domain hiện tại
+        $url = url('/') . '/'; // Domain hiện tại
 
         // dd($old_url, $url);
 

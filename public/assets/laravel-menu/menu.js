@@ -7,28 +7,31 @@ function getmenus() {
 
     $('#spinsavemenu').show();
 
-    $('#menu-to-edit li').each(function (index) {
+    var parentStack = [];
+
+    $('#menu-to-edit > li.menu-item').each(function () {
         let dept = 0;
 
-        for (var i = 0; i < $('#menu-to-edit li').length; i++) {
-            var n = $(this)
-                .attr('class')
-                .indexOf('menu-item-depth-' + i);
-            if (n != -1) dept = i;
+        for (var i = 0; i <= 11; i++) {
+            if ($(this).attr('class').indexOf('menu-item-depth-' + i) !== -1) {
+                dept = i;
+            }
         }
 
-        var textoiner = $(this).find('.item-edit').text();
         var id = this.id.split('-');
-        var textoexplotado = textoiner.split('|');
-        var padre = 0;
+        var itemId = id[2];
 
-        if (!!textoexplotado[textoexplotado.length - 2] && textoexplotado[textoexplotado.length - 2] != id[2]) {
-            padre = textoexplotado[textoexplotado.length - 2];
+        while (parentStack.length > dept) {
+            parentStack.pop();
         }
+
+        var padre = dept === 0 ? 0 : parentStack[dept - 1] || 0;
+
+        parentStack[dept] = itemId;
 
         arraydata.push({
             depth: dept,
-            id: id[2],
+            id: itemId,
             parent: padre,
             sort: cont,
         });
