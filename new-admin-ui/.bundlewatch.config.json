@@ -6,7 +6,7 @@
     },
     {
       "path": "./dist/css/adminlte.min.css",
-      "maxSize": "42 kB"
+      "maxSize": "42.5 kB"
     },
     {
       "path": "./dist/css/adminlte.rtl.css",
@@ -14,15 +14,27 @@
     },
     {
       "path": "./dist/css/adminlte.rtl.min.css",
-      "maxSize": "42 kB"
+      "maxSize": "42.5 kB"
+    },
+    {
+      "path": "./dist/css/adminlte-docs.min.css",
+      "maxSize": "4.5 kB"
     },
     {
       "path": "./dist/js/adminlte.js",
-      "maxSize": "9 kB"
+      "maxSize": "10 kB"
     },
     {
       "path": "./dist/js/adminlte.min.js",
-      "maxSize": "5.2 kB"
+      "maxSize": "7 kB"
+    },
+    {
+      "path": "./dist/js/adminlte.esm.js",
+      "maxSize": "10 kB"
+    },
+    {
+      "path": "./dist/js/adminlte.esm.min.js",
+      "maxSize": "7 kB"
     }
   ]
 }

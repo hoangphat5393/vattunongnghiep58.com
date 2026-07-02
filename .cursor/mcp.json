@@ -1,0 +1,9 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "E:\\laragon\\bin\\php\\php-8.3.30\\php.exe",
+            "args": ["artisan", "boost:mcp"],
+            "cwd": "${workspaceFolder}"
+        }
+    }
+}
