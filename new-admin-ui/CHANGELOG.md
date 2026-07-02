@@ -7,6 +7,199 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.1.0] - 2026-07-02
+
+### Added
+
+- **ESM bundle and TypeScript declarations on npm:** `dist/js/adminlte.esm.js` (+ `.min`) ships alongside the UMD build, generated `.d.ts` files ship under `dist/js/types/`, and package.json gains `module`, `types`, and a full `exports` map (with `sass`/`style` conditions and `./dist/*` + `./src/scss/*` subpaths). `import { PushMenu } from "admin-lte"` now resolves natively in Vite/webpack and type-checks out of the box — previously the package shipped a single minified UMD file with no typings at all.
+- **Component lifecycle API (Bootstrap-style):** every JS component now has `getInstance(element)`, `getOrCreateInstance(element, config?)` and `dispose()`, backed by a per-element WeakMap registry (instances are garbage-collected with their elements — Turbo-safe). The data API now uses **delegated document-level listeners**, so toggles inside content inserted after page load (AJAX partials, Turbo Frames) work without re-initialisation. `PushMenu` is finally controllable programmatically via `PushMenu.getInstance(sidebar)`.
+- **`ColorMode` module in the bundle:** the light/dark/auto switcher (persisted in `lte-theme`, OS-preference aware, `[data-bs-theme-value]` data-API, `changed.lte.color-mode` event) is now part of `adminlte.js`. Applications no longer need to copy the demo's inline script; the demo pages now use the bundled module. Only the tiny no-flash snippet in `<head>` remains inline, by design.
+- **`bootstrap` declared as a peer dependency** — the Sass source imports it, so `@use "admin-lte/src/scss/adminlte"` now works after a plain `npm install admin-lte` (npm installs the peer automatically). Documented the required Sass load-path setup.
+- **New demo pages:** a blank **starter page** (the most-requested v3 page, absent from v4), a dedicated **ApexCharts** page with six chart types, and a **Users** management page (searchable directory table, add-user and delete-confirmation modals, pagination). All linked from the sidebar.
+- **Test baseline:** a vitest + happy-dom unit suite (30 tests across the component lifecycle, card/treeview/push-menu behavior, ColorMode, and slide animations) wired into `npm run production`; plus `npm run test-a11y` — an axe-core check over key built demo pages that fails on serious/critical WCAG violations, with a dedicated GitHub workflow.
+
+### Fixed
+
+- First findings of the new axe gate, fixed at the source: breadcrumb links now use the darker link shade (Bootstrap's default blue was 4.26:1 against the content-header's gray background — below WCAG AA's 4.5:1), the direct-chat message pane is keyboard-focusable (`tabindex="0"` + `role="log"`), and muted footnote text uses `text-body-secondary` instead of the failing `text-secondary`.
+
+### Changed
+
+- **Component events overhauled (behavior change):** all plugin events are now bubbling `CustomEvent`s dispatched on the component's root element (the card, the nav item, the sidebar) — previously most were non-bubbling and card events fired on whatever was clicked, including the `<i>` icon. Animated actions gained cancelable "before" events (`collapse`/`expand`/`remove.lte.card-widget`, `expand`/`collapse.lte.treeview`, `open`/`collapse.lte.push-menu`) and their "after" events (`collapsed`, `expanded`, `removed`, `opened`, …) now fire when the animation completes, not when it starts. If you listened for card events on the tool buttons themselves, listen on the card or on `document` instead.
+- **Docs styles split out of the production CSS:** the documentation/FAQ styling now compiles to a separate `adminlte-docs.css`, loaded only by the docs pages. Together with the 4.0.4 dedup, `adminlte.min.css` is down to ~40.4 KB gzip (from 46.7 KB in 4.0.3); bundlewatch budgets tightened accordingly.
+- **Vendored Bootstrap variables fork replaced:** the 1,766-line `_bootstrap-variables.scss` copy (which had to be re-synced by hand every Bootstrap release) is gone; AdminLTE's ~10 actual changes now live in a small `_bootstrap-overrides.scss` loaded before Bootstrap's own variables. Compiled CSS is byte-identical.
+- **Sass deprecation policy:** the build no longer silences all warnings (`--quiet`); it silences only dependency warnings and the known `@import` deprecation (`--quiet-deps --silence-deprecation=import`), so new deprecations in AdminLTE's own code surface at build time. All deprecated global built-ins (`map-get`, `map-keys`) migrated to the `sass:map` module. The full `@use` module-system migration is intentionally deferred until Bootstrap ships module-system Sass (Bootstrap 6) — Bootstrap 5's partials are designed around `@import`'s shared global namespace and cannot be loaded individually via `@use`.
+- Rewrote the color-mode docs page around the bundled `ColorMode` module (the old copy-paste script it showed used a stale storage key); tsconfig.json no longer carries the invalid `"root": true` option.
+
+## [4.0.4] - 2026-07-02
+
+### Added
+
+- **Forgot-password example page** — both login pages have linked `forgot-password.html` since 4.0.0, but the page didn't exist (dead link in every deployed demo). Now shipped and listed in the sidebar under Examples › Version 1.
+- **Treeview exposes its state to assistive tech:** submenu toggle links now carry `aria-expanded`, stamped on init and kept in sync on open/close.
+
+### Fixed
+
+- **npm packaging:** the package is now built from a `files` allowlist instead of the `.npmignore` denylist. Stray local files can no longer leak into the tarball (4.0.2 shipped an untracked working file this way), and the demo/docs HTML — which SECURITY.md advises never to deploy — is no longer published to npm. Unpacked size drops from 12.7 MB to 9.0 MB (177 → 95 files). Also declares `engines: node >= 20`.
+- **CSS bundles shipped the docs-site styles twice:** `_docs.scss` was imported from both `adminlte.scss` and `parts/_core.scss`, and Sass `@import` duplicates output — ~23 KB of dead weight in each of the four dist stylesheets.
+- **Accessibility module keyboard handling:**
+  - removed the document-edge Tab wrap — it acted as a page-level keyboard trap (WCAG 2.1.2), preventing keyboard users from ever tabbing out to the browser chrome
+  - arrow keys are no longer intercepted inside inputs, textareas, selects, or contenteditable elements (typing in a navbar search field used to yank focus into the menu), and menu arrow-navigation only engages when focus is actually on a menu item
+  - modal focus restore now captures the triggering element on `show.bs.modal` (capturing on `shown` stored an element inside the modal, so closing dropped focus to `<body>`); `[autofocus]` is respected
+- **Hotwired Turbo no longer duplicates injected DOM:** the skip links, `#live-region`, and sidebar overlay are now reused when a restored `<body>` snapshot already contains them — previously they accumulated one copy per navigation.
+- **Card widget:** `remove()` now actually removes the card from the DOM after the animation (it only hid it, so hidden form fields kept submitting); clicking the collapse toggle mid-animation reverses it instead of being swallowed; widget events now dispatch on the toggle button itself rather than a clicked `<i>` icon; `minimize()` cleans up its inline styles.
+- **Slide animations are cancelable:** rapid-toggling a treeview or card no longer lets a stale animation timer strip styles mid-flight and desync display state.
+- **Treeview accordion guard** compared each open item against the parent `<ul>` (never true), so `open()` on an already-open item slid its own menu shut.
+- **PushMenu** reacts to viewport changes via `matchMedia` on the actual breakpoint crossing — mobile URL-bar/keyboard resizes and same-side width changes no longer re-expand a sidebar the user collapsed; the default breakpoint (991.98) now matches the CSS convention, fixing a 992px off-by-one.
+- **Callout variants** referenced two custom properties that were never defined, so links and inline code inside callouts never recolored; the user-menu footer used `--bs-light-bg`, which doesn't exist in Bootstrap 5.3 (now `--bs-tertiary-bg`).
+- **Demo pages:** Bootstrap JS CDN pin updated 5.3.7 → 5.3.8 to match the compiled CSS; removed the dead navbar-search button (`data-widget="navbar-search"` has no implementation in v4); every page now has exactly one `<h1>` (page titles were `<h3>`); breadcrumbs are wrapped in `<nav aria-label="breadcrumb">`; all icon-only buttons (card tools, topbar toggles) have `aria-label`s; auth forms have real `<label>`s and `<main>` landmarks; dated "Google+" copy updated.
+
+### Changed
+
+- **ACCESSIBILITY-COMPLIANCE.md rewritten as an accurate accessibility statement** — what's implemented, what's partial (treeview keyboard pattern, drag-and-drop alternatives, touch-target sizes), and what's on the roadmap — replacing the aspirational all-checked WCAG checklist. Demo meta descriptions updated to match.
+- **bundlewatch budgets recalibrated:** CSS budgets tightened (46 → 44 kB min+gzip) to lock in the docs-dedup win; JS budget raised (5.8 → 6.5 kB) for the behavior fixes above.
+
+## [4.0.3] - 2026-07-01
+
+### Added
+
+- **Hotwired Turbo / Turbo Drive support:** plugins now re-initialise on `turbo:load`, so PushMenu, TreeView and the other JS components keep working after Turbo swaps the `<body>` on in-app navigation (previously they went dead after the first link click). Each init cycle uses an `AbortController` whose signal is aborted on `turbo:before-render`, so the `window`/`document`-level listeners are torn down before re-init instead of stacking up on every navigation. (#563, #5890 — diagnosed and prototyped by @MarkDaleman in #6058)
+
+### Fixed
+
+- **Fullscreen state sync:** the fullscreen icons and the `maximized`/`minimized` events are now driven by the native `fullscreenchange` event instead of the request/exit calls. The UI no longer flips when a fullscreen request is denied (permissions policy, missing `allowfullscreen`, lost user gesture), and it now stays in sync when the user exits with `ESC` or `F11`. (builds on @webgo-oss's report in #6055)
+- **Accessibility:** form inputs lacking both an `id` and a `name` now receive a stable, generated error-message id instead of colliding on a shared `-error` id and appending a new orphaned error node on every re-validation. (#6055, reported by @webgo-oss)
+
+### Updated
+
+- All dependencies bumped to their latest releases, including four majors — **Astro 6 → 7** (which pulls in Vite 8), **@astrojs/mdx 6 → 7**, **eslint-plugin-astro 1 → 2**, and **eslint-plugin-unicorn 68 → 69** — plus ESLint, Prettier, Stylelint, PostCSS, Rollup and typescript-eslint. No source changes were required; the full `npm run production` pipeline (lint + Astro build + bundlewatch) passes and `npm audit` remains at **0 vulnerabilities**. (supersedes Dependabot PRs #6065–#6074)
+
+## [4.0.2] - 2026-06-11
+
+### Fixed
+
+- **#6048:** `npm run production` no longer fails — the dev-only `scripts/social-preview.mjs` tripped 9 ESLint errors when building from source. The script is now lint-clean. (reported by @lfiorini)
+
+### Security
+
+- Hardened the social preview script's static file server against path traversal and error detail leakage (CodeQL alerts #87–#92). Dev-only script, not part of the npm package.
+
+## [4.0.1] - 2026-06-11
+
+### Added
+
+- **Official framework integrations announced** — AdminLTE 4 is now available as first-class packages for four ecosystems, maintained under ColorlibHQ:
+  - [adminlte-vue](https://github.com/ColorlibHQ/adminlte-vue) — Vue 3 & Nuxt, 45+ typed components, composables, SSR-safe theming, ⌘K command palette
+  - [adminlte-react](https://github.com/ColorlibHQ/adminlte-react) — React & Next.js (App Router / RSC), 30+ typed components, dark mode, ⌘K command palette
+  - [adminlte-django](https://github.com/ColorlibHQ/adminlte-django) — config-driven sidebar menu, 33+ components, themed `django.contrib.admin`, `{{ form }}` renderer
+  - [adminlte-laravel](https://github.com/ColorlibHQ/adminlte-laravel) — Blade integration, Vite-ready
+- Social preview generator script (`scripts/social-preview.mjs`, dev-only — excluded from the npm package).
+
+### Fixed
+
+- **#6043:** Stored color mode is now applied before first paint — no more light-mode flash when reloading a page in dark mode. (reported by @bsshreesha)
+- **#6044:** Long subject/preview text in the mailbox inbox list is truncated instead of overflowing its container. (reported by @Oscurlo)
+- **#6038:** `accessibility.js` no longer assigns `role="navigation"` to `<ul>`/`<ol>` elements, which broke list semantics and failed the Lighthouse accessibility audit. (reported by @lfiorini)
+
+### Updated
+
+- All dependencies bumped to latest; `axios` pinned via npm overrides to clear a transitive advisory. `npm audit` remains at **0 vulnerabilities**.
+
+## [4.0.0] - 2026-05-19
+
+### Added
+
+- **18 new demo pages** dramatically expanding the page catalog:
+  - **Apps:** Calendar (FullCalendar 6, drag-and-drop scheduling), Kanban (SortableJS, lane-to-lane drag), Chat (full-page conversation app), File Manager (grid + list views, folder tree), Projects (list with status, progress, team avatars)
+  - **Mailbox:** Inbox, Read Message, Compose — three-pane workflow with folders + labels
+  - **Forms:** Wizard (4-step with per-step validation + review summary)
+  - **Tables:** Data Tables — jQuery-free implementation using Tabulator 6
+  - **Pages:** Profile (tabbed activity/timeline/settings), Settings (account / notifications / security / billing / danger zone), Invoice (print-ready with totals math), Pricing (3-tier + comparison table + billing toggle), FAQ (data-driven accordions)
+  - **Error pages:** 404, 500, Maintenance
+- **Recommended Integrations docs page** (`docs/integrations.html`) — copy-paste install snippets for Flatpickr, Tom Select, noUiSlider, Pickr, IMask, Dropzone, FilePond, Quill, EasyMDE, Toast UI Editor, ApexCharts, Chart.js, Tabulator, FullCalendar, SortableJS, GLightbox, and a comparison of icon libraries. AdminLTE doesn't bundle these — the page shows how to drop them in.
+- **Visible color-mode toggle in the default topbar** (#6010) — Light / Dark / Auto dropdown with localStorage persistence and `prefers-color-scheme` integration. Wiring JS shipped globally in `_scripts.astro` so the toggle works on every demo page automatically.
+
+### Changed
+
+- **Forms section restructured:** Split the 623-line `forms/general.html` into three focused pages — `forms/elements.html` (inputs, selects, checks/radios/switches, ranges, floating labels), `forms/layout.html` (horizontal, inline, sizing, width), and `forms/validation.html` (Bootstrap native validation + tooltip variant).
+
+### Fixed
+
+- **#6028:** Color-mode "Auto" icon now renders. The dropdown used `bi-circle-fill-half-stroke` (a FontAwesome class name); replaced with the correct Bootstrap Icons class `bi-circle-half`.
+- **#6026:** `.table-head-fixed` now respects dark mode. Hardcoded `background-color: $white` swapped for `var(--bs-body-bg)` so the sticky header tracks the active colour scheme.
+- **#6021:** Fullscreen button no longer shifts after click. The plugin used to set `iconMaximize.style.display = 'block'` directly, overriding the icon library's natural display value (visible on FontAwesome). Now toggles Bootstrap's `.d-none` utility class. Markup updated accordingly.
+- **#6020:** Sidebar (including brand) now stays put when using `.fixed-header`. New companion rule pins the sidebar sticky on `sidebar-expand-*` breakpoints, giving the menu its own scrollbar instead of scrolling with the page.
+- **#6019:** Pie chart on `index2.html` no longer flickers on browser zoom. Pinned an explicit `height: 350` to break the ApexCharts ResizeObserver feedback loop most visible on Edge.
+
+### Updated
+
+- **Bootstrap variable sync with 5.3.4:**
+  - Added missing null variables: `$btn-close-filter`, `$carousel-control-icon-filter`
+  - Marked deprecated-in-5.3.4 variables with inline comments: `$btn-close-white-filter`, `$carousel-dark-indicator-active-bg`, `$carousel-dark-caption-color`, `$carousel-dark-control-icon-filter`
+  - Documented the intentional override of `$modal-content-color` (null vs Bootstrap's `var(--bs-body-color)`)
+- **All dependencies bumped to latest, including majors:**
+  - eslint: 9.39.4 → 10.4.0
+  - typescript: 5.9.3 → 6.0.3 (`baseUrl` removed, `moduleResolution: "bundler"` set to clear deprecation warnings)
+  - stylelint: 16.26.1 → 17.11.1
+  - eslint-plugin-unicorn: 62 → 64
+  - astro: 6.0.0 → 6.3.3
+  - autoprefixer: 10.4.27 → 10.5.0
+  - postcss: 8.5.8 → 8.5.14
+  - rollup: 4.59.0 → 4.60.4
+  - sass: 1.97.3 → 1.99.0
+  - terser: 5.46.0 → 5.47.1
+  - bundlewatch: 0.4.1 → 0.4.2, fs-extra: 11.3.4 → 11.3.5, prettier: 3.8.1 → 3.8.3
+- **ESLint config flattened:** Removed the legacy `.eslintrc.json` (ignored since ESLint 9), along with three deps that only it referenced: `eslint-plugin-import`, `eslint-config-xo`, `eslint-config-xo-typescript`. Added explicit deps for `@eslint/js`, `globals`, and `typescript-eslint` (now required to be declared since ESLint 10 stopped resolving them transitively).
+- **`stylelint-config-twbs-bootstrap` peer pinned via npm overrides** so it accepts stylelint 17 ahead of an upstream release. This removes the need for `--legacy-peer-deps` on `npm install`.
+- **Security:** `yaml` pinned to `^2.9.0` via overrides to clear the dev-only stack-overflow advisory chain through `@astrojs/check`. `npm audit` now reports **0 vulnerabilities**.
+
+## [4.0.0-rc7] - 2026-03-10
+
+### Added
+
+- **Sidebar Without Hover:** New `sidebar-without-hover` body class that prevents collapsed mini sidebar from expanding on hover (#5837)
+  - New demo page at `layout/collapsed-sidebar-without-hover.html`
+- **JavaScript Documentation:** Added documentation pages for all JS components
+  - Layout, Card Widget, Direct Chat, Fullscreen, and Accessibility modules
+  - Updated PushMenu documentation with configuration options and responsive behavior
+  - All 7 JS components now fully documented in the sidebar navigation
+- **Accessibility Module:** WCAG 2.1 AA compliance features (skip links, focus management, keyboard navigation, reduced motion, live announcements)
+- **Print Layout Fix:** Sidebar and main content now both visible when printing (#5996)
+
+### Changed
+
+- **Sidebar Persistence:** `enablePersistence` now defaults to `false` (was `true`). Opt in via `data-enable-persistence="true"` on `.app-sidebar`. **BREAKING CHANGE**
+- **Layout Plugin Refactor:** Single Layout instance with persistent hold-transition timer, proper cleanup on resize (#5956)
+- **PushMenu Plugin Refactor:** Single PushMenu instance with proper responsive logic, config from data attributes, mobile-aware state management (#5954)
+- **Login/Register Box:** Increased width from 360px to 400px (#5963)
+
+### Fixed
+
+- **Fixed Footer with Layout Fixed:** Footer now stays pinned at the bottom when using both `.fixed-footer` and `.layout-fixed` (#5805)
+- **Mobile Sidebar Scroll Chaining:** Added `overscroll-behavior: contain` to prevent page scroll when scrolling sidebar on mobile (#5864)
+- **Sidebar Flicker on Load:** Resolved by layout refactor fixing duplicate initialization and broken hold-transition timer (#5952)
+- **Bootstrap Modal Escape Key:** Accessibility module no longer intercepts Escape key when a Bootstrap modal is open (#5993)
+- **Pagination Border Radius:** Fixed `calc()` syntax in `_bootstrap-variables.scss` to match Bootstrap 5.3 format (#5951)
+- **slideUp/slideDown at Duration 0:** Added early return guard for zero/near-zero animation durations (#5964)
+- **TypeScript Comments in Build:** Added `removeComments: true` to tsconfig.json for smaller unminified bundles (#5953)
+
+### Updated
+
+- **Dependencies:** Updated all packages to latest semver-compatible versions
+  - astro: 5.x → 6.0.0
+  - @astrojs/mdx: 4.x → 5.0.0
+  - @astrojs/check: 0.9.6 → 0.9.7
+  - @rollup/plugin-typescript: 12.3.0 → 12.3.1
+  - @typescript-eslint/eslint-plugin: 8.48.1 → 8.50.0
+  - @typescript-eslint/parser: 8.48.1 → 8.50.0
+  - autoprefixer: 10.4.22 → 10.4.23
+  - eslint: 9.39.1 → 9.39.4
+  - postcss: 8.5.7 → 8.5.8
+  - rollup: 4.53.3 → 4.59.0
+  - sass: 1.94.2 → 1.97.3
+  - terser: 5.44.1 → 5.44.3
+  - typescript: 5.9.2 → 5.9.3
+- **Bundlewatch:** Updated adminlte.js size limit to 5.2 kB
+
 ## [4.0.0-rc6] - 2025-12-08
 
 ### Security
