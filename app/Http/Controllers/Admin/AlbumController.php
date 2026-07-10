@@ -26,10 +26,9 @@ class AlbumController extends Controller
 
             ->appends($request->all());
 
-        $total_item = $album->count();
+        $total_item = $album->total();
 
         return view('backend.album.index', compact('album', 'total_item'));
-
     }
 
     /**
@@ -39,7 +38,6 @@ class AlbumController extends Controller
     {
 
         return view('backend.album.single', $this->data);
-
     }
 
     /**
@@ -77,13 +75,10 @@ class AlbumController extends Controller
             $url = route('admin.album.edit', $insert_id);
 
             msg_move_page($msg, $url);
-
         } else {
 
             return redirect(route('admin.album.index'));
-
         }
-
     }
 
     /**
@@ -108,13 +103,10 @@ class AlbumController extends Controller
         if ($this->data['album']) {
 
             return view('backend.album.single', $this->data);
-
         } else {
 
             return view('404');
-
         }
-
     }
 
     /**
@@ -136,7 +128,6 @@ class AlbumController extends Controller
             $album = Album::findOrFail($sid);
 
             $album->update($data);
-
         }
 
         if ($save == 'apply') {
@@ -146,13 +137,10 @@ class AlbumController extends Controller
             $url = route('admin.album.edit', [$sid]);
 
             msg_move_page($msg, $url);
-
         } else {
 
             return redirect(route('admin.album.index'));
-
         }
-
     }
 
     /**
@@ -172,7 +160,5 @@ class AlbumController extends Controller
     {
 
         return view('backend.album.library');
-
     }
-
 }

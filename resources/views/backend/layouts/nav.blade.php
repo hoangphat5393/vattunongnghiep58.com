@@ -75,9 +75,12 @@
                                 <small>{{ $adminUser->email }}</small>
                             </p>
                         </li>
-                        <li class="user-footer">
+                        <li class="user-footer d-flex justify-content-between align-items-center px-3 py-2">
                             <a href="{{ route('admin.change-password') }}" class="btn btn-outline-secondary btn-sm">Đổi mật khẩu</a>
-                            <a href="{{ route('admin.logout') }}" class="btn btn-outline-danger btn-sm float-end">Đăng xuất</a>
+                            <form action="{{ route('admin.logout') }}" method="POST" class="d-inline mb-0">
+                                @csrf
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Đăng xuất</button>
+                            </form>
                         </li>
                     </ul>
                 </li>

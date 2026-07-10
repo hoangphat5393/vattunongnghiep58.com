@@ -58,7 +58,7 @@
                 </div>
                 <div class="md:col-span-2">
                     <label for="order_note" class="block text-sm font-semibold text-gray-700 mb-1.5">Lời nhắn</label>
-                    <textarea class="w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-leaf-500 focus:outline-none focus:ring-2 focus:ring-leaf-500/25 transition min-h-[120px] resize-y" rows="4" id="order_note" name="order[content]" placeholder="Ghi chú thêm về đơn hàng (không bắt buộc)">{{ old('order.content', $cart_info['cart_note'] ?? '') }}</textarea>
+                    <textarea class="w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:border-leaf-500 focus:outline-none focus:ring-2 focus:ring-leaf-500/25 transition min-h-30 resize-y" rows="4" id="order_note" name="order[content]" placeholder="Ghi chú thêm về đơn hàng (không bắt buộc)">{{ old('order.content', $cart_info['cart_note'] ?? '') }}</textarea>
                 </div>
             </div>
 

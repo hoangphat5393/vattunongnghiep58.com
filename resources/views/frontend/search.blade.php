@@ -4,11 +4,6 @@
     <title>Search</title>
 @endsection
 
-@php
-    use Carbon\Carbon;
-    Carbon::setLocale('vi');
-@endphp
-
 @section('content')
     @include('frontend.includes.menu')
 
@@ -22,7 +17,7 @@
         </div>
     </div>
 
-    <div class="container mx-auto px-4 py-8 flex-grow">
+    <div class="container mx-auto px-4 py-8 grow">
         <div class="flex flex-col md:flex-row gap-8">
             <div class="w-full md:w-1/4">
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-24">
@@ -44,29 +39,25 @@
                     </div>
                 </div>
 
-                @if ($product->count() > 0)
+                @if ($products->count() > 0)
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        @foreach ($product as $item)
-                            <div
-                                class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition duration-300 group overflow-hidden border border-gray-100">
+                        @foreach ($products as $item)
+                            <div class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition duration-300 group overflow-hidden border border-gray-100">
                                 <div class="relative h-64 overflow-hidden">
-                                    <a href="{{ route('product.detail', [$item->slug, $item->id]) }}"
-                                        title="{{ $item->name }}" class="block w-full h-full">
-                                        <img src="{{ get_image($item->image) }}" alt="{{ $item->name }}"
-                                            class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                                    <a href="{{ route('product.detail', [$item['slug'], $item['id']]) }}" title="{{ $item['name'] }}" class="block w-full h-full">
+                                        <img src="{{ get_image($item['image']) }}" alt="{{ $item['name'] }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
                                     </a>
                                 </div>
                                 <div class="p-4">
-                                    <h3
-                                        class="font-bold text-lg mb-1 group-hover:text-leaf-600 transition line-clamp-2">
-                                        <a href="{{ route('product.detail', [$item->slug, $item->id]) }}">
-                                            {{ $item->name }}
+                                    <h3 class="font-bold text-lg mb-1 group-hover:text-leaf-600 transition line-clamp-2">
+                                        <a href="{{ route('product.detail', [$item['slug'], $item['id']]) }}">
+                                            {{ $item['name'] }}
                                         </a>
                                     </h3>
                                     <div class="mt-2">
-                                        @if ($item->price)
+                                        @if ($item['has_price'])
                                             <span class="text-xl font-bold text-leaf-700">
-                                                {{ number_format($item->price, 0, ',', '.') }} đ
+                                                {{ number_format($item['price'], 0, ',', '.') }} đ
                                             </span>
                                         @else
                                             <span class="text-sm font-semibold text-leaf-700">
@@ -79,7 +70,7 @@
                         @endforeach
                     </div>
                     <div class="mt-8 flex justify-center">
-                        {!! $product->appends(request()->input())->links('frontend.pagination.custom') !!}
+                        {!! $products->appends(request()->input())->links('frontend.pagination.custom') !!}
                     </div>
                 @else
                     <p class="text-gray-500">Không có sản phẩm nào.</p>

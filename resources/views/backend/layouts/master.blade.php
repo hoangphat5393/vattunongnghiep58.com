@@ -160,6 +160,7 @@
     <script src="{{ asset('assets/plugin/ckfinder/ckfinder.js') }}"></script>
 
     {{-- Custom JS --}}
+    @include('backend.layouts.admin-routes')
     <script src="{{ asset('assets/js/js_admin.js') }}?ver={{ time() }}"></script>
 
     {{-- URL --}}

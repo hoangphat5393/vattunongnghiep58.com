@@ -16,7 +16,7 @@
                 <div class="md:w-1/2 text-center md:text-left">
                     <h1 class="text-4xl md:text-6xl font-extrabold text-gray-900 mb-6 leading-tight">
                         Mang màu xanh <br />
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-leaf-600 to-yellow-500">đến ngôi
+                        <span class="text-transparent bg-clip-text bg-linear-to-r from-leaf-600 to-yellow-500">đến ngôi
                             nhà bạn</span>
                     </h1>
                     <p class="text-lg text-gray-600 mb-8">
@@ -24,7 +24,7 @@
                         trọt miễn phí trọn đời.
                     </p>
                     <div class="flex flex-col md:flex-row gap-4 justify-center md:justify-start">
-                        <a href="{{ route('product') }}" class="px-8 py-4 bg-gradient-to-r from-leaf-500 to-leaf-600 text-white font-bold rounded-full shadow-lg shadow-leaf-500/30 hover:shadow-xl hover:-translate-y-1 transition transform">
+                        <a href="{{ route('product') }}" class="px-8 py-4 bg-linear-to-r from-leaf-500 to-leaf-600 text-white font-bold rounded-full shadow-lg shadow-leaf-500/30 hover:shadow-xl hover:-translate-y-1 transition transform">
                             Khám phá ngay
                         </a>
                         <a href="#experience" class="px-8 py-4 bg-white text-leaf-700 font-bold rounded-full shadow-md hover:bg-gray-50 transition flex items-center justify-center gap-2">
@@ -41,7 +41,7 @@
                     <div class="relative">
                         <div class="absolute inset-0 bg-leaf-200 rounded-full transform rotate-6 scale-95 opacity-50">
                         </div>
-                        <img src="{{ asset('upload/images/bang_hieu.jpg') }}" alt="Vườn rau" class="relative rounded-[2rem] shadow-2xl border-4 border-white object-cover h-[30rem] w-full transform -rotate-3 hover:rotate-0 transition duration-500" />
+                        <img src="{{ asset('upload/images/bang_hieu.jpg') }}" alt="Vườn rau" class="relative rounded-4xl shadow-2xl border-4 border-white object-cover h-120 w-full transform -rotate-3 hover:rotate-0 transition duration-500" />
                         <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl animate-bounce">
                             <div class="flex items-center gap-3">
                                 <div class="bg-yellow-100 p-2 rounded-full text-yellow-600">
@@ -154,13 +154,13 @@
                             @endphp
                             <div class="group relative rounded-3xl overflow-hidden h-80 shadow-lg">
                                 <img src="{{ get_image($item['image']) }}" alt="{{ $item['title'] }}" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110" />
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                                <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent">
                                 </div>
                                 <div class="absolute bottom-0 left-0 p-8 text-white">
                                     <span class="{{ $badgeColor }} text-xs font-bold px-3 py-1 rounded-full mb-3 inline-block">
                                         {{ $categoryName }}
                                     </span>
-                                    <h3 class="text-2xl font-bold mb-2 leading-tight group-hover:text-leaf-300 transition line-clamp-2 min-h-[3.75rem]">
+                                    <h3 class="text-2xl font-bold mb-2 leading-tight group-hover:text-leaf-300 transition line-clamp-2 min-h-15">
                                         {{ html_entity_decode($item['title']) }}
                                     </h3>
                                     <p class="text-gray-300 mb-4 line-clamp-1" style="display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">

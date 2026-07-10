@@ -35,11 +35,34 @@
             </div>
 
             <div class="flex shrink-0 items-center gap-4">
-                @if (\Illuminate\Support\Facades\Route::has('login'))
-                    <a href="{{ route('login') }}" class="hidden md:block font-bold text-leaf-700 hover:text-leaf-500">
-                        Đăng nhập
-                    </a>
-                @endif
+                @auth
+                    <div class="hidden md:flex items-center gap-3 text-sm font-bold">
+                        <a href="{{ route('customer.profile') }}" class="text-leaf-700 hover:text-leaf-500 no-underline">
+                            Tài khoản
+                        </a>
+                        <span class="text-gray-300">|</span>
+                        <a href="{{ route('customer.orders.index') }}" class="text-leaf-700 hover:text-leaf-500 no-underline">
+                            Đơn hàng
+                        </a>
+                        <form method="post" action="{{ route('customer.logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="cursor-pointer border-0 bg-transparent p-0 font-bold text-gray-600 hover:text-red-600">
+                                Đăng xuất
+                            </button>
+                        </form>
+                    </div>
+                @else
+                    @if (\Illuminate\Support\Facades\Route::has('customer.login'))
+                        <a href="{{ route('customer.login') }}" class="hidden md:block font-bold text-leaf-700 hover:text-leaf-500 no-underline">
+                            Đăng nhập
+                        </a>
+                    @endif
+                    @if (\Illuminate\Support\Facades\Route::has('customer.register'))
+                        <a href="{{ route('customer.register') }}" class="hidden md:block font-bold text-leaf-600 hover:text-leaf-500 no-underline">
+                            Đăng ký
+                        </a>
+                    @endif
+                @endauth
                 <a href="{{ route('cart') }}" class="relative bg-leaf-100 p-2 rounded-full text-leaf-700 hover:bg-leaf-200 transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
@@ -109,6 +132,31 @@
             </button>
         </div>
         <div class="flex flex-col space-y-2 font-bold text-gray-600">
+            @auth
+                <a href="{{ route('customer.profile') }}" class="block rounded-md px-2 py-2 font-bold no-underline text-gray-700 hover:bg-leaf-50 hover:text-leaf-600">
+                    Tài khoản
+                </a>
+                <a href="{{ route('customer.orders.index') }}" class="block rounded-md px-2 py-2 font-bold no-underline text-gray-700 hover:bg-leaf-50 hover:text-leaf-600">
+                    Đơn hàng
+                </a>
+                <form method="post" action="{{ route('customer.logout') }}">
+                    @csrf
+                    <button type="submit" class="w-full rounded-md px-2 py-2 text-left font-bold text-gray-700 transition hover:bg-red-50 hover:text-red-600 border-0 bg-transparent cursor-pointer">
+                        Đăng xuất
+                    </button>
+                </form>
+            @else
+                @if (\Illuminate\Support\Facades\Route::has('customer.login'))
+                    <a href="{{ route('customer.login') }}" class="block rounded-md px-2 py-2 font-bold no-underline text-gray-700 hover:bg-leaf-50 hover:text-leaf-600">
+                        Đăng nhập
+                    </a>
+                @endif
+                @if (\Illuminate\Support\Facades\Route::has('customer.register'))
+                    <a href="{{ route('customer.register') }}" class="block rounded-md px-2 py-2 font-bold no-underline text-leaf-700 hover:bg-leaf-50 hover:text-leaf-600">
+                        Đăng ký
+                    </a>
+                @endif
+            @endauth
             @if ($headerMenu)
                 @foreach ($headerMenu->items as $item)
                     @php

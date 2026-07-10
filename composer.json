@@ -7,24 +7,46 @@
         "laravel"
     ],
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/ckfinder-laravel-package",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "packages/shoppingcart",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "packages/laravel-shortcodes",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "require": {
         "php": "^8.3",
-        "ckfinder/ckfinder-laravel-package": "^5",
-        "diglactic/laravel-breadcrumbs": "^10.1",
-        "gornymedia/laravel-shortcodes": "^1.5",
+        "ckfinder/ckfinder-laravel-package": "@dev",
+        "gornymedia/laravel-shortcodes": "@dev",
         "intervention/image": "^3.11",
         "josiasmontag/laravel-recaptchav3": "^1.0",
-        "laravel/framework": "^12.56",
+        "laravel/framework": "^13.0",
         "laravel/sanctum": "^4.3",
         "laravel/socialite": "^5.26",
-        "laravel/tinker": "^2.11",
+        "laravel/tinker": "^3.0",
         "laravel/ui": "^4.6",
-        "surfsidemedia/shoppingcart": "^2.0",
+        "surfsidemedia/shoppingcart": "@dev",
         "symfony/http-client": "^7.4",
         "symfony/mailgun-mailer": "^7.4"
     },
     "require-dev": {
-        "barryvdh/laravel-debugbar": "^3.16",
+        "barryvdh/laravel-debugbar": "^4.4",
         "fakerphp/faker": "^1.24",
         "laravel/boost": "^2.4",
         "laravel/pint": "^1.29",

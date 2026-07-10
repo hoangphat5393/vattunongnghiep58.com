@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    <div class="bg-leaf-50 flex-grow pb-16">
+    <div class="bg-leaf-50 grow pb-16">
         <div class="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
             @if (session('checkout_success'))
                 <div class="mb-6 rounded-xl border border-leaf-200 bg-leaf-50 px-4 py-3 text-sm text-leaf-900">

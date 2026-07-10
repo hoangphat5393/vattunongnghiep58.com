@@ -80,15 +80,29 @@ class ProductController extends Controller
         $category = Category::where('slug', $slug)->first();
 
         if ($category) {
-            $this->data['category'] = $category;
-            $this->data['category_child'] = $category->children();
+            $category->load(['children' => function ($query) {
+                $query->where('status', 1)->orderByDesc('sort');
+            }]);
 
-            $this->data['product'] = $product = $category->products()
+            $this->data['category'] = $this->transformCategoryPage($category);
+
+            $products = $category->products()
                 ->where('status', 1)
+                ->select(
+                    'products.id',
+                    'products.name',
+                    'products.slug',
+                    'products.image',
+                    'products.price',
+                    'products.price_type'
+                )
                 ->orderbyDesc('sort')->orderbyDesc('name')->orderbyDesc('id')
                 ->paginate(12);
 
-            // dd($this->data['product']);
+            $products->through(fn (Product $product) => $this->transformProductCard($product));
+
+            $this->data['products'] = $products;
+
             $this->data['seo'] = [
                 'seo_title' => $category->seo_title != '' ? $category->seo_title : $category->name,
                 'seo_image' => $category->image,

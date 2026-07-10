@@ -32,6 +32,13 @@
     .max-h-product-sidebar-scroll {
         max-height: calc(100vh - var(--site-header-sticky-height) - 1rem);
     }
+
+    /* Đăng nhập / đăng ký — width cố định (max-w-md chưa luôn có trong build) */
+    .auth-form-shell {
+        width: 100%;
+        max-width: 26rem;
+        margin-inline: auto;
+    }
 }
 
 /*

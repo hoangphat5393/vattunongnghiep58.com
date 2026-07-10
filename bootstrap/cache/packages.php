@@ -3,11 +3,11 @@
   array (
     'aliases' => 
     array (
-      'Debugbar' => 'Barryvdh\\Debugbar\\Facades\\Debugbar',
+      'Debugbar' => 'Fruitcake\\LaravelDebugbar\\Facades\\Debugbar',
     ),
     'providers' => 
     array (
-      0 => 'Barryvdh\\Debugbar\\ServiceProvider',
+      0 => 'Fruitcake\\LaravelDebugbar\\ServiceProvider',
     ),
   ),
   'ckfinder/ckfinder-laravel-package' => 
@@ -15,17 +15,6 @@
     'providers' => 
     array (
       0 => 'CKSource\\CKFinderBridge\\CKFinderServiceProvider',
-    ),
-  ),
-  'diglactic/laravel-breadcrumbs' => 
-  array (
-    'aliases' => 
-    array (
-      'Breadcrumbs' => 'Diglactic\\Breadcrumbs\\Breadcrumbs',
-    ),
-    'providers' => 
-    array (
-      0 => 'Diglactic\\Breadcrumbs\\ServiceProvider',
     ),
   ),
   'josiasmontag/laravel-recaptchav3' => 
@@ -144,13 +133,13 @@
   ),
   'surfsidemedia/shoppingcart' => 
   array (
-    'aliases' => 
-    array (
-      'Cart' => 'Surfsidemedia\\Shoppingcart\\Facades\\Cart',
-    ),
     'providers' => 
     array (
       0 => 'Surfsidemedia\\Shoppingcart\\ShoppingcartServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'Cart' => 'Surfsidemedia\\Shoppingcart\\Facades\\Cart',
     ),
   ),
 );

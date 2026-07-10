@@ -4,8 +4,6 @@
     @include('frontend.layouts.seo', $seo ?? [])
 @endsection
 
-@inject('ProductModel', 'App\Models\Frontend\Product')
-
 @section('content')
     @include('frontend.includes.menu')
 
@@ -17,7 +15,7 @@
         </div>
     </div>
 
-    <div class="bg-leaf-50 flex-grow">
+    <div class="bg-leaf-50 grow">
         <div class="container mx-auto px-4 py-8">
             @if ($carts->count())
                 <h1 class="text-3xl font-extrabold text-gray-900 mb-8">Giỏ hàng của bạn</h1>
@@ -55,13 +53,15 @@
                         return;
                     }
 
-                    axios({
-                        method: 'post',
-                        url: '/cart/ajax/remove',
-                        data: {
+                    const removeFromCart = window.http ?
+                        window.http.postForm(window.AppRoutes?.cartRemove || '{{ route('cart.remove-item') }}', {
                             rowId: rowId
-                        }
-                    }).then(function(res) {
+                        }) :
+                        window.axios.post(window.AppRoutes?.cartRemove || '{{ route('cart.remove-item') }}', {
+                            rowId: rowId
+                        });
+
+                    removeFromCart.then(function(res) {
                         if (res.data.error === 0) {
                             if (res.data.view) {
                                 var tableContainer = document.querySelector('.carts-content .cart-table-include');
@@ -140,14 +140,17 @@
             });
 
             function updateCartQuantity(rowId, qty) {
-                axios({
-                    method: 'post',
-                    url: '{{ route('carts.update') }}',
-                    data: {
+                const updateRequest = window.http ?
+                    window.http.postForm(window.AppRoutes?.cartUpdate || '{{ route('carts.update') }}', {
                         rowId: rowId,
                         qty: qty
-                    }
-                }).then(function(res) {
+                    }) :
+                    window.axios.post(window.AppRoutes?.cartUpdate || '{{ route('carts.update') }}', {
+                        rowId: rowId,
+                        qty: qty
+                    });
+
+                updateRequest.then(function(res) {
                     if (res.data.error === 0) {
                         if (res.data.view) {
                             var tableContainer = document.querySelector('.carts-content .cart-table-include');

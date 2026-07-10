@@ -94,7 +94,11 @@
                                     </thead>
                                     <tbody>
                                         @if ($categories->count())
-                                            @include('backend.product-category.includes.category_item', ['level' => 0, 'categories' => $categories])
+                                            @include('backend.product-category.includes.category_item', [
+                                                'level' => 0,
+                                                'categories' => $categories,
+                                                'childrenMap' => $childrenMap ?? collect(),
+                                            ])
                                         @endif
                                     </tbody>
                                 </table>

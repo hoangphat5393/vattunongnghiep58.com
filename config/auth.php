@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Frontend\User;
+
 return [
 
     /*
@@ -73,7 +75,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Frontend\User::class,
+            'model' => User::class,
         ],
 
         'admins' => [
@@ -104,14 +106,14 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'table' => 'password_resets',
+            'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],
 
         'admins' => [
             'provider' => 'admins',
-            'table' => 'password_resets',
+            'table' => 'password_reset_tokens',
             'expire' => 60,
         ],
     ],

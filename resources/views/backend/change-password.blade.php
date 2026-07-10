@@ -37,10 +37,12 @@
                     <h1 class="mb-0">{{ $title_head }}</h1>
                 </div>
                 <div class="col-sm-6">
-                    <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
-                    </ol></nav>
+                    <nav aria-label="breadcrumb" class="float-sm-end">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
+                        </ol>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -229,19 +231,17 @@
                 //check password equal
                 $('#current_password').on('change', function() {
                     var current_password = $(this).val();
-                    $.ajax({
-                        type: "get",
-                        url: admin_url + "/check-password",
-                        data: {
-                            current_password: current_password
-                        },
-                        cache: false,
-                        beforeSend: function() {},
-                        success: function(data) {
-                            console.log(data)
-                            $('#current-password-ajax-feedback').html(data);
-                        }
-                    }); //ajax
+                    axios.get(admin_url + "/check-password", {
+                            params: {
+                                current_password: current_password
+                            }
+                        })
+                        .then(function(response) {
+                            $('#current-password-ajax-feedback').html(response.data);
+                        })
+                        .catch(function(e) {
+                            console.error(e);
+                        });
                 });
 
                 //validate

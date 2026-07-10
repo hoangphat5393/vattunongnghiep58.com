@@ -111,7 +111,10 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label for="parent" class="form-label col-form-label">Chọn thể loại Cha</label>
-                                    @include('backend.product-category.includes.select-category', ['parent' => $parent ?? 0])
+                                    @include('backend.product-category.includes.select-category', [
+                                        'parent' => $parent ?? 0,
+                                        'childrenMap' => $childrenMap ?? collect(),
+                                    ])
                                 </div>
 
                                 <div class="form-group">

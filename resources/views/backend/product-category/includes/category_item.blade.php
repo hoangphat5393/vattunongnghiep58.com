@@ -77,6 +77,7 @@
             @include('backend.product-category.includes.category_item', [
                 'categories' => $children,
                 'level' => $level + 1,
+                'childrenMap' => $childrenMap ?? collect(),
             ])
         @endif
     @endforeach

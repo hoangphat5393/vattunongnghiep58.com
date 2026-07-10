@@ -46,10 +46,12 @@
                     <h1 class="mb-0">{{ $title_head }}</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
-                    <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">{{ $title_head }}</li>
-                    </ol></nav>
+                    <nav aria-label="breadcrumb" class="float-sm-end">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">{{ $title_head }}</li>
+                        </ol>
+                    </nav>
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -73,7 +75,13 @@
                             </div> <!-- /.card-header -->
                             <div class="card-body">
                                 <!-- show error form -->
-                                <div class="js-validation-messages mb-2 small" role="alert"></div>
+                                <div class="js-validation-messages mb-2 small" role="alert">
+                                    @if ($errors->any())
+                                        @foreach ($errors->all() as $error)
+                                            <div class="text-danger">{{ $error }}</div>
+                                        @endforeach
+                                    @endif
+                                </div>
 
                                 {{-- <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
                                     <li class="nav-item" role="presentation">
@@ -88,13 +96,19 @@
 
                                     <div class="tab-pane fade active show" id="pills-vi" role="tabpanel" aria-labelledby="vi-tab">
                                         <div class="mb-3 form-group">
-                                            <label for="name" class="form-label">Tiêu đề</label>
-                                            <input type="text" class="form-control title_slugify" id="name" name="name" placeholder="Tiêu đề" value="{{ $name ?? '' }}">
+                                            <label for="name" class="form-label">Tiêu đề (subject email)</label>
+                                            <input type="text" class="form-control title_slugify @error('name') is-invalid @enderror" id="name" name="name" placeholder="Tiêu đề hiển thị khi gửi mail" value="{{ old('name', $name ?? '') }}">
+                                            @error('name')
+                                                <div class="invalid-feedback d-block">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                         @php
-                                            $content_arr = ['id' => 'text', 'label' => 'Nội dung mail', 'name' => 'text', 'content' => $text ?? ''];
+                                            $content_arr = ['id' => 'text', 'label' => 'Nội dung mail', 'name' => 'text', 'content' => old('text', $text ?? '')];
                                         @endphp
                                         @include('backend.partials.content', $content_arr)
+                                        @error('text')
+                                            <div class="text-danger small">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     {{-- <div class="tab-pane fade show " id="pills-en" role="tabpanel" aria-labelledby="en-tab">
@@ -111,14 +125,19 @@
 
                                 <div class="row">
                                     <div class="form-group col-lg-12">
-                                        <select class="form-control" style="width: 100%;" name="group">
-                                            <option value="">Select group</option>
-                                            @foreach ($arrayGroup as $k => $v)
-                                                <option value="{{ $k }}" {{ isset($group) && $group == $k ? 'selected' : '' }}>{{ $v }}</option>
-                                            @endforeach
-                                        </select>
+                                        <label for="email-template-code" class="form-label">Mã code <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control font-monospace @error('code') is-invalid @enderror" id="email-template-code" name="code" placeholder="vd: new_register" value="{{ old('code', $code ?? '') }}" autocomplete="off" spellcheck="false">
+                                        @error('code')
+                                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                                        @enderror
+                                        <div class="form-text">
+                                            Code do dev dùng trong code PHP để gọi đúng template. Chỉ dùng chữ thường, số và <code>_</code>.
+                                        </div>
                                     </div>
+                                </div>
 
+                                <div class="alert alert-warning mt-3 mb-0 small" id="email-template-draft-hint" style="display: none;">
+                                    Template đang ở trạng thái <strong>Bản nháp</strong> — hệ thống sẽ <strong>không gửi</strong> mail cho đến khi chuyển sang <strong>Công khai</strong>.
                                 </div>
 
                             </div> <!-- /.card-body -->
@@ -137,30 +156,53 @@
 
 @push('scripts')
     <script>
-        // editor('text_en');
-        editor('text');
-
         $(function() {
-            //xử lý validate
+            editor('text');
+
+            function toggleDraftHint() {
+                var isDraft = $('#radioDraft').is(':checked');
+                $('#email-template-draft-hint').toggle(isDraft);
+            }
+
+            $('input[name="status"]').on('change', toggleDraftHint);
+            toggleDraftHint();
+
             $("#formEdit").validate({
                 errorLabelContainer: '#formEdit .js-validation-messages',
                 ignore: [],
+                onfocusout: false,
+                onkeyup: false,
+                onclick: false,
                 rules: {
-                    name_en: "required",
-                    name: "required",
-                    group: "required",
+                    name: 'required',
+                    code: {
+                        required: true,
+                        pattern: /^[a-z][a-z0-9_]*$/,
+                    },
+                    text: {
+                        ckeditor_required: true,
+                    },
                 },
                 messages: {
-                    name_en: "Enter mail title (EN)",
-                    name: "Enter mail title (VN)",
-                    group: "Select group"
+                    name: 'Nhập tiêu đề mail (subject)',
+                    code: {
+                        required: 'Nhập mã code template',
+                        pattern: 'Code chỉ gồm chữ thường, số và dấu _',
+                    },
+                    text: {
+                        ckeditor_required: 'Nhập nội dung mail',
+                    },
                 },
                 errorElement: 'div',
                 invalidHandler: function(event, validator) {
                     $('html, body').animate({
                         scrollTop: 0
                     }, 500);
-                }
+                },
+                submitHandler: function(form) {
+                    syncAllCkEditors();
+                    form.submit();
+                },
             });
         });
     </script>

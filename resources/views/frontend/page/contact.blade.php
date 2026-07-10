@@ -212,15 +212,16 @@
 
                 const fdnew = new FormData(contact_form);
 
-                axios({
-                        method: 'POST',
-                        url: contact_form.getAttribute('action'),
-                        data: fdnew,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Accept': 'application/json'
-                        }
-                    })
+                const submitRequest = window.http ? window.http.postForm.bind(window.http) : window.axios.post.bind(window.axios);
+
+                submitRequest(
+                        contact_form.getAttribute('action'),
+                        fdnew, {
+                            headers: {
+                                Accept: 'application/json',
+                            },
+                        },
+                    )
                     .then(res => {
                         if (res.data.status === 'success') {
                             const redirect = res.data.redirect || contactSuccess;

@@ -47,7 +47,7 @@ class ProductCategoryController extends Controller
             ->orderBy('sort', 'asc')->paginate(20)
             ->appends($request->all());
 
-        $total_item = $categories->count();
+        $total_item = $categories->total();
 
         $childrenMap = $this->buildChildrenMapForIndex($request);
 

@@ -1,67 +1,55 @@
-<?php
-
-namespace App\Http\Requests\Admin\Post;
-
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rule;
-
-class UpdatePost extends FormRequest
-{
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        return Gate::allows('admin.post.edit', $this->post);
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules(): array
-    {
-        return [
-            'post_title' => ['sometimes', 'string'],
-            'post_slug' => ['sometimes', 'string'],
-            'post_content' => ['nullable', 'string'],
-            'post_excerpt' => ['nullable', 'string'],
-            'post_status' => ['sometimes', 'boolean'],
-            'meta_title' => ['nullable', 'string'],
-            'meta_description' => ['nullable', 'string'],
-            'taxs' => ['nullable', 'array'],
-            'action' => ['required'],
-        ];
-    }
-
-    /**
-     * Modify input data
-     *
-     * @return array
-     */
-    public function getSanitized(): array
-    {
-        $sanitized = $this->validated();
-
-        if( ! isset($sanitized['post_status']) ){
-            $sanitized['post_status'] = 0;
-        }
-
-        $html = $sanitized['post_content'];
-        do {
-            $tmp = $html;
-            $html = preg_replace(
-                '#<([^ >]+)[^>]*>[[:space:]]*</\1>#', '', $html );
-        } while ( $html !== $tmp );
-
-        $sanitized['post_content'] = $html ;
-
-        //Add your code for manipulation with request data here
-
-        return $sanitized;
-    }
-}
+<?php
+
+namespace App\Http\Requests\Admin\Post;
+
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+
+class UpdatePost extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $name = $this->input('name') ?? $this->input('title');
+        if (! $this->filled('slug') && is_string($name) && $name !== '') {
+            $this->merge(['slug' => Str::slug($name)]);
+        }
+    }
+
+    public function rules(): array
+    {
+        $id = (int) ($this->route('id') ?? $this->input('id'));
+
+        return [
+            'id' => ['nullable', 'integer'],
+            'name' => ['sometimes', 'string', 'max:500'],
+            'title' => ['nullable', 'string', 'max:500'],
+            'slug' => [
+                'nullable',
+                'string',
+                'max:255',
+                Rule::unique('pages', 'slug')
+                    ->ignore($id)
+                    ->where(fn ($query) => $query->where('type', 'post')),
+            ],
+            'description' => ['nullable', 'string'],
+            'description_en' => ['nullable', 'string'],
+            'content' => ['nullable', 'string'],
+            'content_en' => ['nullable', 'string'],
+            'image' => ['nullable', 'string', 'max:500'],
+            'status' => ['nullable', 'in:0,1'],
+            'sort' => ['nullable', 'integer'],
+            'seo_title' => ['nullable', 'string', 'max:500'],
+            'seo_keyword' => ['nullable', 'string', 'max:500'],
+            'seo_description' => ['nullable', 'string'],
+            'gallery' => ['nullable', 'array'],
+            'gallery.*' => ['nullable', 'string'],
+            'submit' => ['nullable', 'string'],
+        ];
+    }
+}

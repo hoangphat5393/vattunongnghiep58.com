@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Post\StorePost;
+use App\Http\Requests\Admin\Post\UpdatePost;
+use App\Models\Backend\Category;
+use App\Models\Backend\Page;
+use Auth;
+use DB;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\Controller;
-use App\Models\Backend\Page;
-use App\Models\Backend\Category;
-use Auth, DB, File, Image, Config;
 
 class PostController extends Controller
 {
     public $data = [];
+
     public $route = [];
 
     /**
@@ -32,7 +36,7 @@ class PostController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return Renderable
      */
     public function index()
     {
@@ -42,7 +46,7 @@ class PostController extends Controller
 
         $db = Page::posts()->with(['user'])->select('*');
         if (request('search_name') != '') {
-            $db->where('name', 'like', '%' . request('search_name') . '%');
+            $db->where('name', 'like', '%'.request('search_name').'%');
         }
 
         // User data
@@ -75,7 +79,7 @@ class PostController extends Controller
     /**
      * REST alias: routes/admin.php maps POST /admin/post → store.
      */
-    public function store(Request $request)
+    public function store(StorePost $request)
     {
         return $this->post($request);
     }
@@ -83,7 +87,7 @@ class PostController extends Controller
     /**
      * REST alias: routes/admin.php maps PUT /admin/post/{id} → update.
      */
-    public function update(Request $request, $id)
+    public function update(UpdatePost $request, $id)
     {
         $request->merge(['id' => $id]);
 
@@ -92,9 +96,25 @@ class PostController extends Controller
 
     public function post(Request $request)
     {
-        $data = request()->except(['_token', '_method', 'gallery', 'created_at', 'submit', 'tab_lang', 'custom_field']);
+        $data = $request->only([
+            'name',
+            'name_en',
+            'slug',
+            'title',
+            'description',
+            'description_en',
+            'content',
+            'content_en',
+            'image',
+            'status',
+            'sort',
+            'seo_title',
+            'seo_description',
+            'seo_keyword',
+            'type',
+        ]);
 
-        //id post
+        // id post
         $sid = $request->id ?? 0;
 
         $data['name'] = $data['name'] ?? $data['title'] ?? '';
@@ -106,9 +126,9 @@ class PostController extends Controller
             $data['slug'] = Str::slug($data['name'] ?? '');
         }
 
-        $data['description'] = $data['description'] ? htmlspecialchars($data['description']) : '';
-        $data['content'] = $data['content'] ? htmlspecialchars($data['content']) : '';
-        $data['seo_title'] = $data['seo_title'] ? $data['seo_title'] : ($data['name'] ?? '');
+        $data['description'] = ! empty($data['description']) ? htmlspecialchars($data['description']) : '';
+        $data['content'] = ! empty($data['content']) ? htmlspecialchars($data['content']) : '';
+        $data['seo_title'] = ! empty($data['seo_title']) ? $data['seo_title'] : ($data['name'] ?? '');
 
         // $data['description'] = $request->description ? htmlspecialchars($request->description) : '';
         // $data['content'] = $request->content ? htmlspecialchars($request->content) : '';
@@ -116,13 +136,13 @@ class PostController extends Controller
         // $data['description_en'] = $request->description_en ? htmlspecialchars($request->description_en) : '';
         // $data['content_en'] = $request->content_en ? htmlspecialchars($request->content_en) : '';
 
-        //xử lý gallery
+        // xử lý gallery
         $galleries = $request->gallery ?? '';
         if ($galleries != '') {
             $galleries = array_filter($galleries);
             $data['gallery'] = $galleries ? serialize($galleries) : '';
         }
-        //end xử lý gallery
+        // end xử lý gallery
 
         $save = $request->submit ?? 'apply';
 
@@ -134,14 +154,14 @@ class PostController extends Controller
 
         if ($sid > 0) {
             $post_id = $sid;
-            $respons = Page::where("id", $sid)->update($data);
+            $respons = Page::where('id', $sid)->update($data);
         } else {
             $respons = Page::create($data);
             $insert_id = $respons->id;
             $post_id = $insert_id;
 
             // // if sort = 0 => update sort
-            Page::where("id", $post_id)->update(['sort' => $post_id]);
+            Page::where('id', $post_id)->update(['sort' => $post_id]);
 
             // $db = ShopProduct::find(1);
             // $db->sort = $post_id;
@@ -156,12 +176,32 @@ class PostController extends Controller
         // }
 
         if ($save == 'apply') {
-            $msg = "Data has been Updated";
-            $url = route('admin.post.edit', array($post_id));
+            $msg = 'Data has been Updated';
+            $url = route('admin.post.edit', [$post_id]);
             msg_move_page($msg, $url);
             // return redirect(route('admin.postEdit', array($post_id)));
         } else {
             return redirect(route('admin.post.index'));
         }
+    }
+
+    /**
+     * REST alias: routes/admin.php maps GET /admin/post/{id} → show.
+     */
+    public function show($id)
+    {
+        Page::posts()->findOrFail($id);
+
+        return redirect()->route('admin.post.edit', $id);
+    }
+
+    /**
+     * REST alias: routes/admin.php maps DELETE /admin/post/{id} → destroy.
+     */
+    public function destroy($id)
+    {
+        Page::posts()->findOrFail($id)->delete();
+
+        return redirect()->route('admin.post.index')->with('success', 'Post deleted successfully.');
     }
 }

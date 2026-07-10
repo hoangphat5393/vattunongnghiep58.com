@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Backend\Category;
+use Auth;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Auth, DB, File, Image, Config;
 
 class PostCategoryController extends Controller
 {
     public $data = [];
+
     /**
      * Create a new controller instance.
      *
@@ -24,29 +26,33 @@ class PostCategoryController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return Renderable
      */
-
     public function index()
     {
         $categories = Category::where(['parent' => 0])->orderBy('sort', 'asc')->paginate(20);
 
-        $total_item = $categories->count();
+        $total_item = $categories->total();
 
-        return view('backend.post-category.index', compact('categories', 'total_item'));
+        $childrenMap = Category::orderBy('sort', 'asc')->get()->groupBy('parent');
+
+        return view('backend.post-category.index', compact('categories', 'total_item', 'childrenMap'));
     }
-
 
     public function create()
     {
-        return view('backend.post-category.single', ['data' => $this->data]);
+        $childrenMap = Category::where('status', 1)->orderBy('sort', 'asc')->get()->groupBy('parent');
+
+        return view('backend.post-category.single', ['data' => $this->data, 'childrenMap' => $childrenMap]);
     }
 
     public function edit($id)
     {
         $this->data['category'] = Category::find($id);
         if ($this->data['category']) {
-            return view('backend.post-category.single', ['data' => $this->data]);
+            $childrenMap = Category::where('status', 1)->orderBy('sort', 'asc')->get()->groupBy('parent');
+
+            return view('backend.post-category.single', ['data' => $this->data, 'category' => $this->data['category'], 'childrenMap' => $childrenMap]);
         } else {
             return view('404');
         }
@@ -64,8 +70,9 @@ class PostCategoryController extends Controller
         $data['slug'] = Str::slug($data['name']);
 
         // $slug = addslashes($data['slug']);
-        if (empty($slug) || $slug == '')
+        if (empty($slug) || $slug == '') {
             $slug = Str::slug($data['name']);
+        }
 
         $data['description'] = $data['description'] ? htmlspecialchars($data['description']) : '';
         // $data['content'] = $data['content'] ? htmlspecialchars($data['content']) : '';
@@ -78,21 +85,47 @@ class PostCategoryController extends Controller
 
         if ($sid > 0) {
             $post_id = $sid;
-            $respons = Category::where("id", $sid)->update($data);
+            $respons = Category::where('id', $sid)->update($data);
         } else {
             $respons = Category::create($data);
             $post_id = $respons->id;
 
             // if sort = 0 => update sort
-            Category::where("id", $post_id)->update(['sort' => $post_id]);
+            Category::where('id', $post_id)->update(['sort' => $post_id]);
         }
 
         if ($save == 'apply') {
-            $msg = "Category has been Updated";
-            $url = route('admin.post-category.edit', array($post_id));
+            $msg = 'Category has been Updated';
+            $url = route('admin.post-category.edit', [$post_id]);
             msg_move_page($msg, $url);
         } else {
             return redirect(route('admin.post-category.index'));
         }
+    }
+
+    public function store(Request $request)
+    {
+        return $this->post($request);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->merge(['id' => $id]);
+
+        return $this->post($request);
+    }
+
+    public function show($id)
+    {
+        Category::findOrFail($id);
+
+        return redirect()->route('admin.post-category.edit', $id);
+    }
+
+    public function destroy($id)
+    {
+        Category::findOrFail($id)->delete();
+
+        return redirect()->route('admin.post-category.index')->with('success', 'Category deleted successfully.');
     }
 }

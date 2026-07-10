@@ -1,12 +1,12 @@
 <?php
 
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\URL;
 use App\Models\Backend\Setting;
 use App\Models\Backend\ShopCurrency;
+use App\Models\Frontend\Product;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 // Product kind
 define('SC_PRODUCT_SINGLE', 0);
@@ -40,25 +40,38 @@ define('SC_API_MIDDLEWARE', ['api', 'api.extent']);
 define('SC_CONNECTION', 'mysql');
 define('SC_CONNECTION_LOG', 'mysql');
 
-//Prefix url admin
+// Prefix url admin
 define('SC_ADMIN_PREFIX', env('ADMIN_PREFIX', 'admin'));
 
-if (!function_exists('setting_option')) {
+if (! function_exists('setting_option')) {
     function setting_option($variable = '')
     {
-        if (Cache::has('theme_option'))
-            $data = Cache::get('theme_option');
-        else {
-            $data = Setting::get();
-            Cache::forever('theme_option', $data);
+        $data = null;
+
+        if (Cache::has('theme_option')) {
+            $cached = Cache::get('theme_option');
+
+            if (is_array($cached)) {
+                $data = Setting::hydrate($cached);
+            } else {
+                Cache::forget('theme_option');
+            }
         }
+
+        if (! $data) {
+            $data = Setting::get();
+            Cache::forever('theme_option', $data->toArray());
+        }
+
         if ($data) {
             $option = $data->where('name', $variable)->first();
 
             if ($option) {
                 $content = $option->content;
-                if ($option->type == 'editor' || $option->type == 'text')
+                if ($option->type == 'editor' || $option->type == 'text') {
                     $content = htmlspecialchars_decode(htmlspecialchars_decode($content));
+                }
+
                 return $content;
             }
         }
@@ -82,33 +95,26 @@ if (!function_exists('setting_option')) {
 //     }
 // }
 
-if (!function_exists('permalink_by_id')) {
+if (! function_exists('permalink_by_id')) {
     function permalink_by_id($sid)
     {
-        $products = DB::table('category_theme')
-            ->join('join_category_theme', 'category_theme.categoryID', '=', 'join_category_theme.id_category_theme')
-            ->join('theme', 'join_category_theme.id_theme', '=', 'theme.id')
-            ->where('theme.id', $sid)
-            ->first();
-        $link = "";
-        if ($products) :
-            $slug_product = $products->slug;
-            $slug_category = $products->categorySlug;
-            $link = route('tintuc.details', array($slug_category, $slug_product));
-        else :
-            $link = "";
-        endif;
-        return $link;
+        $product = Product::find($sid);
+        if (! $product || ! $product->slug) {
+            return '';
+        }
+
+        return route('product.detail', ['slug' => $product->slug, 'id' => $product->id]);
     }
 }
 
-if (!function_exists('arrayPaginator')) {
+if (! function_exists('arrayPaginator')) {
     function arrayPaginator($array, $request)
     {
         $page = $request->get('page', 1);
         $perPage = config('app.item_list_category_product');
         $offset = ($page * $perPage) - $perPage;
-        $url = str_replace(\Request::getRequestUri(), '', URL::current());
+        $url = str_replace(Request::getRequestUri(), '', URL::current());
+
         return new LengthAwarePaginator(
             array_slice($array, $offset, $perPage, true),
             count($array),
@@ -119,14 +125,15 @@ if (!function_exists('arrayPaginator')) {
     }
 }
 
-if (!function_exists('remove_accents')) {
+if (! function_exists('remove_accents')) {
     function remove_accents($string)
     {
-        if (!preg_match('/[\x80-\xff]/', $string))
+        if (! preg_match('/[\x80-\xff]/', $string)) {
             return $string;
+        }
 
         if (seems_utf8($string)) {
-            $chars = array(
+            $chars = [
                 // Decompositions for Latin-1 Supplement
                 'ª' => 'a',
                 'º' => 'o',
@@ -453,10 +460,10 @@ if (!function_exists('remove_accents')) {
                 // grave accent
                 'Ǜ' => 'U',
                 'ǜ' => 'u',
-            );
+            ];
             $string = strtr($string, $chars);
         } else {
-            $chars = array();
+            $chars = [];
             // Assume ISO-8859-1 if not UTF-8
             $chars['in'] = "\x80\x83\x8a\x8e\x9a\x9e"
                 . "\x9f\xa2\xa5\xb5\xc0\xc1\xc2"
@@ -469,19 +476,19 @@ if (!function_exists('remove_accents')) {
                 . "\xf4\xf5\xf6\xf8\xf9\xfa\xfb"
                 . "\xfc\xfd\xff";
 
-            $chars['out'] = "EfSZszYcYuAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy";
+            $chars['out'] = 'EfSZszYcYuAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy';
 
             $string = strtr($string, $chars['in'], $chars['out']);
-            $double_chars = array();
-            $double_chars['in'] = array("\x8c", "\x9c", "\xc6", "\xd0", "\xde", "\xdf", "\xe6", "\xf0", "\xfe");
-            $double_chars['out'] = array('OE', 'oe', 'AE', 'DH', 'TH', 'ss', 'ae', 'dh', 'th');
+            $double_chars = [];
+            $double_chars['in'] = ["\x8c", "\x9c", "\xc6", "\xd0", "\xde", "\xdf", "\xe6", "\xf0", "\xfe"];
+            $double_chars['out'] = ['OE', 'oe', 'AE', 'DH', 'TH', 'ss', 'ae', 'dh', 'th'];
             $string = str_replace($double_chars['in'], $double_chars['out'], $string);
         }
 
         return $string;
     }
 }
-if (!function_exists('seems_utf8')) {
+if (! function_exists('seems_utf8')) {
     function seems_utf8($str)
     {
         mbstring_binary_safe_encoding();
@@ -489,34 +496,52 @@ if (!function_exists('seems_utf8')) {
         reset_mbstring_encoding();
         for ($i = 0; $i < $length; $i++) {
             $c = ord($str[$i]);
-            if ($c < 0x80) $n = 0; // 0bbbbbbb
-            elseif (($c & 0xE0) == 0xC0) $n = 1; // 110bbbbb
-            elseif (($c & 0xF0) == 0xE0) $n = 2; // 1110bbbb
-            elseif (($c & 0xF8) == 0xF0) $n = 3; // 11110bbb
-            elseif (($c & 0xFC) == 0xF8) $n = 4; // 111110bb
-            elseif (($c & 0xFE) == 0xFC) $n = 5; // 1111110b
-            else return false; // Does not match any model
+            if ($c < 0x80) {
+                $n = 0;
+            } // 0bbbbbbb
+            elseif (($c & 0xE0) == 0xC0) {
+                $n = 1;
+            } // 110bbbbb
+            elseif (($c & 0xF0) == 0xE0) {
+                $n = 2;
+            } // 1110bbbb
+            elseif (($c & 0xF8) == 0xF0) {
+                $n = 3;
+            } // 11110bbb
+            elseif (($c & 0xFC) == 0xF8) {
+                $n = 4;
+            } // 111110bb
+            elseif (($c & 0xFE) == 0xFC) {
+                $n = 5;
+            } // 1111110b
+            else {
+                return false;
+            } // Does not match any model
             for ($j = 0; $j < $n; $j++) { // n bytes matching 10bbbbbb follow ?
-                if ((++$i == $length) || ((ord($str[$i]) & 0xC0) != 0x80))
+                if ((++$i == $length) || ((ord($str[$i]) & 0xC0) != 0x80)) {
                     return false;
+                }
             }
         }
+
         return true;
     }
 }
-if (!function_exists('mbstring_binary_safe_encoding')) {
+if (! function_exists('mbstring_binary_safe_encoding')) {
     function mbstring_binary_safe_encoding($reset = false)
     {
-        static $encodings = array();
+        static $encodings = [];
         static $overloaded = null;
 
-        if (is_null($overloaded))
+        if (is_null($overloaded)) {
             $overloaded = function_exists('mb_internal_encoding') && (ini_get('mbstring.func_overload') & 2);
+        }
 
-        if (false === $overloaded)
+        if ($overloaded === false) {
             return;
+        }
 
-        if (!$reset) {
+        if (! $reset) {
             $encoding = mb_internal_encoding();
             array_push($encodings, $encoding);
             mb_internal_encoding('ISO-8859-1');
@@ -528,51 +553,54 @@ if (!function_exists('mbstring_binary_safe_encoding')) {
         }
     }
 }
-if (!function_exists('reset_mbstring_encoding')) {
+if (! function_exists('reset_mbstring_encoding')) {
     function reset_mbstring_encoding()
     {
         mbstring_binary_safe_encoding(true);
     }
 }
 
-if (!function_exists('changeTitle')) {
+if (! function_exists('changeTitle')) {
     function changeTitle($str)
     {
         $str = remove_accents($str);
         $str = str_replace(' ', '', $str);
         $str = strtolower($str);
+
         return $str;
     }
 }
 
-if (!function_exists('msg_move_page')) {
-    function msg_move_page($msg, $url = "back", $isExit = 1)
+if (! function_exists('msg_move_page')) {
+    function msg_move_page($msg, $url = 'back', $isExit = 1)
     {
-        if ($msg) echo "<script language='javascript'>alert('" . $msg . "');</script>";
+        if ($msg) {
+            echo "<script language='javascript'>alert('" . $msg . "');</script>";
+        }
         if ($url) {
             switch ($url) {
-                case "home":
+                case 'home':
                     echo "<script>location.href='/'</script>";
                     break;
-                case "back":
+                case 'back':
                     echo "<script language='javascript'>history.go(-1);</script>";
                     break;
-                case "close":
+                case 'close':
                     echo "<script language='javascript'>self.close();</script>";
                     break;
-                case "reload":
+                case 'reload':
                     echo "<script language='javascript'>document.location.reload();</script>";
                     break;
-                case "top_opener_reload":
+                case 'top_opener_reload':
                     echo "<script language='javascript'>top.opener.document.location.reload();</script>";
                     break;
-                case "top_url":
+                case 'top_url':
                     echo "<Script language='javascript'>top.document.location.href = '" . $url . "'</script>";
                     break;
-                case "parent_reload":
+                case 'parent_reload':
                     echo "<script language='javascript'>parent.document.location.reload();</Script>";
                     break;
-                case "not":
+                case 'not':
                     echo "<script language='javascript'>alert('" . $msg . "');</script>";
                     break;
                 default:
@@ -580,37 +608,41 @@ if (!function_exists('msg_move_page')) {
                     break;
             }
         }
-        if ($isExit) exit();
+        if ($isExit) {
+            exit();
+        }
     }
 }
 
-if (!function_exists('render_price')) {
+if (! function_exists('render_price')) {
     function render_price(float $money, $currency = null, $rate = null, $space_between_symbol = false, $useSymbol = true)
     {
         return ShopCurrency::render($money, $currency, $rate, $space_between_symbol, $useSymbol);
     }
 }
 
-if (!function_exists('render_option_name')) {
+if (! function_exists('render_option_name')) {
     function render_option_name($att)
     {
         if ($att) {
             $att_array = explode('__', $att);
-            if (isset($att_array[0]))
+            if (isset($att_array[0])) {
                 return $att_array[0];
+            }
         }
     }
 }
 
-if (!function_exists('render_option_price')) {
+if (! function_exists('render_option_price')) {
     function render_option_price($att)
     {
         if ($att) {
             $att_array = explode('__', $att);
-            if (isset($att_array[2]))
+            if (isset($att_array[2])) {
                 return render_price($att_array[2]);
-            elseif (isset($att_array[1]))
+            } elseif (isset($att_array[1])) {
                 return render_price($att_array[1]);
+            }
         }
     }
 }
@@ -626,7 +658,7 @@ if (!function_exists('render_option_price')) {
 //     }
 // }
 
-if (!function_exists('get_image')) {
+if (! function_exists('get_image')) {
     function get_image($item_image = '')
     {
         $image = asset('assets/images/placeholder.png');
@@ -654,98 +686,96 @@ if (!function_exists('get_image')) {
 //     }
 // }
 
-if (!function_exists('getThumbnail')) {
-    function getThumbnail($path, $img_path, $width, $height, $type = "fit")
+if (! function_exists('getThumbnail')) {
+    function getThumbnail($path, $img_path, $width, $height, $type = 'fit')
     {
         return app('App\Http\Controllers\ImageController')->getImageThumbnail($path, $img_path, $width, $height, $type);
     }
 }
 
-if (!function_exists('variations_traverse')) {
+if (! function_exists('variations_traverse')) {
     function variations_traverse($array, $parent_ind)
     {
         $r = [];
         $pr = '';
-        if (!is_numeric($parent_ind))
+        if (! is_numeric($parent_ind)) {
             $pr = $parent_ind . '-';
+        }
         foreach ($array as $ind => $el) {
             if (is_array($el)) {
                 $r = array_merge($r, variations_traverse($el, $pr . (is_numeric($ind) ? '' : $ind)));
-            } else
-                if (is_numeric($ind))
+            } elseif (is_numeric($ind)) {
                 $r[] = $pr . $el;
-            else
+            } else {
                 $r[] = $pr . $ind . '-' . $el;
+            }
         }
+
         return $r;
     }
 }
 
-if (!function_exists('variations')) {
+if (! function_exists('variations')) {
     function variations($array)
     {
-        if (empty($array)) return [];
+        if (empty($array)) {
+            return [];
+        }
 
-        //1. Go through entire array and transform elements that are arrays into elements, collect keys
+        // 1. Go through entire array and transform elements that are arrays into elements, collect keys
         $keys = [];
         $size = 1;
         foreach ($array as $key => $elems) {
             if (is_array($elems)) {
                 $rr = [];
                 foreach ($elems as $ind => $elem) {
-                    if (is_array($elem))
+                    if (is_array($elem)) {
                         $rr = array_merge($rr, variations_traverse($elem, $ind));
-                    else $rr[] = $elem;
+                    } else {
+                        $rr[] = $elem;
+                    }
                 }
                 $array[$key] = $rr;
                 $size *= count($rr);
             }
             $keys[] = $key;
         }
-        //2. Go through all new elems and make variations
+        // 2. Go through all new elems and make variations
         $rez = [];
         for ($i = 0; $i < $size; $i++) {
-            $rez[$i] = array();
+            $rez[$i] = [];
             foreach ($array as $key => $value) {
                 $current = current($array[$key]);
                 $rez[$i][$key] = $current;
             }
-            foreach ($keys as $key)
-                if (!next($array[$key])) reset($array[$key]);
-                else break;
+            foreach ($keys as $key) {
+                if (! next($array[$key])) {
+                    reset($array[$key]);
+                } else {
+                    break;
+                }
+            }
         }
+
         return $rez;
     }
 }
 
-if (!function_exists('get_permalink_by_id')) {
+if (! function_exists('get_permalink_by_id')) {
     function get_permalink_by_id($sid)
     {
-        $products = DB::table('category_theme')
-            ->join('join_category_theme', 'category_theme.categoryID', '=', 'join_category_theme.id_category_theme')
-            ->join('theme', 'join_category_theme.id_theme', '=', 'theme.id')
-            ->where('theme.id', $sid)
-            ->first();
-        $link = "";
-        if ($products) :
-            $slug_product = $products->slug;
-            $slug_category = $products->categorySlug;
-            $link = route('tintuc.details', array($slug_category, $slug_product));
-        else :
-            $link = "";
-        endif;
-        return $link;
+        return permalink_by_id($sid);
     }
 }
 
-if (!function_exists('get_product_by_id')) {
+if (! function_exists('get_product_by_id')) {
     function get_product_by_id($id)
     {
-        return \App\Models\Theme::where('id', $id)->first();
+        return Product::find($id);
     }
 }
 
-if (!function_exists('setting_phone')) {
+if (! function_exists('setting_phone')) {
     function setting_phone($phone = '')
     {
         // $re = '~\s|\([^)]*\)~m';

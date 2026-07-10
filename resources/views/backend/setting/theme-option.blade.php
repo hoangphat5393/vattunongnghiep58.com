@@ -292,10 +292,12 @@
                     <h1 class="mb-0">{{ $title_head }}</h1>
                 </div>
                 <div class="col-sm-6">
-                    <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
-                    </ol></nav>
+                    <nav aria-label="breadcrumb" class="float-sm-end">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
+                        </ol>
+                    </nav>
                 </div>
             </div>
         </div>
@@ -541,7 +543,7 @@
 
         function updateOrder(items) {
             // Sử dụng Axios để gửi yêu cầu cập nhật thứ tự
-            axios.post('{{ route('admin.theme-option.ajax_update_sort') }}', {
+            axios.post('{{ route('admin.theme-option.update_sort') }}', {
                     sort: items
                 })
                 .then(function(response) {

@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Backend\Permission;
+use App\Models\Backend\Role;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Backend\Role;
-use App\Models\Backend\Permission;
 
 class CheckSystemHealth extends Command
 {
@@ -36,12 +36,13 @@ class CheckSystemHealth extends Command
             DB::connection()->getPdo();
             $this->info('✅ Database connection successful.');
         } catch (\Exception $e) {
-            $this->error('❌ Database connection failed: ' . $e->getMessage());
+            $this->error('❌ Database connection failed: '.$e->getMessage());
+
             return;
         }
 
         // 2. Check Critical Tables
-        $tables = ['roles', 'users', 'permissions', 'permission_role', 'admins'];
+        $tables = ['roles', 'users', 'permissions', 'permission_role', 'shop_orders'];
         foreach ($tables as $table) {
             if (Schema::hasTable($table)) {
                 $this->info("✅ Table '$table' exists.");
@@ -55,7 +56,7 @@ class CheckSystemHealth extends Command
             $permissionCount = Permission::count();
             $this->info("✅ Permission model works. Count: $permissionCount");
         } catch (\Exception $e) {
-            $this->error('❌ Permission model error: ' . $e->getMessage());
+            $this->error('❌ Permission model error: '.$e->getMessage());
         }
 
         try {
@@ -63,7 +64,7 @@ class CheckSystemHealth extends Command
             $roleCount = Role::count();
             $this->info("✅ Role model works. Count: $roleCount");
         } catch (\Exception $e) {
-            $this->error('❌ Role model error: ' . $e->getMessage());
+            $this->error('❌ Role model error: '.$e->getMessage());
         }
 
         $this->info('System Health Check Completed.');

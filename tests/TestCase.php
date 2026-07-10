@@ -79,6 +79,20 @@ abstract class TestCase extends BaseTestCase
             ]);
         }
 
+        if (! Schema::hasTable('shop_order_status')) {
+            Schema::create('shop_order_status', function (Blueprint $table) {
+                $table->id();
+                $table->string('name')->nullable();
+            });
+        }
+
+        if (! Schema::hasTable('shop_order_payment_status')) {
+            Schema::create('shop_order_payment_status', function (Blueprint $table) {
+                $table->id();
+                $table->string('name')->nullable();
+            });
+        }
+
         if (! Schema::hasTable('pages')) {
             Schema::create('pages', function (Blueprint $table) {
                 $table->id();
@@ -156,6 +170,7 @@ abstract class TestCase extends BaseTestCase
                 $table->string('price_type')->nullable();
                 $table->string('unit')->nullable();
                 $table->integer('stock')->default(0);
+                $table->unsignedBigInteger('user_id')->nullable();
                 $table->string('seo_title')->nullable();
                 $table->longText('seo_description')->nullable();
                 $table->longText('seo_keyword')->nullable();
@@ -170,9 +185,29 @@ abstract class TestCase extends BaseTestCase
                 $table->string('name')->nullable();
                 $table->string('username')->nullable();
                 $table->string('email')->unique();
+                $table->string('phone')->nullable();
+                $table->string('address')->nullable();
+                $table->string('avatar')->nullable();
                 $table->string('password')->nullable();
                 $table->unsignedTinyInteger('status')->default(1);
                 $table->rememberToken();
+                $table->timestamps();
+            });
+        }
+
+        if (! Schema::hasTable('shop_orders')) {
+            Schema::create('shop_orders', function (Blueprint $table) {
+                $table->id('cart_id');
+                $table->unsignedBigInteger('user_id')->nullable();
+                $table->string('name')->nullable();
+                $table->string('cart_email')->nullable();
+                $table->string('cart_phone')->nullable();
+                $table->string('cart_address')->nullable();
+                $table->longText('cart_note')->nullable();
+                $table->string('cart_code')->nullable();
+                $table->integer('cart_status')->default(0);
+                $table->integer('cart_payment')->default(0);
+                $table->decimal('cart_total', 12, 2)->default(0);
                 $table->timestamps();
             });
         }
@@ -267,6 +302,37 @@ abstract class TestCase extends BaseTestCase
                 $table->string('rel', 10)->nullable();
                 $table->string('target', 10)->nullable();
                 $table->timestamps();
+            });
+        }
+
+        if (! Schema::hasTable('email_templates')) {
+            Schema::create('email_templates', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name', 50);
+                $table->string('code', 100);
+                $table->string('group', 50)->nullable();
+                $table->text('text')->nullable();
+                $table->unsignedTinyInteger('status')->default(1);
+                $table->integer('sort')->default(0);
+                $table->dateTime('created_at')->nullable();
+                $table->dateTime('updated_at')->nullable();
+            });
+        }
+
+        if (! Schema::hasTable('contacts')) {
+            Schema::create('contacts', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('type', 50)->nullable();
+                $table->string('name', 200)->nullable();
+                $table->text('address')->nullable();
+                $table->string('email', 200)->nullable();
+                $table->string('phone', 100)->nullable();
+                $table->string('file', 200)->nullable();
+                $table->text('content')->nullable();
+                $table->integer('sort')->default(0);
+                $table->unsignedTinyInteger('status')->default(1);
+                $table->dateTime('created_at')->nullable();
+                $table->dateTime('updated_at')->nullable();
             });
         }
     }

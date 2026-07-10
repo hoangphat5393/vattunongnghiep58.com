@@ -23,11 +23,6 @@ class PageController extends Controller
         $this->localized();
         $page = Page::where('slug', 'home')->first();
         $this->data['page'] = $page;
-        // $this->data['news'] = \App\News::with('category')
-        //     ->whereHas('category', function ($query) {
-        //         return $query->where('id', 1);
-        //     })
-        //     ->where('status', 1)->orderbyDesc('id')->limit(4)->get();
 
         // MAIN MENU
         // $categories = Menu::getByName('Menu-main');
@@ -156,7 +151,7 @@ class PageController extends Controller
 
     // public function news($slug)
     // {
-    //     return \App::call('App\Http\Controllers\NewsController@index',  [
+    //     return \App::call('App\Http\Controllers\PostController@index',  [
     //         "slug" => $slug
     //     ]);
     // }

@@ -38,7 +38,7 @@ class ProductController extends Controller
             ->paginate(20)
             ->appends($request->all());
 
-        $total_item = $products->count();
+        $total_item = $products->total();
 
         return view('backend.product.index', compact('products', 'total_item'));
     }

@@ -2,51 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
-use App\Models\Frontend\EmailTemplate;
-use App\Models\Frontend\ShopOrderStatus, App\Models\Frontend\ShopOrderPaymentStatus;
-use App\Models\Frontend\Order, App\Models\Frontend\OrderItem;
-use App\Models\Frontend\Product;
-use App\Models\ProductPrice;
-// use App\Models\Frontend\Province
-use Cart, Auth, Exception;
 use App\Http\Requests\CheckoutRequest;
+use App\Models\Frontend\Order;
+use App\Models\Frontend\OrderItem;
+use App\Models\Frontend\Product;
+use App\Models\Frontend\ShopOrderPaymentStatus;
+use App\Models\Frontend\ShopOrderStatus;
+use App\Models\Frontend\User;
+// use App\Models\Frontend\Province
+use App\Models\ProductPrice;
+use App\Traits\FrontendDataTransform;
+use App\Traits\LocalizeController;
+use Auth;
+use Cart;
+use Illuminate\Http\Request;
 use Lunaweb\RecaptchaV3\Facades\RecaptchaV3;
-
 
 class CartController extends Controller
 {
-    use \App\Traits\LocalizeController;
+    use FrontendDataTransform;
+    use LocalizeController;
 
-    public $currency,
-        $statusOrder,
-        $orderPayment;
+    public $currency;
+
+    public $statusOrder;
+
+    public $orderPayment;
+
     public $data = [
         'error' => false,
         'success' => false,
-        'message' => ''
+        'message' => '',
     ];
 
     public function __construct()
     {
         parent::__construct();
-        $this->data['statusOrder']    = ShopOrderStatus::getIdAll();
-        $this->data['orderPayment']    = ShopOrderPaymentStatus::getIdAll();
+        $this->data['statusOrder'] = ShopOrderStatus::getIdAll();
+        $this->data['orderPayment'] = ShopOrderPaymentStatus::getIdAll();
     }
 
     public function cart()
     {
         $this->localized();
 
-        $this->data['carts'] = Cart::content();
-        // $this->data['states'] = Province::get();
+        $this->hydrateCartViewData();
 
         $this->data['seo'] = ['seo_title' => 'Giỏ hàng'];
 
-
-        // return view($this->templatePath . '.cart.cart', $this->data);
         return view('frontend.cart.cart', $this->data);
     }
 
@@ -79,7 +82,6 @@ class CartController extends Controller
         //     );
         // }
 
-
         // // Tiến hành giảm giá nếu có;
         // if ($promotion->qty_to_promotion && $promotion_price && $data['qty'] >= $promotion->qty_to_promotion) {
         //     if ($promotion_unit == '%') {
@@ -92,7 +94,7 @@ class CartController extends Controller
         $price = (int) ($product->price ?? 0);
         $options = [];
 
-        if (!empty($data['product_price_id'])) {
+        if (! empty($data['product_price_id'])) {
             $pp = ProductPrice::where('id', $data['product_price_id'])
                 ->where('product_id', $product->id)
                 ->where('status', 1)
@@ -109,20 +111,19 @@ class CartController extends Controller
         // $form_attr = ['promotion_id' => $data['promotion_id']];
         // dd($promotion, $price);
 
-
         // Check product allow for sale
         // if (Cart::get($product->id)) {
         //     dd(123);
         // }
 
         Cart::add(
-            array(
-                'id'      => $product->id,
-                'name'    => $product->name,
-                'qty'     => $data['qty'],
-                'price'   => $price,
-                'options' => $options
-            )
+            [
+                'id' => $product->id,
+                'name' => $product->name,
+                'qty' => $data['qty'],
+                'price' => $price,
+                'options' => $options,
+            ]
         );
 
         // dd(Cart::content());
@@ -149,20 +150,22 @@ class CartController extends Controller
         Cart::update($data['rowId'], ['qty' => (int) $data['qty']]);
 
         $carts = Cart::content();
+        $cartItems = $this->transformCartLines($carts);
+        $cartSummary = $this->transformCartSummary($cartItems);
 
-        $subtotal = 0;
-        foreach ($carts as $cart) {
-            $subtotal += (float) $cart->price * (int) $cart->qty;
-        }
-
-        // Dùng cùng partial với trang cart (cart-table + sidebar), không dùng cart-list/cart-mini (App\Product, game.detail → 500).
         return response()->json([
             'error' => 0,
             'count_cart' => Cart::count(),
-            'subtotal' => $subtotal,
+            'subtotal' => $cartSummary['subtotal'],
             'total' => number_format(Cart::total()),
-            'view' => view('frontend.cart.cart-table', compact('carts'))->render(),
-            'view_sidebar' => view('frontend.cart.includes.cart-sidebar', compact('carts'))->render(),
+            'view' => view('frontend.cart.cart-table', [
+                'cart_items' => $cartItems,
+                'cart_summary' => $cartSummary,
+            ])->render(),
+            'view_sidebar' => view('frontend.cart.includes.cart-sidebar', [
+                'cart_items' => $cartItems,
+                'cart_summary' => $cartSummary,
+            ])->render(),
             'msg' => 'Cập nhật số lượng thành công',
         ]);
     }
@@ -170,6 +173,7 @@ class CartController extends Controller
     public function removeCarts()
     {
         Cart::destroy();
+
         return redirect(route('cart'));
     }
 
@@ -180,6 +184,8 @@ class CartController extends Controller
             Cart::remove($rowId);
 
             $carts = Cart::content();
+            $cartItems = $this->transformCartLines($carts);
+            $cartSummary = $this->transformCartSummary($cartItems);
 
             return response()->json(
                 [
@@ -187,12 +193,18 @@ class CartController extends Controller
                     'count_cart' => Cart::count(),
                     'total' => number_format(Cart::total()),
                     'msg' => 'Xóa thành công',
-                    // Trang giỏ hàng cần HTML mới để thay thế bảng + sidebar (cart.blade.php)
-                    'view' => view('frontend.cart.cart-table', compact('carts'))->render(),
-                    'view_sidebar' => view('frontend.cart.includes.cart-sidebar', compact('carts'))->render(),
+                    'view' => view('frontend.cart.cart-table', [
+                        'cart_items' => $cartItems,
+                        'cart_summary' => $cartSummary,
+                    ])->render(),
+                    'view_sidebar' => view('frontend.cart.includes.cart-sidebar', [
+                        'cart_items' => $cartItems,
+                        'cart_summary' => $cartSummary,
+                    ])->render(),
                 ]
             );
         }
+
         return response()->json(
             [
                 'error' => 1,
@@ -214,11 +226,13 @@ class CartController extends Controller
             $this->data['seo'] = [
                 'seo_title' => 'Đặt hàng',
             ];
-            $this->data['carts'] = Cart::content();
+
+            $this->hydrateCartViewData();
 
             return view('frontend.checkout.checkout', $this->data);
-        } else
+        } else {
             return $this->cart();
+        }
     }
 
     public function checkPayment($cart_id)
@@ -226,12 +240,12 @@ class CartController extends Controller
         $this->localized();
         $this->data['cart'] = Order::where('cart_id', $cart_id)->first();
         // dd($cart);
-        if ($this->data['cart'] && $this->data['cart']['cart_status'] == 'waiting-payment')
+        if ($this->data['cart'] && $this->data['cart']['cart_status'] == 'waiting-payment') {
             return view('frontend.checkout.check-payment', $this->data);
-        else
+        } else {
             return redirect(url('/'));
+        }
     }
-
 
     public function checkoutConfirm(CheckoutRequest $request)
     {
@@ -252,14 +266,18 @@ class CartController extends Controller
                 ->with('checkout_recaptcha_error', 'Giỏ hàng trống hoặc thiếu thông tin. Vui lòng thêm sản phẩm rồi đặt lại.');
         }
 
-        $data = array(
+        $data = [
             'name' => $data_input['name'],
             'cart_email' => $data_input['email'],
             'cart_phone' => $data_input['phone'],
             'cart_address' => $data_input['address'],
             'cart_note' => $data_input['content'],
             'cart_total' => Cart::total(),
-        );
+        ];
+
+        if (Auth::check()) {
+            $data['user_id'] = Auth::id();
+        }
 
         $respons = Order::Create($data);
         $id_insert = $respons->cart_id;
@@ -269,15 +287,15 @@ class CartController extends Controller
             $priceLabel = data_get($item->options, 'price_label');
             $priceUnit = data_get($item->options, 'price_unit');
 
-            $cart_item = array(
+            $cart_item = [
                 'product_id' => $item->id,
                 'product_price_id' => is_numeric($productPriceId) ? (int) $productPriceId : null,
                 'price_label' => is_string($priceLabel) && $priceLabel !== '' ? $priceLabel : null,
                 'price_unit' => is_string($priceUnit) && $priceUnit !== '' ? $priceUnit : null,
                 'price' => $item->price,
                 'quanlity' => $item->qty,
-                'cart_id' => $id_insert
-            );
+                'cart_id' => $id_insert,
+            ];
             OrderItem::Create($cart_item);
         }
 
@@ -320,20 +338,21 @@ class CartController extends Controller
         // $cart = Order::find(80);
         // dd($cart);
 
-        if ($cart)
+        if ($cart) {
             return view('frontend.checkout.completed', compact('cart'));
+        }
+
         return view('errors.404');
     }
-
 
     // CHECK EMAIL EXISTS
     public function checkEmail()
     {
         $this->localized();
         $data = request()->all();
-        $user = \App\Models\Frontend\User::where('email', $data['email'])->first();
+        $user = User::where('email', $data['email'])->first();
 
-        if (!empty($user)) {
+        if (! empty($user)) {
             echo 'false';
         } else {
             echo 'true';
@@ -345,9 +364,9 @@ class CartController extends Controller
     {
         $this->localized();
         $data = request()->all();
-        $user = \App\Models\Frontend\User::where('phone', $data['phone'])->first();
+        $user = User::where('phone', $data['phone'])->first();
 
-        if (!empty($user)) {
+        if (! empty($user)) {
             echo 'false';
         } else {
             echo 'true';
@@ -357,6 +376,16 @@ class CartController extends Controller
     public function quickBuyConfirm()
     {
         return redirect()->route('cart.checkout');
+    }
+
+    public function legacyCheckoutProcessRedirect()
+    {
+        return redirect()
+            ->route('cart.checkout')
+            ->with(
+                'checkout_recaptcha_error',
+                'Luồng thanh toán cũ đã ngừng. Vui lòng hoàn tất đơn hàng tại trang đặt hàng mới.'
+            );
     }
 
     // public function forgetCartSession()
@@ -386,7 +415,6 @@ class CartController extends Controller
     //     return redirect(url('/'));
     // }
 
-
     // public function view($id)
     // {
     //     if ($id) {
@@ -410,8 +438,6 @@ class CartController extends Controller
     //     }
     // }
 
-
-
     public function orderStatus()
     {
         $data = [
@@ -433,5 +459,13 @@ class CartController extends Controller
         ];
 
         return $data;
+    }
+
+    protected function hydrateCartViewData(): void
+    {
+        $cartItems = $this->transformCartLines(Cart::content());
+        $this->data['cart_items'] = $cartItems;
+        $this->data['cart_summary'] = $this->transformCartSummary($cartItems);
+        $this->data['carts'] = Cart::content();
     }
 }

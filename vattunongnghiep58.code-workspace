@@ -3,6 +3,9 @@
         {
             "path": ".",
         },
+        {
+            "path": "../3nong",
+        },
     ],
     "settings": {
         "xml.downloadExternalResources.enabled": true,

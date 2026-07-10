@@ -7,7 +7,6 @@
         <div id="slider_list" class="col-lg-12 slider-list">
 
             @foreach ($album_items as $slider)
-
                 <div data-id="{{ $slider->id }}" class="slider-item slider-{{ $slider->id }} row mb-2 pb-2 border-bottom align-items-center">
 
                     <input type="hidden" name="slider[]" value="{{ $slider->id }}">
@@ -54,7 +53,6 @@
                     </div>
 
                 </div>
-
             @endforeach
 
         </div>
@@ -68,29 +66,27 @@
 
 
 @push('scripts')
-
     <script>
-
         // UPDATE SORT
 
         var sliderListEl = document.getElementById('slider_list');
         if (sliderListEl) {
             var sortable = new Sortable(sliderListEl, {
-            // handle: '.handle', // handle's class
+                // handle: '.handle', // handle's class
 
-            // swap: true, // Enable swap plugin
+                // swap: true, // Enable swap plugin
 
-            // swapClass: 'highlight', // The class applied to the hovered swap item
+                // swapClass: 'highlight', // The class applied to the hovered swap item
 
-            animation: 150,
+                animation: 150,
 
-            onEnd: function(evt) {
+                onEnd: function(evt) {
 
-                var items = sortable.toArray(); // Lấy thứ tự các mục sau khi sắp xếp
+                    var items = sortable.toArray(); // Lấy thứ tự các mục sau khi sắp xếp
 
-                updateOrder(items);
+                    updateOrder(items);
 
-            }
+                }
 
             });
         }
@@ -100,7 +96,7 @@
 
             // Sử dụng Axios để gửi yêu cầu cập nhật thứ tự
 
-            axios.post(`{{ url('/admin/album_item/ajax_update_sort') }}`, {
+            axios.post(`{{ route('admin.albumItem.update_sort') }}`, {
                     sort: items
 
                 })
@@ -145,8 +141,5 @@
             }
 
         });
-
     </script>
-
 @endpush
-

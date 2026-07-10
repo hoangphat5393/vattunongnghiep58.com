@@ -2,27 +2,30 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Auth, DB, Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
+use App\Models\Backend\Category;
+use App\Models\Backend\Contact;
+use App\Models\Backend\District;
+use App\Models\Backend\EmailTemplate;
 use App\Models\Backend\Menu;
 use App\Models\Backend\MenuItems;
+use App\Models\Backend\Order;
+use App\Models\Backend\OrderItem;
 use App\Models\Backend\Page;
-use App\Models\Backend\User;
-use App\Models\Backend\District;
-use App\Models\Backend\Ward;
-use App\Models\Backend\Category;
 use App\Models\Backend\Product;
 use App\Models\Backend\ProductCategory;
 use App\Models\Backend\Slider;
-use App\Models\Backend\EmailTemplate;
-use App\Models\Backend\Contact;
-use App\Models\Backend\Subscription;
-use App\Models\Backend\AddToCard;
-use App\Models\Backend\AddToCardDetail;
-
+use App\Models\Backend\User;
+use App\Models\Backend\Ward;
+use App\Support\EmailTemplateCodes;
+use Auth;
+use Carbon\Carbon;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 
 class AjaxController extends Controller
 {
@@ -34,11 +37,22 @@ class AjaxController extends Controller
     public function __construct() {}
 
     /**
+     * Reset AUTO_INCREMENT sau bulk delete (MySQL). Bỏ qua trên SQLite (test env).
+     */
+    private function resetTableAutoIncrement(string $table): void
+    {
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            return;
+        }
+
+        DB::statement("ALTER TABLE `{$table}` AUTO_INCREMENT = 1");
+    }
+
+    /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return Renderable
      */
-
     public function ajax_delete(Request $rq)
     {
         $rq->validate([
@@ -49,14 +63,14 @@ class AjaxController extends Controller
 
         $type = $rq->type;
         $check_data = $rq->seq_list;
-        $arr = array();
+        $arr = [];
         foreach ($check_data as $id) {
-            $arr[] = (int)$id;
+            $arr[] = (int) $id;
         }
         switch ($type) {
 
             case 'page':
-                //xóa thumbnail
+                // xóa thumbnail
                 $url_upload = $_SERVER['DOCUMENT_ROOT'] . '/images/page/';
                 foreach ($arr as $it) {
                     $data_page = Page::where('id', '=', $it)->get();
@@ -72,15 +86,14 @@ class AjaxController extends Controller
                 }
                 $loadDelete = Page::whereIn('id', $arr)->delete();
 
-                // SET AUTO_INCREMENT TO 1
-                $table = (new Category)->getTable();
-                DB::statement("ALTER TABLE $table AUTO_INCREMENT = 1;");
+                $this->resetTableAutoIncrement((new Page)->getTable());
 
                 return 1;
                 break;
 
             case 'email_template':
                 EmailTemplate::whereIn('id', $arr)->delete();
+
                 return 1;
                 break;
             case 'menuWp':
@@ -97,25 +110,22 @@ class AjaxController extends Controller
                     }
                 }
 
-                $table = (new Menu)->getTable();
-                $table2 = (new MenuItems)->getTable();
-                DB::statement("ALTER TABLE $table AUTO_INCREMENT = 1;");
-                DB::statement("ALTER TABLE $table2 AUTO_INCREMENT = 1;");
+                $this->resetTableAutoIncrement((new Menu)->getTable());
+                $this->resetTableAutoIncrement((new MenuItems)->getTable());
+
                 return 1;
                 break;
             case 'post':
                 // Bài viết nằm trong bảng pages (type=post), bảng posts đã xóa
-                \App\Models\Backend\Page::where('type', 'post')->whereIn('id', $arr)->delete();
+                Page::where('type', 'post')->whereIn('id', $arr)->delete();
+
                 return 1;
                 break;
             case 'post-category':
                 Category::whereIn('id', $arr)->delete();
 
-                // Bảng post_categories đã xóa, không còn pivot.
+                $this->resetTableAutoIncrement((new Category)->getTable());
 
-                // SET AUTO_INCREMENT TO 1
-                $table = (new Category)->getTable();
-                DB::statement("ALTER TABLE $table AUTO_INCREMENT = 1;");
                 return 1;
                 break;
             case 'product':
@@ -123,9 +133,8 @@ class AjaxController extends Controller
                 ProductCategory::whereIn('product_id', $arr)->delete();
                 Product::whereIn('id', $arr)->delete();
 
-                // SET AUTO_INCREMENT TO 1
-                $table = (new Product)->getTable();
-                DB::statement("ALTER TABLE $table AUTO_INCREMENT = 1;");
+                $this->resetTableAutoIncrement((new Product)->getTable());
+
                 return 1;
                 break;
             case 'product-category':
@@ -134,48 +143,37 @@ class AjaxController extends Controller
                 // DELETE DATA FROM PIVOT TABLE
                 ProductCategory::whereIn('category_id', $arr)->delete();
 
-                // SET AUTO_INCREMENT TO 1
-                $table = (new Category)->getTable();
-                DB::statement("ALTER TABLE $table AUTO_INCREMENT = 1;");
+                $this->resetTableAutoIncrement((new Category)->getTable());
+
                 return 1;
                 break;
             case 'user_admin':
-                //xóa user admin
+                // xóa user admin
                 $loadDelete = User::whereIn('id', $arr)->delete();
 
-                //delete products
-                // $productDelete = Theme::all();
-                // if ($loadDelete) {
-                //     foreach ($productDelete as $value) {
-                //         foreach ($arr as $value_id) {
-                //             if ($value->admin_id == $value_id) {
-                //                 $value->delete();
-                //                 break;
-                //             }
-                //         }
-                //     } //foreach
-                // }
                 return 1;
                 break;
             case 'order':
-                $loadDelete = \App\Models\Backend\Order::whereIn('cart_id', $arr)->delete();
-                $addToCardDelete = \App\Models\Backend\OrderItem::whereIn('cart_id', $arr)->delete();
+                $loadDelete = Order::whereIn('cart_id', $arr)->delete();
+                $addToCardDelete = OrderItem::whereIn('cart_id', $arr)->delete();
+
                 return 1;
                 break;
             case 'contact':
                 Contact::whereIn('id', $arr)->delete();
 
-                // SET AUTO_INCREMENT TO 1
-                $table = (new Contact)->getTable();
-                DB::statement("ALTER TABLE $table AUTO_INCREMENT = 1;");
+                $this->resetTableAutoIncrement((new Contact)->getTable());
+
                 return 1;
                 break;
             case 'subscription':
-                Subscription::whereIn('id', $arr)->delete();
+                Contact::query()
+                    ->where('type', 'subscription')
+                    ->whereIn('id', $arr)
+                    ->delete();
 
-                // SET AUTO_INCREMENT TO 1
-                $table = (new Subscription)->getTable();
-                DB::statement("ALTER TABLE $table AUTO_INCREMENT = 1;");
+                $this->resetTableAutoIncrement((new Contact)->getTable());
+
                 return 1;
                 break;
             case 'slider':
@@ -195,14 +193,13 @@ class AjaxController extends Controller
                     }
                 }
 
-                // SET AUTO_INCREMENT TO 1
-                $table = (new Slider)->getTable();
-                DB::statement("ALTER TABLE $table AUTO_INCREMENT = 1;");
+                $this->resetTableAutoIncrement((new Slider)->getTable());
+
                 return 1;
                 break;
 
             default:
-                # code...
+                // code...
                 break;
         }
     }
@@ -217,9 +214,9 @@ class AjaxController extends Controller
 
         $type = $rq->type;
         $check_data = $rq->seq_list;
-        $arr = array();
+        $arr = [];
         foreach ($check_data as $id) {
-            $arr[] = (int)$id;
+            $arr[] = (int) $id;
         }
 
         if ($type == 'category-post' || $type == 'category-product') {
@@ -243,12 +240,13 @@ class AjaxController extends Controller
                     $slug = Str::slug($newPage->name . '-' . $newPage->id);
 
                     // update sort = id
-                    Page::where("id", $newPage->id)->update(['slug' => $slug, 'sort' => $newPage->id]);
+                    Page::where('id', $newPage->id)->update(['slug' => $slug, 'sort' => $newPage->id]);
 
                     // Replicate Post Category
                     $newPage = Page::find($newPage->id);
                     $i++;
                 }
+
                 return 1;
                 break;
             case 'email_template':
@@ -261,13 +259,19 @@ class AjaxController extends Controller
 
                     // Replicate post
                     $newTemplate = $template->replicate();
-                    $newTemplate->created_at = Carbon::now(); // changing the created_at date
-                    $newTemplate->save(); // saving it to the database
+                    $baseCode = EmailTemplateCodes::normalize((string) ($template->code ?? ''));
+                    if ($baseCode === '') {
+                        $baseCode = 'email_template';
+                    }
+                    $newTemplate->code = $baseCode . '_copy_' . $template->id;
+                    $newTemplate->created_at = Carbon::now();
+                    $newTemplate->save();
 
                     // update sort = id
-                    EmailTemplate::where("id", $newTemplate->id)->update(['sort' => $newTemplate->id]);
+                    EmailTemplate::where('id', $newTemplate->id)->update(['sort' => $newTemplate->id]);
                     $i++;
                 }
+
                 return 1;
                 break;
             case 'menuwp':
@@ -300,6 +304,7 @@ class AjaxController extends Controller
                     }
                     $i++;
                 }
+
                 return 1;
                 break;
             case 'category':
@@ -309,7 +314,7 @@ class AjaxController extends Controller
                 foreach ($arr as $id) {
                     $category = Category::find($id);
 
-                    // Get categories of current post 
+                    // Get categories of current post
                     // $category_id = $post->categories->pluck('id')->toArray();
 
                     // Replicate category
@@ -320,28 +325,32 @@ class AjaxController extends Controller
                     $newCaterory->save(); // saving it to the database
 
                     // update sort = id
-                    Category::where("id", $newCaterory->id)->update(['sort' => $newCaterory->id]);
+                    Category::where('id', $newCaterory->id)->update(['sort' => $newCaterory->id]);
 
                     // Replicate Post Category
                     // $newPost = Post::find($newCaterory->id);
                     // $newPost->categories()->sync($category_id);
                     $i++;
                 }
+
                 return 1;
                 break;
             case 'post':
                 // Replicate bài viết (Page type=post), bảng posts đã xóa
                 $i = 1;
                 foreach ($arr as $id) {
-                    $page = \App\Models\Backend\Page::where('type', 'post')->find($id);
-                    if (!$page) continue;
+                    $page = Page::where('type', 'post')->find($id);
+                    if (! $page) {
+                        continue;
+                    }
                     $newPage = $page->replicate();
                     $newPage->created_at = Carbon::now();
                     $newPage->save();
                     $slug = Str::slug(($newPage->name ?? 'post') . '-' . $newPage->id);
-                    \App\Models\Backend\Page::where('id', $newPage->id)->update(['slug' => $slug, 'sort' => $newPage->id]);
+                    Page::where('id', $newPage->id)->update(['slug' => $slug, 'sort' => $newPage->id]);
                     $i++;
                 }
+
                 return 1;
                 break;
             case 'product':
@@ -351,7 +360,7 @@ class AjaxController extends Controller
                 foreach ($arr as $id) {
                     $product = Product::find($id);
 
-                    // Get categories of current product 
+                    // Get categories of current product
                     $category_id = $product->categories->pluck('id')->toArray();
 
                     // Replicate post
@@ -364,13 +373,14 @@ class AjaxController extends Controller
                     $slug = Str::slug($newProduct->name . '-' . $newProduct->id);
 
                     // update sort = id
-                    Product::where("id", $newProduct->id)->update(['slug' => $slug, 'sort' => $newProduct->id]);
+                    Product::where('id', $newProduct->id)->update(['slug' => $slug, 'sort' => $newProduct->id]);
 
                     // Replicate Post Category
                     $newProduct = Product::find($newProduct->id);
                     $newProduct->categories()->sync($category_id);
                     $i++;
                 }
+
                 return 1;
                 break;
             case 'slider':
@@ -392,7 +402,7 @@ class AjaxController extends Controller
                     $newSlider->save(); // saving it to the database
 
                     // update sort = id
-                    Slider::where("id", $newSlider->id)->update(['sort' => $newSlider->id]);
+                    Slider::where('id', $newSlider->id)->update(['sort' => $newSlider->id]);
 
                     // Replicate Slider list image
                     if ($list_image->count() > 0) {
@@ -406,10 +416,11 @@ class AjaxController extends Controller
                     }
                     $i++;
                 }
+
                 return 1;
                 break;
             default:
-                # code...
+                // code...
                 break;
         }
     }
@@ -444,114 +455,20 @@ class AjaxController extends Controller
 
         if (in_array($modelClass, $allowedModels) && in_array($column, $allowedColumns)) {
             (new $modelClass)::where($column == 'cart_status' || $column == 'cart_payment' ? 'cart_id' : 'id', $id)->update([$column => $value]);
+
             return response()->json(['success' => true]);
         }
 
         return response()->json(['success' => false, 'message' => 'Unauthorized action'], 403);
     }
 
-    public function processThemeFast(Request $request)
-    {
-        $id = (int)$request->id;
-        $origin_price = $request->origin_price;
-        $promotion_price = $request->promotion_price;
-        // $order_short = $request->order_short;
-        $start_event = $request->start_event;
-        $end_event = $request->end_event;
-        if ($id > 0) :
-            $data = array(
-                'price_origin' => $origin_price,
-                'price_promotion' => $promotion_price,
-                // 'order_short' => $order_short,
-                'start_event' => $start_event,
-                'end_event' => $end_event,
-                'updated' => date('Y-m-d H:i:s')
-            );
-            // $respons = Theme::where("id", "=", $id)->update($data);
-            echo 'OK';
-        else :
-            echo 'Lỗi';
-        endif;
-        exit();
-    }
-
-    public function update_new_item_status(Request $request)
-    {
-        if (isset($request['check']) && $request['sid'] != "") :
-            $status = $request['check'];
-            $postID = (int)$request['sid'];
-            if ($postID > 0) :
-                // $respons1 = Theme::where("id", "=", $postID)->update(array('item_new' => $status));
-                echo "OK";
-            else :
-                echo "Lỗi";
-            endif;
-        endif;
-    }
-
-    public function update_process_flash_sale(Request $request)
-    {
-        if (isset($request['check']) && $request['sid'] != "") :
-            $status = $request['check'];
-            $postID = (int)$request['sid'];
-            if ($postID > 0) :
-                // $respons1 = Theme::where("id", "=", $postID)->update(array('flash_sale' => $status));
-                echo "OK";
-            else :
-                echo "Lỗi";
-            endif;
-        endif;
-    }
-
-    public function update_process_sale_top_week(Request $request)
-    {
-        if (isset($request['check']) && $request['sid'] != "") :
-            $status = $request['check'];
-            $postID = (int)$request['sid'];
-            if ($postID > 0) :
-                // $respons1 = Theme::where("id", "=", $postID)->update(array('sale_top_week' => $status));
-                echo "OK";
-            else :
-                echo "Lỗi";
-            endif;
-        endif;
-    }
-
-    public function update_process_propose(Request $request)
-    {
-        if (isset($request['check']) && $request['sid'] != "") :
-            $status = $request['check'];
-            $postID = (int)$request['sid'];
-            if ($postID > 0) :
-                // $respons1 = Theme::where("id", "=", $postID)->update(array('propose' => $status));
-                echo "OK";
-            else :
-                echo "Lỗi";
-            endif;
-        endif;
-    }
-
-    public function updateStoreStatus(Request $request)
-    {
-        if (isset($request['check']) && $request['sid'] != "") :
-            $status = $request['check'];
-            $postID = (int)$request['sid'];
-            if ($postID > 0) :
-                // $respons1 = Theme::where("id", "=", $postID)->update(array('store_status' => $status));
-                echo "OK";
-            else :
-                echo "Lỗi";
-            endif;
-        endif;
-    }
-
     public function checkPassword(Request $request)
     {
         $current_password = $request->current_password;
-        if (!Hash::check($request->current_password, Auth::guard('admin')->user()->password)) {
+        if (! Hash::check($request->current_password, Auth::guard('admin')->user()->password)) {
             echo 'Mật khẩu hiện tại không chính xác';
         } else {
-            //echo 'Mật khẩu chính xác';
+            // echo 'Mật khẩu chính xác';
         }
     }
 
@@ -584,6 +501,7 @@ class AjaxController extends Controller
             $data['type'] = 'ward';
             $data['child'] = 'street';
         }
+
         return view('backend.partials.select-label', $data);
     }
 }

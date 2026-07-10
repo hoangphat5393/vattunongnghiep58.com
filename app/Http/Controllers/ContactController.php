@@ -1,30 +1,19 @@
 <?php
 
-
-
 namespace App\Http\Controllers;
 
-
-
-use Illuminate\Http\Request;
-
-use Illuminate\Support\Facades\Mail;
-
-use App\Models\Frontend\EmailTemplate;
-
 use App\Models\Frontend\Contact;
-
+use App\Models\Frontend\EmailTemplate;
+use App\Support\EmailTemplateCodes;
+use App\Traits\LocalizeController;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Lunaweb\RecaptchaV3\Facades\RecaptchaV3;
 
-
-
 class ContactController extends Controller
-
 {
-
-    use \App\Traits\LocalizeController;
-
-
+    use LocalizeController;
 
     public $data = [
 
@@ -32,52 +21,11 @@ class ContactController extends Controller
 
         'success' => false,
 
-        'message' => ''
+        'message' => '',
 
     ];
 
-
-
-    public function index()
-
-    {
-
-        $this->localized();
-
-        $this->data['page'] = \App\Models\Frontend\Page::where('slug', 'contact')->first();
-
-        // return view($this->templatePath . '.contact.index', ['data' => $this->data]);
-
-        return view('theme.contact.index', ['data' => $this->data]);
-
-    }
-
-
-
-    public function confirmation(Request $rq)
-
-    {
-
-        $this->localized();
-
-        $detail = $rq->input('contact');
-
-        if ($detail) {
-
-            $this->data['data'] = $detail;
-
-            // return view($this->templatePath . '.contact.confirmation', $this->data)->compileShortcodes();
-
-            return view($this->templatePath . '.contact.confirmation', $this->data);
-
-        }
-
-    }
-
-
-
     public function getContact(Request $request, $type)
-
     {
 
         if ($type == 'request-contact') {
@@ -91,14 +39,10 @@ class ContactController extends Controller
             $this->data['product_title'] = $request->product_title;
 
             $this->data['view'] = view('theme.page.includes.get-contact-form', ['data' => $this->data])->render();
-
         }
 
         return response()->json($this->data);
-
     }
-
-
 
     public function submit(Request $request)
     {
@@ -106,7 +50,7 @@ class ContactController extends Controller
         $score = RecaptchaV3::verify($request->get('g-recaptcha-response'), 'contact');
         $shouldReturnJson = $request->expectsJson() || $request->wantsJson() || $request->ajax();
 
-        if (!is_array($detail) || empty($detail)) {
+        if (! is_array($detail) || empty($detail)) {
             $this->data['status'] = 'error';
             $this->data['message'] = 'invalid contact payload';
 
@@ -118,7 +62,7 @@ class ContactController extends Controller
         }
 
         if ($score > 0.7) {
-            $mail_customer = EmailTemplate::where('group', 'contact_admin')->first();
+            $mail_customer = EmailTemplate::findPublishedByCode(EmailTemplateCodes::CONTACT_ADMIN);
             $mail_content = $mail_customer?->text ?? '';
 
             $data = [
@@ -139,11 +83,11 @@ class ContactController extends Controller
                 ];
                 $mail_content = preg_replace($dataFind, $data, $mail_content);
             } else {
-                $mail_content = 'Họ tên: ' . e($data['name']) . '<br>'
-                    . 'Email: ' . e($data['email']) . '<br>'
-                    . 'SĐT: ' . e($data['phone']) . '<br>'
-                    . 'Địa chỉ: ' . e($data['address']) . '<br>'
-                    . 'Nội dung: ' . nl2br(e($data['content']));
+                $mail_content = 'Họ tên: '.e($data['name']).'<br>'
+                    .'Email: '.e($data['email']).'<br>'
+                    .'SĐT: '.e($data['phone']).'<br>'
+                    .'Địa chỉ: '.e($data['address']).'<br>'
+                    .'Nội dung: '.nl2br(e($data['content']));
             }
 
             $data['type'] = 'contact';
@@ -154,7 +98,7 @@ class ContactController extends Controller
 
             $sub = setting_option('webtitle');
             $from_mail = [setting_option('email_admin'), setting_option('webtitle') ?? ''];
-            $subject = $sub . 'Đăng ký tư vấn' . ' (' . date('Y-m-d H:i:s') . ')';
+            $subject = $sub.'Đăng ký tư vấn'.' ('.date('Y-m-d H:i:s').')';
 
             Mail::send([], [], function ($message) use ($data, $from_mail, $subject, $mail_content) {
                 $message->from($from_mail[0])
@@ -194,22 +138,12 @@ class ContactController extends Controller
         return redirect()->back()->withErrors($this->data['message'])->withInput();
     }
 
-    public function completed(Request $request)
-
+    public function completed(Request $request): View
     {
-        try {
-            if (view()->exists('theme.contact.completed')) {
-                return view('theme.contact.completed');
-            }
-        } catch (\Throwable $e) {
-        }
-
-        if (view()->exists('frontend.contact.completed')) {
-            return view('frontend.contact.completed');
-        }
-
-        return view('errors.404');
+        return view('frontend.page.contact-completed', [
+            'seo' => [
+                'seo_title' => 'Hoàn tất liên hệ',
+            ],
+        ]);
     }
-
 }
-

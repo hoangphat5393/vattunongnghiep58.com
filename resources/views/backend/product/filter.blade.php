@@ -25,10 +25,12 @@
                     <h1 class="mb-0">Lọc sản phẩm</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
-                    <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Lọc sản phẩm</li>
-                    </ol></nav>
+                    <nav aria-label="breadcrumb" class="float-sm-end">
+                        <ol class="breadcrumb mb-0">
+                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Lọc sản phẩm</li>
+                        </ol>
+                    </nav>
                 </div><!-- /.col -->
             </div><!-- /.row -->
         </div><!-- /.container-fluid -->
@@ -56,12 +58,14 @@
                                 <div class="float-end">
                                     <form method="GET" action="{{ route('admin.product.index') }}" id="frm-filter-post" class="form-inline">
                                         <?php
-                                        $list_cate = App\Models\Category_Theme::orderBy('category_theme.categoryName', 'ASC')->select('category_theme.categoryID', 'category_theme.categoryName')->get();
+                                        $list_cate = \App\Models\Backend\Category::query()
+                                            ->orderBy('name')
+                                            ->get(['id', 'name']);
                                         ?>
-                                        <select class="custom-select me-2" name="category_theme">
-                                            <option value="">Thể loại sản phẩm</option>
+                                        <select class="custom-select me-2" name="category_id">
+                                            <option value="">Danh mục sản phẩm</option>
                                             @foreach ($list_cate as $cate)
-                                                <option value="{{ $cate->categoryID }}" @if (isset($_GET['category_theme']) && $_GET['category_theme'] == $cate->categoryID) selected @endif>{{ $cate->categoryName }}</option>
+                                                <option value="{{ $cate->id }}" @if (isset($_GET['category_id']) && $_GET['category_id'] == $cate->id) selected @endif>{{ $cate->name }}</option>
                                             @endforeach
                                         </select>
                                         <input type="text" class="form-control" name="search_title" value="<?php if (isset($_GET['search_title'])) {
@@ -104,20 +108,13 @@
                                                         <b>{{ $data->title }}</b>
                                                         <br>
                                                         <b style="color:#c76805;">{{ $data->slug }}</b>
-                                                        <?php
-                                                $categories = \App\Models\Theme::where('theme.id', '=', $data->id)
-                                                    ->join('join_category_theme','theme.id','=','join_category_theme.id_theme')
-                                                    ->join('category_theme','join_category_theme.id_category_theme','=','category_theme.categoryID')
-                                                    ->select('category_theme.categoryID','category_theme.categoryName','category_theme.categorySlug')
-                                                    ->orderBy('category_theme.categoryParent','ASC')
-                                                    ->get(); 
-                                                if($categories): ?>
-                                                        <div class="list_cat_post_content_link">
-                                                            @foreach ($categories as $category)
-                                                                <a class="tag" target="_blank" href="#">{{ $category->categoryName }}</a>
-                                                            @endforeach
-                                                        </div>
-                                                        <?php endif; ?>
+                                                        @if (isset($data->categories) && $data->categories->isNotEmpty())
+                                                            <div class="list_cat_post_content_link">
+                                                                @foreach ($data->categories as $category)
+                                                                    <a class="tag" target="_blank" href="#">{{ $category->name }}</a>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
                                                     </a>
                                                 </td>
                                                 <td class="text-center">

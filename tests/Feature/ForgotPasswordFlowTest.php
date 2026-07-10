@@ -29,12 +29,12 @@ class ForgotPasswordFlowTest extends TestCase
         $this->withoutMiddleware(Currency::class);
 
         $response = $this
-            ->from(route('forgetPassword'))
-            ->post(route('actionForgetPassword'), [
+            ->from(route('customer.password.forgot'))
+            ->post(route('customer.password.forgot.submit'), [
                 'email' => '',
             ]);
 
-        $response->assertRedirect(route('forgetPassword'));
+        $response->assertRedirect(route('customer.password.forgot'));
         $response->assertSessionHasErrors(['email']);
     }
 
@@ -43,12 +43,12 @@ class ForgotPasswordFlowTest extends TestCase
         $this->withoutMiddleware(Currency::class);
 
         $response = $this
-            ->from(route('forgetPassword'))
-            ->post(route('actionForgetPassword'), [
+            ->from(route('customer.password.forgot'))
+            ->post(route('customer.password.forgot.submit'), [
                 'email' => 'not-exist@example.com',
             ]);
 
-        $response->assertRedirect(route('forgetPassword'));
+        $response->assertRedirect(route('customer.password.forgot'));
         $response->assertSessionHasErrors(['email']);
     }
 }

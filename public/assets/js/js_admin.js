@@ -9,6 +9,32 @@
         }
     }
 
+    window.http = window.http || {
+        get: function (url, config) {
+            return axios.get(url, config);
+        },
+        post: function (url, data, config) {
+            return axios.post(url, data, config);
+        },
+        postForm: function (url, data, config) {
+            return axios.post(url, data, config);
+        },
+        postJson: function (url, data, config) {
+            return axios.post(url, data, Object.assign({}, config, {
+                headers: Object.assign({ 'Content-Type': 'application/json', Accept: 'application/json' }, config && config.headers),
+            }));
+        },
+        put: function (url, data, config) {
+            return axios.put(url, data, config);
+        },
+        delete: function (url, config) {
+            return axios.delete(url, config);
+        },
+        postText: function (url, data, config) {
+            return axios.post(url, data, Object.assign({}, config, { responseType: 'text' }));
+        },
+    };
+
     function getMetaContentByName(name, content) {
         const attr = content == null ? 'content' : content;
         const meta = document.querySelector("meta[name='" + name + "']");
@@ -16,11 +42,7 @@
     }
 
     function adminPost(url, data, config) {
-        return axios.post(url, data, config);
-    }
-
-    function adminPostText(url, data) {
-        return adminPost(url, data, { responseType: 'text' });
+        return window.http.postForm(url, data, config);
     }
 
     function getCheckedSeqList() {
@@ -29,18 +51,6 @@
                 return $(this).val();
             })
             .get();
-    }
-
-    function adminToggleCheckbox(endpoint, productId, checkboxSelector) {
-        const check = $(checkboxSelector + ':checkbox:checked').length > 0 ? 1 : 0;
-
-        return adminPostText(admin_url + endpoint, {
-            _token: getMetaContentByName('csrf-token'),
-            check: check,
-            sid: productId,
-        }).catch(function (e) {
-            console.error(e);
-        });
     }
 
     window.getMetaContentByName = getMetaContentByName;
@@ -174,7 +184,7 @@
             return false;
         }
 
-        adminPost(admin_url + '/delete-id', {
+        adminPost(window.AdminRoutes?.bulkDelete || admin_url + '/bulk-delete', {
             _token: getMetaContentByName('csrf-token'),
             type: type,
             seq_list: seq_list,
@@ -199,7 +209,7 @@
             return false;
         }
 
-        adminPost(admin_url + '/replicate-id', {
+        adminPost(window.AdminRoutes?.bulkReplicate || admin_url + '/bulk-replicate', {
             _token: getMetaContentByName('csrf-token'),
             type: type,
             seq_list: seq_list,
@@ -210,48 +220,6 @@
             .catch(function (e) {
                 console.error(e);
             });
-    };
-
-    window.update_theme_fast = function update_theme_fast(product_id) {
-        const origin_price = $('#origin-price-' + product_id).val();
-        const promotion_price = $('#promotion-price-' + product_id).val();
-        const start_event = $('#start-event-' + product_id).val();
-        const end_event = $('#end-event-' + product_id).val();
-
-        adminPostText(admin_url + '/ajax/process_theme_fast', {
-            _token: getMetaContentByName('csrf-token'),
-            id: product_id,
-            origin_price: origin_price,
-            promotion_price: promotion_price,
-            start_event: start_event,
-            end_event: end_event,
-        })
-            .then(function (res) {
-                $('#alert_' + product_id).html(res.data).show();
-            })
-            .catch(function (e) {
-                console.error(e);
-            });
-    };
-
-    window.new_item_click = function new_item_click(product_id) {
-        adminToggleCheckbox('/ajax/process_new_item', product_id, '#toggle-new-item-' + product_id);
-    };
-
-    window.flash_sale_click = function flash_sale_click(product_id) {
-        adminToggleCheckbox('/ajax/process_flash_sale', product_id, '#toggle-flash-sale-' + product_id);
-    };
-
-    window.sale_top_week_click = function sale_top_week_click(product_id) {
-        adminToggleCheckbox('/ajax/process_sale_top_week', product_id, '#toggle-sale-top-week-' + product_id);
-    };
-
-    window.propose_click = function propose_click(product_id) {
-        adminToggleCheckbox('/ajax/process_propose', product_id, '#toggle-propose-' + product_id);
-    };
-
-    window.store_status_click = function store_status_click(product_id) {
-        adminToggleCheckbox('/ajax/process_store_status', product_id, '#toggle-store-status-' + product_id);
     };
 
     window.loadFile = function loadFile(event) {
@@ -353,6 +321,43 @@
         editorQuote(text);
     };
 
+    window.syncAllCkEditors = function syncAllCkEditors() {
+        if (!window.CKEDITOR || !CKEDITOR.instances) {
+            return;
+        }
+
+        Object.keys(CKEDITOR.instances).forEach(function (instance) {
+            CKEDITOR.instances[instance].updateElement();
+        });
+    };
+
+    window.registerCkeditorValidator = function registerCkeditorValidator(message) {
+        if (typeof $.validator === 'undefined' || $.validator.methods.ckeditor_required) {
+            return;
+        }
+
+        const defaultMessage = message || 'Nhập nội dung';
+
+        $.validator.addMethod('ckeditor_required', function (value, element) {
+            const editor = CKEDITOR.instances[element.id];
+            if (editor) {
+                const plain = editor
+                    .getData()
+                    .replace(/<[^>]*>/gi, '')
+                    .replace(/&nbsp;/gi, ' ')
+                    .trim();
+
+                return plain.length > 0;
+            }
+
+            return String(value || '').trim().length > 0;
+        }, defaultMessage);
+    };
+
+    $(function () {
+        registerCkeditorValidator();
+    });
+
     $(function () {
         $('.ckfinder-popup').each(function () {
             const id = $(this).attr('id');
@@ -438,7 +443,7 @@
                     break;
             }
 
-            adminPost(admin_url + '/quick-change', {
+            adminPost(window.AdminRoutes?.quickChange || admin_url + '/quick-change', {
                 _token: getMetaContentByName('csrf-token'),
                 id: id,
                 model: model,

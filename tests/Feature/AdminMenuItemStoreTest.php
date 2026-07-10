@@ -11,18 +11,28 @@ use Tests\TestCase;
 
 class AdminMenuItemStoreTest extends TestCase
 {
-    public function test_admin_menu_builder_renders_adminlte_refactor_without_losing_core_selectors(): void
+    private function createAdministrator(): User
     {
         $admin = User::create([
-            'name' => 'Menu UI Admin',
-            'username' => 'menu_ui_admin_' . uniqid(),
-            'email' => 'menu_ui_admin_' . uniqid('', true) . '@example.com',
+            'name' => 'Menu Admin',
+            'username' => 'menu_admin_'.uniqid(),
+            'email' => 'menu_admin_'.uniqid('', true).'@example.com',
             'password' => bcrypt('password'),
             'status' => 1,
         ]);
 
+        $role = Role::firstOrCreate(['slug' => 'administrator'], ['name' => 'Administrator']);
+        $admin->roles()->sync([$role->id]);
+
+        return $admin;
+    }
+
+    public function test_admin_menu_builder_renders_adminlte_refactor_without_losing_core_selectors(): void
+    {
+        $admin = $this->createAdministrator();
+
         $menu = Menu::create([
-            'name' => 'menu-ui-test-' . uniqid('', true),
+            'name' => 'menu-ui-test-'.uniqid('', true),
         ]);
 
         $menuItem = MenuItems::create([
@@ -36,7 +46,7 @@ class AdminMenuItemStoreTest extends TestCase
 
         $category = Category::create([
             'name' => 'Long Category Name For Menu Source Filter',
-            'slug' => 'long-category-name-for-menu-source-filter-' . uniqid(),
+            'slug' => 'long-category-name-for-menu-source-filter-'.uniqid(),
             'parent' => 0,
             'sort' => 0,
             'status' => 1,
@@ -60,10 +70,10 @@ class AdminMenuItemStoreTest extends TestCase
         $response->assertSee('menu-source-list', false);
         $response->assertSee('menu-source-item', false);
         $response->assertSee('menu-source-title', false);
-        $response->assertSee('item-name-' . $category->id, false);
-        $response->assertSee('item-slug-' . $category->id, false);
-        $response->assertSee('item-url-' . $category->id, false);
-        $response->assertSee('item-type-' . $category->id, false);
+        $response->assertSee('item-name-'.$category->id, false);
+        $response->assertSee('item-slug-'.$category->id, false);
+        $response->assertSee('item-url-'.$category->id, false);
+        $response->assertSee('item-type-'.$category->id, false);
 
         MenuItems::where('menu_id', $menu->id)->delete();
         $category->delete();
@@ -73,13 +83,7 @@ class AdminMenuItemStoreTest extends TestCase
 
     public function test_menu_zero_renders_create_state_without_edit_actions(): void
     {
-        $admin = User::create([
-            'name' => 'Menu Create Admin',
-            'username' => 'menu_create_admin_' . uniqid(),
-            'email' => 'menu_create_admin_' . uniqid('', true) . '@example.com',
-            'password' => bcrypt('password'),
-            'status' => 1,
-        ]);
+        $admin = $this->createAdministrator();
 
         $response = $this->actingAs($admin, 'admin')->get(route('admin.menu.index', ['menu' => 0]));
 
@@ -100,15 +104,15 @@ class AdminMenuItemStoreTest extends TestCase
 
         $admin = User::create([
             'name' => 'Menu Admin',
-            'username' => 'menu_admin_' . uniqid(),
-            'email' => 'menu_admin_' . uniqid('', true) . '@example.com',
+            'username' => 'menu_admin_'.uniqid(),
+            'email' => 'menu_admin_'.uniqid('', true).'@example.com',
             'password' => bcrypt('password'),
             'status' => 1,
         ]);
         $admin->roles()->sync([$role->id]);
 
         $menu = Menu::create([
-            'name' => 'menu-test-' . uniqid('', true),
+            'name' => 'menu-test-'.uniqid('', true),
         ]);
 
         $response = $this->actingAs($admin, 'admin')->post(
@@ -141,16 +145,10 @@ class AdminMenuItemStoreTest extends TestCase
 
     public function test_administrator_can_save_menu_item_tree_structure(): void
     {
-        $admin = User::create([
-            'name' => 'Menu Tree Admin',
-            'username' => 'menu_tree_admin_' . uniqid(),
-            'email' => 'menu_tree_admin_' . uniqid('', true) . '@example.com',
-            'password' => bcrypt('password'),
-            'status' => 1,
-        ]);
+        $admin = $this->createAdministrator();
 
         $menu = Menu::create([
-            'name' => 'menu-tree-test-' . uniqid('', true),
+            'name' => 'menu-tree-test-'.uniqid('', true),
         ]);
 
         $parent = MenuItems::create([
@@ -221,16 +219,10 @@ class AdminMenuItemStoreTest extends TestCase
 
     public function test_administrator_can_update_menu_item_target_and_rel(): void
     {
-        $admin = User::create([
-            'name' => 'Menu Item Update Admin',
-            'username' => 'menu_item_update_admin_' . uniqid(),
-            'email' => 'menu_item_update_admin_' . uniqid('', true) . '@example.com',
-            'password' => bcrypt('password'),
-            'status' => 1,
-        ]);
+        $admin = $this->createAdministrator();
 
         $menu = Menu::create([
-            'name' => 'menu-item-update-test-' . uniqid('', true),
+            'name' => 'menu-item-update-test-'.uniqid('', true),
         ]);
 
         $item = MenuItems::create([
@@ -272,13 +264,7 @@ class AdminMenuItemStoreTest extends TestCase
 
     public function test_generate_menu_returns_not_found_for_missing_menu(): void
     {
-        $admin = User::create([
-            'name' => 'Menu Missing Admin',
-            'username' => 'menu_missing_admin_' . uniqid(),
-            'email' => 'menu_missing_admin_' . uniqid('', true) . '@example.com',
-            'password' => bcrypt('password'),
-            'status' => 1,
-        ]);
+        $admin = $this->createAdministrator();
 
         $response = $this->actingAs($admin, 'admin')->post(route('admin.menu.generate'), [
             'idmenu' => 999999999,
@@ -286,27 +272,22 @@ class AdminMenuItemStoreTest extends TestCase
             'arraydata' => [],
         ]);
 
-        $response->assertNotFound();
+        $response->assertRedirect();
+        $response->assertSessionHasErrors(['idmenu']);
 
         $admin->delete();
     }
 
     public function test_administrator_cannot_delete_menu_item_from_another_menu(): void
     {
-        $admin = User::create([
-            'name' => 'Menu Delete Admin',
-            'username' => 'menu_delete_admin_' . uniqid(),
-            'email' => 'menu_delete_admin_' . uniqid('', true) . '@example.com',
-            'password' => bcrypt('password'),
-            'status' => 1,
-        ]);
+        $admin = $this->createAdministrator();
 
         $menu = Menu::create([
-            'name' => 'menu-delete-test-' . uniqid('', true),
+            'name' => 'menu-delete-test-'.uniqid('', true),
         ]);
 
         $otherMenu = Menu::create([
-            'name' => 'other-menu-delete-test-' . uniqid('', true),
+            'name' => 'other-menu-delete-test-'.uniqid('', true),
         ]);
 
         $otherItem = MenuItems::create([

@@ -2,27 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Account\AccountController;
+use App\Http\Controllers\Auth\CustomerAuthController;
+use App\Http\Requests\UpdateCustomerPasswordRequest;
+use App\Http\Requests\UpdateCustomerProfileRequest;
 use App\Models\Addtocard;
-use App\Models\Addtocard_Detail;
 use App\Models\Customer_forget_pass_otp;
+use App\Models\Frontend\Contact;
 use App\Models\Frontend\Product;
 use App\Models\Frontend\ShopOrderPaymentStatus;
 use App\Models\Frontend\ShopOrderStatus;
 use App\Models\Frontend\User;
 use App\Models\Join_Category_Theme;
-use App\Models\ShopPaymentMethod;
-use App\Models\Subscription;
 use App\Models\ThemeInfo;
-use App\Models\Wishlist;
+// use App\Libraries\Helpers;
 use App\Traits\LocalizeController;
 use Auth;
-// use App\Libraries\Helpers;
 use Carbon\Carbon;
 use Cart;
-use DB;
-use Gornymedia\Shortcodes\Facades\Shortcode;
-use Hash;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rule;
 use Mail;
 use Redirect;
 use Validator;
@@ -51,62 +51,17 @@ class CustomerController extends Controller
 
     public function index()
     {
-        return view('customer.home');
+        return app(AccountController::class)->index();
     }
 
     public function showLoginForm()
     {
-        if (! Auth::check()) {
-            $this->localized();
-            $this->data['seo'] = [
-                'seo_title' => 'Đăng nhập',
-            ];
-            $html = view('theme.customer.login', $this->data)->render();
-            try {
-                $html = Shortcode::compile($html);
-            } catch (\Throwable $e) {
-            }
-
-            return $html;
-        }
-
-        return redirect(url('/'));
+        return app(CustomerAuthController::class)->showLoginForm();
     }
 
     public function postLogin(Request $request)
     {
-        $data_return = ['status' => 'success', 'message' => 'Thành công'];
-
-        $login = [
-            'email' => $request->email,
-            'password' => $request->password,
-        ];
-        if ($request->remember_me == 1) {
-            $remember_me = true;
-        } else {
-            $remember_me = false;
-        }
-
-        $check_user = User::where('email', $request->email)->first();
-        if ($check_user != '' && $check_user->status == 0) {
-            if (Auth::attempt($login, $remember_me)) {
-                return response()->json([
-                    'error' => 0,
-                    'redirect_back' => $request->url_back ?? '/', // redirect()->back(),
-                    'view' => view($this->templatePath.'.customer.includes.login_success')->render(),
-                    'msg' => __('Login success'),
-                ]);
-            } else {
-                $message = __('Email or Password is wrong');
-            }
-        } else {
-            $message = __('Account does not exist!');
-        }
-
-        return response()->json([
-            'error' => 1,
-            'msg' => $message,
-        ]);
+        return app(CustomerAuthController::class)->postLogin($request);
     }
 
     public function loginOrregister()
@@ -175,9 +130,9 @@ class CustomerController extends Controller
             $email_admin = 'huunamtn@gmail.com'; // setting_option('email_admin');
 
             $data_email = [
-                'content' => '<h1 style="font-size:22px;font-weight:normal;line-height:22px;margin:0 0 11px 0">Thân gửi, <span style="color: #F04F32">'.$new_cus->fullname.'</span></h1>
-                    <p style="font-size:12px;line-height:16px;margin:0 0 8px 0">Cảm ơn bạn đã đăng ký thành viên tại '.url('/').'</p>
-                    <p>Mật khẩu đăng nhập: '.$data['password'].'</p>',
+                'content' => '<h1 style="font-size:22px;font-weight:normal;line-height:22px;margin:0 0 11px 0">Thân gửi, <span style="color: #F04F32">' . $new_cus->fullname . '</span></h1>
+                    <p style="font-size:12px;line-height:16px;margin:0 0 8px 0">Cảm ơn bạn đã đăng ký thành viên tại ' . url('/') . '</p>
+                    <p>Mật khẩu đăng nhập: ' . $data['password'] . '</p>',
                 'email_admin' => $email_admin,
                 'subject' => 'Đăng ký tài khoản thành công',
                 'subject_sys' => 'Thông báo có tài khoản vừa đăng ký',
@@ -195,7 +150,7 @@ class CustomerController extends Controller
                 function ($message) use ($data_email) {
                     $message->from($data_email['email_admin'], $data_email['title']);
                     $message->to($data_email['email_admin'])
-                        ->subject($data_email['subject_sys'].' - Website: '.$data_email['url_only']);
+                        ->subject($data_email['subject_sys'] . ' - Website: ' . $data_email['url_only']);
                 }
             );
             Mail::send(
@@ -204,7 +159,7 @@ class CustomerController extends Controller
                 function ($message) use ($data_email) {
                     $message->from($data_email['email_admin'], $data_email['title']);
                     $message->to($data_email['email_admin'])
-                        ->subject($data_email['subject_sys'].' - Website: '.$data_email['url_only']);
+                        ->subject($data_email['subject_sys'] . ' - Website: ' . $data_email['url_only']);
                 }
             );
 
@@ -228,9 +183,9 @@ class CustomerController extends Controller
             $email_admin = setting_option('email_admin');
 
             $data_email = [
-                'content' => '<h1 style="font-size:22px;font-weight:normal;line-height:22px;margin:0 0 11px 0">Thân gửi, <span style="color: #F04F32">'.$new_cus->fullname.'</span></h1>
-                    <p style="font-size:12px;line-height:16px;margin:0 0 8px 0">Cảm ơn bạn đã đăng ký thành viên tại '.url('/').'</p>
-                    <p>Mật khẩu đăng nhập: '.$password_auto.'</p>',
+                'content' => '<h1 style="font-size:22px;font-weight:normal;line-height:22px;margin:0 0 11px 0">Thân gửi, <span style="color: #F04F32">' . $new_cus->fullname . '</span></h1>
+                    <p style="font-size:12px;line-height:16px;margin:0 0 8px 0">Cảm ơn bạn đã đăng ký thành viên tại ' . url('/') . '</p>
+                    <p>Mật khẩu đăng nhập: ' . $password_auto . '</p>',
                 'email_admin' => $email_admin,
                 'subject' => 'Đăng ký tài khoản thành công',
                 'subject_sys' => 'Thông báo có tài khoản vừa đăng ký',
@@ -248,7 +203,7 @@ class CustomerController extends Controller
                 function ($message) use ($data_email) {
                     $message->from($data_email['email_admin'], $data_email['title']);
                     $message->to($data_email['email_admin'])
-                        ->subject($data_email['subject_sys'].' - Website: '.$data_email['url_only']);
+                        ->subject($data_email['subject_sys'] . ' - Website: ' . $data_email['url_only']);
                 }
             );
             Mail::send(
@@ -257,7 +212,7 @@ class CustomerController extends Controller
                 function ($message) use ($data_email) {
                     $message->from($data_email['email_admin'], $data_email['title']);
                     $message->to($data_email['email_admin'])
-                        ->subject($data_email['subject_sys'].' - Website: '.$data_email['url_only']);
+                        ->subject($data_email['subject_sys'] . ' - Website: ' . $data_email['url_only']);
                 }
             );
 
@@ -283,16 +238,7 @@ class CustomerController extends Controller
 
     public function registerCustomer()
     {
-        $this->data['seo'] = [
-            'seo_title' => 'Đăng ký thành viên',
-        ];
-        $html = view('theme.customer.register', $this->data)->render();
-        try {
-            $html = Shortcode::compile($html);
-        } catch (\Throwable $e) {
-        }
-
-        return $html;
+        return app(CustomerAuthController::class)->registerCustomer();
     }
 
     public function createCustomer(Request $request)
@@ -366,7 +312,7 @@ class CustomerController extends Controller
                 function ($message) use ($data) {
                     $message->from($data['email_admin'], $data['title']);
                     $message->to($data['email_admin'])
-                        ->subject($data['subject_sys'].' - Website: '.$data['url_only']);
+                        ->subject($data['subject_sys'] . ' - Website: ' . $data['url_only']);
                 }
             );
 
@@ -374,7 +320,7 @@ class CustomerController extends Controller
 
             return response()->json([
                 'error' => 0,
-                'view' => view($this->templatePath.'.customer.includes.register_success')->render(),
+                'view' => view($this->templatePath . '.account.includes.register_success')->render(),
                 'msg' => __('Register success'),
             ]);
 
@@ -387,85 +333,34 @@ class CustomerController extends Controller
 
     public function createCustomerSuccess()
     {
-        $html = view($this->templatePath.'.customer.includes.register_success')->render();
-        try {
-            $html = Shortcode::compile($html);
-        } catch (\Throwable $e) {
-        }
-
-        return $html;
+        return app(CustomerAuthController::class)->createCustomerSuccess();
     }
 
     public function profile()
     {
-        $this->data['user'] = Auth::user();
-
-        $this->data['seo'] = [
-            'seo_title' => 'Customer | Profile',
-            'seo_image' => '',
-            'seo_description' => 'Customer Update Profile',
-            'seo_keyword' => 'Update, Profile',
-        ];
-
-        return view($this->templatePath.'.customer.profile', $this->data);
+        return app(AccountController::class)->profile();
     }
 
-    public function updateProfile(Request $rq)
+    public function updateProfile(UpdateCustomerProfileRequest $request)
     {
-        $id = Auth::user()->id;
-        $name_field = 'avatar_upload';
-        if ($rq->avatar_upload) {
-            $image_folder = '/images/avatar/';
-
-            $file = $rq->file($name_field);
-            $file_name = uniqid().'-'.$file->getClientOriginalName();
-            $name_avatar = $image_folder.$file_name;
-
-            $file->move(base_path().$image_folder, $file_name);
-            if (Auth::user()->avatar != '' && file_exists(base_path().Auth::user()->avatar)) {
-                if (file_exists(asset(base_path().Auth::user()->avatar))) {
-                    unlink(asset(base_path().Auth::user()->avatar));
-                }
-            }
-        } else {
-            $name_avatar = Auth::user()->avatar;
-        }
-
-        $data = [
-            'fullname' => $rq->fullname ?? '',
-            'firstname' => $rq->firstname ?? '',
-            'lastname' => $rq->lastname ?? '',
-            'address' => $rq->address ?? '',
-            'birthday' => $rq->birthday ?? null,
-            'country' => $rq->country ?? '',
-            'province' => $rq->state ?? '',
-            'district' => $rq->slt_district ?? '',
-            'city' => $rq->city ?? '',
-            'postal_code' => $rq->postal_code ?? 0,
-            'avatar' => $name_avatar,
-            'phone' => $rq->phone,
-            'full_phone' => $rq->full_phone,
-        ];
-        $respons = (new User)->find($id)->update($data);
-        $msg = 'Thông tin tài khoản đã được cập nhật';
-        $url = route('customer.profile');
-        msg_move_page($msg, $url);
+        return app(AccountController::class)->updateProfile($request);
     }
 
     public function myPost()
     {
-        $this->localized();
-        $this->data['products'] = Product::where('user_id', auth()->user()->id)->orderbyDesc('id')->paginate(10);
-
-        return view('theme.customer.my-post', ['data' => $this->data]);
+        return redirect()->route('customer.dashboard');
     }
 
     public function deletePost($id)
     {
         $db = Product::where('id', $id)->where('user_id', auth()->user()->id)->first();
-        if ($db->delete()) {
-            ThemeInfo::where('theme_id', $id)->delete();
-            Join_Category_Theme::where('theme_id', $id)->delete();
+        if ($db && $db->delete()) {
+            if (Schema::hasTable('theme_info')) {
+                ThemeInfo::where('theme_id', $id)->delete();
+            }
+            if (Schema::hasTable('join_category_theme')) {
+                Join_Category_Theme::where('theme_id', $id)->delete();
+            }
 
             return redirect()->back();
         }
@@ -473,44 +368,12 @@ class CustomerController extends Controller
 
     public function changePassword()
     {
-        $this->data['user'] = Auth::user();
-        $this->data['seo'] = [
-            'seo_title' => 'Customer | Change Password',
-        ];
-        $this->data['seo'] = [
-            'seo_title' => 'Customer | Change Password',
-            'seo_image' => '',
-            'seo_description' => 'Customer Change Password',
-            'seo_keyword' => 'Customer, Password',
-        ];
-
-        return view('theme.customer.auth.change_pass')->with(['data' => $this->data]);
+        return app(AccountController::class)->changePassword();
     }
 
-    public function postChangePassword(Request $rq)
+    public function postChangePassword(UpdateCustomerPasswordRequest $request)
     {
-        $user = Auth::user();
-        $id = $user->id;
-        $current_pass = $user->password;
-        if (Hash::check($rq->current_password, $user->password)) {
-            if ($rq->new_password != '' && $rq->new_password == $rq->confirm_password) {
-                $data = [
-                    'password' => bcrypt($rq->new_password),
-                ];
-            } else {
-                $msg = 'Mật khẩu xác nhận không trùng khớp';
-
-                return Redirect::back()->withErrors($msg);
-            }
-        } else {
-            $msg = 'Mật khẩu hiện tại không chính xác';
-
-            return Redirect::back()->withErrors($msg);
-        }
-        $respons = DB::table('users')->where('id', '=', $id)->update($data);
-        $msg = 'Mật khẩu đã được thay đổi';
-        $url = route('customer.profile');
-        msg_move_page($msg, $url);
+        return app(AccountController::class)->postChangePassword($request);
     }
 
     public function checkWallet(Request $request)
@@ -523,27 +386,29 @@ class CustomerController extends Controller
             $wallet_check = 'error';
             $this->data['status'] = 'error';
         }
-        $this->data['view'] = view('theme.dangtin.includes.wallet_check', compact('wallet_check'))->render();
+        $walletView = $this->templatePath . '.dangtin.includes.wallet_check';
+        $this->data['view'] = view()->exists($walletView)
+            ? view($walletView, compact('wallet_check'))->render()
+            : '';
 
         return response()->json($this->data);
     }
 
     public function wishlist()
     {
-        if (auth()->check()) {
-            $this->data['wishlist'] = Wishlist::with('product')->where('user_id', auth()->user()->id)->get();
+        $this->data['wishlist'] = collect([]);
 
-            return view('theme.customer.wishlist', ['data' => $this->data]);
+        if (auth()->check()) {
+            // Legacy wishlist table removed — empty state until feature is reintroduced.
         } else {
             $wishlist = json_decode(\Cookie::get('wishlist'));
 
             if ($wishlist != '') {
-                $this->data['wishlist'] = Product::whereIn('id', $wishlist)->get();
-                // dd($this->data['wishlist']);
+                $this->data['wishlist'] = Product::whereIn('id', (array) $wishlist)->get();
             }
-
-            return view($this->templatePath.'.customer.wishlist', ['data' => $this->data]);
         }
+
+        return view($this->templatePath . '.customer.wishlist', ['data' => $this->data]);
     }
 
     public function subscription(Request $request)
@@ -551,17 +416,15 @@ class CustomerController extends Controller
         $email = $request->email;
 
         $validation_rules = [
-            'email' => 'required|email|max:255|unique:subscription',
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('contacts', 'email')->where(fn($query) => $query->where('type', 'subscription')),
+            ],
         ];
-        // $messages = array(
-        //     'email.required' => 'Please enter your email',
-        //     'email.email' => 'Email address is not in the correct format',
-        //     'email.max' => 'Email address up to 255 characters',
-        //     'email.unique' => 'Email address already exists',
-        // );
         $data = $request->all();
 
-        // $validator = Validator::make($data, $validation_rules, $messages);
         $validator = Validator::make($data, $validation_rules);
 
         $this->data['email'] = $data['email'];
@@ -571,17 +434,15 @@ class CustomerController extends Controller
             $this->data['status'] = 'error';
             $this->data['message'] = $error;
         } else {
-            Subscription::updateOrCreate(['email' => $email]);
+            Contact::updateOrCreate(
+                ['email' => $email, 'type' => 'subscription'],
+                ['name' => $email, 'status' => 1, 'content' => 'Newsletter subscription']
+            );
             $this->data['status'] = 'success';
             $this->data['message'] = 'Đăng ký thành công';
         }
 
         return response()->json($this->data);
-
-        // $this->data['view'] = view($this->templatePath . '.customer.includes.subscription')->render();
-        // if ($saved->wasRecentlyCreated) {
-        //     $this->data['status'] = 'success';
-        // }
     }
 
     // xử lý quên mật khẩu
@@ -593,7 +454,7 @@ class CustomerController extends Controller
         //     'seo_description'   => '',
         //     'seo_keyword'   => '',
         // ];
-        return view($this->templatePath.'.customer.auth.forget-password', $this->data);
+        return view($this->templatePath . '.account.auth.forget-password', $this->data);
     }
 
     public function actionForgetPassword(Request $rq)
@@ -626,12 +487,12 @@ class CustomerController extends Controller
                 'site_name' => $site_name,
             ];
             Mail::send(
-                $this->templatePath.'.mail.forget-password.forget-password',
+                $this->templatePath . '.mail.forget-password.forget-password',
                 $data,
                 function ($message) use ($data) {
                     $message->from($data['emailadmin'], $data['site_name']);
                     $message->to($data['email'])
-                        ->subject($data['otp'].' là mã OTP của '.$data['site_name']);
+                        ->subject($data['otp'] . ' là mã OTP của ' . $data['site_name']);
                 }
             );
 
@@ -657,7 +518,7 @@ class CustomerController extends Controller
 
             return redirect()->route('forgetPassword');
         } else {
-            return view('theme.customer.auth.forget-password-step-2', $this->data);
+            return view($this->templatePath . '.account.auth.forget-password-step-2', $this->data);
         }
     }
 
@@ -669,7 +530,7 @@ class CustomerController extends Controller
         $customer_forget_pass_otp = Customer_forget_pass_otp::where('otp_mail', '=', $rq->otp_mail)
             ->where('otp_mail', '=', $_SESSION['otp_forget'])
             ->where('status', '=', 0)
-            ->whereRaw("TIME_TO_SEC('".Carbon::now()."') - TIME_TO_SEC(created_at) < 300 ")
+            ->whereRaw("TIME_TO_SEC('" . Carbon::now() . "') - TIME_TO_SEC(created_at) < 300 ")
             ->first();
         if ($customer_forget_pass_otp) {
             $_SESSION['otp_true'] = 1;
@@ -693,7 +554,7 @@ class CustomerController extends Controller
 
             return redirect()->route('forgetPassword');
         } else {
-            return view('theme.customer.auth.forget-password-step-3', $this->data);
+            return view($this->templatePath . '.account.auth.forget-password-step-3', $this->data);
         }
     }
 
@@ -742,55 +603,35 @@ class CustomerController extends Controller
 
     public function myOrder()
     {
-        $this->data['user'] = Auth::user();
-        $this->data['orders'] = Addtocard::where('user_id', Auth::user()->id)->orderByDesc('cart_id')->paginate(10);
-
-        $this->data['seo'] = [
-            'seo_title' => 'Customer |  My Order',
-            'seo_image' => '',
-            'seo_description' => 'Customer My Order',
-            'seo_keyword' => 'Order',
-        ];
-
-        return view($this->templatePath.'.customer.myorder', $this->data);
+        return app(AccountController::class)->myOrder();
     }
 
     public function myOrderDetail($id_cart)
     {
-        $this->data['shop_payment_method'] = ShopPaymentMethod::where('status', 1)->get()->pluck('name', 'code')->toArray();
-        $this->data['order'] = Addtocard::find($id_cart);
-        $this->data['order_detail'] = Addtocard_Detail::where('cart_id', $this->data['order']->cart_id)->get();
-
-        $total_price = isset($order_detail->total) ? $order_detail->total : 0;
-
-        if ($this->data['order']) {
-            $this->data['seo'] = [
-                'seo_title' => 'Đơn hàng - '.$this->data['order']->cart_code,
-            ];
-
-            return view($this->templatePath.'.customer.orderdetail', ['data' => $this->data]);
-        } else {
-            return view('errors.404');
-        }
+        return app(AccountController::class)->myOrderDetail($id_cart);
     }
 
     public function orderView()
     {
         $id = request()->id;
-        $order = Addtocard::find($id);
+        $order = Addtocard::query()
+            ->where('cart_id', $id)
+            ->where('user_id', Auth::id())
+            ->first();
+
         if ($order) {
-            $view = view($this->templatePath.'.customer.order-view', compact('order'))->render();
+            $view = view($this->templatePath . '.customer.order-view', compact('order'))->render();
 
             return response()->json([
                 'error' => 1,
                 'view' => $view,
             ]);
-        } else {
-            return response()->json([
-                'error' => 0,
-                'message' => 'Không tìm thấy đơn hàng!',
-            ]);
         }
+
+        return response()->json([
+            'error' => 0,
+            'message' => 'Không tìm thấy đơn hàng!',
+        ], 403);
     }
 
     public function myPoint()
@@ -807,14 +648,12 @@ class CustomerController extends Controller
             ],
         ];
 
-        return view($this->templatePath.'.customer.my-point', $this->data);
+        return view($this->templatePath . '.customer.my-point', $this->data);
     }
 
     public function logoutCustomer()
     {
-        Auth::logout();
-
-        return redirect()->route('index');
+        return app(CustomerAuthController::class)->logoutCustomer();
     }
 
     public function messages()
@@ -824,6 +663,21 @@ class CustomerController extends Controller
             'seo_title' => 'Messages',
         ];
 
-        return view($this->templatePath.'.customer.messages', $this->data);
+        return view($this->templatePath . '.customer.messages', $this->data);
+    }
+
+    public function myReviews()
+    {
+        return redirect()->route('customer.dashboard');
+    }
+
+    public function postReviews(Request $request)
+    {
+        return redirect()->route('customer.dashboard');
+    }
+
+    public function refused()
+    {
+        return redirect()->route('customer.dashboard');
     }
 }

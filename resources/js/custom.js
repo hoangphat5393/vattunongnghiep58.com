@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import AOS from 'aos';
 import Swiper from 'swiper/bundle';
+import http from './http';
 
 class SimpleModal {
     constructor(element) {
@@ -74,11 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!form) return;
             const fdnew = new FormData(form);
             const action = form.getAttribute('action') || window.location.href;
-            axios({
-                method: 'post',
-                url: action,
-                data: fdnew,
-            })
+            http.postForm(action, fdnew)
                 .then((res) => {
                     if (res.data.error === 0) {
                         setTimeout(() => {
@@ -113,11 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!form) return;
             const fdnew = new FormData(form);
             const href = quickBuyButton.getAttribute('href') || window.location.href;
-            axios({
-                method: 'post',
-                url: 'buy-now',
-                data: fdnew,
-            })
+            http.postForm('buy-now', fdnew)
                 .then((res) => {
                     if (res.data.error === 0) {
                         window.location.href = href;
@@ -138,11 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 widgetItem.remove();
             }
             const rowId = miniCartRemove.getAttribute('data');
-            axios({
-                method: 'post',
-                url: '/cart/ajax/remove',
-                data: { rowId: rowId },
-            })
+            http.postForm(window.AppRoutes?.cartRemove || '/cart/remove-item', { rowId: rowId })
                 .then((res) => {
                     if (res.data.error === 0) {
                         setTimeout(() => {
@@ -167,11 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const addToWishlist = event.target.closest('.add-to-wishlist');
         if (addToWishlist) {
             const id = addToWishlist.getAttribute('data');
-            axios({
-                method: 'post',
-                url: '/add-to-wishlist',
-                data: { id: id },
-            })
+            http.postForm('/add-to-wishlist', { id: id })
                 .then(() => {
                     const heart = addToWishlist.querySelector('.anm-heart');
                     const heartL = addToWishlist.querySelector('.anm-heart-l');
@@ -194,11 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (quickView) {
             const idAttr = quickView.getAttribute('data-id');
             const id = idAttr ? idAttr : null;
-            axios({
-                method: 'post',
-                url: '/quick-view',
-                data: { id: id },
-            })
+            http.postForm('/quick-view', { id: id })
                 .then((res) => {
                     if (res.data.error === 0) {
                         const existing = document.getElementById('content_quickview');
@@ -353,11 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('signin-tab');
             const fdnew = new FormData(form);
             loginPage.find('.list-content-loading').show();
-            axios({
-                method: 'POST',
-                url: '/customer/login',
-                data: fdnew,
-            })
+            http.postForm(window.AppRoutes?.login || '/auth/login', fdnew)
                 .then((res) => {
                     loginPage.find('.error-message').hide();
                     if (res.data.error === 0) {

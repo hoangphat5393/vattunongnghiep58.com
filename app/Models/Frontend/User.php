@@ -2,44 +2,61 @@
 
 namespace App\Models\Frontend;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Backend\Role;
+use App\Traits\Filterable;
+use Auth;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Support\Str;
-use Auth;
-use App\Models\Backend\Role;
-
+use Illuminate\Notifications\Notifiable;
 // Trait
-use App\Traits\LocalizeController;
-use App\Traits\Filterable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
-    use HasFactory, Filterable, Notifiable;
+    use Filterable, HasFactory, Notifiable;
 
     // protected $guard = 'users';
 
     protected static $allPermissions = null;
+
     protected static $allViewPermissions = null;
 
     protected $fillable = [
         'fullname',
-        'name',
         'birthday',
         'email',
         'password',
         'phone',
         'address',
+        'avatar',
+        'firstname',
+        'lastname',
+        'province',
+        'district',
+        'city',
+        'postal_code',
+        'country',
+        'full_phone',
         'admin_level',
         'email_info',
-        'status'
+        'status',
     ];
 
     protected $hidden = ['password', 'remember_token'];
+
+    /**
+     * Form đăng ký gửi field `name`; DB lưu `fullname`.
+     */
+    protected function name(): Attribute
+    {
+        return Attribute::get(function (): string {
+            return (string) ($this->attributes['fullname'] ?? $this->attributes['name'] ?? '');
+        });
+    }
 
     public static function user()
     {
@@ -53,8 +70,6 @@ class User extends Authenticatable
 
     /**
      * A user has and belongs to many roles.
-     *
-     * @return BelongsToMany
      */
     public function roles(): BelongsToMany
     {
@@ -65,8 +80,7 @@ class User extends Authenticatable
      * Check url menu can display
      *
      * @param   [type]  $url  [$url description]
-     *
-     * @return  [type]        [return description]
+     * @return [type]        [return description]
      */
     public function checkUrlAllowAccess($url)
     {
@@ -78,10 +92,10 @@ class User extends Authenticatable
         $arrScheme = ['https://', 'http://'];
         $pathCheck = strtolower(str_replace($arrScheme, '', $url));
         if ($listUrlAllowAccess) {
-            foreach ($listUrlAllowAccess as  $pathAllow) {
+            foreach ($listUrlAllowAccess as $pathAllow) {
                 if (
                     $pathCheck === $pathAllow
-                    || $pathCheck  === $pathAllow . '/'
+                    || $pathCheck === $pathAllow.'/'
                     || (Str::endsWith($pathAllow, '*') && ($pathCheck === str_replace('/*', '', $pathAllow) || strpos($pathCheck, str_replace('*', '', $pathAllow)) === 0))
                     || (Str::endsWith($pathAllow, '{id}') && ($pathCheck === str_replace('/{id}', '', $pathAllow) || strpos($pathCheck, str_replace('{id}', '', $pathAllow)) === 0))
                 ) {
@@ -89,6 +103,7 @@ class User extends Authenticatable
                 }
             }
         }
+
         return false;
     }
 
@@ -105,7 +120,6 @@ class User extends Authenticatable
     /**
      * Check if user is $role.
      *
-     * @param string $role
      *
      * @return mixed
      */
@@ -136,8 +150,8 @@ class User extends Authenticatable
             $allPermissionTmp = self::allPermissions();
             $allPermissionTmp = $allPermissionTmp->pluck('http_uri')->toArray();
             if ($allPermissionTmp) {
-                foreach ($allPermissionTmp as  $actionList) {
-                    foreach (explode(',', $actionList) as  $action) {
+                foreach ($allPermissionTmp as $actionList) {
+                    foreach (explode(',', $actionList) as $action) {
                         if (strpos($action, 'ANY::') === 0 || strpos($action, 'GET::') === 0) {
                             $arrPrefix = ['ANY::', 'GET::'];
                             $arrScheme = ['https://', 'http://'];
@@ -148,6 +162,7 @@ class User extends Authenticatable
             }
             self::$allViewPermissions = $arrView;
         }
+
         return self::$allViewPermissions;
     }
 
@@ -159,18 +174,18 @@ class User extends Authenticatable
     public static function allPermissions()
     {
         if (self::$allPermissions === null) {
-            $user = \Auth::guard('admin')->user();
+            $user = Auth::guard('admin')->user();
             self::$allPermissions = $user->roles()->with('permissions')
                 ->get()->pluck('permissions')->flatten()
                 ->merge($user->permissions);
         }
+
         return self::$allPermissions;
     }
-
 
     // Filter Search
     public function filterName(Builder $query, string $value)
     {
-        return $query->where('name', 'LIKE', '%' . $value . '%');
+        return $query->where('fullname', 'LIKE', '%'.$value.'%');
     }
 }

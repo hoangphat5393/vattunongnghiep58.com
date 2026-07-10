@@ -95,7 +95,7 @@
 
     @include('frontend.layouts.footer')
 
-
+    @include('frontend.layouts.app-routes')
 
     @stack('scripts')
 

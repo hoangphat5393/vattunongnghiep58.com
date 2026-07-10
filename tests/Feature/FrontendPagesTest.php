@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class FrontendPagesTest extends TestCase
@@ -77,6 +78,53 @@ class FrontendPagesTest extends TestCase
         $response->assertStatus(200);
     }
 
+    public function test_contact_completed_page_uses_frontend_layout(): void
+    {
+        $response = $this->get(route('contact_completed'));
+
+        $response->assertOk();
+        $response->assertSee('<main id="app"', false);
+        $response->assertSee('Hoàn tất liên hệ', false);
+    }
+
+    public function test_contact_confirmation_route_is_not_registered(): void
+    {
+        $this->assertFalse(Route::has('contact.confirmation'));
+    }
+
+    public function test_cart_page_is_accessible(): void
+    {
+        $this->get(route('cart'))->assertOk();
+    }
+
+    public function test_checkout_page_is_accessible_with_empty_cart(): void
+    {
+        $this->get(route('cart.checkout'))->assertOk();
+    }
+
+    public function test_search_page_is_accessible(): void
+    {
+        $this->get(route('search'))->assertOk();
+    }
+
+    public function test_error_404_view_renders_with_tailwind_layout(): void
+    {
+        $html = view('errors.404')->render();
+
+        $this->assertStringContainsString('grow', $html);
+        $this->assertStringNotContainsString('flex-grow', $html);
+    }
+
+    public function test_frontend_pages_use_tailwind_v4_canonical_grow_class(): void
+    {
+        $response = $this->get(route('cart'));
+        $response->assertOk();
+
+        $html = $response->getContent();
+        $this->assertStringContainsString('grow', $html);
+        $this->assertStringNotContainsString('flex-grow', $html);
+    }
+
     public function test_header_renders_two_level_menu_when_menu_main_has_children(): void
     {
         if (config('database.default') !== 'sqlite') {
@@ -114,7 +162,7 @@ class FrontendPagesTest extends TestCase
             'menu_id' => $menuId,
             'slug' => null,
             'label' => $childLabel,
-            'link' => url('/product') . '?cat=test',
+            'link' => url('/product').'?cat=test',
             'image' => null,
             'parent' => $parentId,
             'sort' => 1,

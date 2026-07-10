@@ -58,8 +58,8 @@
                             </div>
                         </div>
                         <div class="md:w-1/2 relative">
-                            <div class="absolute inset-0 bg-leaf-600 rounded-[2rem] transform rotate-3 opacity-10"></div>
-                            <img src="{{ asset('upload/images/bang_hieu.jpg') }}" alt="Về chúng tôi" class="relative rounded-[2rem] shadow-2xl w-full h-auto object-cover border-4 border-white" />
+                            <div class="absolute inset-0 bg-leaf-600 rounded-4xl transform rotate-3 opacity-10"></div>
+                            <img src="{{ asset('upload/images/bang_hieu.jpg') }}" alt="Về chúng tôi" class="relative rounded-4xl shadow-2xl w-full h-auto object-cover border-4 border-white" />
                         </div>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
 
                         <div class="mb-6">
                             <div class="flex items-start gap-4 mb-4">
-                                <div class="w-12 h-12 rounded-full bg-leaf-100 flex items-center justify-center flex-shrink-0 text-leaf-600">
+                                <div class="w-12 h-12 rounded-full bg-leaf-100 flex items-center justify-center shrink-0 text-leaf-600">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
@@ -103,7 +103,7 @@
 
                         <div>
                             <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 rounded-full bg-leaf-100 flex items-center justify-center flex-shrink-0 text-leaf-600">
+                                <div class="w-12 h-12 rounded-full bg-leaf-100 flex items-center justify-center shrink-0 text-leaf-600">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                     </svg>

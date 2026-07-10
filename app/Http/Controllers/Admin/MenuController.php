@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Menu\GenerateMenu;
+use App\Http\Requests\Admin\Menu\StoreMenu;
+use App\Http\Requests\Admin\Menu\StoreMenuItem;
 use App\Models\Backend\Category;
 use App\Models\Backend\Menu;
 use App\Models\Backend\MenuItems;
@@ -49,10 +52,10 @@ class MenuController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreMenu $request)
     {
 
-        $menu = Menu::create(['name' => $request->input('menuname')]);
+        $menu = Menu::create(['name' => $request->validated('menuname')]);
 
         return response()->json(['resp' => $menu->id]);
     }
@@ -173,21 +176,22 @@ class MenuController extends Controller
         }
     }
 
-    public function generatemenucontrol(Request $request)
+    public function generatemenucontrol(GenerateMenu $request)
     {
-        $menu = Menu::find($request->input('idmenu'));
+        $validated = $request->validated();
+        $menu = Menu::find($validated['idmenu']);
 
         if (! $menu) {
             return response()->json(['message' => 'Menu not found'], 404);
         }
 
-        $menu->name = $request->input('menuname');
+        $menu->name = $validated['menuname'];
 
         $menu->save();
 
-        if (is_array($request->input('arraydata'))) {
+        if (is_array($validated['arraydata'] ?? null)) {
 
-            foreach ($request->input('arraydata') as $value) {
+            foreach ($validated['arraydata'] as $value) {
 
                 $menuitem = MenuItems::where('menu_id', $menu->id)->find($value['id']);
 
@@ -201,17 +205,9 @@ class MenuController extends Controller
 
                 $menuitem->depth = $value['depth'];
 
-                // if (config('menu.use_roles')) {
-
-                //     $menuitem->role_id = request()->input("role_id");
-
-                // }
-
                 $menuitem->save();
             }
         }
-
-        // return json_encode(array("resp" => 1));
 
         return response()->json(['resp' => 1]);
     }
@@ -222,28 +218,29 @@ class MenuController extends Controller
 
     // public function addcustommenu(Request $request)
 
-    public function menuItemStore(Request $request, string $menu)
+    public function menuItemStore(StoreMenuItem $request, string $menu)
     {
         $menuId = (int) $menu;
+        $validated = $request->validated();
 
         $menuitem = new MenuItems;
 
-        $menuitem->label = $request->input('labelmenu');
+        $menuitem->label = $validated['labelmenu'];
 
-        $menuitem->slug = $request->input('slug') ?? $request->input('slugmenu');
+        $menuitem->slug = $validated['slug'] ?? $validated['slugmenu'] ?? '';
 
-        $menuitem->link = $request->input('linkmenu');
+        $menuitem->link = $validated['linkmenu'] ?? '';
 
         $menuitem->menu_id = $menuId;
 
         $menuitem->sort = MenuItems::getNextSortRoot($menuId);
 
-        if ($request->filled('targetmenu')) {
-            $menuitem->target = $request->input('targetmenu');
+        if (! empty($validated['targetmenu'])) {
+            $menuitem->target = $validated['targetmenu'];
         }
 
-        if ($request->filled('relmenu')) {
-            $menuitem->rel = $request->input('relmenu');
+        if (! empty($validated['relmenu'])) {
+            $menuitem->rel = $validated['relmenu'];
         }
 
         $menuitem->save();
@@ -350,7 +347,7 @@ class MenuController extends Controller
 
         $old_url = 'http://onehealth.foundation.test/'; // domain cũ
 
-        $url = url('/') . '/'; // Domain hiện tại
+        $url = url('/').'/'; // Domain hiện tại
 
         // dd($old_url, $url);
 

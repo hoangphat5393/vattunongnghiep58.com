@@ -3,7 +3,9 @@
 Tài liệu này tổng hợp kiến trúc, cơ sở dữ liệu, luồng dữ liệu, vấn đề và kế hoạch cải thiện.  
 **Phạm vi:** mã nguồn ứng dụng (`app/`, `routes/`, `config/`, `resources/`, `database/migrations/`), không liệt kê từng file trong `node_modules/` hay `public/assets/plugin/`.
 
----
+**Cập nhật lần cuối:** 2026-07-07 — **BACK-001…018 hoàn tất**; backlog mở mới dùng `BACK-019+`.
+
+**Theo dõi tiến độ:** [IMPROVEMENT_PLAYBOOK.md](IMPROVEMENT_PLAYBOOK.md) · [BACKEND_AUDIT_PLAYBOOK.md](BACKEND_AUDIT_PLAYBOOK.md) · [CHANGE_LOG.md](CHANGE_LOG.md)
 
 ## 1. Tổng quan dự án (Project Overview)
 
@@ -12,10 +14,8 @@ Tài liệu này tổng hợp kiến trúc, cơ sở dữ liệu, luồng dữ l
     - **Backend:** PHP **8.4+**, **Laravel 12**, Eloquent ORM.
     - **Auth:** Guard `web` (khách hàng) và guard `admin` (quản trị — model dùng bảng `users`).
     - **Frontend:** Blade + **Vite 7**, **Tailwind CSS 4**, jQuery / Axios / Swiper / AOS (bundle `resources/js/app.js`).
-    - **Thư viện đáng chú ý:** `surfsidemedia/shoppingcart`, `gornymedia/laravel-shortcodes`, `ckfinder/ckfinder-laravel-package`, `diglactic/laravel-breadcrumbs`, `intervention/image`, Socialite, reCAPTCHA v3, Mailgun.
-- **Đặc điểm:** Codebase có dấu vết **refactor** (gộp bài viết vào `pages` với cột `type`, bỏ một số bảng/category cũ), và phần **API/controller cũ** (`ApiController`) còn tham chiếu schema **không thuộc** shop hiện tại.
-
----
+    - **Thư viện đáng chú ý:** `surfsidemedia/shoppingcart`, `gornymedia/laravel-shortcodes`, `ckfinder/ckfinder-laravel-package`, `intervention/image`, Socialite, reCAPTCHA v3, Mailgun.
+- **Đặc điểm:** Codebase đã qua nhiều đợt refactor (gộp bài viết vào `pages` với `type`, `NewsController` → `PostController`, gỡ `ApiController` và bundle JS/webpack cũ). Frontend chỉ dùng **Vite**; admin dùng jQuery + **axios** (`js_admin.js` + Blade inline).
 
 ## 2. Tóm tắt kiến trúc (Architecture Summary)
 
@@ -32,18 +32,28 @@ Tài liệu này tổng hợp kiến trúc, cơ sở dữ liệu, luồng dữ l
 
 | Module         | Trách nhiệm chính                                                                                                                                            |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Storefront** | `routes/web.php` → `PageController`, `ProductController`, `NewsController`, `CartController`, `CustomerController`, `ContactController`, `SearchController`… |
+| **Storefront** | `routes/web.php` → `PageController`, `ProductController`, `PostController`, `CartController`, `CustomerController`, `ContactController`, `SearchController`… |
 | **Admin**      | `routes/admin.php` (prefix URL `/admin`) → CRUD page/post/product/contact/email-template/album, menu, theme-option, user/role/permission, order…             |
-| **API (file)** | `routes/api.php` **được định nghĩa nhưng không được đăng ký** trong `RouteServiceProvider` — thực tế **không phục vụ request** qua `/api/*` (xem mục 6).     |
+| **API (file)** | `routes/api.php` — **stub trống** (legacy `ApiController` đã gỡ 2026-07-05); chưa đăng ký route API mới.                                                     |
 
-### 2.3. Jobs / Queue
+### 2.3. Frontend assets (Vite vs public)
+
+| Lớp                   | Nguồn                                                                                  | Ghi chú                                                                              |
+| --------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| **Storefront**        | `@vite(['resources/css/app.css', 'resources/scss/style.scss', 'resources/js/app.js'])` | `app.js` → `http.js`, `auth-forms.js`, `custom.js`, axios-setup, jQuery, Swiper, AOS |
+| **Storefront routes** | `app-routes.blade.php` → `window.AppRoutes`                                            | Cart remove, contact, auth POST — không hardcode URL                                 |
+| **Admin**             | `assets/js/jquery-3.7.1.min.js`, `js_admin.js`, plugin trong `master.blade.php`        | Không dùng Vite; AJAX qua **axios** + `window.AdminRoutes`                           |
+| **Menu builder**      | `public/assets/laravel-menu/menu.js`                                                   | axios + `AdminRoutes.bulkDelete` / `bulkReplicate`                                   |
+| **Đã gỡ**             | `public/assets/js/app.js`, `custom.js`, `resources/js/components/*.vue`                | Webpack/Vue cũ — xem CHANGE_LOG P2–P4                                                |
+
+### 2.4. Jobs / Queue
 
 - Thư mục **`app/Jobs`:** không có class Job trong scan hiện tại.
 - Database có bảng `jobs`, `failed_jobs` (chuẩn Laravel) — có thể dùng queue nhưng **không thấy job nghiệp vụ tùy chỉnh** trong repo.
 
-### 2.4. Middleware quan trọng
+### 2.5. Middleware quan trọng
 
-- `web`: session, cookie, locale… Trong `app/Http/Kernel.php`, **`VerifyCsrfToken` bị comment** — rủi ro bảo mật lớn (mục 6).
+- `web`: session, cookie, locale, **`VerifyCsrfToken`** (bật lại IMP-009; ngoại lệ `ckfinder/*`).
 - `currency`: áp vào nhóm route public trong `RouteServiceProvider`.
 - `auth:admin` + `checkAdminPermission`: phân quyền menu/URI cho admin.
 
@@ -60,9 +70,9 @@ Tài liệu này tổng hợp kiến trúc, cơ sở dữ liệu, luồng dữ l
 
 Danh sách bảng thực tế (rút gọn theo output `php artisan db:show`):
 
-`addtocard`, `addtocard_detail`, `admin_menus`, `admins`, `album_items`, `albums`, `cache`, `cache_locks`, `categories`, `contacts`, `countries`, `customer`, `customer_forget_pass_otp`, `email_templates`, `failed_jobs`, `import_log`, `jobs`, `media_files`, `menu_items`, `menus`, `migrations`, `pages`, `password_reset_tokens`, `password_resets`, `payment_request`, `payments`, `permission_role`, `permissions`, `product_categories`, `products`, `role_user`, `roles`, `sessions`, `settings`, `settings_cost`, `shipping_order`, `shop_currencies`, `shop_order_payment_status`, `shop_order_status`, `shop_payment_method`, `user_password_auto`, `users`.
+`addtocard`, `addtocard_detail`, `admin_menus`, `admins`, `album_items`, `albums`, `cache`, `cache_locks`, `categories`, `contacts`, `countries`, `customer_forget_pass_otp`, `email_templates`, `failed_jobs`, `import_log`, `jobs`, `media_files`, `menu_items`, `menus`, `migrations`, `pages`, `password_reset_tokens`, `password_resets`, `payment_request`, `payments`, `permission_role`, `permissions`, `product_categories`, `products`, `role_user`, `roles`, `sessions`, `settings`, `settings_cost`, `shipping_order`, `shop_currencies`, `shop_order_payment_status`, `shop_order_status`, `shop_payment_method`, `user_password_auto`, `users`.
 
-_(Các bảng legacy `admin_permission` / `admin_role_permission` đã được loại bỏ sau khi dữ liệu chuyển sang `permissions` + `permission_role` — xem `docs/GHI_CHU_LOAI_BO_BANG_ADMIN_PERMISSION.md`.)_
+_(Bảng `admin_permission` / `admin_role_permission` legacy đã loại bỏ; dữ liệu chuyển sang `permissions` + `permission_role`.)_
 
 ### 3.3. Quan hệ logic (ORM / nghiệp vụ)
 
@@ -99,8 +109,7 @@ _(Các bảng legacy `admin_permission` / `admin_role_permission` đã được 
 
 - **`App\Models\Frontend\Page`:** khớp hướng dùng `type`, scope `posts` / `pages`; accessor đa ngôn ngữ; **`getCategoriesAttribute`** trả collection rỗng (bảng category-page đã bỏ) — **đồng bộ với refactor DB**.
 - **`App\Models\Frontend\Product`:** khớp bảng `products`; quan hệ category qua `product_categories` (cần đối chiếu method quan hệ trong model).
-- **`App\Models\Backend\User`:** `$table = 'users'` — **khớp** cấu hình `auth.php` provider `admins` → model này; bảng `admins` có thể là **di sản** hoặc dùng mục đích khác — nên **tài liệu hóa** hoặc dọn dẹp sau audit.
-- **`ApiController`:** tham chiếu model/bảng kiểu `theme`, `category_theme` — **không khớp** schema shop hiện tại → coi là **dead code** hoặc project cũ.
+- **`App\Models\Backend\User`:** `$table = 'users'` — **khớp** `auth.php` provider `admins`; bảng `admins` có thể là **di sản** — nên audit hoặc tài liệu hóa.
 
 ### 3.6. Rủi ro truy vấn (unsafe / nặng)
 
@@ -113,7 +122,7 @@ _(Các bảng legacy `admin_permission` / `admin_role_permission` đã được 
 
 - **Trang chủ & trang tĩnh:** `PageController@index`, `PageController@page` — load `pages` (`slug` home, hoặc slug động), shortcode, SEO.
 - **Sản phẩm:** `ProductController` — danh sách, chi tiết URL dạng `product/{slug}-{id}.html`, quick view, mua nhanh.
-- **Tin tức:** `NewsController` — tương tự pattern slug + id, nội dung từ `pages` type `post`.
+- **Tin tức / bài viết:** `PostController` — URL `/news/...`, dữ liệu từ `pages` type `post`, transform qua `FrontendDataTransform`.
 - **Giỏ hàng & checkout:** `CartController` — session cart (package), đồng bộ/ghi `addtocard` / chi tiết, xác nhận email/phone, redirect success.
 - **Khách hàng:** `CustomerController` — đăng ký/đăng nhập, profile, đơn hàng, đánh giá (route có), social login (`RegisterAuthController`).
 - **Liên hệ / tìm kiếm:** `ContactController`, `SearchController`.
@@ -149,9 +158,11 @@ HTTP Request
   → View backend
 ```
 
-### 5.3. API (lý thuyết file vs thực tế)
+### 5.3. API
 
-- File `routes/api.php` khai báo endpoint như `/slider`, `/products`… nhưng **`RouteServiceProvider` không `->group(api.php)`** — luồng **Route → ApiController** **không tồn tại** trên ứng dụng hiện tại trừ khi có chỗ đăng ký khác (không thấy).
+- `routes/api.php` chỉ còn comment stub — **không có endpoint** hoạt động.
+- Legacy `/api/slider`, `/api/products`, … trả **404** (`ApiLegacyCleanupTest`).
+- Nếu cần API mobile: viết mới + Sanctum, không khôi phục controller cũ.
 
 ### 5.4. Logic trùng / dùng chung
 
@@ -161,75 +172,79 @@ HTTP Request
 
 ---
 
-## 6. Vấn đề đã phát hiện (Issues Found)
+## 6. Vấn đề & trạng thái (Issues)
 
-### 6.1. Mã nguồn & kỹ thuật
+### 6.1. Đã xử lý (2026-07-05)
 
-| Vấn đề                             | Chi tiết / ví dụ trong project                                                                                                      |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| **CSRF tắt toàn cục**              | `app/Http/Kernel.php`: middleware `VerifyCsrfToken` bị comment trong nhóm `web`.                                                    |
-| **Endpoint admin nguy hiểm**       | `routes/admin.php`: route `GET admin/cc` gọi `optimize:clear` **không** nằm trong `auth:admin` — ai biết URL cũng có thể kích hoạt. |
-| **API không hoạt động**            | `RouteServiceProvider`: phần load `routes/api.php` bị comment — `routes/api.php` **không có hiệu lực**.                             |
-| **Controller/API legacy**          | `ApiController` dùng model/bảng không thuộc schema shop — nếu bật route sẽ **lỗi** hoặc truy cập sai DB.                            |
-| **Trùng đường dẫn file (Windows)** | Git có thể có `app\Http\...` và `app/Http/...` — nguy cơ **hai file cùng class** trên OS case-sensitive (Linux).                    |
-| **Route name không khớp UI**       | `header.blade.php` dùng `route('login')` trong khi `web.php` đặt tên `user.login` — dễ **lỗi route** nếu không có alias `login`.    |
-| **Validation không đồng nhất**     | `CartController@addCart`: không thấy validate mạnh/kiểm tồn kho (một phần đã comment) — rủi ro dữ liệu/SKU.                         |
+| Hạng mục                 | Chi tiết                                                                     |
+| ------------------------ | ---------------------------------------------------------------------------- |
+| **CSRF**                 | `VerifyCsrfToken` bật trong `web`; test `CsrfProtectionTest`                 |
+| **API legacy**           | Gỡ `ApiController`; `routes/api.php` stub; test `ApiLegacyCleanupTest`       |
+| **Checkout legacy**      | Redirect/stub quick-buy; test `CheckoutLegacyCleanupTest`                    |
+| **Category tree N+1**    | `childrenMap` + Blade đệ quy; test `ProductCategoryCategoryTreeViewsTest`    |
+| **Admin `$.ajax` Blade** | `admin-menu`, `change-password` → axios; test `AdminAxiosP1Test`             |
+| **Admin route rename**   | `admin.bulk.*`, `cart.remove-item`, alias legacy; test `RouteAliasTest`      |
+| **Theme quick-edit gỡ**  | JS `process_theme_fast` / toggle `theme.*` — thay `admin.quick-change`       |
+| **JS dead code**         | Gỡ `public/assets/js/app.js`, `custom.js`, 8 file `.vue`; test cleanup suite |
+| **Tailwind v4**          | Batch A–C frontend; test `FrontendPagesTest`                                 |
 
-### 6.2. Hiệu năng
+### 6.2. Backlog backend (đã đóng 2026-07-07)
 
-- **`products` / `pages` / `categories`:** chỉ có index PK — các query theo **`slug`**, **`status`**, **`type`** có thể **full table scan** khi dữ liệu lớn.
+**Theo dõi chi tiết:** [BACKEND_AUDIT_PLAYBOOK.md](BACKEND_AUDIT_PLAYBOOK.md) — `BACK-001` … `BACK-018` trạng thái `done`.
+
+| Giai đoạn | ID           | Trạng thái |
+| --------- | ------------ | ---------- |
+| P0        | BACK-001…003 | `done`     |
+| P1        | BACK-004…009 | `done`     |
+| P2        | BACK-010…017 | `done`     |
+| P3        | BACK-018     | `done`     |
+
+**Việc ngoài BACK:** smoke CKFinder thủ công; `php artisan migrate` (index slug); IMP-011 `deferred`.
+
+### 6.3. Hiệu năng
+
+- **`products` / `pages` / `categories`:** migration index `slug`/`status` (BACK-014) — chạy `php artisan migrate` trên server.
 - **N+1:** một số chỗ đã `with()` (vd: `PageController@index` với `home_categories`) — cần audit toàn bộ listing (product, news) bằng **Laravel Debugbar** hoặc **Telescope** trên staging.
 - **Cache `theme_option`:** `Cache::forever` — nhanh nhưng khi đổi setting trong admin phải **invalidate** (kiểm tra đã gọi clear chưa).
 
-### 6.3. Bảo mật
+### 6.4. Bảo mật (đã xử lý chính qua BACK)
 
-- **CSRF off** — ưu tiên P0.
-- **SQL raw / ALTER TABLE** trong Ajax admin — cần **whitelist** bảng + chỉ super-admin.
-- **Auth provider** — đảm bảo session `admin` và `web` không bị nhầm guard trên route nhạy cảm.
+- `/admin/cc`, CKFinder auth, RBAC admin, logout POST, Theme CSS administrator-only — xem playbook.
+- **Còn:** smoke test upload CKFinder thủ công trên staging/local.
 
-### 6.4. Bảo trì & mở rộng
+### 6.5. Bảo trì & mở rộng
 
 - Thiếu **service layer** — logic nghiệp vụ nằm rải rác controller → khó test.
 - **Migrations** không bao phủ toàn bộ bảng shop (một phần schema đến từ **DB có sẵn**) — môi trường mới khó **tái tạo** chỉ bằng migrate.
 
 ---
 
-## 7. Kế hoạch cải thiện (Improvement Plan)
+## 7. Kế hoạch cải thiện (sau BACK-018)
 
-### Ưu tiên 1 — Sửa khẩn cấp (Critical)
+> IMP-001…015 và BACK-001…018 đã xong (trừ IMP-011 `deferred`). Backlog mới → mở `BACK-019+` trong playbook.
 
-| Hạng mục                      | Vấn đề                           | Hướng xử lý                                                                    | Cách triển khai gợi ý                                                      |
-| ----------------------------- | -------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
-| **Bật lại CSRF**              | Form POST dễ bị giả mạo          | Bật `VerifyCsrfToken` trong `web`; exclude tối thiểu (nếu thật sự cần webhook) | Khôi phục middleware; kiểm thử toàn bộ form/AJAX (thêm token hoặc `@csrf`) |
-| **Khóa route `admin/cc`**     | Clear cache không cần đăng nhập  | Xóa route public hoặc bọc `auth:admin` + `can`/super-admin                     | Chỉ giữ trên CLI hoặc env `local`                                          |
-| **Chuẩn hóa route đăng nhập** | `route('login')` vs `user.login` | Một tên route thống nhất                                                       | Thêm `Route::get(...)->name('login')` alias hoặc sửa Blade                 |
-| **Rà soát Ajax admin**        | `ALTER TABLE ... AUTO_INCREMENT` | Tránh DDL từ request; whitelist                                                | Refactor chỉ cho phép tên bảng cố định + policy                            |
+### Gợi ý ưu tiên tiếp theo (chưa có ID BACK)
 
-### Ưu tiên 2 — Hiệu năng
+| Hạng mục           | Hướng xử lý                                       |
+| ------------------ | ------------------------------------------------- |
+| **Eager loading**  | Audit listing product/news                        |
+| **Cache settings** | Invalidate `theme_option` khi save admin          |
+| **Service layer**  | Tách dần `CartService`, `OrderService` (tùy chọn) |
 
-| Hạng mục               | Vấn đề                                  | Hướng xử lý                                                                               |
-| ---------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------- |
-| **Index DB**           | Thiếu index trên cột filter thường dùng | Thêm index `(slug)`, `(status, id)`, `(type, slug)` tùy query thực tế — đo bằng `EXPLAIN` |
-| **Eager loading**      | N+1 ở listing                           | Audit `with()`, `select()` cần thiết                                                      |
-| **Cache invalidation** | Setting đổi mà cache cũ                 | Khi save `settings`, xóa `theme_option` cache                                             |
+### Ưu tiên sản phẩm
 
-### Ưu tiên 3 — Refactor
+| Hạng mục               | Ghi chú                             |
+| ---------------------- | ----------------------------------- |
+| **API REST**           | Sanctum + resource mới              |
+| **SEO / sitemap**      | Đồng bộ URL `slug-id`               |
+| **Notification queue** | Dùng bảng `jobs` cho email đơn hàng |
 
-| Hạng mục             | Vấn đề                                        | Hướng xử lý                                       |
-| -------------------- | --------------------------------------------- | ------------------------------------------------- |
-| **Service layer**    | Controller phình to                           | Tách `OrderService`, `CartService`, `PageService` |
-| **Dọn legacy**       | `ApiController`, controller `theme`/`post` cũ | Xóa hoặc migrate sang model `Product`/`Page`      |
-| **Một schema nguồn** | `admins` vs `users` cho admin                 | Quyết định một bảng + cập nhật doc/migration      |
-| **CI**               | Regressions                                   | PHPUnit + PHPStan/Pint trên PR                    |
+### Kiểm chứng (living)
 
-### Ưu tiên 4 — Tính năng / sản phẩm
-
-| Hạng mục                 | Ghi chú                                                                                    |
-| ------------------------ | ------------------------------------------------------------------------------------------ |
-| **API REST thật**        | Nếu cần app mobile — viết controller/resource mới + Sanctum, không dùng `ApiController` cũ |
-| **Wishlist**             | Model `Wishlist` đã xóa trong git — hoàn thiện hoặc gỡ UI                                  |
-| **Theo dõi đơn / email** | Chuẩn hóa notification queue (`jobs`)                                                      |
-| **SEO & sitemap**        | Đồng bộ với cấu trúc URL mới (`slug` + id)                                                 |
+```bash
+php artisan test --compact                    # 87 passed, 1 skipped (2026-07-05)
+pnpm run build                                # sau đổi frontend
+```
 
 ---
 
@@ -253,4 +268,4 @@ HTTP Request
 
 ---
 
-_Tài liệu được tạo để onboard developer và lập kế hoạch refactor; cần cập nhật sau mỗi thay đổi kiến trúc lớn._
+_Tài liệu living doc — cập nhật sau thay đổi kiến trúc lớn hoặc mỗi sprint cleanup. Index: `RECOMMENDATIONS.md`._

@@ -95,7 +95,7 @@ function delete_menu_id() {
     if (confirm(info_user_admin + 'Are you sure you want to delete this menu?')) {
         $(function () {
             axios
-                .post(admin_url + '/delete-id', arr)
+                .post(window.AdminRoutes?.bulkDelete || admin_url + '/bulk-delete', arr)
                 .then((response) => {
                     window.location = admin_url + '/menu';
                 })
@@ -130,7 +130,7 @@ function replicate_menu_id(type, id) {
     if (confirm('Are you sure replicate?')) {
         $(function () {
             axios
-                .post(admin_url + '/replicate-id', arr)
+                .post(window.AdminRoutes?.bulkReplicate || admin_url + '/bulk-replicate', arr)
                 .then((response) => {
                     location.reload();
                 })

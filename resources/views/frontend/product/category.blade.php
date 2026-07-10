@@ -14,7 +14,7 @@
                 <span>/</span>
                 <a href="{{ route('product') }}" class="hover:text-leaf-600">Sản phẩm</a>
                 <span>/</span>
-                <span class="font-bold text-leaf-700">{{ $category->name }}</span>
+                <span class="font-bold text-leaf-700">{{ $category['name'] }}</span>
             </div>
         </div>
 
@@ -26,12 +26,12 @@
             <div class="md:w-3/4">
                 <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                        <h1 class="text-xl font-bold text-gray-900 md:text-2xl">{{ $category->name }}</h1>
-                        @if ($category->children && $category->children->isNotEmpty())
+                        <h1 class="text-xl font-bold text-gray-900 md:text-2xl">{{ $category['name'] }}</h1>
+                        @if (!empty($category['children']))
                             <div class="mt-3 flex flex-wrap gap-2">
-                                @foreach ($category->children as $sub)
-                                    <a href="{{ route('product.category', $sub->slug) }}" class="inline-flex items-center rounded-full border border-leaf-200 bg-white px-3 py-1 text-sm font-semibold text-leaf-800 shadow-sm transition hover:border-leaf-400 hover:bg-leaf-50">
-                                        {{ $sub->name }}
+                                @foreach ($category['children'] as $sub)
+                                    <a href="{{ route('product.category', $sub['slug']) }}" class="inline-flex items-center rounded-full border border-leaf-200 bg-white px-3 py-1 text-sm font-semibold text-leaf-800 shadow-sm transition hover:border-leaf-400 hover:bg-leaf-50">
+                                        {{ $sub['name'] }}
                                     </a>
                                 @endforeach
                             </div>
@@ -39,25 +39,25 @@
                     </div>
                 </div>
 
-                @if ($product->count() > 0)
+                @if ($products->count() > 0)
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        @foreach ($product as $item)
+                        @foreach ($products as $item)
                             <div class="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition duration-300 hover:shadow-xl">
                                 <div class="relative h-64 overflow-hidden">
-                                    <a href="{{ route('product.detail', [$item->slug, $item->id]) }}" class="block h-full w-full" title="{{ $item->name }}">
-                                        <img src="{{ get_image($item->image) }}" alt="{{ $item->name }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-110" loading="lazy" />
+                                    <a href="{{ route('product.detail', [$item['slug'], $item['id']]) }}" class="block h-full w-full" title="{{ $item['name'] }}">
+                                        <img src="{{ get_image($item['image']) }}" alt="{{ $item['name'] }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-110" loading="lazy" />
                                     </a>
                                 </div>
                                 <div class="p-4">
                                     <h2 class="mb-2 line-clamp-2 text-lg font-bold text-gray-900 transition group-hover:text-leaf-600">
-                                        <a href="{{ route('product.detail', [$item->slug, $item->id]) }}">
-                                            {{ $item->name }}
+                                        <a href="{{ route('product.detail', [$item['slug'], $item['id']]) }}">
+                                            {{ $item['name'] }}
                                         </a>
                                     </h2>
                                     <div class="flex items-center justify-between">
-                                        @if ($item->price_type == 'price')
+                                        @if ($item['has_price'])
                                             <span class="text-xl font-extrabold text-leaf-600">
-                                                {{ number_format($item->price, 0, ',', '.') }} đ
+                                                {{ number_format($item['price'], 0, ',', '.') }} đ
                                             </span>
                                         @else
                                             <span class="text-sm font-semibold text-leaf-600">
@@ -70,7 +70,7 @@
                         @endforeach
                     </div>
 
-                    {{ $product->links('frontend.pagination.tailwind') }}
+                    {{ $products->links('frontend.pagination.tailwind') }}
                 @else
                     <div class="rounded-2xl border border-dashed border-leaf-200 bg-white/80 px-6 py-14 text-center shadow-sm">
                         <p class="text-lg font-semibold text-gray-800">Chưa có sản phẩm trong danh mục này</p>

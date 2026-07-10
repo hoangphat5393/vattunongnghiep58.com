@@ -1,0 +1,84 @@
+<?php
+
+namespace Gornymedia\Shortcodes\Illuminate\View;
+
+use Gornymedia\Shortcodes\Shortcode;
+use Illuminate\Contracts\View\Engine as EngineInterface;
+use Illuminate\View\View as IlluminateView;
+
+class View extends IlluminateView
+{
+    /**
+     * @var Shortcode
+     */
+    public $shortcode;
+
+    /**
+     * View constructor.
+     *
+     * @param  string  $view
+     * @param  string  $path
+     * @param  array  $data
+     */
+    public function __construct(Factory $factory, EngineInterface $engine, $view, $path, $data, Shortcode $shortcode)
+    {
+        parent::__construct($factory, $engine, $view, $path, $data);
+
+        $this->shortcode = $shortcode;
+    }
+
+    /**
+     * Compile the shortcodes.
+     *
+     * @return $this
+     */
+    public function compileShortcodes()
+    {
+        $this->shortcode->mode = Shortcode::modeCompile;
+
+        return $this;
+    }
+
+    /**
+     * Strip the shortcodes.
+     *
+     * @return $this
+     */
+    public function stripShortcodes()
+    {
+        $this->shortcode->mode = Shortcode::modeStrip;
+
+        return $this;
+    }
+
+    /**
+     * Get the contents of the view instance.
+     *
+     * @return string|void
+     */
+    protected function renderContents()
+    {
+        $this->factory->incrementRender();
+        $this->factory->callComposer($this);
+
+        $contents = $this->getContents();
+
+        if ($this->shortcode->mode === Shortcode::modeCompile) {
+            $contents = $this->shortcode->compile($contents);
+        } elseif ($this->shortcode->mode === Shortcode::modeStrip) {
+            $contents = $this->shortcode->strip($contents);
+        } else {
+            $mode = config('gornymedia-laravel-shortcodes.mode');
+
+            if (in_array($mode, ['compile', 'strip'])) {
+                $mode === 'compile'
+                ? $contents = $this->shortcode->compile($contents)
+                : $contents = $this->shortcode->strip($contents);
+            }
+        }
+
+        $this->factory->decrementRender();
+
+        return $contents;
+    }
+}

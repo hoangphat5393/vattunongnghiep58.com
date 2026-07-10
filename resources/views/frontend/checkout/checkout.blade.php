@@ -3,17 +3,6 @@
     @include('frontend.layouts.seo', $seo ?? [])
 @endsection
 
-@inject('ProductModel', 'App\Models\Frontend\Product')
-
-@php
-    $carts = Cart::content();
-
-    $subtotal = 0;
-    foreach ($carts as $cart) {
-        $subtotal += $cart->price * $cart->qty;
-    }
-@endphp
-
 @section('content')
     @include('frontend.includes.menu')
 
@@ -27,7 +16,7 @@
         </div>
     </div>
 
-    <div class="bg-leaf-50 flex-grow pb-12">
+    <div class="bg-leaf-50 grow pb-12">
         <div class="container mx-auto px-4 py-6 md:py-8">
             @if (session('checkout_recaptcha_error'))
                 <div class="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900" role="alert">
@@ -71,7 +60,7 @@
                         <div class="space-y-4">
                             <div class="flex justify-between text-gray-700">
                                 <span>Tạm tính</span>
-                                <span class="font-bold">{!! render_price($subtotal, 'VND') !!}</span>
+                                <span class="font-bold">{!! render_price($cart_summary['subtotal'], 'VND') !!}</span>
                             </div>
                             <div class="flex justify-between text-gray-700">
                                 <span>Phí vận chuyển</span>
@@ -80,7 +69,7 @@
                             <div class="pt-4 border-t border-gray-100">
                                 <div class="flex justify-between items-center gap-2">
                                     <span class="font-bold text-lg text-gray-900">Tổng cộng</span>
-                                    <span class="text-2xl font-extrabold text-leaf-600">{!! render_price($subtotal, 'VND') !!}</span>
+                                    <span class="text-2xl font-extrabold text-leaf-600">{!! render_price($cart_summary['total'], 'VND') !!}</span>
                                 </div>
                                 <p class="text-xs text-gray-500 mt-1 text-right">Đã bao gồm VAT (nếu có)</p>
                             </div>

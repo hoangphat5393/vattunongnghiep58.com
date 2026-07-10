@@ -23,6 +23,7 @@
                 @include('backend.partials.category-item', [
                     'categories' => $children,
                     'level' => $level + 1,
+                    'childrenMap' => $childrenMap ?? collect(),
                 ])
             @endif
         </li>

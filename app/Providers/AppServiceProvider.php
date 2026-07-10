@@ -2,10 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Blade;
+use App\Http\Middleware\Currency;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +28,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        View::prependNamespace('ckfinder', resource_path('views/backend/ckfinder'));
+        View::prependNamespace('theme', resource_path('views/frontend'));
+
         $buildDirectory = env('VITE_BUILD_DIRECTORY', 'build'); // 'build' là giá trị mặc định
         Vite::useBuildDirectory($buildDirectory);
 
@@ -35,7 +40,6 @@ class AppServiceProvider extends ServiceProvider
         Blade::if('env', function ($environment) {
             return app()->environment($environment);
         });
-
 
         // @env('local')
         //     // The application is in the local environment...
@@ -83,8 +87,8 @@ class AppServiceProvider extends ServiceProvider
         //     // The application is not using the local disk...
         // @enddisk
 
-        view()->share('templatePath', env('APP_THEME', 'theme'));
-        view()->share('templateFile', env('APP_THEME', 'theme'));
+        view()->share('templatePath', env('APP_THEME', 'frontend'));
+        view()->share('templateFile', env('APP_THEME', 'frontend'));
 
         Paginator::useBootstrap();
     }
@@ -108,6 +112,6 @@ class AppServiceProvider extends ServiceProvider
      * @var array
      */
     protected $routeMiddleware = [
-        'currency' => \App\Http\Middleware\Currency::class
+        'currency' => Currency::class,
     ];
 }

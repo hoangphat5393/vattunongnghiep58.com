@@ -35,8 +35,8 @@
             </div>
 
             <div class="flex shrink-0 items-center gap-4">
-                @if (\Illuminate\Support\Facades\Route::has('login'))
-                    <a href="{{ route('login') }}" class="hidden md:block font-bold text-leaf-700 hover:text-leaf-500">
+                @if (\Illuminate\Support\Facades\Route::has('customer.login'))
+                    <a href="{{ route('customer.login') }}" class="hidden md:block font-bold text-leaf-700 hover:text-leaf-500">
                         Đăng nhập
                     </a>
                 @endif

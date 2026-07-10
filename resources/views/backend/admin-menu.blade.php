@@ -331,26 +331,23 @@
                 reverseButtons: true,
 
                 preConfirm: function() {
-                    return new Promise(function(resolve) {
-                        $.ajax({
-                            method: 'post',
-                            url: '{{ $urlDeleteItem ?? '' }}',
-                            data: {
-                                id: id,
-                                _token: '{{ csrf_token() }}',
-                            },
-                            success: function(data) {
-                                if (data.error == 1) {
-                                    alertMsg('error', 'Cancelled', data.msg);
-                                    return;
-                                } else {
-                                    alertMsg('success', 'Success');
-                                    window.location.replace('{{ route('admin.admin-menu.index') }}');
-                                }
-
+                    return axios.post('{{ $urlDeleteItem ?? '' }}', {
+                            id: id,
+                            _token: '{{ csrf_token() }}',
+                        })
+                        .then(function(response) {
+                            const data = response.data;
+                            if (data.error == 1) {
+                                alertMsg('error', 'Cancelled', data.msg);
+                                return;
+                            } else {
+                                alertMsg('success', 'Success');
+                                window.location.replace('{{ route('admin.admin-menu.index') }}');
                             }
+                        })
+                        .catch(function(e) {
+                            console.error(e);
                         });
-                    });
                 }
 
             }).then((result) => {
@@ -375,23 +372,22 @@
             $('#loading').show();
             var serialize = $('#menu-sort').nestable('serialize');
             var menu = JSON.stringify(serialize);
-            $.ajax({
-                    url: '{{ route('admin.admin-menu.update_sort') }}',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        menu: menu
-                    },
+            axios.post('{{ route('admin.admin-menu.update_sort') }}', {
+                    _token: '{{ csrf_token() }}',
+                    menu: menu
                 })
-                .done(function(data) {
+                .then(function(response) {
                     $('#loading').hide();
+                    const data = response.data;
                     if (data.error == 0) {
                         location.reload();
                     } else {
                         alertMsg('error', data.msg, 'Cancelled');
                     }
-                    //console.log(data);
+                })
+                .catch(function(e) {
+                    $('#loading').hide();
+                    console.error(e);
                 });
         });
 

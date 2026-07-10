@@ -2,16 +2,21 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Theme\UpdateThemeCss;
+use App\Models\Backend\Setting;
 // use Illuminate\Support\Str;
 // use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\Controller;
-use App\Models\Backend\Setting, App\Models\Backend\Addtocard;
-use App\Models\Backend\Theme, App\Models\Backend\Rating_Product;
+use App\Models\Backend\Theme;
 use App\Models\Backend\User;
-use Auth, DB, File, Image, Redirect, Cache, Hash, Exception;
-use App\Models\Backend\Menus, App\Models\Backend\MenuItems;
-
+use Auth;
+use Cache;
+use File;
+use Hash;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Redirect;
 
 class AdminController extends Controller
 {
@@ -27,12 +32,20 @@ class AdminController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return Renderable
      */
     public function error()
     {
         return view('errors.404');
     }
+
+    public function clearCache()
+    {
+        Artisan::call('optimize:clear');
+
+        return redirect()->route('admin.dashboard')->with('success', 'Đã xóa cache hệ thống.');
+    }
+
     public function changePassword()
     {
         return view('backend.change-password');
@@ -47,9 +60,9 @@ class AdminController extends Controller
 
     public function deleteUser($id)
     {
-        //$loadDelete = User::find($id)->delete();
+        // $loadDelete = User::find($id)->delete();
 
-        //delete products
+        // delete products
         // $productDelete = Theme::all();
         // if($loadDelete){
         //   foreach($productDelete as $value){
@@ -59,7 +72,7 @@ class AdminController extends Controller
         //     }
         // }
 
-        $msg = "Customer account has been Delete";
+        $msg = 'Customer account has been Delete';
         $url = route('admin.listUsers');
         msg_move_page($msg, $url);
     }
@@ -72,44 +85,47 @@ class AdminController extends Controller
 
         if ($rq->check_pass_value == 'off') {
 
-            //no change pass — cập nhật bảng users (admin guard dùng Backend\User -> users)
-            $data = array(
+            // no change pass — cập nhật bảng users (admin guard dùng Backend\User -> users)
+            $data = [
                 'email' => $rq->email,
                 'fullname' => $rq->name,
                 'phone' => $rq->phone,
                 'address' => $rq->address,
-            );
+            ];
         } else {
 
-            //change pass
+            // change pass
             if (Hash::check($rq->current_password, $user->password)) {
                 if ($rq->new_password == $rq->confirm_password) {
-                    $data = array(
+                    $data = [
                         'email' => $rq->email,
                         'fullname' => $rq->name,
                         'password' => bcrypt($rq->new_password),
                         'phone' => $rq->phone,
                         'address' => $rq->address,
-                    );
+                    ];
                 } else {
                     $msg = 'Mật khẩu xác nhận không trùng khớp';
+
                     return Redirect::back()->withErrors($msg);
                 }
             } else {
                 $msg = 'Mật khẩu hiện tại không chính xác';
+
                 return Redirect::back()->withErrors($msg);
             }
         }
         // Admin đăng nhập từ bảng users (Backend\User), không còn dùng bảng admins
         $respons = User::where('id', $id)->update($data);
-        $msg = "Thông tin cập nhật thành công!";
-        $url =  route('admin.changePassword');
+        $msg = 'Thông tin cập nhật thành công!';
+        $url = route('admin.changePassword');
         msg_move_page($msg, $url);
     }
 
     public function listUsers()
     {
         $data_user = User::get();
+
         return view('backend.users.index')->with(['data_user' => $data_user]);
     }
 
@@ -131,16 +147,17 @@ class AdminController extends Controller
                 $type = $key;
                 foreach ($option['name'] as $index => $item) {
                     $content = htmlspecialchars($option['value'][$index]);
-                    if ($type == 'editor')
+                    if ($type == 'editor') {
                         $content = htmlspecialchars($content);
+                    }
                     $option_db = Setting::updateOrCreate(
                         [
-                            'name'  => $item
+                            'name' => $item,
                         ],
                         [
-                            'content'   => $content,
-                            'type'   => $type,
-                            'sort'   => $i,
+                            'content' => $content,
+                            'type' => $type,
+                            'sort' => $i,
                         ]
                     );
                     $list_option[] = $option_db->id;
@@ -148,46 +165,50 @@ class AdminController extends Controller
                 }
             }
         }
-        //delete;
+        // delete;
         Setting::whereNotIn('id', $list_option)->delete();
         Cache::forget('theme_option');
-        $msg = "Option has been registered";
+        $msg = 'Option has been registered';
         $url = route('admin.theme-option');
         msg_move_page($msg, $url);
     }
 
     public function getCSS()
     {
-        // $scssPath = resource_path('sass/user_custom.scss');
-        $cssPath = public_path('assets/css/user_custom.css');
+        $this->authorizeThemeCssAccess();
 
-        // Đọc nội dung file custom.scss
+        $cssPath = $this->themeCssPath();
         $scssContent = file_exists($cssPath) ? file_get_contents($cssPath) : '';
 
         return view('backend.setting.theme-css', compact('scssContent'));
     }
 
-    public function updateCSS(Request $request)
+    public function updateCSS(UpdateThemeCss $request)
     {
+        $cssPath = $this->themeCssPath();
+        $directory = dirname($cssPath);
 
-        // $scssPath = resource_path('sass/user_custom.scss');
-        $cssPath = public_path('assets/css/user_custom.css');
+        if (! is_dir($directory)) {
+            File::makeDirectory($directory, 0755, true);
+        }
 
-        // Lưu nội dung mới vào file user_custom.scss
-        file_put_contents($cssPath, $request->input('css_content'));
+        file_put_contents($cssPath, $request->validated('css_content'));
 
-        // Chạy lệnh npm run prod
-        // $process = new Process(['npm', 'run', 'prod']);
-        // $process->setWorkingDirectory(base_path()); // Đảm bảo chạy trong thư mục gốc của dự án Laravel
-        // $process->run();
+        return redirect()->route('admin.css.get')->with('success', 'CSS file updated successfully.');
+    }
 
-        // // Kiểm tra nếu có lỗi khi chạy lệnh npm
-        // if (!$process->isSuccessful()) {
-        //     throw new ProcessFailedException($process);
-        // }
+    private function authorizeThemeCssAccess(): void
+    {
+        $user = Auth::guard('admin')->user();
 
-        // Chuyển hướng lại trang edit với thông báo thành công
-        return redirect()->route('admin.css.get')->with('success', 'SCSS file updated and compiled successfully!');
+        if (! $user || ! method_exists($user, 'isAdministrator') || ! $user->isAdministrator()) {
+            abort(403, 'Unauthorized action.');
+        }
+    }
+
+    private function themeCssPath(): string
+    {
+        return public_path('assets/css/user_custom.css');
     }
 
     public function ajaxUpdateSort(Request $request)
@@ -201,6 +222,7 @@ class AdminController extends Controller
                 // Cập nhật thứ tự cho từng mục, giả sử bạn có model Setting
                 Setting::find($id)->update(['sort' => $index]);
             }
+
             return response()->json(['Update success' => true]);
         } else {
             return response('404 data Not Found');
@@ -216,8 +238,8 @@ class AdminController extends Controller
         $user->phone = $request->phone;
         $user->address = $request->address;
         if ($user->save()) {
-            $msg = "Thông tin tài khoản đã được cập nhật";
-            $url =  route('admin.profile');
+            $msg = 'Thông tin tài khoản đã được cập nhật';
+            $url = route('admin.profile');
             msg_move_page($msg, $url);
         }
     }

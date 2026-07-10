@@ -10,7 +10,7 @@
 @section('content')
     @include('frontend.includes.menu')
 
-    <div class="bg-leaf-50 flex-grow">
+    <div class="bg-leaf-50 grow">
         <div class="container mx-auto px-4 py-10 md:py-16 lg:py-24">
             <div class="mx-auto max-w-xl text-center">
                 <div class="relative mb-8 inline-block">

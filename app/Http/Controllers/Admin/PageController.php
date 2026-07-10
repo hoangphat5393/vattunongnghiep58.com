@@ -3,19 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Backend\Page;
 use App\Http\Requests\Admin\Page\StorePage;
 use App\Http\Requests\Admin\Page\UpdatePage;
-
+use App\Models\Backend\Page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
-
 class PageController extends Controller
 {
     public $data = [];
+
     /**
      * Display a listing of the resource.
      */
@@ -23,7 +22,7 @@ class PageController extends Controller
     {
         $pages = Page::pages()->with(['user'])->filter($request)->orderByDesc('sort')->paginate(20)->appends($request->all());
 
-        $total_item = $pages->count();
+        $total_item = $pages->total();
 
         return view('backend.page.index', compact('pages', 'total_item'));
     }
@@ -64,8 +63,8 @@ class PageController extends Controller
 
         $save = $request->submit ?? 'apply';
         if ($save == 'apply') {
-            $msg = "Page has been created successfully";
-            $url = route('admin.page.edit', array($insert_id));
+            $msg = 'Page has been created successfully';
+            $url = route('admin.page.edit', [$insert_id]);
             msg_move_page($msg, $url);
         } else {
             return redirect(route('admin.page.index'));
@@ -78,6 +77,7 @@ class PageController extends Controller
     public function show(Page $page, $id)
     {
         $page = $page->findorfail($id);
+
         return view('backend.page.show', compact('page'));
     }
 
@@ -112,8 +112,8 @@ class PageController extends Controller
 
         $save = $request->submit ?? 'apply';
         if ($save == 'apply') {
-            $msg = "Page has been updated successfully";
-            $url = route('admin.page.edit', array($request->id));
+            $msg = 'Page has been updated successfully';
+            $url = route('admin.page.edit', [$request->id]);
             msg_move_page($msg, $url);
         } else {
             return redirect(route('admin.page.index'));
@@ -126,6 +126,7 @@ class PageController extends Controller
     public function destroy(Page $page, $id)
     {
         $page->find($id)->delete();
+
         return redirect()->route('admin.page.index')->with('success', 'Page deleted successfully.');
     }
 }

@@ -21,6 +21,7 @@
                     'data_type' => 'option',
                     'parent' => $parent,
                     'slit' => $slit,
+                    'childrenMap' => $childrenMap ?? collect(),
                 ])
             @endif
         @endforeach
@@ -37,6 +38,7 @@
                 'data_type' => 'option',
                 'parent' => $parent,
                 'slit' => $slit . '-----',
+                'childrenMap' => $childrenMap ?? collect(),
             ])
         @endif
     @endforeach

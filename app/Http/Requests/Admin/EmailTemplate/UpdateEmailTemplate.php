@@ -2,38 +2,59 @@
 
 namespace App\Http\Requests\Admin\EmailTemplate;
 
+use App\Support\EmailTemplateCodes;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class UpdateEmailTemplate extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
     public function authorize(): bool
     {
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'code' => EmailTemplateCodes::normalize((string) $this->input('code', '')),
+            'text' => is_string($this->input('text')) ? $this->input('text') : '',
+            'status' => $this->input('status', 1),
+        ]);
+    }
+
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
+     * @return array<string, mixed>
      */
     public function rules(): array
     {
+        $templateId = (int) $this->input('id');
+
         return [
-            'name' => ['nullable', 'string', 'max:255'],
-            'subject' => ['nullable', 'string', 'max:255'],
-            'content' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
+            'name' => ['required', 'string', 'max:50'],
+            'code' => [
+                'required',
+                'string',
+                'max:100',
+                'regex:/^[a-z][a-z0-9_]*$/',
+                Rule::unique('email_templates', 'code')->ignore($templateId),
+            ],
+            'text' => ['required', 'string'],
+            'status' => ['nullable', 'integer', 'in:0,1'],
         ];
     }
 
-    public function getSanitized(): array
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
     {
-        return $this->validated();
+        return [
+            'name.required' => 'Nhập tiêu đề mail (dùng làm subject khi gửi).',
+            'name.max' => 'Tiêu đề tối đa 50 ký tự.',
+            'code.required' => 'Nhập mã code template.',
+            'code.regex' => 'Mã code chỉ gồm chữ thưường, số và dấu gạch dưới (vd: new_register).',
+            'code.unique' => 'Mã code đã tồn tại.',
+            'text.required' => 'Nhập nội dung mail.',
+        ];
     }
 }

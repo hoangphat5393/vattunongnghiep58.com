@@ -290,7 +290,7 @@
 
 
                     @php
-                        $route_active = ['admin.theme-option', 'admin.css.get'];
+                        $route_active = ['admin.theme-option', 'admin.css.get', 'admin.cache.clear'];
                     @endphp
 
 
@@ -335,16 +335,28 @@
 
 
 
+                            @if ($user && $user->isAdministrator())
+                                <li class="nav-item">
+
+                                    <a href="{{ route('admin.css.get') }}" class="nav-link {{ Route::currentRouteName() == 'admin.css.get' ? 'active' : '' }}">
+
+                                        <i class="nav-icon fas fa-angle-right"></i>
+
+                                        <p>Theme CSS</p>
+
+                                    </a>
+
+                                </li>
+                            @endif
+
                             <li class="nav-item">
-
-                                <a href="{{ route('admin.css.get') }}" class="nav-link {{ Route::currentRouteName() == 'admin.css.get' ? 'active' : '' }}">
-
-                                    <i class="nav-icon fas fa-angle-right"></i>
-
-                                    <p>Theme CSS</p>
-
-                                </a>
-
+                                <form action="{{ route('admin.cache.clear') }}" method="POST" class="m-0">
+                                    @csrf
+                                    <button type="submit" class="nav-link border-0 bg-transparent w-100 text-start">
+                                        <i class="nav-icon fas fa-angle-right"></i>
+                                        <p>Xóa cache</p>
+                                    </button>
+                                </form>
                             </li>
 
                         </ul>
@@ -367,13 +379,19 @@
 
                     <li class="nav-item">
 
-                        <a href="{{ route('admin.logout') }}" class="nav-link">
+                        <form action="{{ route('admin.logout') }}" method="POST" class="mb-0">
 
-                            <i class="nav-icon fas fa-sign-out-alt"></i>
+                            @csrf
 
-                            <p>@lang('admin.logout')</p>
+                            <button type="submit" class="nav-link border-0 bg-transparent text-start w-100">
 
-                        </a>
+                                <i class="nav-icon fas fa-sign-out-alt"></i>
+
+                                <p>@lang('admin.logout')</p>
+
+                            </button>
+
+                        </form>
 
                     </li>
 

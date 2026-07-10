@@ -43,7 +43,7 @@
                 <h4 class="sidebar-title mb-4">LATEST NEWS</h4>
                 @foreach ($latest_news as $news)
                     <div class="d-flex align-items-center mb-4">
-                        <a class="flex-shrink-0" href="{{ route('news', $news->slug) }}">
+                        <a class="shrink-0" href="{{ route('news', $news->slug) }}">
                             <img class="img-fluid" src="{{ $news->image }}" width="64" alt="{{ $news->name }}">
                         </a>
                         <div class="ps-2">

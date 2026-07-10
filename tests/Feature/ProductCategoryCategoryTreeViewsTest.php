@@ -3,11 +3,16 @@
 namespace Tests\Feature;
 
 use App\Models\Backend\Category;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class ProductCategoryCategoryTreeViewsTest extends TestCase
 {
-    public function test_product_category_tree_views_render_without_errors(): void
+    /**
+     * @return array{childrenMap: Collection, root: Collection}
+     */
+    private function seedFourLevelCategoryTree(): array
     {
         $level1 = Category::create([
             'name' => 'Root',
@@ -41,27 +46,73 @@ class ProductCategoryCategoryTreeViewsTest extends TestCase
             'sort' => 1,
         ]);
 
+        $childrenMap = Category::query()->orderBy('sort')->get()->groupBy('parent');
+
+        return [
+            'childrenMap' => $childrenMap,
+            'root' => $childrenMap->get(0, collect()),
+        ];
+    }
+
+    public function test_product_category_tree_views_render_without_errors(): void
+    {
+        $tree = $this->seedFourLevelCategoryTree();
+
         $selectHtml = view('backend.product-category.includes.select-category', [
             'parent' => 0,
+            'childrenMap' => $tree['childrenMap'],
         ])->render();
 
         $this->assertStringContainsString('<select', $selectHtml);
+        $this->assertStringContainsString('Great Grandchild', $selectHtml);
 
         $categoryRowsHtml = view('backend.product-category.includes.category_item', [
-            'categories' => Category::query()->where('parent', 0)->get(),
+            'categories' => $tree['root'],
             'level' => 0,
+            'childrenMap' => $tree['childrenMap'],
         ])->render();
 
         $this->assertStringContainsString('item-level-0', $categoryRowsHtml);
+        $this->assertStringContainsString('item-level-3', $categoryRowsHtml);
+        $this->assertStringContainsString('Great Grandchild', $categoryRowsHtml);
 
         $categoryCheckboxTreeHtml = view('backend.partials.category-item', [
-            'categories' => Category::query()->where('parent', 0)->get(),
+            'categories' => $tree['root'],
             'level' => 0,
             'array_checked' => [],
             'category_type' => null,
+            'childrenMap' => $tree['childrenMap'],
         ])->render();
 
         $this->assertStringContainsString('category_menu_list', $categoryCheckboxTreeHtml);
+        $this->assertStringContainsString('Great Grandchild', $categoryCheckboxTreeHtml);
+    }
+
+    public function test_category_tree_views_do_not_query_database_during_render(): void
+    {
+        $tree = $this->seedFourLevelCategoryTree();
+
+        DB::enableQueryLog();
+
+        view('backend.product-category.includes.category_item', [
+            'categories' => $tree['root'],
+            'level' => 0,
+            'childrenMap' => $tree['childrenMap'],
+        ])->render();
+
+        view('backend.product-category.includes.select-category', [
+            'parent' => 0,
+            'childrenMap' => $tree['childrenMap'],
+        ])->render();
+
+        view('backend.partials.category-item', [
+            'categories' => $tree['root'],
+            'level' => 0,
+            'array_checked' => [],
+            'childrenMap' => $tree['childrenMap'],
+        ])->render();
+
+        $this->assertCount(0, DB::getQueryLog());
     }
 
     public function test_top_pagination_is_hidden_in_list_views(): void
@@ -110,7 +161,7 @@ class ProductCategoryCategoryTreeViewsTest extends TestCase
             $this->assertNotFalse($contents);
 
             $this->assertStringContainsString('app-content-header', $contents);
-            $this->assertStringContainsString('h3 class="mb-0"', $contents);
+            $this->assertStringContainsString('h1 class="mb-0"', $contents);
             $this->assertStringContainsString('card-primary card-outline', $contents);
             $this->assertStringContainsString("links('backend.pagination.custom')", $contents);
         }
@@ -137,7 +188,7 @@ class ProductCategoryCategoryTreeViewsTest extends TestCase
             $this->assertNotFalse($contents);
 
             $this->assertStringContainsString('app-content-header', $contents);
-            $this->assertStringContainsString('h3 class="mb-0"', $contents);
+            $this->assertStringContainsString('h1 class="mb-0"', $contents);
             $this->assertStringContainsString('card-primary card-outline', $contents);
         }
 

@@ -1,43 +1,42 @@
-# Danh sách đề xuất cải thiện hệ thống (Vật Tư Nông Nghiệp 58)
+# Đề xuất cải thiện — Vật Tư Nông Nghiệp 58
 
-Dưới đây là các đề xuất cải thiện được rút ra từ quá trình phân tích hệ thống, nhằm nâng cao tính bảo trì, hiệu năng và bảo mật.
+> **Cập nhật:** 2026-07-10  
+> **IMP-001 … IMP-015:** hoàn tất (trừ IMP-011 `deferred`).  
+> **BACK-001 … BACK-018:** hoàn tất — xem [docs/BACKEND_AUDIT_PLAYBOOK.md](docs/BACKEND_AUDIT_PLAYBOOK.md).
 
-## 1. Chuẩn hóa Cơ sở dữ liệu và Model
-- **Vấn đề**: Tên bảng đơn hàng bị sai chính tả (`addtocard`) và không đồng nhất với code (sử dụng `cart_id`, `cart_status`, v.v.).
-- **Đề xuất**: 
-    - Rename bảng `addtocard` thành `shop_orders`.
-    - Rename bảng `addtocard_detail` thành `shop_order_items`.
-    - Rename các cột trong database để khớp với logic code hiện có (ví dụ: `id` -> `cart_id`, `status` -> `cart_status`).
-    - Cập nhật các Model tương ứng ([Order.php](file:///e:/web/vattunongnghiep58/app/Models/Backend/Order.php), [OrderItem.php](file:///e:/web/vattunongnghiep58/app/Models/Backend/OrderItem.php)).
-- **Trạng thái**: **Đã hoàn thành**. (Đã cập nhật cả tên bảng, tên cột và Model).
+## Index tài liệu
 
-## 2. Áp dụng Form Request Validation
-- **Vấn đề**: Logic kiểm tra dữ liệu đầu vào nằm trực tiếp trong Controller.
-- **Đề xuất**: Tạo các lớp `FormRequest` riêng biệt (ví dụ: `CheckoutRequest`).
-- **Trạng thái**: **Đã hoàn thành**.
+| File                                                                       | Mục đích                                                  |
+| -------------------------------------------------------------------------- | --------------------------------------------------------- |
+| [docs/BACKEND_AUDIT_PLAYBOOK.md](docs/BACKEND_AUDIT_PLAYBOOK.md)           | Audit backend BACK-001…018 (đã xong)                      |
+| [docs/IMPROVEMENT_PLAYBOOK.md](docs/IMPROVEMENT_PLAYBOOK.md)               | Tiến độ IMP-001…015                                       |
+| [docs/PROJECT_ANALYSIS.md](docs/PROJECT_ANALYSIS.md)                       | Kiến trúc, DB, luồng dữ liệu                              |
+| [docs/CHANGE_LOG.md](docs/CHANGE_LOG.md)                                   | Ghi chú thay đổi kỹ thuật theo ngày                       |
+| [docs/LARAVEL_13_UPGRADE_PLAYBOOK.md](docs/LARAVEL_13_UPGRADE_PLAYBOOK.md) | Nâng cấp Laravel 12 → 13 (một môi trường)                 |
+| [MASTER.md](MASTER.md)                                                     | **Tài liệu master** — nghiệp vụ, luồng, schema, tính năng |
+| [docs/TABLE_GLOSSARY.md](docs/TABLE_GLOSSARY.md)                           | Bảng ↔ model ↔ legacy (tra cứu DB)                        |
+| [docs/ROUTE_GLOSSARY.md](docs/ROUTE_GLOSSARY.md)                           | Route ↔ URL ↔ controller (tra cứu routing)                |
+| [docs/DB_AUDIT.md](docs/DB_AUDIT.md)                                       | Rà soát bảng thừa / code mồ côi + kế hoạch dọn            |
 
-## 3. Tối ưu hóa Truy vấn (N+1 Query)
-- **Vấn đề**: 
-    - Truy cập quan hệ `$product->user->name` trong vòng lặp Backend mà không sử dụng Eager Loading.
-    - Thực hiện truy vấn DB trực tiếp trong Blade views (`home.blade.php`, `product/index.blade.php`) gây ra N+1 query nghiêm trọng (truy vấn sản phẩm cho từng danh mục trong vòng lặp).
-- **Đề xuất**: 
-    - Sử dụng `with(['user', 'categories'])` trong Backend Controllers.
-    - Chuyển toàn bộ logic truy vấn từ View sang Controller và sử dụng Eager Loading cho các quan hệ sản phẩm/danh mục.
-- **Trạng thái**: **Đã hoàn thành**. (Đã tối ưu cả Backend và Frontend, loại bỏ hoàn toàn DB query trong views).
+## Kiểm chứng
 
-## 4. Chuẩn hóa Quản lý Package (Node.js)
-- **Vấn đề**: Xung đột giữa nhiều file lock (npm, pnpm).
-- **Đề xuất**: Chỉ sử dụng `pnpm-lock.yaml` và Vite.
-- **Trạng thái**: **Đã hoàn thành**. (Đã xóa `package-lock.json`).
+```bash
+php artisan test --compact
+pnpm run build
+```
 
-## 5. Tăng cường Bảo mật
-- **Vấn đề**: Một số endpoint chưa có validation chặt chẽ hoặc CSRF protection cho AJAX. Đặc biệt là `ajax_quickchange` cho phép cập nhật dữ liệu tùy ý.
-- **Đề xuất**: 
-    - Áp dụng Validation cho các phương thức AJAX.
-    - Whitelist các Model và Column được phép cập nhật qua `ajax_quickchange`.
-- **Trạng thái**: **Đã hoàn thành**. (Đã thêm validation và whitelist cho các phương thức trong `AjaxController`).
+| Suite         | File gợi ý                                                                    |
+| ------------- | ----------------------------------------------------------------------------- |
+| CSRF          | `tests/Feature/CsrfProtectionTest.php`                                        |
+| JS cleanup    | `tests/Feature/PublicLegacyJsCleanupTest.php`                                 |
+| Backend P1/P2 | `tests/Feature/BackendP1HardeningTest.php`, `BackendP2ContinuationTest.php`   |
+| Route alias   | `tests/Feature/RouteAliasTest.php`                                            |
+| Customer auth | `tests/Feature/CustomerAuthFlowTest.php`, `CustomerRegistrationEmailTest.php` |
+| Email admin   | `tests/Feature/AdminEmailTemplateTest.php`                                    |
+| Docs          | `tests/Feature/DocumentationCleanupTest.php`                                  |
 
-## 6. Cải thiện Kiến trúc Frontend (Mới)
-- **Vấn đề**: Sử dụng Data Transformation Trait nhưng chưa nhất quán giữa các trang.
-- **Đề xuất**: Mở rộng `FrontendDataTransform` để bao quát tất cả các loại dữ liệu hiển thị, giúp Blade view sạch sẽ hơn và dễ bảo trì.
-- **Trạng thái**: Đang thực hiện. (Đã áp dụng cho Home và Product List).
+## Việc còn lại (không blocker)
+
+- Smoke CKFinder upload trong admin (BACK-002 checklist thủ công).
+- `php artisan migrate` trên server cho migration index BACK-014 (nếu chưa chạy).
+- IMP-011 Bootstrap admin — `deferred` (dùng AdminLTE + `style_admin.css`).
