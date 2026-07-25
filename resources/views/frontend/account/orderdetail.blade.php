@@ -85,7 +85,7 @@
                                 <tr>
                                     <td class="py-4 pr-4 align-top">
                                         @if ($product)
-                                            <a href="{{ route('product.detail', $product->slug) }}" class="font-semibold text-leaf-700 hover:text-leaf-500 no-underline">
+                                            <a href="{{ route('product.detail', [$product->slug, $product->id]) }}" class="font-semibold text-leaf-700 hover:text-leaf-500 no-underline">
                                                 {{ $product->name }}
                                             </a>
                                         @else

@@ -5,7 +5,7 @@
             @foreach ($category->products as $item)
                 <div class="col-12 col-lg-4">
                     <div class="item-product">
-                        <a href="{{ route('product.detail', $item->slug) }}">
+                        <a href="{{ route('product.detail', [$item->slug, $item->id]) }}">
                             <div class="thumb">
                                 <img class="img-fluid" src="{{ get_image($item->image) }}" />
                                 <p style="top:{{ $item->text_position }}">{{ $item->image_name }}</p>

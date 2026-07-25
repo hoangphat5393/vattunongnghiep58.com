@@ -63,13 +63,13 @@ class CustomerAuthController extends Controller
                     'error' => 0,
                     'redirect_back' => $request->url_back ?? '/',
                     'view' => view($this->templatePath.'.account.includes.login_success')->render(),
-                    'msg' => __('Login success'),
+                    'msg' => 'Đăng nhập thành công!',
                 ]);
             }
 
-            $message = __('Email or Password is wrong');
+            $message = 'Email hoặc mật khẩu không chính xác!';
         } else {
-            $message = __('Account does not exist!');
+            $message = 'Tài khoản không tồn tại hoặc đã bị khóa!';
         }
 
         return response()->json([

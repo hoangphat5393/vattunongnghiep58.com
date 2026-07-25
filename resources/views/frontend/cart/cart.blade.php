@@ -33,7 +33,7 @@
                 </div>
             @else
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mt-4 text-center">
-                    <p class="text-gray-600 text-lg">@lang('Cart is empty!')</p>
+                    <p class="text-gray-600 text-lg">Giỏ hàng của bạn đang trống!</p>
                 </div>
             @endif
         </div>

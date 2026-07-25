@@ -41,25 +41,25 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('customer.password.update') }}" method="post" class="space-y-5">
+                        <form action="{{ route('customer.password.update') }}" method="post" id="form-change-password" novalidate="novalidate" class="space-y-5">
                             @csrf
 
                             <div>
                                 <label for="current_password" class="block text-sm font-semibold text-gray-700 mb-1.5">Mật khẩu hiện tại <span class="text-red-500">*</span></label>
-                                <input type="password" name="current_password" id="current_password" class="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-leaf-500 focus:outline-none focus:ring-2 focus:ring-leaf-500/25 transition" required>
+                                <input type="password" name="current_password" id="current_password" class="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-leaf-500 focus:outline-none focus:ring-2 focus:ring-leaf-500/25 transition">
                             </div>
 
                             <div>
                                 <label for="new_password" class="block text-sm font-semibold text-gray-700 mb-1.5">Mật khẩu mới <span class="text-red-500">*</span></label>
-                                <input type="password" name="new_password" id="new_password" class="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-leaf-500 focus:outline-none focus:ring-2 focus:ring-leaf-500/25 transition" required>
+                                <input type="password" name="new_password" id="new_password" class="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-leaf-500 focus:outline-none focus:ring-2 focus:ring-leaf-500/25 transition">
                             </div>
 
                             <div>
                                 <label for="confirm_password" class="block text-sm font-semibold text-gray-700 mb-1.5">Nhập lại mật khẩu mới <span class="text-red-500">*</span></label>
-                                <input type="password" name="confirm_password" id="confirm_password" class="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-leaf-500 focus:outline-none focus:ring-2 focus:ring-leaf-500/25 transition" required>
+                                <input type="password" name="confirm_password" id="confirm_password" class="w-full rounded-xl border border-gray-200 px-4 py-3 focus:border-leaf-500 focus:outline-none focus:ring-2 focus:ring-leaf-500/25 transition">
                             </div>
 
-                            <button type="submit" class="w-full cursor-pointer rounded-xl bg-leaf-600 px-6 py-3 font-bold text-white hover:bg-leaf-700 transition">
+                            <button type="submit" class="btn-submit-password w-full cursor-pointer rounded-xl bg-leaf-600 px-6 py-3 font-bold text-white hover:bg-leaf-700 transition">
                                 Cập nhật mật khẩu
                             </button>
                         </form>
@@ -69,3 +69,74 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: "{{ session('success') }}",
+                        timer: 2500
+                    });
+                }
+            });
+        </script>
+    @endif
+
+    @if ($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: "{{ $errors->first() }}",
+                        timer: 3000
+                    });
+                }
+            });
+        </script>
+    @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('form-change-password');
+            const $ = window.jQuery || window.$;
+
+            if ($ && $.fn && typeof $.fn.validate === 'function' && form) {
+                $('#form-change-password').validate({
+                    onfocusout: false,
+                    onkeyup: false,
+                    onclick: false,
+                    rules: {
+                        current_password: 'required',
+                        new_password: {
+                            required: true,
+                            minlength: 6
+                        },
+                        confirm_password: {
+                            required: true,
+                            equalTo: '#new_password'
+                        }
+                    },
+                    messages: {
+                        current_password: 'Vui lòng nhập mật khẩu hiện tại.',
+                        new_password: {
+                            required: 'Vui lòng nhập mật khẩu mới.',
+                            minlength: 'Mật khẩu mới tối thiểu 6 ký tự.'
+                        },
+                        confirm_password: {
+                            required: 'Vui lòng nhập lại mật khẩu mới.',
+                            equalTo: 'Mật khẩu xác nhận không khớp.'
+                        }
+                    },
+                    errorElement: 'div',
+                    errorClass: 'text-red-600 text-xs mt-1'
+                });
+            }
+        });
+    </script>
+@endpush

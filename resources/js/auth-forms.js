@@ -5,8 +5,20 @@ function getJquery() {
 }
 
 function showFormError(form, message) {
+    const swalInstance = window.Swal || (typeof Swal !== 'undefined' ? Swal : null);
+    if (swalInstance && typeof swalInstance.fire === 'function') {
+        swalInstance.fire({
+            position: 'center',
+            icon: 'error',
+            title: message,
+            timer: 2500,
+        });
+        return;
+    }
+
     const errorEl = form.querySelector('.error-message');
     if (!errorEl) {
+        alert(message);
         return;
     }
 

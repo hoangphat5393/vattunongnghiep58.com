@@ -574,7 +574,7 @@ class CheckoutController extends Controller
                 [
                     'error' => 0,
                     'view' => view($this->templatePath.'.cart.includes.send_request_payment_success')->render(),
-                    'msg' => __('Login success'),
+                    'msg' => 'Đăng nhập thành công!',
                 ]
             );
         }

@@ -30,7 +30,7 @@ $config['authentication'] = '\App\Http\Middleware\CustomCKFinderAuth';
 // http://docs.cksource.com/ckfinder3-php/configuration.html#configuration_options_licenseKey
 
 $config['licenseName'] = 'vattunongnghiep58.test';
-$config['licenseKey'] = 'CTNTTS8REXSJGFUQAD8J45CRHURD2';
+$config['licenseKey'] = 'ETYTMTBBUL47FV5Q7WUG4JWDB1UF1';
 
 /* ============================ CKFinder Internal Directory ============================ */
 // http://docs.cksource.com/ckfinder3-php/configuration.html#configuration_options_privateDir
@@ -94,7 +94,7 @@ $config['backends']['default'] = [
 /* ================================ Resource Types ===================================== */
 // http://docs.cksource.com/ckfinder3-php/configuration.html#configuration_options_resourceTypes
 
-$config['defaultResourceTypes'] = '';
+$config['defaultResourceTypes'] = 'Images,Files';
 
 $config['resourceTypes'][] = [
     'name' => 'Files', // Single quotes not allowed.

@@ -32,7 +32,7 @@ class RegisterController extends Controller
         if ($this->registrationScore($request) <= 0.3) {
             return response()->json([
                 'error' => 1,
-                'msg' => __('You are most likely a bot'),
+                'msg' => 'Hệ thống nghi ngờ bạn là bot tự động. Vui lòng thử lại.',
             ]);
         }
 
@@ -52,7 +52,7 @@ class RegisterController extends Controller
             'error' => 0,
             'redirect_back' => $request->input('url_back', route('customer.register.success')),
             'view' => view(($this->templatePath ?: env('APP_THEME', 'frontend')).'.account.includes.register_success')->render(),
-            'msg' => __('Register success'),
+            'msg' => 'Đăng ký tài khoản thành công!',
         ]);
     }
 

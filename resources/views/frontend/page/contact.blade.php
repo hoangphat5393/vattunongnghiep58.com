@@ -12,12 +12,6 @@
 
 
 @push('head-script')
-    <script>
-        window.addEventListener("pageshow", () => {
-            // update hidden input field
-        });
-    </script>
-
     {!! RecaptchaV3::initJs() !!}
 @endpush
 
@@ -140,101 +134,100 @@
 
 @push('scripts')
     <script>
-        const contact_form = document.getElementById('contact_form');
-        const submitBtn = document.querySelector('.btn-contact-submit');
-        const contactSuccess = typeof contact_success !== 'undefined' ? contact_success : null;
+        document.addEventListener('DOMContentLoaded', function() {
+            const contact_form = document.getElementById('contact_form');
+            const submitBtn = document.querySelector('.btn-contact-submit');
+            const contactSuccess = typeof contact_success !== 'undefined' ? contact_success : null;
+            const $ = window.jQuery || window.$;
 
-        const showError = (message) => {
-            Swal.fire({
-                position: 'center',
-                icon: 'error',
-                title: message,
-                timer: 1500
-            });
-        };
-
-        const validateContactForm = () => {
-            const formData = new FormData(contact_form);
-            const name = formData.get('contact[name]');
-            const email = formData.get('contact[email]');
-            const phone = formData.get('contact[phone]');
-            const content = formData.get('contact[content]');
-
-            if (!name) {
-                showError('Vui lòng điền tên!');
-                return false;
+            if ($ && $.fn && typeof $.fn.validate === 'function' && contact_form) {
+                $('#contact_form').validate({
+                    onfocusout: false,
+                    onkeyup: false,
+                    onclick: false,
+                    rules: {
+                        'contact[name]': 'required',
+                        'contact[phone]': {
+                            required: true,
+                            minlength: 10
+                        },
+                        'contact[email]': {
+                            required: true,
+                            email: true
+                        },
+                        'contact[content]': {
+                            required: true,
+                            minlength: 10,
+                            maxlength: 200
+                        }
+                    },
+                    messages: {
+                        'contact[name]': 'Vui lòng điền họ và tên!',
+                        'contact[phone]': {
+                            required: 'Vui lòng điền số điện thoại!',
+                            minlength: 'Vui lòng cung cấp số điện thoại hợp lệ (tối thiểu 10 số)!'
+                        },
+                        'contact[email]': {
+                            required: 'Vui lòng điền địa chỉ email!',
+                            email: 'Vui lòng nhập địa chỉ email hợp lệ!'
+                        },
+                        'contact[content]': {
+                            required: 'Vui lòng nhập lời nhắn!',
+                            minlength: 'Vui lòng nhập tối thiểu 10 ký tự!',
+                            maxlength: 'Vui lòng nhập tối đa 200 ký tự!'
+                        }
+                    },
+                    errorElement: 'div',
+                    errorClass: 'text-red-600 text-xs mt-1'
+                });
             }
 
-            if (!email) {
-                showError('Vui lòng điền địa chỉ email!');
-                return false;
-            }
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (email && !emailRegex.test(email)) {
-                showError('Vui lòng nhập địa chỉ email hợp lệ');
-                return false;
-            }
-
-            if (!phone) {
-                showError('Vui lòng số điện thoại hợp lệ');
-                return false;
-            }
-
-            const phoneDigits = phone.replace(/\D/g, '');
-            if (phoneDigits.length < 10) {
-                showError('Vui lòng cung cấp số điện thoại hợp lệ!!');
-                return false;
-            }
-
-            if (!content || content.length < 10) {
-                showError('Vui lòng nhập tối thiểu 10 ký tự!!');
-                return false;
-            }
-
-            if (content.length > 200) {
-                showError('Vui lòng nhập tối đa 200 ký tự!!');
-                return false;
-            }
-
-            return true;
-        };
-
-        if (submitBtn && contact_form) {
-            submitBtn.addEventListener('click', function() {
-                if (!validateContactForm()) {
-                    contact_form.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
+            const showSwalError = (message) => {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: message,
+                        timer: 2500
                     });
-                    return;
+                } else {
+                    alert(message);
                 }
+            };
 
-                const fdnew = new FormData(contact_form);
+            if (submitBtn && contact_form) {
+                submitBtn.addEventListener('click', function() {
+                    if ($ && $.fn && typeof $.fn.validate === 'function') {
+                        if (!$('#contact_form').valid()) {
+                            return;
+                        }
+                    }
 
-                const submitRequest = window.http ? window.http.postForm.bind(window.http) : window.axios.post.bind(window.axios);
+                    const fdnew = new FormData(contact_form);
+                    const submitRequest = window.http ? window.http.postForm.bind(window.http) : window.axios.post.bind(window.axios);
 
-                submitRequest(
+                    submitRequest(
                         contact_form.getAttribute('action'),
                         fdnew, {
                             headers: {
                                 Accept: 'application/json',
                             },
-                        },
+                        }
                     )
                     .then(res => {
                         if (res.data.status === 'success') {
                             const redirect = res.data.redirect || contactSuccess;
                             if (redirect) window.location.replace(redirect);
                         } else {
-                            showError(res.data.message || 'Đã xảy ra lỗi, vui lòng thử lại!');
+                            showSwalError(res.data.message || 'Đã xảy ra lỗi từ hệ thống, vui lòng thử lại!');
                         }
                     })
                     .catch((err) => {
                         const msg = err?.response?.data?.message;
-                        showError(msg || 'Đã xảy ra lỗi, vui lòng thử lại!');
+                        showSwalError(msg || 'Đã xảy ra lỗi kết nối, vui lòng thử lại!');
                     });
-            });
-        }
+                });
+            }
+        });
     </script>
 @endpush

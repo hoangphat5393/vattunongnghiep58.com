@@ -208,7 +208,7 @@ class CartController extends Controller
         return response()->json(
             [
                 'error' => 1,
-                'msg' => 'Delete error',
+                'msg' => 'Lỗi khi xóa sản phẩm khỏi giỏ hàng',
             ]
         );
     }

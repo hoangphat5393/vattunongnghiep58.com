@@ -572,4 +572,6 @@ return [
     'code' => 'Mã',
     'Code' => 'Mã',
     'email template' => 'Mẫu Email',
+    'library' => 'Thư viện',
+    'Library' => 'Thư viện',
 ];

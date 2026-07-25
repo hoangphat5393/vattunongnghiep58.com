@@ -387,6 +387,19 @@
             width: 1000,
             height: 600,
             onInit: function (finder) {
+                var initialSelected = false;
+
+                finder.on('folder:getFiles:after', function (evt) {
+                    var folder = evt.data.folder;
+                    if (!initialSelected && folder && folder.get('name') === 'Images') {
+                        initialSelected = true;
+                        finder.request('folder:select', { folder: folder });
+                        if (folder.get('hasChildren')) {
+                            finder.request('folder:expand', { folder: folder });
+                        }
+                    }
+                });
+
                 finder.on('files:choose', function (evt) {
                     if (multi) {
                         let html = '';
