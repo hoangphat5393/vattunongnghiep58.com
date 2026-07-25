@@ -31,7 +31,7 @@
                 </div>
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                         <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
                     </ol></nav>
                 </div>
@@ -63,8 +63,8 @@
                                 @include('backend.partials.button_add_delete', ['type' => 'album', 'route' => route('admin.album.create')])
                                 <div>
                                     <form method="GET" action="" id="frm-filter-post" class="form-inline">
-                                        <div class="input-group mb-3">
-                                            <input type="text" class="form-control" id="name" name="name" placeholder="@lang('admin.name')" aria-label="@lang('admin.Keyword')" aria-describedby="name" value="{{ request('name') }}">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="name" name="name" placeholder="@lang('admin.name')" aria-label="@lang('admin.keyword')" aria-describedby="name" value="{{ request('name') }}">
                                             <button class="btn btn-outline-primary" type="submit" id="button-addon2">
                                                 <i class="fa-regular fa-magnifying-glass"></i> @lang('admin.search')
                                             </button>
@@ -73,7 +73,7 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex align-items-center justify-content-between my-4">
+                            <div class="my-4 d-flex justify-content-between align-items-center">
                                 <div>
                                     <b>@lang('admin.total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.album')
                                 </div>
@@ -90,9 +90,9 @@
                                                 </div>
                                             </th>
                                             <th class="text-center" style="width:100px">@lang('admin.priority')</th>
-                                            <th class="text-center">Short code</th>
-                                            <th class="text-center">@lang('name')</th>
-                                            <th class="text-center">@lang('created date')</th>
+                                            <th class="text-center">@lang('admin.shortcode')</th>
+                                            <th class="text-center">@lang('admin.name')</th>
+                                            <th class="text-center">@lang('admin.created date')</th>
                                         </tr>
                                     </thead>
                                     <tbody>

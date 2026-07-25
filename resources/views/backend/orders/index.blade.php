@@ -1,7 +1,7 @@
 @extends('backend.layouts.master')
 @section('seo')
     @php
-        $title_head = 'Đơn hàng';
+        $title_head = __('admin.order manager');
         $seo = [
             'title' => $title_head . ' | ' . setting_option('seo-title-add'),
             'keywords' => setting_option('seo-keywords-add'),
@@ -61,7 +61,7 @@
                                 <div>
                                     <form method="GET" action="{{ route('admin.order.index') }}" id="frm-filter-order" class="form-inline">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" name="search_name" placeholder="Tên khách hàng" value="{{ request('search_name') }}" aria-label="Tìm theo tên">
+                                            <input type="text" class="form-control" name="search_name" placeholder="@lang('admin.customer_name')" value="{{ request('search_name') }}" aria-label="@lang('admin.customer_name')">
                                             <button class="btn btn-outline-primary" type="submit">
                                                 <i class="fa-regular fa-magnifying-glass"></i> @lang('admin.search')
                                             </button>
@@ -70,9 +70,9 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center my-4">
+                            <div class="my-4 d-flex justify-content-between align-items-center">
                                 <div>
-                                    <b>@lang('admin.total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> đơn
+                                    <b>@lang('admin.total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> {{ $title_head }}
                                 </div>
                             </div>
 
@@ -80,11 +80,11 @@
                                 <table class="table table-bordered list-data v-center" id="table_index">
                                     <thead>
                                         <tr>
-                                            <th scope="col" class="text-center">Mã đơn hàng</th>
-                                            <th scope="col" class="text-center">Tên khách hàng</th>
-                                            <th scope="col" class="text-center">Tổng tiền</th>
-                                            <th scope="col" class="text-center">Thời gian đặt</th>
-                                            <th scope="col" class="text-center">Trạng thái</th>
+                                            <th scope="col" class="text-center">@lang('admin.order_code')</th>
+                                            <th scope="col" class="text-center">@lang('admin.customer_name')</th>
+                                            <th scope="col" class="text-center">@lang('admin.total_amount')</th>
+                                            <th scope="col" class="text-center">@lang('admin.order_time')</th>
+                                            <th scope="col" class="text-center">@lang('admin.status')</th>
                                         </tr>
                                     </thead>
                                     <tbody>

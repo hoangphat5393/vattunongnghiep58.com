@@ -28,7 +28,7 @@
                 </div>
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.dashboard')</a></li>
                         <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
                     </ol></nav>
                 </div>
@@ -113,9 +113,9 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('admin.user.edit', $item->id) }}" class="btn btn-primary btn-sm"><i class="fa fa-pen"></i> Edit</a><a href="" title=""></a>
+                                                    <a href="{{ route('admin.user.edit', $item->id) }}" class="btn btn-primary btn-sm"><i class="fa fa-pen"></i> @lang('admin.edit')</a><a href="" title=""></a>
                                                     {{-- @if ($item->id != auth()->user()->id)
-                                                        <a href="{{ route('admin.userAdmin.destroy', $item->id) }}" class="btn btn-danger btn-sm btn_deletes"><i class="fa fa-trash"></i> Remove</a><a href="" title=""></a>
+                                                        <a href="{{ route('admin.userAdmin.destroy', $item->id) }}" class="btn btn-danger btn-sm btn_deletes"><i class="fa fa-trash"></i> @lang('admin.delete')</a><a href="" title=""></a>
                                                     @endif --}}
                                                 </td>
                                             </tr>

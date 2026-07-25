@@ -48,12 +48,12 @@
 
 ## 3. Liên hệ & newsletter
 
-| Route name            | Method | URL                  | Controller@method                                                 |
-| --------------------- | ------ | -------------------- | ----------------------------------------------------------------- |
-| `contact.submit`      | POST   | `/contact`           | `ContactController@submit`                                        |
-| `contact_completed`   | GET    | `/contact-completed` | `ContactController@completed` → `frontend.page.contact-completed` |
-| `cart.contact.submit` | POST   | `/cart/contact`      | `ContactController@submit`                                        |
-| `subscription`        | POST   | `/subscription`      | `CustomerController@subscription`                                 |
+| Route name            | Method | URL                  | Controller@method                                                    |
+| --------------------- | ------ | -------------------- | -------------------------------------------------------------------- |
+| `contact.submit`      | POST   | `/contact`           | `ContactController@submit`                                           |
+| `contact_completed`   | GET    | `/contact-completed` | `ContactController@completed` → `frontend.page.contact-completed`    |
+| `cart.contact.submit` | POST   | `/cart/contact`      | `ContactController@submit`                                           |
+| `subscription`        | POST   | `/subscription`      | `CustomerController@subscription` → `contacts` (`type=subscription`) |
 
 ---
 
@@ -83,7 +83,7 @@
 ## 5. Tài khoản khách (`/account/*`) — middleware `auth`
 
 | Route name                 | Method | URL                         | Controller@method                              |
-| -------------------------- | ------ | --------------------------- | ---------------------------------------------- | ---------------------------- |
+| -------------------------- | ------ | --------------------------- | ---------------------------------------------- | ----------------------------------- |
 | `customer.dashboard`       | GET    | `/account`                  | `Account\AccountController@index`              |
 | `customer.profile`         | GET    | `/account/profile`          | `Account\AccountController@profile`            |
 | `customer.profile.update`  | POST   | `/account/profile`          | `Account\AccountController@updateProfile`      |
@@ -91,11 +91,11 @@
 | `customer.orders.show`     | GET    | `/account/orders/{id_cart}` | `Account\AccountController@myOrderDetail`      |
 | `customer.password.edit`   | GET    | `/account/password`         | `Account\AccountController@changePassword`     |
 | `customer.password.update` | POST   | `/account/password`         | `Account\AccountController@postChangePassword` |
-| `customer.reviews`         | GET    | `/account/my-reviews`       | `CustomerController@myReviews`                 |
-| `customer.post`            | GET    | `/account/quan-ly-tin-dang` | `CustomerController@myPost`                    |
-| `customer.refused`         | GET    | `/account/refused`          | `CustomerController@refused`                   |
-| `customer.payment.point`   | GET    | `/account/payment-point`    | `PaymentController@paymentPoint`               | **disabled** (comment route) |
-| `customer.post_reviews`    | POST   | `/account/post-reviews`     | `CustomerController@postReviews`               |
+| `customer.reviews`         | GET    | `/account/my-reviews`       | `CustomerController@myReviews`                 | **Redirect** → `customer.dashboard` |
+| `customer.post`            | GET    | `/account/quan-ly-tin-dang` | `CustomerController@myPost`                    | **Redirect** → `customer.dashboard` |
+| `customer.refused`         | GET    | `/account/refused`          | `CustomerController@refused`                   | **Redirect** → `customer.dashboard` |
+| `customer.payment.point`   | GET    | `/account/payment-point`    | `PaymentController@paymentPoint`               | **disabled** (comment route)        |
+| `customer.post_reviews`    | POST   | `/account/post-reviews`     | `CustomerController@postReviews`               | **Redirect** → `customer.dashboard` |
 | `customer.messages`        | GET    | `/account/messages`         | `CustomerController@messages`                  |
 
 > `{id_cart}` = `shop_orders.cart_id` (không phải `id`).
@@ -297,5 +297,6 @@ php artisan route:list --path=checkout
 
 | Ngày       | Thay đổi                                                                               |
 | ---------- | -------------------------------------------------------------------------------------- |
-| 2026-07-10 | Route rename + alias; §15 JS `AppRoutes`/`AdminRoutes`; gỡ endpoint `theme` quick-edit |
+| 2026-07-10 | Account legacy routes → redirect dashboard; subscription → `contacts`                  |
+| 2026-07-10 | Route rename + alias; §14 JS `AppRoutes`/`AdminRoutes`; gỡ endpoint `theme` quick-edit |
 | 2026-07-10 | Tạo ROUTE_GLOSSARY.md                                                                  |

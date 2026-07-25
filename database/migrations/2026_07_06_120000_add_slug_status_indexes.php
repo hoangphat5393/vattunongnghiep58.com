@@ -10,6 +10,9 @@ return new class extends Migration
     public function up(): void
     {
         if (Schema::hasTable('pages')) {
+            Schema::table('pages', function (Blueprint $table) {
+                $table->string('slug', 255)->nullable()->change();
+            });
             $this->addIndex('pages', 'slug', 'pages_slug_index');
             $this->addIndex('pages', ['status', 'id'], 'pages_status_id_index');
             if (Schema::hasColumn('pages', 'type')) {
@@ -18,11 +21,17 @@ return new class extends Migration
         }
 
         if (Schema::hasTable('products')) {
+            Schema::table('products', function (Blueprint $table) {
+                $table->string('slug', 255)->nullable()->change();
+            });
             $this->addIndex('products', 'slug', 'products_slug_index');
             $this->addIndex('products', ['status', 'id'], 'products_status_id_index');
         }
 
         if (Schema::hasTable('categories')) {
+            Schema::table('categories', function (Blueprint $table) {
+                $table->string('slug', 255)->nullable()->change();
+            });
             $this->addIndex('categories', 'slug', 'categories_slug_index');
             $this->addIndex('categories', ['status', 'id'], 'categories_status_id_index');
             $this->addIndex('categories', 'parent', 'categories_parent_index');

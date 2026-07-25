@@ -1,5 +1,15 @@
 # CHANGE_LOG
 
+## 2026-07-10 — Đồng bộ tài liệu chuẩn refactor `3nong`
+
+- Tạo [docs/REFACTOR_3NONG_PLAYBOOK.md](REFACTOR_3NONG_PLAYBOOK.md) — gap matrix, phase P0–P5, map bảng/route 3nong → vattun.
+- Cập nhật `MASTER.md`: test **192 passed**, newsletter `contacts`, legacy account redirect, checklist port 3nong.
+- Cập nhật `TABLE_GLOSSARY.md`: bỏ bảng `subscription` active; newsletter qua `contacts`.
+- Cập nhật `ROUTE_GLOSSARY.md`, `DB_AUDIT.md`, `PROJECT_ANALYSIS.md`, `README.md`, `RECOMMENDATIONS.md`.
+- Test docs: `DocumentationCleanupTest` thêm assert `REFACTOR_3NONG_PLAYBOOK.md`.
+
+---
+
 ## 2026-07-10 — Phase 4: dọn code mồ côi (orphan legacy)
 
 - Newsletter `POST /subscription` → lưu `contacts` (`type=subscription`) thay bảng `subscription`.
@@ -9,7 +19,7 @@
 - `wishlist()` không query bảng `wishlist` (empty state).
 - `backend/product/filter.blade.php`: bỏ `category_theme` / `Theme` joins.
 - Test: `tests/Feature/OrphanLegacyCodeTest.php` (5 tests).
-- Full suite: **190 passed, 2 skipped**.
+- Full suite: **192 passed, 2 skipped** (756 assertions).
 
 ---
 

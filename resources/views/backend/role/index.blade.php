@@ -71,10 +71,10 @@
                                                     <label for="selectall"></label>
                                                 </div>
                                             </th>
-                                            <th scope="col">@lang('admin.Name')</th>
-                                            <th scope="col">@lang('admin.Slug')</th>
-                                            <th scope="col">@lang('admin.Permission')</th>
-                                            <th scope="col">@lang('admin.Action')</th>
+                                            <th scope="col">@lang('admin.name')</th>
+                                            <th scope="col">@lang('admin.slug')</th>
+                                            <th scope="col">@lang('admin.permission')</th>
+                                            <th scope="col">@lang('admin.action')</th>
                                         </tr>
                                     </thead>
 
@@ -103,11 +103,11 @@
                                                     {!! $showPermission !!}
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('admin.role.edit', $data->id) }}" class="btn btn-primary btn-sm"><i class="fa fa-pen"></i> Edit</a>
+                                                    <a href="{{ route('admin.role.edit', $data->id) }}" class="btn btn-primary btn-sm"><i class="fa fa-pen"></i> @lang('admin.edit')</a>
                                                     <form action="{{ route('admin.role.destroy', $data->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Bạn có chắc muốn xóa?');">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Remove</button>
+                                                        <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> @lang('admin.delete')</button>
                                                     </form>
                                                 </td>
                                             </tr>

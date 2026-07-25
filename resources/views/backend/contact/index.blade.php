@@ -1,7 +1,7 @@
 @extends('backend.layouts.master')
 @section('seo')
     @php
-        $title_head = 'Contact';
+        $title_head = __('admin.contact');
         $seo = [
             'title' => $title_head,
             'keywords' => '',
@@ -27,7 +27,7 @@
                 </div>
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                         <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
                     </ol></nav>
                 </div>
@@ -56,10 +56,10 @@
                         <div class="card-body">
                             <div class="d-flex flex-column flex-lg-row justify-content-between">
                                 @include('backend.partials.button_delete', ['type' => 'subscription'])
-                                <div class="w-lg-50 mt-3 mt-lg-0">
+                                <div class="mt-3 mt-lg-0">
                                     <form method="GET" action="" id="frm-filter-post" class="form-inline">
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="name" name="name" placeholder="@lang('admin.name')" aria-label="@lang('admin.Keyword')" aria-describedby="name" value="{{ request('name') }}">
+                                            <input type="text" class="form-control" id="name" name="name" placeholder="@lang('admin.name')" aria-label="@lang('admin.keyword')" aria-describedby="name" value="{{ request('name') }}">
                                             <button class="btn btn-outline-primary" type="submit" id="button-addon2">
                                                 <i class="fa-regular fa-magnifying-glass"></i> @lang('admin.search')
                                             </button>
@@ -74,49 +74,48 @@
                                 </div>
                             </div>
 
-                            <table class="table table-bordered list-data v-center">
-                                <thead>
-                                    <tr>
-                                        <th class="text-center" style="width:50px">
-                                            <div class="icheck-info d-inline">
-                                                <input type="checkbox" id="selectall" onclick="select_all()">
-                                                <label for="selectall"></label>
-                                            </div>
-                                        </th>
-                                        <th style="width: 10px">#</th>
-                                        <th class="text-center">@lang('admin.name')</th>
-                                        <th class="text-center">@lang('admin.type')</th>
-                                        <th class="text-center">@lang('admin.Created at')</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($data as $item)
-                                        <tr class="align-middle">
-                                            <td class="text-center">
+                            <div class="table-responsive">
+                                <table class="table table-bordered list-data v-center" id="table_index">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center" style="width:50px">
                                                 <div class="icheck-info d-inline">
-                                                    <input type="checkbox" id="{{ $item->id }}" name="seq_list[]" value="{{ $item->id }}">
-                                                    <label for="{{ $item->id }}"></label>
+                                                    <input type="checkbox" id="selectall" onclick="select_all()">
+                                                    <label for="selectall"></label>
                                                 </div>
-                                            </td>
-                                            <td>{{ $item->id }}.</td>
-                                            <td>
-                                                <a class="row-title fw-bold" href="{{ route('admin.contact.edit', $item->id) }}">
-                                                    {{ $item->name }}
-                                                </a>
-                                            </td>
-                                            <td class="text-center">
-                                                {{ $item->type }}
-                                            </td>
-                                            <td class="text-center">
-                                                {{ $item->updated_at }}
-                                                {{-- <br>
-                                                    <input type="checkbox" id="status" class="quick_change_value" @checked($item->status == 1) value="1" value-off="0" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" data-toggle="toggle" data-on="Công khai" data-off="Bản nháp"
-                                                        data-onstyle="success" data-offstyle="light"> --}}
-                                            </td>
+                                            </th>
+                                            <th scope="col" class="text-center" style="width:50px">#</th>
+                                            <th scope="col" class="text-center">@lang('admin.name')</th>
+                                            <th scope="col" class="text-center">@lang('admin.type')</th>
+                                            <th scope="col" class="text-center">@lang('admin.created date')</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($data as $item)
+                                            <tr class="align-middle">
+                                                <td class="text-center">
+                                                    <div class="icheck-info d-inline">
+                                                        <input type="checkbox" id="{{ $item->id }}" name="seq_list[]" value="{{ $item->id }}">
+                                                        <label for="{{ $item->id }}"></label>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">{{ $item->id }}.</td>
+                                                <td>
+                                                    <a class="row-title fw-bold" href="{{ route('admin.contact.edit', $item->id) }}">
+                                                        {{ $item->name }}
+                                                    </a>
+                                                </td>
+                                                <td class="text-center">
+                                                    {{ $item->type }}
+                                                </td>
+                                                <td class="text-center">
+                                                    {{ $item->updated_at }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
                         {{-- card-footer --}}

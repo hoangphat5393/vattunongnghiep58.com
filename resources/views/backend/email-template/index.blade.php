@@ -2,7 +2,7 @@
 @section('seo')
     @php
         $lc = app()->getLocale();
-        $title_head = 'Email template';
+        $title_head = __('admin.email template');
         $seo = [
             'title' => $title_head,
             'keywords' => '',
@@ -29,7 +29,7 @@
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                             <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
                         </ol>
                     </nav>
@@ -60,14 +60,14 @@
                                 @include('backend.partials.button_add_delete', ['type' => 'email_template', 'route' => route('admin.email-template.create')])
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center my-4">
+                            <div class="my-4 d-flex justify-content-between align-items-center">
                                 <div>
-                                    <b>@lang('admin.total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.email')
+                                    <b>@lang('admin.total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> {{ $title_head }}
                                 </div>
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="table_index">
+                                <table class="table table-bordered list-data v-center" id="table_index">
                                     <thead>
                                         <tr>
                                             <th class="text-center" style="width:50px">
@@ -76,9 +76,9 @@
                                                     <label for="selectall"></label>
                                                 </div>
                                             </th>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Code</th>
-                                            <th class="text-center" scope="col">Status</th>
+                                            <th scope="col" class="text-center">@lang('admin.name')</th>
+                                            <th scope="col" class="text-center">@lang('admin.code')</th>
+                                            <th scope="col" class="text-center">@lang('admin.created date')</th>
                                         </tr>
                                     </thead>
                                     <tbody>

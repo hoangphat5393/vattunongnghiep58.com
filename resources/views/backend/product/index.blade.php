@@ -1,12 +1,12 @@
 @extends('backend.layouts.master')
 @section('seo')
     @php
-        $title_head = 'Sản phẩm';
+        $title_head = __('admin.product');
         $seo = [
             'title' => $title_head . ' | ' . setting_option('seo-title-add'),
             'keywords' => setting_option('seo-keywords-add'),
             'description' => setting_option('seo-description-add'),
-            'og_title' => 'List Category Product | ' . setting_option('seo-title-add'),
+            'og_title' => $title_head,
             'og_description' => setting_option('seo-description-add'),
             'og_url' => Request::url(),
             'og_img' => asset('assets/images/logo_seo.png'),
@@ -27,7 +27,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                         <li class="breadcrumb-item active">{{ $title_head }}</li>
                     </ol></nav>
                 </div><!-- /.col -->
@@ -47,30 +47,32 @@
                         </div> <!-- /.card-header -->
                         <div class="card-body">
 
-                            <div class="mb-3 d-flex justify-content-between">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between">
                                 @include('backend.partials.button_add_delete', ['type' => 'product', 'route' => route('admin.product.create')])
-                                <div class="mt-3 float-end mt-lg-0">
-                                    <form method="GET" action="" id="frm-filter-post" class="d-flex align-items-center">
+                                <div class="mt-3 mt-lg-0">
+                                    <form method="GET" action="" id="frm-filter-post" class="form-inline">
                                         @php
                                             $categories = App\Models\Backend\Category::select('id', 'name')->orderByDesc('sort')->get();
                                         @endphp
-                                        <select class="form-select me-2" name="category_id">
-                                            <option value="">@lang('admin.Category')</option>
-                                            @foreach ($categories as $item)
-                                                <option value="{{ $item->id }}" {{ request('category_id') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                            @endforeach
-                                        </select>
-                                        <input type="text" class="form-control me-2" name="name" id="name" placeholder="@lang('admin.Keyword')" value="{{ request('name') }}">
-                                        <button type="submit" class="btn btn-primary" aria-label="@lang('admin.Search')">
-                                            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                                        </button>
+                                        <div class="input-group">
+                                            <select class="form-select" name="category_id">
+                                                <option value="">@lang('admin.category')</option>
+                                                @foreach ($categories as $item)
+                                                    <option value="{{ $item->id }}" {{ request('category_id') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <input type="text" class="form-control" name="name" id="name" placeholder="@lang('admin.keyword')" value="{{ request('name') }}">
+                                            <button type="submit" class="btn btn-outline-primary" aria-label="@lang('admin.search')">
+                                                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> @lang('admin.search')
+                                            </button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
 
                             <div class="my-4 d-flex align-items-center justify-content-between">
                                 <div>
-                                    <b>@lang('admin.Total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.Products')
+                                    <b>@lang('admin.total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.product')
                                 </div>
                             </div>
 
@@ -85,11 +87,11 @@
                                                     </label>
                                                 </div>
                                             </th>
-                                            <th scope="col" class="text-center" style="width:100px">Ưu tiên</th>
-                                            <th scope="col" class="text-center">Tên sản phẩm</th>
-                                            <th scope="col" class="text-center">Hình ảnh</th>
-                                            <th scope="col" class="text-center">Danh mục</th>
-                                            <th scope="col" class="text-center">Ngày</th>
+                                            <th scope="col" class="text-center" style="width:100px">@lang('admin.priority')</th>
+                                            <th scope="col" class="text-center">@lang('admin.name')</th>
+                                            <th scope="col" class="text-center">@lang('admin.thumbnail')</th>
+                                            <th scope="col" class="text-center">@lang('admin.category')</th>
+                                            <th scope="col" class="text-center">@lang('admin.created date')</th>
                                         </tr>
                                     </thead>
 

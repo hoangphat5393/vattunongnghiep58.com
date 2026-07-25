@@ -3,9 +3,9 @@
 Tài liệu này tổng hợp kiến trúc, cơ sở dữ liệu, luồng dữ liệu, vấn đề và kế hoạch cải thiện.  
 **Phạm vi:** mã nguồn ứng dụng (`app/`, `routes/`, `config/`, `resources/`, `database/migrations/`), không liệt kê từng file trong `node_modules/` hay `public/assets/plugin/`.
 
-**Cập nhật lần cuối:** 2026-07-07 — **BACK-001…018 hoàn tất**; backlog mở mới dùng `BACK-019+`.
+**Cập nhật lần cuối:** 2026-07-10 — DB cleanup 35 bảng; Phase 4 orphan; [REFACTOR_3NONG_PLAYBOOK.md](REFACTOR_3NONG_PLAYBOOK.md).
 
-**Theo dõi tiến độ:** [IMPROVEMENT_PLAYBOOK.md](IMPROVEMENT_PLAYBOOK.md) · [BACKEND_AUDIT_PLAYBOOK.md](BACKEND_AUDIT_PLAYBOOK.md) · [CHANGE_LOG.md](CHANGE_LOG.md)
+**Theo dõi tiến độ:** [IMPROVEMENT_PLAYBOOK.md](IMPROVEMENT_PLAYBOOK.md) · [BACKEND_AUDIT_PLAYBOOK.md](BACKEND_AUDIT_PLAYBOOK.md) · [CHANGE_LOG.md](CHANGE_LOG.md) · [REFACTOR_3NONG_PLAYBOOK.md](REFACTOR_3NONG_PLAYBOOK.md)
 
 ## 1. Tổng quan dự án (Project Overview)
 
@@ -68,19 +68,19 @@ Tài liệu này tổng hợp kiến trúc, cơ sở dữ liệu, luồng dữ l
 
 ### 3.2. Bảng thuộc ứng dụng (schema `vattunnongnghiep58`)
 
-Danh sách bảng thực tế (rút gọn theo output `php artisan db:show`):
+Danh sách bảng thực tế (**35 bảng**, sau cleanup 2026-07-10):
 
-`addtocard`, `addtocard_detail`, `admin_menus`, `admins`, `album_items`, `albums`, `cache`, `cache_locks`, `categories`, `contacts`, `countries`, `customer_forget_pass_otp`, `email_templates`, `failed_jobs`, `import_log`, `jobs`, `media_files`, `menu_items`, `menus`, `migrations`, `pages`, `password_reset_tokens`, `password_resets`, `payment_request`, `payments`, `permission_role`, `permissions`, `product_categories`, `products`, `role_user`, `roles`, `sessions`, `settings`, `settings_cost`, `shipping_order`, `shop_currencies`, `shop_order_payment_status`, `shop_order_status`, `shop_payment_method`, `user_password_auto`, `users`.
+`admin_menus`, `album_items`, `albums`, `cache`, `cache_locks`, `categories`, `contacts`, `countries`, `customer_forget_pass_otp`, `email_templates`, `failed_jobs`, `import_log`, `jobs`, `media_files`, `menu_items`, `menus`, `migrations`, `pages`, `password_reset_tokens`, `permission_role`, `permissions`, `product_categories`, `product_prices`, `products`, `role_user`, `roles`, `sessions`, `settings`, `shop_currencies`, `shop_order_items`, `shop_order_payment_status`, `shop_order_status`, `shop_orders`, `shop_payment_method`, `users`.
 
-_(Bảng `admin_permission` / `admin_role_permission` legacy đã loại bỏ; dữ liệu chuyển sang `permissions` + `permission_role`.)_
+_(Đã drop: `admins`, `payments`, `payment_request`, `password_resets`, `user_password_auto`, `settings_cost`, `shipping_order`. Đơn hàng: `addtocard`/`addtocard_detail` đã rename → `shop_orders`/`shop_order_items`.)_
 
 ### 3.3. Quan hệ logic (ORM / nghiệp vụ)
 
 - **Sản phẩm — danh mục (n-n):** bảng trung gian **`product_categories`** (`product_id`, `category_id`) — có **index FK** trên `product_id` và `category_id`.
 - **Trang / bài viết:** bảng **`pages`**, phân biệt **`type`** (ví dụ `page` / `post`) — thay cho mô hình `posts` cũ (đã migrate/loại bỏ qua migrations).
-- **Đơn hàng:** **`addtocard`** (header đơn) + **`addtocard_detail`** (dòng chi tiết) — tên bảng theo legacy; model `Frontend\AddToCard` / `AddToCardDetail`.
-- **ACL:** `users` ↔ `roles` qua **`role_user`**; `roles` ↔ `permissions` qua **`permission_role`**. (Schema cũ `admin_permission` / `admin_role_permission` không còn dùng runtime.)
-- **Bảng `admins`:** tồn tại trong schema nhưng **guard admin** cấu hình dùng model `Backend\User` với **`$table = 'users'`** — cần **một nguồn sự thật** (tránh nhầm lẫn khi bảo trì).
+- **Đơn hàng:** **`shop_orders`** (header, PK `cart_id`) + **`shop_order_items`** (chi tiết) — model `Frontend\Order` / `OrderItem`; alias legacy `Addtocard`.
+- **ACL:** `users` ↔ `roles` qua **`role_user`**; `roles` ↔ `permissions` qua **`permission_role`**. Guard admin dùng model `Backend\User` với **`$table = 'users'`** — bảng `admins` **đã drop**.
+- **Newsletter:** `POST /subscription` → bản ghi `contacts` với `type=subscription` (không bảng `subscription`).
 
 ### 3.4. Ví dụ chi tiết bảng (từ `php artisan db:table`)
 
@@ -101,15 +101,15 @@ _(Bảng `admin_permission` / `admin_role_permission` legacy đã loại bỏ; d
 
 - Cây danh mục: `parent`, `sort`, `hot`, `status`; SEO; chỉ PK `id` (tương tự cần index theo `slug`/`parent` nếu query nhiều).
 
-**`addtocard` (đơn):**
+**`shop_orders` (đơn):**
 
-- Thông tin khách, địa chỉ, `total_price`, `status`, vận chuyển, `user_id`, thanh toán; chỉ PK `id` — thường filter theo `user_id`, `status`, `created_at` → xem xét index sau khi đo.
+- PK: `cart_id` (không phải `id`). Thông tin khách, địa chỉ, `cart_total`, `cart_status`, `user_id`, thanh toán.
 
 ### 3.5. So sánh schema vs Model Laravel
 
 - **`App\Models\Frontend\Page`:** khớp hướng dùng `type`, scope `posts` / `pages`; accessor đa ngôn ngữ; **`getCategoriesAttribute`** trả collection rỗng (bảng category-page đã bỏ) — **đồng bộ với refactor DB**.
 - **`App\Models\Frontend\Product`:** khớp bảng `products`; quan hệ category qua `product_categories` (cần đối chiếu method quan hệ trong model).
-- **`App\Models\Backend\User`:** `$table = 'users'` — **khớp** `auth.php` provider `admins`; bảng `admins` có thể là **di sản** — nên audit hoặc tài liệu hóa.
+- **`App\Models\Backend\User`:** `$table = 'users'` — **khớp** `auth.php` provider `admins`; bảng `admins` **đã drop** (2026-07-10).
 
 ### 3.6. Rủi ro truy vấn (unsafe / nặng)
 
@@ -242,7 +242,7 @@ HTTP Request
 ### Kiểm chứng (living)
 
 ```bash
-php artisan test --compact                    # 87 passed, 1 skipped (2026-07-05)
+php artisan test --compact                    # 192 passed, 2 skipped (2026-07-10)
 pnpm run build                                # sau đổi frontend
 ```
 

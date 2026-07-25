@@ -142,10 +142,10 @@
 
                                 <div class="col-lg-12">
                                     <div class="row border py-2 mb-4">
-                                        <div class="col-lg-3 text-center">@lang('admin.Image')</div>
-                                        <div class="col-lg-3">@lang('admin.Name')</div>
-                                        <div class="col-lg-3">@lang('admin.Link')</div>
-                                        <div class="col-lg-3 text-center">@lang('admin.Action')</div>
+                                        <div class="col-lg-3 text-center">@lang('admin.image')</div>
+                                        <div class="col-lg-3">@lang('admin.name')</div>
+                                        <div class="col-lg-3">@lang('admin.link')</div>
+                                        <div class="col-lg-3 text-center">@lang('admin.action')</div>
                                     </div>
                                 </div>
 

@@ -84,14 +84,14 @@
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="vi" role="tabpanel" aria-labelledby="vi-tab">
                                         <div class="mb-3 form-group">
-                                            <label for="name" class="form-label">@lang('admin.Name')</label>
+                                            <label for="name" class="form-label">@lang('admin.name')</label>
                                             <input type="text" class="form-control title_slugify" id="name" name="name" value="{{ $name ?? '' }}">
                                         </div>
 
                                     </div>
                                     <div class="tab-pane fade" id="en" role="tabpanel" aria-labelledby="en-tab">
                                         <div class="mb-3 form-group">
-                                            <label for="name_en" class="form-label">@lang('admin.Name')</label>
+                                            <label for="name_en" class="form-label">@lang('admin.name')</label>
                                             <input type="text" class="form-control title_slugify" id="name_en" name="name_en" value="{{ $name_en ?? '' }}">
                                         </div>
                                     </div>

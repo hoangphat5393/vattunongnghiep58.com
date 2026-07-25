@@ -27,7 +27,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                         <li class="breadcrumb-item active">{{ $title_head }}</li>
                     </ol></nav>
                 </div><!-- /.col -->
@@ -47,19 +47,10 @@
                         </div> <!-- /.card-header -->
                         <div class="card-body">
 
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between">
                                 @include('backend.partials.button_add_delete', ['type' => 'post', 'route' => route('admin.post.create')])
-                                <div class="float-end mt-3 mt-lg-0">
+                                <div class="mt-3 mt-lg-0">
                                     <form method="GET" action="" id="frm-filter-post" class="form-inline">
-                                        @php
-                                            // $categories = App\Models\Backend\Category::select('id', 'name')->where('type', 'post')->orderByDesc('sort')->get();
-                                        @endphp
-                                        {{-- <select class="custom-select mr-2" name="category_id">
-                                            <option value="">@lang('admin.Category')</option>
-                                            @foreach ($categories as $item)
-                                                <option value="{{ $item->id }}" {{ request('category_id') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                            @endforeach
-                                        </select> --}}
                                         <div class="input-group">
                                             <input type="text" class="form-control" name="search_name" id="search_name" placeholder="@lang('admin.keyword')" value="{{ request('search_name') }}">
                                             <button type="submit" class="btn btn-outline-primary" aria-label="@lang('admin.search')">
@@ -70,15 +61,10 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex align-items-center justify-content-between my-4">
-                                <div class="float-start">
-                                    <b>@lang('admin.Total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.News')
+                            <div class="my-4 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <b>@lang('admin.total')</b>: <span class="fw-bold text-red">{{ $total_item ?? 0 }}</span> @lang('admin.news')
                                 </div>
-                                @if (false)
-                                    <div class="float-end">
-                                        {!! $data->links() !!}
-                                    </div>
-                                @endif
                             </div>
 
                             <div class="table-responsive">
@@ -93,10 +79,9 @@
                                             </th>
                                             <th class="text-center" style="width:100px">@lang('admin.priority')</th>
                                             <th class="text-center">@lang('admin.name')</th>
-                                            {{-- <th class="text-center" style="width:150px">@lang('admin.category')</th> --}}
                                             <th class="text-center">@lang('admin.thumbnail')</th>
-                                            <th class="text-center">@lang('admin.Createdby')</th>
-                                            <th class="text-center">@lang('admin.Createddate')</th>
+                                            <th class="text-center">@lang('admin.created by')</th>
+                                            <th class="text-center">@lang('admin.created date')</th>
                                         </tr>
                                     </thead>
                                     <tbody>

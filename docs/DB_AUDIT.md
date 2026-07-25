@@ -10,14 +10,14 @@
 
 ---
 
-## 1. Tổng quan (42 bảng thực tế trong DB)
+## 1. Tổng quan (**35 bảng** sau cleanup 2026-07-10)
 
-| Nhóm                      | Số bảng | Hành động                  |
-| ------------------------- | ------- | -------------------------- |
-| Nghiệp vụ chính           | 28      | **Giữ**                    |
-| Hạ tầng Laravel           | 7       | **Giữ**                    |
-| Legacy / thừa             | 7       | **Cân nhắc drop** (xem §4) |
-| Bảng thiếu (code còn trỏ) | ~15     | **Dọn code** (xem §5)      |
+| Nhóm                      | Số bảng | Hành động                              |
+| ------------------------- | ------- | -------------------------------------- |
+| Nghiệp vụ chính           | 28      | **Giữ**                                |
+| Hạ tầng Laravel           | 7       | **Giữ**                                |
+| Legacy / thừa             | 0       | **Đã drop** (xem §4)                   |
+| Bảng thiếu (code còn trỏ) | ~10     | **Phase 4 đã xử lý phần lớn** (xem §5) |
 
 ---
 
@@ -71,19 +71,19 @@ Route VNPay comment: `customer.vnpay`, `customer.payment.point`.
 
 Đây là **nợ kỹ thuật**, không phải bảng thừa. Chạm route/AJAX tương ứng sẽ lỗi SQL.
 
-| Bảng thiếu                                                         | Nơi tham chiếu chính                                                                    | Ghi chú                                    |
-| ------------------------------------------------------------------ | --------------------------------------------------------------------------------------- | ------------------------------------------ |
-| `subscription`                                                     | `CustomerController@subscription`, `Admin\AjaxController`                               | Route `POST /subscription` có thể đang lỗi |
-| `wishlist`                                                         | `AjaxController`, `CustomerController`, `Frontend\Product`                              | Tính năng yêu thích chết                   |
-| `discount_code`                                                    | `AjaxController` (nhiều phần comment)                                                   | Mã giảm giá không hoạt động                |
-| `rating_product`                                                   | `HomeController`                                                                        | Đánh giá SP                                |
-| `sponser`                                                          | `HomeController@... Sponser::`                                                          | Nhà tài trợ                                |
-| `theme`, `category_theme`, `join_category_theme`, `variable_theme` | `system.php`, `AjaxController`, `SitemapController`, `backend/product/filter.blade.php` | Theme builder cũ                           |
-| `user_register_email`                                              | `HomeController@... User_register_email::`                                              | Log email đăng ký                          |
-| `contact_payment`                                                  | `CheckoutController`                                                                    | Liên hệ thanh toán                         |
-| `province`, `district`, `ward`, `street`                           | `AjaxController` (có `Schema::hasTable` → fail êm)                                      | Địa chỉ VN                                 |
-| `orders`                                                           | `Backend\Orders` model                                                                  | **Không ai gọi** — model chết              |
-| `jt_address`, `shop_product_category`                              | Model only                                                                              | Model chết                                 |
+| Bảng thiếu                                                         | Nơi tham chiếu chính                                                                        | Ghi chú                                       |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| `subscription`                                                     | ~~`CustomerController@subscription`~~ → `contacts`                                          | ✅ **Đã sửa** Phase 4                         |
+| `wishlist`                                                         | `AjaxController`, `CustomerController`, `Frontend\Product`                                  | `wishlist()` empty state — không query DB     |
+| `discount_code`                                                    | `AjaxController` (nhiều phần comment)                                                       | Mã giảm giá không hoạt động                   |
+| `rating_product`                                                   | `HomeController`                                                                            | Đánh giá SP                                   |
+| `sponser`                                                          | `HomeController@... Sponser::`                                                              | Nhà tài trợ                                   |
+| `theme`, `category_theme`, `join_category_theme`, `variable_theme` | `system.php`, `AjaxController`, `SitemapController`, ~~`backend/product/filter.blade.php`~~ | Theme builder cũ — filter SP đã bỏ join theme |
+| `user_register_email`                                              | `HomeController@... User_register_email::`                                                  | Log email đăng ký                             |
+| `contact_payment`                                                  | `CheckoutController`                                                                        | Liên hệ thanh toán                            |
+| `province`, `district`, `ward`, `street`                           | `AjaxController` (có `Schema::hasTable` → fail êm)                                          | Địa chỉ VN                                    |
+| `orders`                                                           | `Backend\Orders` model                                                                      | **Không ai gọi** — model chết                 |
+| `jt_address`, `shop_product_category`                              | Model only                                                                                  | Model chết                                    |
 
 **Hướng xử lý (chọn 1 mỗi feature):** dọn code (nếu bỏ tính năng) **hoặc** tạo lại bảng (nếu còn cần).
 
@@ -123,6 +123,7 @@ flowchart TD
 
 ## 8. Lịch sử
 
-| Ngày       | Thay đổi                                                                   |
-| ---------- | -------------------------------------------------------------------------- |
-| 2026-07-10 | Tạo DB_AUDIT.md — verify `admins`/`users`, phân loại 42 bảng + code mồ côi |
+| Ngày       | Thay đổi                                                                        |
+| ---------- | ------------------------------------------------------------------------------- |
+| 2026-07-10 | Sync 35 bảng; Phase 4 done; subscription→contacts; link REFACTOR_3NONG_PLAYBOOK |
+| 2026-07-10 | Tạo DB_AUDIT.md — verify `admins`/`users`, phân loại 42 bảng + code mồ côi      |

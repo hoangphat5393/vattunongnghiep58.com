@@ -4,7 +4,7 @@
 > Dùng làm **chuẩn tham chiếu** khi refactor / build lại dự án khác (vd. `3nong`).  
 > **Cập nhật:** 2026-07-10 · Laravel **13** · PHP **8.3+**
 
-**Tài liệu kỹ thuật chi tiết hơn:** [docs/PROJECT_ANALYSIS.md](docs/PROJECT_ANALYSIS.md) · [docs/TABLE_GLOSSARY.md](docs/TABLE_GLOSSARY.md) · [docs/ROUTE_GLOSSARY.md](docs/ROUTE_GLOSSARY.md) · [RECOMMENDATIONS.md](RECOMMENDATIONS.md)
+**Tài liệu kỹ thuật chi tiết hơn:** [docs/PROJECT_ANALYSIS.md](docs/PROJECT_ANALYSIS.md) · [docs/TABLE_GLOSSARY.md](docs/TABLE_GLOSSARY.md) · [docs/ROUTE_GLOSSARY.md](docs/ROUTE_GLOSSARY.md) · [docs/REFACTOR_3NONG_PLAYBOOK.md](docs/REFACTOR_3NONG_PLAYBOOK.md) · [RECOMMENDATIONS.md](RECOMMENDATIONS.md)
 
 ---
 
@@ -59,21 +59,21 @@ Website **thương mại điện tử + CMS** cho ngành nông nghiệp:
 
 ### 3.1. Storefront (công khai)
 
-| #   | Tính năng          | URL / Route name                               | Controller                        | Trạng thái             |
-| --- | ------------------ | ---------------------------------------------- | --------------------------------- | ---------------------- |
-| 1   | Trang chủ          | `/` · `index`                                  | `PageController@index`            | **Active**             |
-| 2   | Trang tĩnh CMS     | `/{slug}` · `page`                             | `PageController@page`             | **Active**             |
-| 3   | Đổi ngôn ngữ       | `/lang/{locale}` · `change_language`           | Closure                           | **Active** (`vi`/`en`) |
-| 4   | Danh sách sản phẩm | `/product` · `product`                         | `ProductController@index`         | **Active**             |
-| 5   | Danh mục sản phẩm  | `/product/{slug}.html` · `product.category`    | `ProductController@index`         | **Active**             |
-| 6   | Chi tiết sản phẩm  | `/product/{slug}-{id}.html` · `product.detail` | `ProductController@productDetail` | **Active**             |
-| 7   | Quick view (AJAX)  | `POST /quick-view` · `shop.quickView`          | `ProductController@quickView`     | **Active**             |
-| 8   | Mua ngay           | `/buy-now` · `shop.buyNow*`                    | `ProductController`               | **Active**             |
-| 9   | Tin tức / bài viết | `/news` · `news`                               | `PostController@index`            | **Active**             |
-| 10  | Chi tiết bài viết  | `/news/{slug}-{id}.html` · `news.detail`       | `PostController@show`             | **Active**             |
-| 11  | Tìm kiếm           | `/search?keyword=` · `search`                  | `SearchController@index`          | **Active**             |
-| 12  | Liên hệ            | `POST /contact` · `contact.submit`             | `ContactController@submit`        | **Active**             |
-| 13  | Đăng ký newsletter | `POST /subscription` · `subscription`          | `CustomerController@subscription` | **Active**             |
+| #   | Tính năng          | URL / Route name                               | Controller                        | Trạng thái                                    |
+| --- | ------------------ | ---------------------------------------------- | --------------------------------- | --------------------------------------------- |
+| 1   | Trang chủ          | `/` · `index`                                  | `PageController@index`            | **Active**                                    |
+| 2   | Trang tĩnh CMS     | `/{slug}` · `page`                             | `PageController@page`             | **Active**                                    |
+| 3   | Đổi ngôn ngữ       | `/lang/{locale}` · `change_language`           | Closure                           | **Active** (`vi`/`en`)                        |
+| 4   | Danh sách sản phẩm | `/product` · `product`                         | `ProductController@index`         | **Active**                                    |
+| 5   | Danh mục sản phẩm  | `/product/{slug}.html` · `product.category`    | `ProductController@index`         | **Active**                                    |
+| 6   | Chi tiết sản phẩm  | `/product/{slug}-{id}.html` · `product.detail` | `ProductController@productDetail` | **Active**                                    |
+| 7   | Quick view (AJAX)  | `POST /quick-view` · `shop.quickView`          | `ProductController@quickView`     | **Active**                                    |
+| 8   | Mua ngay           | `/buy-now` · `shop.buyNow*`                    | `ProductController`               | **Active**                                    |
+| 9   | Tin tức / bài viết | `/news` · `news`                               | `PostController@index`            | **Active**                                    |
+| 10  | Chi tiết bài viết  | `/news/{slug}-{id}.html` · `news.detail`       | `PostController@show`             | **Active**                                    |
+| 11  | Tìm kiếm           | `/search?keyword=` · `search`                  | `SearchController@index`          | **Active**                                    |
+| 12  | Liên hệ            | `POST /contact` · `contact.submit`             | `ContactController@submit`        | **Active**                                    |
+| 13  | Đăng ký newsletter | `POST /subscription` · `subscription`          | `CustomerController@subscription` | **Active** (lưu `contacts.type=subscription`) |
 
 ### 3.2. Giỏ hàng & đặt hàng
 
@@ -91,18 +91,18 @@ Website **thương mại điện tử + CMS** cho ngành nông nghiệp:
 
 ### 3.3. Tài khoản khách (`/auth/*` + `/account/*`)
 
-| #   | Tính năng                       | URL / Route name                                 | Controller                        | Trạng thái                     |
-| --- | ------------------------------- | ------------------------------------------------ | --------------------------------- | ------------------------------ |
-| 23  | Đăng ký                         | `/auth/register` · `customer.register*`          | `RegisterController`              | **Active**                     |
-| 24  | Đăng nhập                       | `/auth/login` · `customer.login*`                | `CustomerAuthController`          | **Active**                     |
-| 25  | Đăng xuất                       | `POST /auth/logout` · `customer.logout`          | `CustomerAuthController`          | **Active**                     |
-| 26  | Quên mật khẩu (OTP)             | `/auth/forgot-password*` · `customer.password.*` | `ForgotPasswordController`        | **Active**                     |
-| 27  | Đăng nhập MXH                   | `/social/{provider}` · `auth.social*`            | `RegisterAuthController`          | **Active**                     |
-| 28  | Hồ sơ cá nhân                   | `/account/profile` · `customer.profile*`         | `AccountController`               | **Active**                     |
-| 29  | Danh sách đơn                   | `/account/orders` · `customer.orders.index`      | `AccountController@myOrder`       | **Active**                     |
-| 30  | Chi tiết đơn                    | `/account/orders/{id}` · `customer.orders.show`  | `AccountController@myOrderDetail` | **Active**                     |
-| 31  | Đổi mật khẩu                    | `/account/password` · `customer.password.edit`   | `AccountController`               | **Active**                     |
-| 32  | Wishlist / tin đăng / ví / chat | `customer.reviews`, `customer.post`, …           | `CustomerController`              | **Legacy** (route còn, nav ẩn) |
+| #   | Tính năng                              | URL / Route name                                 | Controller                        | Trạng thái                                   |
+| --- | -------------------------------------- | ------------------------------------------------ | --------------------------------- | -------------------------------------------- |
+| 23  | Đăng ký                                | `/auth/register` · `customer.register*`          | `RegisterController`              | **Active**                                   |
+| 24  | Đăng nhập                              | `/auth/login` · `customer.login*`                | `CustomerAuthController`          | **Active**                                   |
+| 25  | Đăng xuất                              | `POST /auth/logout` · `customer.logout`          | `CustomerAuthController`          | **Active**                                   |
+| 26  | Quên mật khẩu (OTP)                    | `/auth/forgot-password*` · `customer.password.*` | `ForgotPasswordController`        | **Active**                                   |
+| 27  | Đăng nhập MXH                          | `/social/{provider}` · `auth.social*`            | `RegisterAuthController`          | **Active**                                   |
+| 28  | Hồ sơ cá nhân                          | `/account/profile` · `customer.profile*`         | `AccountController`               | **Active**                                   |
+| 29  | Danh sách đơn                          | `/account/orders` · `customer.orders.index`      | `AccountController@myOrder`       | **Active**                                   |
+| 30  | Chi tiết đơn                           | `/account/orders/{id}` · `customer.orders.show`  | `AccountController@myOrderDetail` | **Active**                                   |
+| 31  | Đổi mật khẩu                           | `/account/password` · `customer.password.edit`   | `AccountController`               | **Active**                                   |
+| 32  | Legacy account (reviews, tin đăng, ví) | `customer.reviews`, `customer.post`, …           | `CustomerController`              | **Redirect** → `customer.dashboard` (nav ẩn) |
 
 **Redirect 301 từ URL cũ:** `/customer/*` → `/account/*`, `/forget/password*` → `/auth/forgot-password*`
 
@@ -315,27 +315,27 @@ erDiagram
 
 ### 6.2. Bảng nghiệp vụ (active)
 
-| Bảng                           | Mục đích                      | Model chính                     |
-| ------------------------------ | ----------------------------- | ------------------------------- |
-| `users`                        | Khách + admin (shared)        | `Frontend\User`, `Backend\User` |
-| `products`                     | Sản phẩm                      | `Frontend\Product`              |
-| `categories`                   | Danh mục SP (cây)             | `Frontend\Category`             |
-| `product_categories`           | Pivot SP ↔ danh mục           | `Backend\ProductCategory`       |
-| `product_prices`               | Giá / biến thể                | `ProductPrice`                  |
-| `pages`                        | Trang CMS + bài viết (`type`) | `Frontend\Page`                 |
-| `shop_orders`                  | Header đơn hàng               | `Frontend\Order`                |
-| `shop_order_items`             | Chi tiết đơn                  | `Frontend\OrderItem`            |
-| `contacts`                     | Liên hệ từ form               | `Frontend\Contact`              |
-| `email_templates`              | Nội dung email theo code      | `EmailTemplate`                 |
-| `settings`                     | Cấu hình site (SMTP, logo, …) | `Setting`                       |
-| `menus`, `menu_items`          | Menu frontend                 | `Menu`, `MenuItems`             |
-| `admin_menus`                  | Sidebar admin                 | `AdminMenu`                     |
-| `albums`, `album_items`        | Thư viện ảnh                  | `Album`                         |
-| `roles`, `permissions`         | ACL admin                     | `Role`, `Permission`            |
-| `role_user`, `permission_role` | Pivot ACL                     | —                               |
-| `customer_forget_pass_otp`     | OTP quên MK                   | `Customer_forget_pass_otp`      |
-| `shop_currencies`              | Tiền tệ                       | `ShopCurrency`                  |
-| `subscription`                 | Newsletter                    | `Subscription`                  |
+| Bảng                             | Mục đích                      | Model chính                     |
+| -------------------------------- | ----------------------------- | ------------------------------- |
+| `users`                          | Khách + admin (shared)        | `Frontend\User`, `Backend\User` |
+| `products`                       | Sản phẩm                      | `Frontend\Product`              |
+| `categories`                     | Danh mục SP (cây)             | `Frontend\Category`             |
+| `product_categories`             | Pivot SP ↔ danh mục           | `Backend\ProductCategory`       |
+| `product_prices`                 | Giá / biến thể                | `ProductPrice`                  |
+| `pages`                          | Trang CMS + bài viết (`type`) | `Frontend\Page`                 |
+| `shop_orders`                    | Header đơn hàng               | `Frontend\Order`                |
+| `shop_order_items`               | Chi tiết đơn                  | `Frontend\OrderItem`            |
+| `contacts`                       | Liên hệ từ form               | `Frontend\Contact`              |
+| `email_templates`                | Nội dung email theo code      | `EmailTemplate`                 |
+| `settings`                       | Cấu hình site (SMTP, logo, …) | `Setting`                       |
+| `menus`, `menu_items`            | Menu frontend                 | `Menu`, `MenuItems`             |
+| `admin_menus`                    | Sidebar admin                 | `AdminMenu`                     |
+| `albums`, `album_items`          | Thư viện ảnh                  | `Album`                         |
+| `roles`, `permissions`           | ACL admin                     | `Role`, `Permission`            |
+| `role_user`, `permission_role`   | Pivot ACL                     | —                               |
+| `customer_forget_pass_otp`       | OTP quên MK                   | `Customer_forget_pass_otp`      |
+| `shop_currencies`                | Tiền tệ                       | `ShopCurrency`                  |
+| Newsletter (`type=subscription`) | Lưu trong `contacts`          | `Contact`                       |
 
 ### 6.3. `shop_orders` — cột quan trọng
 
@@ -354,15 +354,16 @@ erDiagram
 
 ### 6.4. Legacy (đã thay / không dùng luồng chính)
 
-| Legacy                                      | Thay bằng / Ghi chú               |
-| ------------------------------------------- | --------------------------------- |
-| `addtocard`, `addtocard_detail`             | `shop_orders`, `shop_order_items` |
-| `posts`, `post_categories`                  | `pages` với `type=post`           |
-| `customer` (bảng)                           | **Đã drop** — dùng `users`        |
-| `admin_permission`, `admin_role_permission` | `permissions`, `permission_role`  |
-| `theme`, `wishlist`, `rating_product`       | Model còn, luồng chính không dùng |
-| PayPal / Stripe / VNPay checkout            | Route comment — không active      |
-| `routes/api.php`                            | Stub trống                        |
+| Legacy                                      | Thay bằng / Ghi chú                             |
+| ------------------------------------------- | ----------------------------------------------- |
+| `addtocard`, `addtocard_detail`             | `shop_orders`, `shop_order_items`               |
+| `posts`, `post_categories`                  | `pages` với `type=post`                         |
+| `customer` (bảng)                           | **Đã drop** — dùng `users`                      |
+| `admin_permission`, `admin_role_permission` | `permissions`, `permission_role`                |
+| `theme`, `wishlist`, `rating_product`       | Model còn, luồng chính không dùng               |
+| `subscription` (bảng)                       | **Đã drop** — dùng `contacts.type=subscription` |
+| PayPal / Stripe / VNPay checkout            | Route comment — không active                    |
+| `routes/api.php`                            | Stub trống                                      |
 
 ---
 
@@ -420,43 +421,51 @@ resources/views/
 ## 9. Kiểm chứng & chất lượng
 
 ```bash
-php artisan test --compact   # 176 passed, 1 skipped
+php artisan test --compact   # 192 passed, 2 skipped
 pnpm run build
 ```
 
-| Suite quan trọng | File test                                                              |
-| ---------------- | ---------------------------------------------------------------------- |
-| Tài khoản khách  | `tests/Feature/CustomerAccount*.php`                                   |
-| Auth / quên MK   | `tests/Feature/CustomerAuthFlowTest.php`, `ForgotPasswordFlowTest.php` |
-| CSRF             | `tests/Feature/CsrfProtectionTest.php`                                 |
-| Admin ACL        | `tests/Feature/AdminAclFeatureTest.php`                                |
-| Checkout legacy  | `tests/Feature/CheckoutLegacyCleanupTest.php`                          |
+| Suite quan trọng | File test                                                               |
+| ---------------- | ----------------------------------------------------------------------- |
+| Tài khoản khách  | `tests/Feature/CustomerAccount*.php`                                    |
+| Auth / quên MK   | `tests/Feature/CustomerAuthFlowTest.php`, `ForgotPasswordFlowTest.php`  |
+| CSRF             | `tests/Feature/CsrfProtectionTest.php`                                  |
+| Admin ACL        | `tests/Feature/AdminAclFeatureTest.php`                                 |
+| Route alias / JS | `tests/Feature/RouteAliasTest.php`, `PublicLegacyJsCleanupTest.php`     |
+| DB legacy drop   | `tests/Feature/LegacyTablesDroppedTest.php`, `OrphanLegacyCodeTest.php` |
+| Checkout legacy  | `tests/Feature/CheckoutLegacyCleanupTest.php`                           |
 
 ---
 
 ## 10. Dùng làm chuẩn refactor `3nong`
 
+**Playbook chi tiết:** [docs/REFACTOR_3NONG_PLAYBOOK.md](docs/REFACTOR_3NONG_PLAYBOOK.md)
+
 Khi port sang dự án khác, ưu tiên giữ theo thứ tự:
 
-| Ưu tiên | Hạng mục                                | Lý do                         |
-| ------- | --------------------------------------- | ----------------------------- |
-| P0      | Auth khách (`/auth/*`, `/account/*`)    | Core ecommerce                |
-| P0      | Cart + checkout + `shop_orders`         | Doanh thu                     |
-| P0      | CSRF + RBAC admin                       | Bảo mật                       |
-| P1      | Product catalog + categories            | Storefront                    |
-| P1      | Contact + email templates               | Vận hành                      |
-| P1      | Admin CRUD (product, post, page, order) | CMS                           |
-| P2      | Menu builder, theme options             | Cấu hình                      |
-| P3      | Legacy (wallet, wishlist, theme cũ)     | Chỉ port nếu `3nong` còn dùng |
+| Ưu tiên | Hạng mục                                | Lý do                                         |
+| ------- | --------------------------------------- | --------------------------------------------- |
+| P0      | Auth khách (`/auth/*`, `/account/*`)    | Core ecommerce                                |
+| P0      | Cart + checkout + `shop_orders`         | Doanh thu                                     |
+| P0      | CSRF + RBAC admin                       | Bảo mật                                       |
+| P1      | Product catalog + categories            | Storefront                                    |
+| P1      | Contact + email templates               | Vận hành                                      |
+| P1      | Admin CRUD (product, post, page, order) | CMS                                           |
+| P2      | Menu builder, theme options             | Cấu hình                                      |
+| P3      | Legacy (wallet, wishlist, theme cũ)     | **Không port** — vattun đã dọn (xem DB_AUDIT) |
 
 **Checklist so sánh với `3nong`:**
 
 - [ ] Route name có khớp `customer.*` không?
-- [ ] Bảng đơn hàng tên gì? (`shop_orders` vs legacy)
-- [ ] Khách và admin có chung `users` không?
-- [ ] Checkout có thanh toán online không?
+- [ ] Bảng đơn: `invoice` → `shop_orders` + `shop_order_items`?
+- [ ] Khách và admin có chung `users` không? (không tách `customer`)
+- [ ] Checkout offline (không VNPay/PayPal) — đúng scope?
+- [ ] `post` + `article` → gộp `pages` + `type`?
+- [ ] `cat` đa loại → `categories` + pivot?
 - [ ] Email template có mã `code` không?
+- [ ] Newsletter → `contacts` (`type=subscription`)?
 - [ ] Test coverage cho auth + checkout + ACL?
+- [ ] Frontend dùng `http.js` + `AppRoutes` / `AdminRoutes`?
 
 ---
 
@@ -481,6 +490,7 @@ Khi port sang dự án khác, ưu tiên giữ theo thứ tự:
 
 | Ngày       | Thay đổi                                                     |
 | ---------- | ------------------------------------------------------------ |
+| 2026-07-10 | REFACTOR_3NONG_PLAYBOOK; sync test 192; DB/orphan/axios docs |
 | 2026-07-10 | Thêm link TABLE_GLOSSARY, ROUTE_GLOSSARY; sửa `subscription` |
 | 2026-07-10 | Tạo MASTER.md — business flow, features, schema, rules       |
 | 2026-07-09 | Nâng cấp Laravel 13; gỡ diglactic/laravel-breadcrumbs        |

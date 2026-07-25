@@ -4,7 +4,7 @@
 > **Cập nhật:** 2026-07-10 · Laravel **13**  
 > **Nguồn sự thật:** Model `$table`, migrations, `MASTER.md` §6.
 
-**Tài liệu liên quan:** [MASTER.md](../MASTER.md) · [ROUTE_GLOSSARY.md](ROUTE_GLOSSARY.md) · [PROJECT_ANALYSIS.md](PROJECT_ANALYSIS.md)
+**Tài liệu liên quan:** [MASTER.md](../MASTER.md) · [ROUTE_GLOSSARY.md](ROUTE_GLOSSARY.md) · [REFACTOR_3NONG_PLAYBOOK.md](REFACTOR_3NONG_PLAYBOOK.md) · [PROJECT_ANALYSIS.md](PROJECT_ANALYSIS.md)
 
 ---
 
@@ -82,19 +82,20 @@
 
 ### 3.4. CMS & nội dung
 
-| Bảng              | Model                                             | Alias / legacy             | Nghiệp vụ                      | PK   | Trạng thái |
-| ----------------- | ------------------------------------------------- | -------------------------- | ------------------------------ | ---- | ---------- |
-| `pages`           | `Frontend\Page`, `Backend\Page`                   | thay `posts`               | Trang CMS + bài viết (`type`)  | `id` | active     |
-| `contacts`        | `Frontend\Contact`, `Backend\Contact`             | —                          | Form liên hệ                   | `id` | active     |
-| `email_templates` | `Frontend\EmailTemplate`, `Backend\EmailTemplate` | —                          | Mẫu email theo `code`          | `id` | active     |
-| `menus`           | `Frontend\Menu`, `Backend\Menu`                   | —                          | Menu frontend                  | `id` | active     |
-| `menu_items`      | `Frontend\MenuItems`, `Backend\MenuItems`         | —                          | Item menu                      | `id` | active     |
-| `admin_menus`     | `Backend\AdminMenu`                               | —                          | Sidebar admin                  | `id` | active     |
-| `albums`          | `Frontend\Album`, `Backend\Album`                 | —                          | Album ảnh                      | `id` | active     |
-| `album_items`     | `Frontend\AlbumItem`, `Backend\AlbumItem`         | —                          | Ảnh trong album                | `id` | active     |
-| `media_files`     | —                                                 | —                          | File media (upload)            | `id` | active     |
-| `settings`        | `Setting`, `Backend\Setting`                      | —                          | Cấu hình site (SMTP, theme, …) | `id` | active     |
-| `subscription`    | `Subscription`, `Backend\Subscription`            | không phải `subscriptions` | Newsletter đăng ký             | `id` | active     |
+| Bảng              | Model                                             | Alias / legacy | Nghiệp vụ                      | PK   | Trạng thái |
+| ----------------- | ------------------------------------------------- | -------------- | ------------------------------ | ---- | ---------- |
+| `pages`           | `Frontend\Page`, `Backend\Page`                   | thay `posts`   | Trang CMS + bài viết (`type`)  | `id` | active     |
+| `contacts`        | `Frontend\Contact`, `Backend\Contact`             | —              | Form liên hệ                   | `id` | active     |
+| `email_templates` | `Frontend\EmailTemplate`, `Backend\EmailTemplate` | —              | Mẫu email theo `code`          | `id` | active     |
+| `menus`           | `Frontend\Menu`, `Backend\Menu`                   | —              | Menu frontend                  | `id` | active     |
+| `menu_items`      | `Frontend\MenuItems`, `Backend\MenuItems`         | —              | Item menu                      | `id` | active     |
+| `admin_menus`     | `Backend\AdminMenu`                               | —              | Sidebar admin                  | `id` | active     |
+| `albums`          | `Frontend\Album`, `Backend\Album`                 | —              | Album ảnh                      | `id` | active     |
+| `album_items`     | `Frontend\AlbumItem`, `Backend\AlbumItem`         | —              | Ảnh trong album                | `id` | active     |
+| `media_files`     | —                                                 | —              | File media (upload)            | `id` | active     |
+| `settings`        | `Setting`, `Backend\Setting`                      | —              | Cấu hình site (SMTP, theme, …) | `id` | active     |
+
+> **Newsletter:** không có bảng `subscription` — `POST /subscription` lưu `contacts` với `type=subscription`.
 
 ---
 
@@ -137,6 +138,7 @@
 | `payments`, `payment_request`                           | checkout offline        | cùng migration trên                                      |
 | `password_resets`                                       | `password_reset_tokens` | cùng migration + `config/auth.php`                       |
 | `user_password_auto`, `settings_cost`, `shipping_order` | —                       | cùng migration trên                                      |
+| `subscription`                                          | `contacts` (type)       | Phase 4 orphan — không tạo lại bảng                      |
 
 > Bảng `posts`, `post_categories`, `category_page`, `page_categories` đã drop — dùng `pages` (`type=post`); không liệt kê chi tiết.
 
@@ -171,7 +173,7 @@ shop_order_items → products      qua product_id
 - [ ] Khách hàng: `users` + guard `web`, không bảng `customer`
 - [ ] Admin ACL: `permissions` + `permission_role`, không `admin_permission`
 - [ ] Route `customer.*` ≠ bảng — chỉ là prefix tên route
-- [ ] Newsletter: bảng `subscription` (số ít)
+- [ ] Newsletter: `contacts` + `type=subscription` (không bảng `subscription`)
 
 ---
 
@@ -179,6 +181,7 @@ shop_order_items → products      qua product_id
 
 | Ngày       | Thay đổi                                                                                       |
 | ---------- | ---------------------------------------------------------------------------------------------- |
+| 2026-07-10 | Newsletter → `contacts`; bỏ hàng `subscription` khỏi §3 active                                 |
 | 2026-07-10 | Ghi chú `theme` legacy: đã gỡ quick-edit AJAX; SP admin dùng `products` + `admin.quick-change` |
 | 2026-07-10 | Bỏ §3.5 bảng post đã drop (trùng §6); rút gọn §6                                               |
 | 2026-07-10 | Tạo TABLE_GLOSSARY.md                                                                          |

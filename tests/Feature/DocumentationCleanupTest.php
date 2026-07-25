@@ -44,6 +44,7 @@ class DocumentationCleanupTest extends TestCase
         $this->assertFileExists(base_path('docs/TABLE_GLOSSARY.md'));
         $this->assertFileExists(base_path('docs/ROUTE_GLOSSARY.md'));
         $this->assertFileExists(base_path('docs/DB_AUDIT.md'));
+        $this->assertFileExists(base_path('docs/REFACTOR_3NONG_PLAYBOOK.md'));
     }
 
     public function test_backend_audit_playbook_lists_p0_items(): void
