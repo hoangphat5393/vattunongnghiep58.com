@@ -18,15 +18,53 @@
     @include('backend.partials.seo')
 @endsection
 
-<style>
-    .wrap-pass {
-        display: none
-    }
+@push('style')
+    <style>
+        .wrap-pass {
+            display: none;
+        }
 
-    .avtive-wpap-pass {
-        display: block
-    }
-</style>
+        .password-collapse-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .wrap-pass.is-open {
+            animation: passSlideFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes passSlideFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .toggle-password-visibility {
+            cursor: pointer;
+            border-left: 0;
+        }
+
+        .toggle-password-visibility:hover {
+            background-color: #f1f5f9;
+        }
+
+        .form-check-switch-custom .form-check-input {
+            cursor: pointer;
+            width: 2.75em;
+            height: 1.4em;
+            margin-right: 0.5rem;
+        }
+    </style>
+@endpush
 
 @section('content')
     {{-- begin::App Content Header --}}
@@ -83,24 +121,24 @@
                             <form id="frm-updateinfo-useradmin" action="{{ route('admin.postChangePassword') }}" method="POST">
                                 @csrf
                                 @foreach ($errors->all() as $error)
-                                    <div class="text-error small mb-1">{{ $error }}</div>
+                                    <div class="alert alert-danger small py-2 mb-3">{{ $error }}</div>
                                 @endforeach
                                 <div class="js-validation-messages mb-2 small" role="alert"></div>
 
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
-                                        <label for="post_title" class="form-label">@lang('admin.email')</label>
-                                        <input type="text" class="form-control" id="post_title" name="email" placeholder="@lang('admin.email')" value="{{ Auth::guard('admin')->user()->email }}">
+                                        <label for="post_title" class="form-label fw-semibold">@lang('admin.email') <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="post_title" name="email" placeholder="@lang('admin.email')" value="{{ Auth::guard('admin')->user()->email }}" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="name" class="form-label">@lang('admin.username')</label>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="@lang('admin.username')" value="{{ Auth::guard('admin')->user()->name }}">
+                                        <label for="name" class="form-label fw-semibold">@lang('admin.username') <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="@lang('admin.username')" value="{{ Auth::guard('admin')->user()->name }}" required>
                                     </div>
                                     <div class="col-md-12">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" name="check_pass" id="check_pass">
-                                            <label class="form-check-label fw-bold" for="check_pass">
-                                                @lang('admin.change password')
+                                        <div class="form-check form-switch form-check-switch-custom d-flex align-items-center mt-2">
+                                            <input class="form-check-input" type="checkbox" role="switch" value="" name="check_pass" id="check_pass">
+                                            <label class="form-check-label fw-bold user-select-none" for="check_pass">
+                                                <i class="fa-solid fa-key text-primary me-1"></i> @lang('admin.change password')
                                             </label>
                                         </div>
                                         <input type="hidden" id="check_pass_value" name="check_pass_value" value="off">
@@ -108,38 +146,64 @@
                                 </div>
 
                                 {{-- wrap pass --}}
-                                <div class="wrap-pass">
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-md-12">
-                                            <label for="current_password" class="form-label">@lang('admin.current password')</label>
-                                            <input type="password" class="form-control" name="current_password" placeholder="@lang('admin.current password')" id="current_password" disabled>
-                                            <small class="text-error d-block mt-1" id="current-password-ajax-feedback" role="status"></small>
+                                <div class="wrap-pass mb-3">
+                                    <div class="password-collapse-card">
+                                        <div class="d-flex align-items-center mb-3 text-muted small">
+                                            <i class="fa-solid fa-shield-halved me-2 text-warning fs-6"></i>
+                                            <span>Vui lòng nhập mật khẩu hiện tại để xác thực và thiết lập mật khẩu mới</span>
                                         </div>
-                                        <div class="col-md-12">
-                                            <label for="new_password" class="form-label">@lang('admin.new password')</label>
-                                            <input type="password" class="form-control" name="new_password" placeholder="@lang('admin.new password')" id="new_password" disabled>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <label for="confirm_password" class="form-label">@lang('admin.confirm password')</label>
-                                            <input type="password" class="form-control" name="confirm_password" placeholder="@lang('admin.confirm password')" id="confirm_password" disabled>
+                                        <div class="row g-3">
+                                            <div class="col-md-12">
+                                                <label for="current_password" class="form-label fw-semibold">@lang('admin.current password') <span class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="fa-solid fa-lock text-muted"></i></span>
+                                                    <input type="password" class="form-control" name="current_password" placeholder="@lang('admin.current password')" id="current_password" autocomplete="current-password" disabled>
+                                                    <button class="btn btn-outline-secondary toggle-password-visibility" type="button" tabindex="-1" title="Hiện/ẩn mật khẩu">
+                                                        <i class="fa-regular fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                                <small class="text-error d-block mt-1" id="current-password-ajax-feedback" role="status"></small>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="new_password" class="form-label fw-semibold">@lang('admin.new password') <span class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="fa-solid fa-key text-muted"></i></span>
+                                                    <input type="password" class="form-control" name="new_password" placeholder="@lang('admin.new password')" id="new_password" autocomplete="new-password" disabled>
+                                                    <button class="btn btn-outline-secondary toggle-password-visibility" type="button" tabindex="-1" title="Hiện/ẩn mật khẩu">
+                                                        <i class="fa-regular fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="confirm_password" class="form-label fw-semibold">@lang('admin.confirm password') <span class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text bg-white"><i class="fa-solid fa-check-double text-muted"></i></span>
+                                                    <input type="password" class="form-control" name="confirm_password" placeholder="@lang('admin.confirm password')" id="confirm_password" autocomplete="new-password" disabled>
+                                                    <button class="btn btn-outline-secondary toggle-password-visibility" type="button" tabindex="-1" title="Hiện/ẩn mật khẩu">
+                                                        <i class="fa-regular fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
-                                        <label for="phone" class="form-label">@lang('admin.phone')</label>
+                                        <label for="phone" class="form-label fw-semibold">@lang('admin.phone')</label>
                                         <input type="text" class="form-control" id="phone" name="phone" placeholder="@lang('admin.phone')" value="{{ Auth::guard('admin')->user()->phone }}">
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="address" class="form-label">@lang('admin.address')</label>
+                                        <label for="address" class="form-label fw-semibold">@lang('admin.address')</label>
                                         <input type="text" class="form-control" id="address" name="address" placeholder="@lang('admin.address')" value="{{ Auth::guard('admin')->user()->address }}">
                                     </div>
                                 </div>
                             </form>
                         </div>
-                        <div class="card-footer">
-                            <input type="submit" form="frm-updateinfo-useradmin" class="btn btn-primary" value="@lang('admin.update')">
+                        <div class="card-footer bg-transparent">
+                            <button type="submit" form="frm-updateinfo-useradmin" class="btn btn-primary px-4">
+                                <i class="fa-solid fa-floppy-disk me-1"></i> @lang('admin.update')
+                            </button>
                         </div>
                     </div>
                     {{-- end::card --}}
@@ -151,68 +215,119 @@
     {{-- end::App Content --}}
 @endsection
 
-
 @push('scripts')
     <script>
         $(function() {
-            $('input[name="check_pass"]').on('change click', function() {
-                let check_pass_length = $('#check_pass:checked').length;
+            // Checkbox switch change event with smooth slide & fade animation
+            $('#check_pass').on('change', function() {
+                var isChecked = this.checked;
+                var $wrapPass = $('.wrap-pass');
+                var $passInputs = $('#current_password, #new_password, #confirm_password');
 
-                if (check_pass_length == 1) {
-                    //show pass
-                    $('#current_password, #new_password, #confirm_password').removeAttr('disabled');
+                if (isChecked) {
+                    $passInputs.prop('disabled', false);
                     $('#check_pass_value').val('on');
-                    $('.wrap-pass').stop(true, true).slideDown(350);
+                    $wrapPass.stop(true, true).addClass('is-open').slideDown({
+                        duration: 350,
+                        easing: 'swing',
+                        complete: function() {
+                            $('#current_password').focus();
+                        }
+                    });
                 } else {
-                    //hide pass
-                    $('#current_password, #new_password, #confirm_password').attr('disabled', 'true');
+                    $passInputs.prop('disabled', true).val('');
                     $('#check_pass_value').val('off');
-                    $('.wrap-pass').stop(true, true).slideUp(300);
+                    $('#current-password-ajax-feedback').empty();
+                    $wrapPass.stop(true, true).removeClass('is-open').slideUp({
+                        duration: 250,
+                        easing: 'swing'
+                    });
                 }
+            });
 
-                //check password equal
-                $('#current_password').on('change', function() {
-                    var current_password = $(this).val();
-                    axios.get(admin_url + "/check-password", {
-                            params: {
-                                current_password: current_password
-                            }
-                        })
-                        .then(function(response) {
-                            $('#current-password-ajax-feedback').html(response.data);
-                        })
-                        .catch(function(e) {
-                            console.error(e);
-                        });
-                });
+            // Toggle password visibility (Eye icon)
+            $(document).on('click', '.toggle-password-visibility', function(e) {
+                e.preventDefault();
+                var $input = $(this).closest('.input-group').find('input');
+                var $icon = $(this).find('i');
+                if ($input.attr('type') === 'password') {
+                    $input.attr('type', 'text');
+                    $icon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    $input.attr('type', 'password');
+                    $icon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
 
-                //validate
-                $("#frm-updateinfo-useradmin").validate({
-                    errorLabelContainer: '#frm-updateinfo-useradmin .js-validation-messages',
-                    rules: {
-                        email: "required",
-                        name: "required",
-                        current_password: "required",
-                        new_password: "required",
-                        repassword: {
-                            equalTo: "#password"
-                        },
-                    },
-                    messages: {
-                        email: "Nhập email/tên đăng nhập",
-                        name: "Nhập tên nhân viên",
-                        current_password: "Nhập mật khẩu hiện tại",
-                        new_password: "Nhập mật khẩu mới",
-                        confirm_password: "Mật khẩu không chính xác",
-                    },
+            // Check current password via AJAX
+            $('#current_password').on('blur change', function() {
+                var current_password = $(this).val();
+                if (!current_password) return;
 
-                    invalidHandler: function(event, validator) {
-                        $('html, body').animate({
-                            scrollTop: 0
-                        }, 500);
+                axios.get(admin_url + "/check-password", {
+                        params: {
+                            current_password: current_password
+                        }
+                    })
+                    .then(function(response) {
+                        $('#current-password-ajax-feedback').html(response.data);
+                    })
+                    .catch(function(e) {
+                        console.error(e);
+                    });
+            });
+
+            // Form validation
+            $("#frm-updateinfo-useradmin").validate({
+                errorElement: 'div',
+                errorClass: 'text-danger small mt-1',
+                errorPlacement: function(error, element) {
+                    if (element.closest('.input-group').length) {
+                        error.insertAfter(element.closest('.input-group'));
+                    } else {
+                        error.insertAfter(element);
                     }
-                });
-                //end validate
+                },
+                rules: {
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    name: "required",
+                    current_password: {
+                        required: function() {
+                            return $('#check_pass').is(':checked');
+                        }
+                    },
+                    new_password: {
+                        required: function() {
+                            return $('#check_pass').is(':checked');
+                        },
+                        minlength: 6
+                    },
+                    confirm_password: {
+                        required: function() {
+                            return $('#check_pass').is(':checked');
+                        },
+                        equalTo: "#new_password"
+                    }
+                },
+                messages: {
+                    email: {
+                        required: "Vui lòng nhập email",
+                        email: "Email không đúng định dạng"
+                    },
+                    name: "Vui lòng nhập tên tài khoản",
+                    current_password: "Vui lòng nhập mật khẩu hiện tại",
+                    new_password: {
+                        required: "Vui lòng nhập mật khẩu mới",
+                        minlength: "Mật khẩu mới tối thiểu 6 ký tự"
+                    },
+                    confirm_password: {
+                        required: "Vui lòng xác nhận mật khẩu mới",
+                        equalTo: "Mật khẩu xác nhận không khớp"
+                    }
+                }
             });
         });
     </script>
