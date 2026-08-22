@@ -380,7 +380,7 @@
                 });
             });
 
-            $(".right_item_theme").delegate("#create_option", "click", function(event) {
+            $(document).on("click", "#create_option", function(event) {
                 event.preventDefault();
                 var choise_option = $(this).parent().find('.select_option_choise').val();
                 var line_html = `
