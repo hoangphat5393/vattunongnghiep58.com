@@ -16,7 +16,6 @@ use Hash;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use Redirect;
 
 class AdminController extends Controller
 {
@@ -83,8 +82,7 @@ class AdminController extends Controller
         $id = $user->id;
         $current_pass = $user->password;
 
-        if ($rq->check_pass_value == 'off') {
-
+        if ($rq->check_pass_value == 'off' || empty($rq->check_pass)) {
             // no change pass — cập nhật bảng users (admin guard dùng Backend\User -> users)
             $data = [
                 'email' => $rq->email,
@@ -93,7 +91,6 @@ class AdminController extends Controller
                 'address' => $rq->address,
             ];
         } else {
-
             // change pass
             if (Hash::check($rq->current_password, $user->password)) {
                 if ($rq->new_password == $rq->confirm_password) {
@@ -105,21 +102,16 @@ class AdminController extends Controller
                         'address' => $rq->address,
                     ];
                 } else {
-                    $msg = 'Mật khẩu xác nhận không trùng khớp';
-
-                    return Redirect::back()->withErrors($msg);
+                    return redirect()->back()->withErrors(['confirm_password' => 'Mật khẩu xác nhận không trùng khớp'])->withInput();
                 }
             } else {
-                $msg = 'Mật khẩu hiện tại không chính xác';
-
-                return Redirect::back()->withErrors($msg);
+                return redirect()->back()->withErrors(['current_password' => 'Mật khẩu hiện tại không chính xác'])->withInput();
             }
         }
         // Admin đăng nhập từ bảng users (Backend\User), không còn dùng bảng admins
-        $respons = User::where('id', $id)->update($data);
-        $msg = 'Thông tin cập nhật thành công!';
-        $url = route('admin.changePassword');
-        msg_move_page($msg, $url);
+        User::where('id', $id)->update($data);
+
+        return redirect()->route('admin.change-password')->with('success', 'Thông tin cập nhật thành công!');
     }
 
     public function listUsers()

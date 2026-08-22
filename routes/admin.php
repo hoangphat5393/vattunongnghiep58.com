@@ -29,6 +29,7 @@ Route::namespace('Admin')->group(function () {
         Route::post('cc', 'AdminController@clearCache')->name('admin.cache.clear');
 
         Route::get('change-password', 'AdminController@changePassword')->name('admin.change-password');
+        Route::get('change-password/alias', 'AdminController@changePassword')->name('admin.changePassword');
         Route::post('change-password', 'AdminController@postChangePassword')->name('admin.postChangePassword');
         Route::get('check-password', 'AjaxController@checkPassword')->name('admin.checkPassword');
 

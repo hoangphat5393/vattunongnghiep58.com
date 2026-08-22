@@ -120,6 +120,11 @@
                         <div class="card-body">
                             <form id="frm-updateinfo-useradmin" action="{{ route('admin.postChangePassword') }}" method="POST">
                                 @csrf
+                                @if (session('success'))
+                                    <div class="alert alert-success small py-2 mb-3">
+                                        <i class="fa-solid fa-circle-check me-1"></i> {{ session('success') }}
+                                    </div>
+                                @endif
                                 @foreach ($errors->all() as $error)
                                     <div class="alert alert-danger small py-2 mb-3">{{ $error }}</div>
                                 @endforeach
