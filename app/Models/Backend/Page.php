@@ -2,22 +2,19 @@
 
 namespace App\Models\Backend;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
-use App\Traits\LocalizeController;
-use App\Traits\Filterable;
-
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use App\Models\Backend\Category;
+use Illuminate\Support\Facades\Schema;
 
 class Page extends Model
 {
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 
     public $timestamps = true;
+
     // protected $table = 'page';
     protected $guarded = [];
 
@@ -32,11 +29,12 @@ class Page extends Model
 
     public function scopePages(Builder $query)
     {
-        if (\Illuminate\Support\Facades\Schema::hasColumn($this->getTable(), 'type')) {
+        if (Schema::hasColumn($this->getTable(), 'type')) {
             return $query->where(function ($q) {
                 $q->where('type', 'page')->orWhereNull('type');
             });
         }
+
         return $query;
     }
 
@@ -44,10 +42,11 @@ class Page extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
     // Filter Search
     public function filterName(Builder $query, string $value)
     {
-        return $query->where('name', 'LIKE', '%' . $value . '%');
+        return $query->where('name', 'LIKE', '%'.$value.'%');
     }
 
     /** Alias cho name (tương thích code cũ dùng ->title). */

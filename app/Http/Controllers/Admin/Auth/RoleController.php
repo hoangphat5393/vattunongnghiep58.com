@@ -3,18 +3,18 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use App\Models\Backend\Role, App\Models\Backend\Permission;
 use App\Http\Requests\Admin\Role\StoreRole;
 use App\Http\Requests\Admin\Role\UpdateRole;
-
-use Validator;
+use App\Models\Backend\Permission;
+use App\Models\Backend\Role;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class RoleController extends Controller
 {
-    public $template, $data;
+    public $template;
+
+    public $data;
 
     // public function __construct()
     // {
@@ -42,12 +42,13 @@ class RoleController extends Controller
     public function create()
     {
         $this->data['permission'] = Permission::pluck('name', 'id')->all();
+
         return view('backend.role.single', $this->data);
     }
 
-
     /**
      * Post create new item in admin
+     *
      * @return [type] [description]
      */
     public function store(StoreRole $request)
@@ -67,13 +68,13 @@ class RoleController extends Controller
         if ($permission) {
             $role->permissions()->attach($permission);
         }
-        //Insert administrators
+        // Insert administrators
         if ($administrators) {
             $role->administrators()->attach($administrators);
         }
+
         return redirect()->route('admin.role.index')->with('success');
     }
-
 
     /**
      * Display the specified resource.
@@ -81,9 +82,9 @@ class RoleController extends Controller
     public function show(Role $role, int $id)
     {
         $role = $role::find($id);
+
         return view('backend.role.show', compact('role'));
     }
-
 
     /**
      * Show the form for editing the specified resource.
@@ -96,6 +97,7 @@ class RoleController extends Controller
 
             $this->data['permission_selected'] = $this->data['role']->permissions()->pluck('permissions.id')->toArray();
             $this->data['permission'] = Permission::pluck('name', 'id')->all();
+
             return view('backend.role.single', $this->data);
         } else {
             return view('404');
@@ -109,7 +111,7 @@ class RoleController extends Controller
     {
         $data = $request->all();
 
-        //Edit
+        // Edit
         if (empty($data['slug'])) {
             $data['slug'] = Str::slug($data['name']);
         }
@@ -127,13 +129,13 @@ class RoleController extends Controller
         $administrators = $data['administrators'] ?? [];
         $role->permissions()->sync($permission);
 
-        //Insert administrators
+        // Insert administrators
         $role->administrators()->sync($administrators);
 
         $save = $data['submit'] ?? 'apply';
         if ($save == 'apply') {
-            $msg = "Permission has been Updated";
-            $url = route('admin.role.edit', array($id));
+            $msg = 'Permission has been Updated';
+            $url = route('admin.role.edit', [$id]);
             msg_move_page($msg, $url);
         } else {
             return redirect(route('admin.role.index'));
@@ -148,6 +150,7 @@ class RoleController extends Controller
     public function destroy(Role $role, int $id)
     {
         $role->find($id)->destroy();
+
         return redirect()->route('admin.role.index')->with('success', 'Role deleted successfully.');
     }
 

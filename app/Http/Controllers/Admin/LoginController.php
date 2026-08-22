@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
+use App\Models\Backend\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Schema;
 
 class LoginController extends Controller
 {
@@ -27,14 +29,13 @@ class LoginController extends Controller
      *
      * @var string
      */
-
     protected $redirectTo = '/admin';
+
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-
     public function __construct()
     {
         $this->middleware('guest:admin')->except('logout');
@@ -48,14 +49,13 @@ class LoginController extends Controller
     /**
      * Get the needed authorization credentials from the request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     protected function credentials(Request $request)
     {
         $login = $request->input($this->username());
-        $userTable = (new \App\Models\Backend\User)->getTable();
-        $hasUsername = \Illuminate\Support\Facades\Schema::hasColumn($userTable, 'username');
+        $userTable = (new User)->getTable();
+        $hasUsername = Schema::hasColumn($userTable, 'username');
 
         // Dùng email nếu input giống email; nếu không thì dùng username chỉ khi bảng có cột username
         if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
@@ -71,7 +71,7 @@ class LoginController extends Controller
             'password' => $request->input('password'),
         ];
 
-        if (\Illuminate\Support\Facades\Schema::hasColumn($userTable, 'status')) {
+        if (Schema::hasColumn($userTable, 'status')) {
             $credentials['status'] = 1;
         }
 
@@ -86,6 +86,7 @@ class LoginController extends Controller
     public function logout()
     {
         Auth::guard('admin')->logout();
+
         return redirect()->route('admin.login');
     }
 }

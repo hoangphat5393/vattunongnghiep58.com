@@ -2,18 +2,16 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-use App\Models\Backend\User;
-use App\Models\Backend\Role;
 use App\Models\Backend\Permission;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Backend\Role;
+use App\Models\Backend\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class AdminAclFeatureTest extends TestCase
 {
-    // We don't use RefreshDatabase here to avoid wiping the actual DB if configured incorrectly, 
-    // instead we'll rely on manual cleanup or transaction if possible. 
+    // We don't use RefreshDatabase here to avoid wiping the actual DB if configured incorrectly,
+    // instead we'll rely on manual cleanup or transaction if possible.
     // But for safety in this environment, let's create unique data and clean it up.
 
     protected $adminUser;
@@ -33,7 +31,7 @@ class AdminAclFeatureTest extends TestCase
             'username' => 'admin_test',
             'email' => 'admin@example.com',
             'password' => bcrypt('password'),
-            'status' => 1
+            'status' => 1,
         ]);
 
         // Assign administrator role
@@ -62,8 +60,8 @@ class AdminAclFeatureTest extends TestCase
 
     public function test_admin_can_create_role()
     {
-        $roleName = 'Test Role ' . time();
-        $roleSlug = 'test-role-' . time();
+        $roleName = 'Test Role '.time();
+        $roleSlug = 'test-role-'.time();
 
         $response = $this->actingAs($this->adminUser, 'admin')
             ->post(route('admin.role.store'), [
@@ -71,14 +69,14 @@ class AdminAclFeatureTest extends TestCase
                 'slug' => $roleSlug,
                 'permission' => [],
                 'administrators' => [],
-                'submit' => 'save'
+                'submit' => 'save',
             ]);
 
         $response->assertRedirect(route('admin.role.index'));
 
         $this->assertDatabaseHas('roles', [
             'name' => $roleName,
-            'slug' => $roleSlug
+            'slug' => $roleSlug,
         ]);
 
         // Cleanup
@@ -90,24 +88,24 @@ class AdminAclFeatureTest extends TestCase
         // Create a role first
         $role = Role::create([
             'name' => 'Role To Update',
-            'slug' => 'role-to-update-' . time()
+            'slug' => 'role-to-update-'.time(),
         ]);
 
-        $newName = 'Role Updated ' . time();
+        $newName = 'Role Updated '.time();
 
         $response = $this->actingAs($this->adminUser, 'admin')
             ->put(route('admin.role.update', ['id' => $role->id]), [
                 'name' => $newName,
                 'slug' => $role->slug,
                 'permission' => [],
-                'submit' => 'save' // redirect to index
+                'submit' => 'save', // redirect to index
             ]);
 
         $response->assertRedirect(route('admin.role.index'));
 
         $this->assertDatabaseHas('roles', [
             'id' => $role->id,
-            'name' => $newName
+            'name' => $newName,
         ]);
 
         // Cleanup
@@ -125,22 +123,22 @@ class AdminAclFeatureTest extends TestCase
 
     public function test_admin_can_create_permission()
     {
-        $permName = 'Test Perm ' . time();
-        $permSlug = 'test-perm-' . time();
+        $permName = 'Test Perm '.time();
+        $permSlug = 'test-perm-'.time();
 
         $response = $this->actingAs($this->adminUser, 'admin')
             ->post(route('admin.permission.store'), [
                 'name' => $permName,
                 'slug' => $permSlug,
                 'http_uri' => ['GET::test'],
-                'submit' => 'save'
+                'submit' => 'save',
             ]);
 
         $response->assertRedirect(route('admin.permission.index'));
 
         $this->assertDatabaseHas('permissions', [
             'name' => $permName,
-            'slug' => $permSlug
+            'slug' => $permSlug,
         ]);
 
         // Cleanup
@@ -155,7 +153,7 @@ class AdminAclFeatureTest extends TestCase
             'username' => 'nopermuser',
             'email' => 'nopermuser@example.com',
             'password' => bcrypt('password'),
-            'status' => 1
+            'status' => 1,
         ]);
 
         $response = $this->actingAs($user, 'admin')
@@ -175,7 +173,7 @@ class AdminAclFeatureTest extends TestCase
         // Create a test role
         $role = Role::create([
             'name' => 'Test Role Assign',
-            'slug' => 'test-role-assign-' . time()
+            'slug' => 'test-role-assign-'.time(),
         ]);
 
         // Create a test user
@@ -184,7 +182,7 @@ class AdminAclFeatureTest extends TestCase
             'username' => 'testuserassign',
             'email' => 'testuserassign@example.com',
             'password' => bcrypt('password'),
-            'status' => 1
+            'status' => 1,
         ]);
 
         // Assign role via UserAdminController post
@@ -196,7 +194,7 @@ class AdminAclFeatureTest extends TestCase
                 'name' => $user->name,
                 'username' => $user->username,
                 'email' => $user->email,
-                'submit' => 'save' // redirect to index
+                'submit' => 'save', // redirect to index
             ]);
 
         // Assert redirect to list
@@ -205,7 +203,7 @@ class AdminAclFeatureTest extends TestCase
         // Assert role attached
         $this->assertDatabaseHas('role_user', [
             'user_id' => $user->id,
-            'role_id' => $role->id
+            'role_id' => $role->id,
         ]);
 
         // Cleanup

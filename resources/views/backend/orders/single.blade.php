@@ -31,7 +31,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                         <li class="breadcrumb-item active">Order Detail: {{ $order_detail->cart_code }}</li>
                     </ol></nav>
                 </div><!-- /.col -->

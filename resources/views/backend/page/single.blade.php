@@ -3,11 +3,10 @@
     $lc = app()->getLocale();
     if (isset($page)) {
         extract($page->getAttributes());
+        $title_head = $name ?? '';
     } else {
-        $title_head = 'Add new page';
+        $title_head = __('admin.add_page');
     }
-
-    $title_head = $name ?? '';
     $template = $template ?? 'page';
 
     $id = $id ?? 0;
@@ -46,7 +45,7 @@
                 </div>
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                         <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
                     </ol></nav>
                 </div>

@@ -17,25 +17,19 @@
 
     <div class="bg-leaf-50 grow">
         <div class="container mx-auto px-4 py-8">
-            @if ($carts->count())
-                <h1 class="text-3xl font-extrabold text-gray-900 mb-8">Giỏ hàng của bạn</h1>
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-8">Giỏ hàng của bạn</h1>
 
-                <div class="flex flex-col lg:flex-row gap-4 carts-content">
-                    <div class="lg:w-3/4">
-                        <div class="bg-white rounded-2xl shadow-sm border border-leaf-100 overflow-hidden">
-                            <div class="overflow-x-auto cart-table-include">
-                                @include('frontend.cart.cart-table')
-                            </div>
+            <div class="flex flex-col lg:flex-row gap-4 carts-content">
+                <div class="lg:w-3/4">
+                    <div class="bg-white rounded-2xl shadow-sm border border-leaf-100 overflow-hidden">
+                        <div class="overflow-x-auto cart-table-include">
+                            @include('frontend.cart.cart-table')
                         </div>
                     </div>
+                </div>
 
-                    @include('frontend.cart.includes.cart-sidebar')
-                </div>
-            @else
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mt-4 text-center">
-                    <p class="text-gray-600 text-lg">Giỏ hàng của bạn đang trống!</p>
-                </div>
-            @endif
+                @include('frontend.cart.includes.cart-sidebar')
+            </div>
         </div>
     </div>
 @endsection

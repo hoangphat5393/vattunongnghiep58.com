@@ -72,16 +72,33 @@
 
     $gallery = [];
     if (is_array($galleryRaw)) {
-        $gallery = $galleryRaw;
+        $gallery = array_filter($galleryRaw);
     } elseif (is_string($galleryRaw) && $galleryRaw !== '') {
         $unserialized = @unserialize($galleryRaw);
         if ($unserialized !== false || $galleryRaw === 'b:0;') {
-            $gallery = is_array($unserialized) ? $unserialized : [];
+            $gallery = is_array($unserialized) ? array_filter($unserialized) : [];
         } else {
             $decoded = json_decode($galleryRaw, true);
-            $gallery = is_array($decoded) ? $decoded : [];
+            $gallery = is_array($decoded) ? array_filter($decoded) : [];
         }
     }
+
+    $validGallery = [];
+    foreach ($gallery as $img) {
+        if (!empty($img) && (\Illuminate\Support\Str::startsWith($img, 'http') || \Illuminate\Support\Facades\File::exists(public_path(ltrim($img, '/'))))) {
+            $validGallery[] = $img;
+        }
+    }
+
+    if (!empty($product->image) && (\Illuminate\Support\Str::startsWith($product->image, 'http') || \Illuminate\Support\Facades\File::exists(public_path(ltrim($product->image, '/'))))) {
+        $validGallery = array_diff($validGallery, [$product->image]);
+        array_unshift($validGallery, $product->image);
+    }
+
+    if (empty($validGallery)) {
+        $validGallery = [$product->image ?: 'assets/images/placeholder.png'];
+    }
+    $gallery = $validGallery;
 
     $product_prices = collect();
     $default_price = null;

@@ -3,15 +3,12 @@
 namespace App\Http\Requests\Admin\Permission;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class UpdatePermission extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -20,12 +17,11 @@ class UpdatePermission extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
         $id = $this->route('id') ?? $this->id;
+
         return [
             'name' => ['required', 'string', 'max:255', Rule::unique('permissions', 'name')->ignore($id)],
             'slug' => ['required', 'string', 'max:255', Rule::unique('permissions', 'slug')->ignore($id), 'regex:/(^([0-9A-Za-z\._\-]+)$)/'],
@@ -34,15 +30,12 @@ class UpdatePermission extends FormRequest
 
     /**
      * Modify input data
-     *
-     * @return array
      */
     public function getSanitized(): array
     {
         $sanitized = $this->validated();
 
-
-        //Add your code for manipulation with request data here
+        // Add your code for manipulation with request data here
 
         return $sanitized;
     }

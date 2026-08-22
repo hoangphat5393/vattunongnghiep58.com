@@ -2,9 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -14,23 +13,23 @@ return new class extends Migration
     public function up(): void
     {
         // 1. Add 'cocojt' column to pages table if not exists
-        if (!Schema::hasColumn('pages', 'cocojt')) {
+        if (! Schema::hasColumn('pages', 'cocojt')) {
             Schema::table('pages', function (Blueprint $table) {
                 $table->string('cocojt', 50)->nullable()->after('id')->index();
             });
         }
 
         // 2. Create page_categories table if not exists (to replace post_categories)
-        if (!Schema::hasTable('page_categories')) {
+        if (! Schema::hasTable('page_categories')) {
             Schema::create('page_categories', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('page_id');
                 $table->unsignedBigInteger('category_id');
                 $table->timestamps();
 
-                // Foreign keys might fail if tables are not MyISAM/InnoDB compatible or ids differ, 
-                // but usually good practice. For now, skipping strict FK to ensure migration runs smooth 
-                // on potentially messy legacy data, or we can add them. 
+                // Foreign keys might fail if tables are not MyISAM/InnoDB compatible or ids differ,
+                // but usually good practice. For now, skipping strict FK to ensure migration runs smooth
+                // on potentially messy legacy data, or we can add them.
                 // Let's rely on logic for now to be safe against constraints.
             });
         }
@@ -43,7 +42,7 @@ return new class extends Migration
                 $originalSlug = $slug;
                 $count = 1;
                 while (DB::table('pages')->where('slug', $slug)->exists()) {
-                    $slug = $originalSlug . '-' . $count;
+                    $slug = $originalSlug.'-'.$count;
                     $count++;
                 }
 
@@ -67,7 +66,7 @@ return new class extends Migration
                     'seo_description' => $post->seo_description,
                     'created_at' => $post->created_at,
                     'updated_at' => $post->updated_at,
-                    // 'user_id' => $post->user_id, // pages table usually has user_id? Check schema again. 
+                    // 'user_id' => $post->user_id, // pages table usually has user_id? Check schema again.
                     // Inspect schema showed pages has NO user_id in the output I got earlier?
                     // Let me re-read my thought trace.
                     // Pages Columns: id, cocojt, slug, title, ... NO user_id listed in my thought trace for Pages!
@@ -94,7 +93,7 @@ return new class extends Migration
                     ];
                 }
 
-                if (!empty($pivotData)) {
+                if (! empty($pivotData)) {
                     DB::table('page_categories')->insert($pivotData);
                 }
             }
@@ -118,10 +117,10 @@ return new class extends Migration
         // Delete pages
         DB::table('pages')->where('cocojt', 'post')->delete();
 
-        // 2. Drop page_categories if we created it? 
+        // 2. Drop page_categories if we created it?
         // If the table was created by this migration, we should drop it.
-        // However, if we want to be safe, maybe just empty it? 
-        // User asked for rollback strategy. 
+        // However, if we want to be safe, maybe just empty it?
+        // User asked for rollback strategy.
         Schema::dropIfExists('page_categories');
 
         // 3. Drop column

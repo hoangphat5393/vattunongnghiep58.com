@@ -1,53 +1,38 @@
 <?php
 
-
-
 namespace App\Http\Controllers;
 
-
-
+use App\Models\Frontend\User;
+use App\Models\PaymentRequest;
+use App\Models\Province;
+use App\Traits\LocalizeController;
 use Illuminate\Http\Request;
-
-use App\Page as Page;
-
 use Illuminate\Support\Facades\View;
 
-use Gornymedia\Shortcodes\Facades\Shortcode;
-
-use App\Models\Frontend\User;
-
-
 class PaymentController extends Controller
-
 {
-
-    use \App\Traits\LocalizeController;
-
-
+    use LocalizeController;
 
     public $data = [];
 
-
-
     public function checkout(Request $request)
-
     {
 
         $this->localized();
 
-        $province = \App\Models\Province::find(auth()->user()->province);
+        $province = Province::find(auth()->user()->province);
 
         $amount = $request->amount ? str_replace(',', '', $request->amount) * 100 : 0;
 
-        $purchase = array(
+        $purchase = [
 
-            "vnp_Command" => "pay",
+            'vnp_Command' => 'pay',
 
-            "vnp_CreateDate" => date('YmdHis'),
+            'vnp_CreateDate' => date('YmdHis'),
 
-            "vnp_CurrCode" => "VND",
+            'vnp_CurrCode' => 'VND',
 
-            "vnp_Bill_Email" => 'bichnhibe@gmail.com',
+            'vnp_Bill_Email' => 'bichnhibe@gmail.com',
 
             'vnp_TxnRef' => time(),
 
@@ -61,15 +46,14 @@ class PaymentController extends Controller
 
             'vnp_Amount' => $amount,
 
-            'vnp_ReturnUrl' => route('payment.retun')
+            'vnp_ReturnUrl' => route('payment.retun'),
 
-        );
+        ];
 
-        if ($request->bank_code != '')
+        if ($request->bank_code != '') {
 
             $purchase['vnp_BankCode'] = $request->bank_code;
-
-
+        }
 
         try {
 
@@ -79,7 +63,7 @@ class PaymentController extends Controller
 
             if ($response->isRedirect()) {
 
-                \App\Models\PaymentRequest::create([
+                PaymentRequest::create([
 
                     'user_id' => auth()->user()->id,
 
@@ -105,22 +89,15 @@ class PaymentController extends Controller
 
         } catch (Exception $e) {
 
-
-
             return $e->getMessage();
 
         }
-
-
 
         // return view('theme.home', ['data' => $this->data]);
 
     }
 
-
-
     public function payment_return()
-
     {
 
         $this->localized();
@@ -135,15 +112,13 @@ class PaymentController extends Controller
 
         $amount = $response->vnp_Amount ? $response->vnp_Amount / 100 : 0;
 
-
-
-        \App\Models\PaymentRequest::updateOrCreate(
+        PaymentRequest::updateOrCreate(
 
             [
 
                 'user_id' => auth()->user()->id,
 
-                'payment_code' => $response->vnp_TxnRef
+                'payment_code' => $response->vnp_TxnRef,
 
             ],
 
@@ -164,8 +139,6 @@ class PaymentController extends Controller
             ]
 
         );
-
-
 
         if ($response->isSuccessful()) {
 
@@ -190,28 +163,20 @@ class PaymentController extends Controller
 
     }
 
-
-
     public function paymentSuccess()
-
     {
 
         $this->localized();
 
-        $this->data['payment'] = \App\Models\PaymentRequest::where('status', '<>', 1)->where('user_id', auth()->user()->id)->orderbyDesc('id')->first();
-
-
+        $this->data['payment'] = PaymentRequest::where('status', '<>', 1)->where('user_id', auth()->user()->id)->orderbyDesc('id')->first();
 
         return view('theme.payment.success', ['data' => $this->data]);
 
     }
 
-
-
-    //nap tien
+    // nap tien
 
     public function paymentPoint()
-
     {
 
         $this->localized();
@@ -220,10 +185,7 @@ class PaymentController extends Controller
 
     }
 
-
-
     public function paymentType(Request $request)
-
     {
 
         $type = $request->type;
@@ -249,6 +211,4 @@ class PaymentController extends Controller
         return response()->json($this->data);
 
     }
-
 }
-

@@ -26,7 +26,7 @@
             }
         }
     }
-    $title_head = $name ?? __('Add product');
+    $title_head = isset($name) && $name !== '' ? $name : __('admin.add_product');
 
     $id = $id ?? 0;
 
@@ -64,7 +64,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                         <li class="breadcrumb-item active">{{ $title_head }}</li>
                     </ol></nav>
                 </div><!-- /.col -->
@@ -125,16 +125,12 @@
                                         @endphp
                                         @include('backend.partials.quote', $quote_arr)
                                         @include('backend.partials.content', $content_arr)
-                                    </div>
-                                </div>
-
-
-
-                                <div class="form-group col-lg-6">
-                                    <div class="row">
-                                        <label for="sort" class="form-label title_txt col-form-label col-md-4 px-md-1">Độ ưu tiên</label>
-                                        <div class="col-md-6">
-                                            <input type="text" name="sort" id="sort" value="{{ $sort ?? '' }}" class="form-control">
+                                        <hr class="my-4">
+                                        <div class="mb-3 form-group">
+                                            <label for="sort" class="form-label font-weight-bold">Độ ưu tiên</label>
+                                            <input type="number" name="sort" id="sort" value="{{ $sort ?? 0 }}"
+                                                class="form-control" placeholder="0" style="max-width: 250px;">
+                                            <small class="form-text text-muted">Số càng lớn sản phẩm càng được ưu tiên hiển thị trước</small>
                                         </div>
                                     </div>
                                 </div>
@@ -145,7 +141,7 @@
                         @include('backend.partials.galleries', ['gallery_images' => $gallery ?? ''])
                         {{-- End Gallery --}}
 
-                        @include('backend.product.includes.price_stock', ['price_type' => $price_type])
+                        @include('backend.product.includes.price_stock_multi', ['price_type' => $price_type])
                     </div>
 
                     <div class="col-md-3">
@@ -153,9 +149,9 @@
                         @include('backend.partials.action_button')
 
                         {{-- SELECT CATEGORY --}}
-                        <div class="card widget-category">
+                        <div class="mb-4 card card-secondary card-outline widget-category">
                             <div class="card-header">
-                                <h4>Chuyên mục</h4>
+                                <h4 class="card-title mb-0">Chuyên mục</h4>
                             </div>
                             <div class="card-body max-vh-75">
                                 <div class="inside clearfix">

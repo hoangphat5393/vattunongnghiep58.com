@@ -22,8 +22,6 @@ class UpdateAdminUser extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
     public function rules(): array
     {
@@ -47,21 +45,20 @@ class UpdateAdminUser extends FormRequest
 
     /**
      * Modify input data
-     *
-     * @return array
      */
     public function getModifiedData(): array
     {
         $data = $this->only(collect($this->rules())->keys()->all());
-        if (!Config::get('admin-auth.activation_enabled')) {
+        if (! Config::get('admin-auth.activation_enabled')) {
             $data['activated'] = true;
         }
         if (array_key_exists('password', $data) && empty($data['password'])) {
             unset($data['password']);
         }
-        if (!empty($data['password'])) {
+        if (! empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         }
+
         return $data;
     }
 }

@@ -168,9 +168,15 @@ class AdminController extends Controller
         // delete;
         Setting::whereNotIn('id', $list_option)->delete();
         Cache::forget('theme_option');
-        $msg = 'Option has been registered';
-        $url = route('admin.theme-option');
-        msg_move_page($msg, $url);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Cấu hình cài đặt đã được lưu thành công!',
+            ]);
+        }
+
+        return redirect()->route('admin.theme-option')->with('success', 'Cấu hình cài đặt đã được lưu thành công!');
     }
 
     public function getCSS()

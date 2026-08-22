@@ -71,13 +71,13 @@ class AjaxController extends Controller
 
             case 'page':
                 // xóa thumbnail
-                $url_upload = $_SERVER['DOCUMENT_ROOT'] . '/images/page/';
+                $url_upload = $_SERVER['DOCUMENT_ROOT'].'/images/page/';
                 foreach ($arr as $it) {
                     $data_page = Page::where('id', '=', $it)->get();
                     foreach ($data_page as $row) {
                         $img = $row->thubnail;
                         if ($img != '') {
-                            $pt = $url_upload . $img;
+                            $pt = $url_upload.$img;
                             if (file_exists($pt)) {
                                 unlink($pt);
                             }
@@ -237,7 +237,7 @@ class AjaxController extends Controller
                     $newPage->created_at = Carbon::now(); // changing the created_at date
                     $newPage->save(); // saving it to the database
 
-                    $slug = Str::slug($newPage->name . '-' . $newPage->id);
+                    $slug = Str::slug($newPage->name.'-'.$newPage->id);
 
                     // update sort = id
                     Page::where('id', $newPage->id)->update(['slug' => $slug, 'sort' => $newPage->id]);
@@ -263,7 +263,7 @@ class AjaxController extends Controller
                     if ($baseCode === '') {
                         $baseCode = 'email_template';
                     }
-                    $newTemplate->code = $baseCode . '_copy_' . $template->id;
+                    $newTemplate->code = $baseCode.'_copy_'.$template->id;
                     $newTemplate->created_at = Carbon::now();
                     $newTemplate->save();
 
@@ -319,7 +319,7 @@ class AjaxController extends Controller
 
                     // Replicate category
                     $newCaterory = $category->replicate();
-                    $newCaterory->name = $newCaterory->name . ' ' . $i;
+                    $newCaterory->name = $newCaterory->name.' '.$i;
                     $newCaterory->slug = Str::slug($newCaterory->name);
                     $newCaterory->created_at = Carbon::now(); // changing the created_at date
                     $newCaterory->save(); // saving it to the database
@@ -346,7 +346,7 @@ class AjaxController extends Controller
                     $newPage = $page->replicate();
                     $newPage->created_at = Carbon::now();
                     $newPage->save();
-                    $slug = Str::slug(($newPage->name ?? 'post') . '-' . $newPage->id);
+                    $slug = Str::slug(($newPage->name ?? 'post').'-'.$newPage->id);
                     Page::where('id', $newPage->id)->update(['slug' => $slug, 'sort' => $newPage->id]);
                     $i++;
                 }
@@ -370,7 +370,7 @@ class AjaxController extends Controller
                     $newProduct->created_at = Carbon::now(); // changing the created_at date
                     $newProduct->save(); // saving it to the database
 
-                    $slug = Str::slug($newProduct->name . '-' . $newProduct->id);
+                    $slug = Str::slug($newProduct->name.'-'.$newProduct->id);
 
                     // update sort = id
                     Product::where('id', $newProduct->id)->update(['slug' => $slug, 'sort' => $newProduct->id]);

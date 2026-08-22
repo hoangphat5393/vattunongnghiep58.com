@@ -32,7 +32,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::with(['user', 'categories'])
+        $products = Product::with(['user', 'categories', 'prices'])
             ->filter($request)
             ->orderByDesc('sort')
             ->paginate(20)

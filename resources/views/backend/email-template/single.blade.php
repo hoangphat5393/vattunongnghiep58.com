@@ -4,11 +4,10 @@
     $lc = app()->getLocale();
     if (isset($emailTemplate)) {
         extract($emailTemplate->getAttributes());
+        $title_head = $name ?? '';
     } else {
-        $title_head = 'Add new email template';
+        $title_head = __('admin.add_email_template');
     }
-
-    $title_head = $name ?? '';
 
     $date_update = $updated_at ?? date('Y-m-d H:i:s');
 
@@ -48,7 +47,7 @@
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                             <li class="breadcrumb-item active">{{ $title_head }}</li>
                         </ol>
                     </nav>

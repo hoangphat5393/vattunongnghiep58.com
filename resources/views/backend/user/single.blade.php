@@ -9,7 +9,7 @@
         // }
     }
 
-    $title_head = $name ?? __('Add user');
+    $title_head = isset($name) && $name !== '' ? $name : __('admin.add_user');
     $id = $id ?? 0;
 
     if (request()->route()->named('admin.user.create')) {

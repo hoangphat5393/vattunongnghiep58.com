@@ -2,18 +2,17 @@
 
 namespace App\Http\Controllers\Admin\Auth;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Permission\StorePermission;
 use App\Http\Requests\Admin\Permission\UpdatePermission;
-use App\Models\Backend\Addtocard, App\Models\Backend\Permission;
+use App\Models\Backend\Permission;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PermissionController extends Controller
 {
     public $data;
+
     public $template;
 
     /**
@@ -28,17 +27,17 @@ class PermissionController extends Controller
             if (Str::startsWith($route->uri(), SC_ADMIN_PREFIX)) {
                 $prefix = SC_ADMIN_PREFIX ? $route->getPrefix() : ltrim($route->getPrefix(), '/');
                 $routeAdmin[$prefix] = [
-                    'uri'    => 'ANY::' . $prefix . '/*',
-                    'name'   => $prefix . '/*',
+                    'uri' => 'ANY::'.$prefix.'/*',
+                    'name' => $prefix.'/*',
                     'method' => 'ANY',
                 ];
                 foreach ($route->methods as $key => $method) {
-                    if ($method != 'HEAD' && !collect($this->without())->first(function ($exp) use ($route) {
+                    if ($method != 'HEAD' && ! collect($this->without())->first(function ($exp) use ($route) {
                         return Str::startsWith($route->uri, $exp);
                     })) {
                         $routeAdmin[] = [
-                            'uri'    => $method . '::' . $route->uri,
-                            'name'   => $route->uri,
+                            'uri' => $method.'::'.$route->uri,
+                            'name' => $route->uri,
                             'method' => $method,
                         ];
                     }
@@ -61,6 +60,7 @@ class PermissionController extends Controller
             ->paginate(20)
             ->appends($request->all());
         $total_item = $permissions->count();
+
         return view('backend.permission.index', compact('permissions', 'total_item'));
     }
 
@@ -91,8 +91,8 @@ class PermissionController extends Controller
 
         $save = $request->submit ?? 'apply';
         if ($save == 'apply') {
-            $msg = "Permission has been created successfully";
-            $url = route('admin.permission.edit', array($insert_id));
+            $msg = 'Permission has been created successfully';
+            $url = route('admin.permission.edit', [$insert_id]);
             msg_move_page($msg, $url);
         } else {
             return redirect(route('admin.permission.index'));
@@ -105,6 +105,7 @@ class PermissionController extends Controller
     public function show(Permission $permission, int $id)
     {
         $permission = $permission::find($id);
+
         return view('backend.permission.show', compact('permission'));
     }
 
@@ -143,8 +144,8 @@ class PermissionController extends Controller
         $save = $request->submit ?? 'apply';
 
         if ($save == 'apply') {
-            $msg = "Permission has been updated successfully";
-            $url = route('admin.permission.edit', array($id));
+            $msg = 'Permission has been updated successfully';
+            $url = route('admin.permission.edit', [$id]);
             msg_move_page($msg, $url);
         } else {
             return redirect(route('admin.permission.index'));
@@ -157,9 +158,9 @@ class PermissionController extends Controller
     public function destroy(Permission $permission, int $id)
     {
         $permission->find($id)->destroy();
+
         return redirect()->route('admin.permission.index')->with('success', 'Permission deleted successfully.');
     }
-
 
     public function roleGroup()
     {
@@ -168,14 +169,15 @@ class PermissionController extends Controller
 
     public function without()
     {
-        $prefix = SC_ADMIN_PREFIX ? SC_ADMIN_PREFIX . '/' : '';
+        $prefix = SC_ADMIN_PREFIX ? SC_ADMIN_PREFIX.'/' : '';
+
         return [
-            $prefix . 'login',
-            $prefix . 'logout',
-            $prefix . 'forgot',
-            $prefix . 'deny',
-            $prefix . 'locale',
-            $prefix . 'uploads',
+            $prefix.'login',
+            $prefix.'logout',
+            $prefix.'forgot',
+            $prefix.'deny',
+            $prefix.'locale',
+            $prefix.'uploads',
         ];
     }
 }

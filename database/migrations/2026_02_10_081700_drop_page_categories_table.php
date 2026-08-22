@@ -24,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         // Recreate page_categories table
-        if (!Schema::hasTable('page_categories')) {
+        if (! Schema::hasTable('page_categories')) {
             Schema::create('page_categories', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('page_id');
@@ -34,7 +34,7 @@ return new class extends Migration
         }
 
         // Recreate post_categories table (simplified version as backup)
-        if (!Schema::hasTable('post_categories')) {
+        if (! Schema::hasTable('post_categories')) {
             Schema::create('post_categories', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('post_id');

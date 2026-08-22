@@ -2,11 +2,10 @@
 @php
     if (isset($contact)) {
         extract($contact->toArray());
+        $title_head = $name ?? '';
     } else {
-        $title_head = 'Add new contact';
+        $title_head = __('admin.add_contact');
     }
-
-    $title_head = $name ?? '';
 
     $id = $id ?? 0;
 

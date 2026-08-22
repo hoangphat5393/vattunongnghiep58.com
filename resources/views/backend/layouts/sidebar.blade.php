@@ -264,7 +264,7 @@
 
                                         <i class="nav-icon fas fa-angle-right"></i>
 
-                                        <p>@lang('role')</p>
+                                        <p>@lang('admin.role')</p>
 
                                     </a>
 
@@ -276,7 +276,7 @@
 
                                         <i class="nav-icon fas fa-angle-right"></i>
 
-                                        <p>@lang('permission')</p>
+                                        <p>@lang('admin.permission')</p>
 
                                     </a>
 
@@ -298,7 +298,7 @@
                         <a href="#" class="nav-link">
                             <i class="nav-icon fa-light fa-gear"></i>
                             <p>
-                                Setting <i class="nav-arrow bi bi-chevron-right"></i>
+                                @lang('admin.setting') <i class="nav-arrow bi bi-chevron-right"></i>
                             </p>
 
                         </a>
@@ -313,7 +313,7 @@
 
                                     <i class="nav-icon fas fa-angle-right"></i>
 
-                                    <p>Sidebar Menu</p>
+                                    <p>@lang('admin.sidebar_menu')</p>
 
                                 </a>
 
@@ -327,7 +327,7 @@
 
                                     <i class="nav-icon fas fa-angle-right"></i>
 
-                                    <p>Theme Option</p>
+                                    <p>@lang('admin.theme_option')</p>
 
                                 </a>
 
@@ -342,7 +342,7 @@
 
                                         <i class="nav-icon fas fa-angle-right"></i>
 
-                                        <p>Theme CSS</p>
+                                        <p>@lang('admin.theme_css')</p>
 
                                     </a>
 

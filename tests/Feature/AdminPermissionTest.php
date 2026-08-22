@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Backend\Permission;
+use App\Models\Backend\Role;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
-use App\Models\Backend\Role;
-use App\Models\Backend\Permission;
 
 class AdminPermissionTest extends TestCase
 {
@@ -18,8 +18,8 @@ class AdminPermissionTest extends TestCase
         // 1. Create a Test Permission
         $permission = Permission::create([
             'name' => 'Test Permission',
-            'slug' => 'test-permission-' . time(),
-            'http_uri' => 'GET::test/uri'
+            'slug' => 'test-permission-'.time(),
+            'http_uri' => 'GET::test/uri',
         ]);
 
         $this->assertDatabaseHas('permissions', [
@@ -30,17 +30,17 @@ class AdminPermissionTest extends TestCase
         // 2. Create a Test Role
         $role = Role::create([
             'name' => 'Test Role',
-            'slug' => 'test-role-' . time(),
+            'slug' => 'test-role-'.time(),
             // 'status' => 1 // Removed as column does not exist
         ]);
 
-        // If Role doesn't have status, we might need to adjust. 
+        // If Role doesn't have status, we might need to adjust.
         // Let's check Role model again if it fails.
         // Assuming minimal fillable from previous read: protected $guarded = [];
 
         $this->assertDatabaseHas('roles', [ // Wait, Role model table is 'roles' by default
             'id' => $role->id,
-            'slug' => $role->slug
+            'slug' => $role->slug,
         ]);
 
         // 3. Attach

@@ -43,7 +43,7 @@
                 <div class="col-12">
                     <div class="mb-4 card card-primary card-outline">
                         <div class="card-header">
-                            <h3 class="card-title">{{ $title_head }} @lang('admin.list')</h3>
+                            <h3 class="card-title">{{ $title_head }}</h3>
                         </div> <!-- /.card-header -->
                         <div class="card-body">
 
@@ -90,6 +90,7 @@
                                             <th scope="col" class="text-center" style="width:100px">@lang('admin.priority')</th>
                                             <th scope="col" class="text-center">@lang('admin.name')</th>
                                             <th scope="col" class="text-center">@lang('admin.thumbnail')</th>
+                                            <th scope="col" class="text-center" style="min-width: 140px;">Giá</th>
                                             <th scope="col" class="text-center">@lang('admin.category')</th>
                                             <th scope="col" class="text-center">@lang('admin.created date')</th>
                                         </tr>
@@ -121,6 +122,43 @@
                                                         <img src="{{ get_image($item->image) }}" style="height: 70px;">
                                                     @endif
                                                 </td>
+                                                <td class="text-start">
+                                                    @php
+                                                        $isContact = ($item->price_type === 'contact' || empty($item->price) || (float)$item->price <= 0);
+                                                        $regularPrice = (float)($item->price ?? 0);
+                                                        $salePrice = (float)($item->sale_price ?? 0);
+                                                        $hasDiscount = ($salePrice > 0 && $regularPrice > 0 && $salePrice < $regularPrice);
+                                                        $displaySalePrice = $hasDiscount ? $salePrice : $regularPrice;
+                                                        $discountAmount = $hasDiscount ? ($regularPrice - $salePrice) : 0;
+                                                        $discountPercent = ($hasDiscount && $regularPrice > 0) ? (int) round(($discountAmount / $regularPrice) * 100) : 0;
+                                                        $unitDisplay = $item->unit ?? 'VNĐ';
+                                                    @endphp
+                                                    @if ($isContact)
+                                                        <span class="badge bg-secondary">Liên hệ</span>
+                                                    @else
+                                                        <div class="small">
+                                                            <div class="mb-1">
+                                                                <span class="text-muted">Giá bán:</span> 
+                                                                <b class="text-success">{{ number_format($displaySalePrice, 0, ',', '.') }} {{ $unitDisplay }}</b>
+                                                            </div>
+                                                            @if ($hasDiscount)
+                                                                <div class="mb-1">
+                                                                    <span class="text-muted">Giá vốn:</span> 
+                                                                    <s class="text-secondary">{{ number_format($regularPrice, 0, ',', '.') }} {{ $unitDisplay }}</s>
+                                                                </div>
+                                                                <div class="mb-1">
+                                                                    <span class="text-muted">Giá giảm:</span> 
+                                                                    <span class="text-danger fw-bold">-{{ number_format($discountAmount, 0, ',', '.') }} {{ $unitDisplay }} ({{ $discountPercent }}%)</span>
+                                                                </div>
+                                                            @endif
+                                                            @if ($item->prices && $item->prices->count() > 0)
+                                                                <div class="mt-1">
+                                                                    <span class="badge bg-info text-dark" style="font-size: 10px;">{{ $item->prices->count() }} mức giá</span>
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    @endif
+                                                </td>
                                                 <td class="text-center">
                                                     @php
                                                         $categories = $item->categories;
@@ -131,7 +169,7 @@
                                                 </td>
 
                                                 <td class="text-center">
-                                                    <input type="checkbox" id="hot" class="quick_change_value" @checked($item->hot == 1) value="1" value-off="0" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" data-toggle="toggle" data-on="Hot" data-off="Không" data-onstyle="danger" data-offstyle="light">
+                                                    <input type="checkbox" id="hot" class="quick_change_value" @checked($item->hot == 1) value="1" value-off="0" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" data-toggle="toggle" data-on="Bán chạy" data-off="Không" data-onstyle="danger" data-offstyle="light">
                                                     <p class="my-2">{{ $item->updated_at }}</p>
                                                     <input type="checkbox" id="status" class="quick_change_value" @checked($item->status == 1) value="1" value-off="0" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" data-toggle="toggle" data-on="Công khai" data-off="Bản nháp" data-onstyle="success" data-offstyle="light">
                                                 </td>

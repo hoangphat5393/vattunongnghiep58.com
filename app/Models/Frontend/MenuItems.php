@@ -57,5 +57,4 @@ class MenuItems extends Model
         return $this->hasMany(MenuItems::class, 'parent')->orderBy('sort', 'ASC');
 
     }
-
 }

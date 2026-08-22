@@ -3,10 +3,8 @@
 namespace App\Models\Frontend;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use App\Models\Frontend\Product;
 
 class Category extends Model
 {
@@ -36,28 +34,30 @@ class Category extends Model
     public function getCategoryNameAttribute($value)
     {
         $lc = app()->getLocale();
-        if ('en' == $lc) {
+        if ($lc == 'en') {
             return $value;
         } else {
-            return $this->{'categoryName_' . $lc};
+            return $this->{'categoryName_'.$lc};
         }
     }
+
     public function getCategoryDescriptionAttribute($value)
     {
         $lc = app()->getLocale();
-        if ('en' == $lc) {
+        if ($lc == 'en') {
             return $value;
         } else {
-            return $this->{'categoryDescription_' . $lc};
+            return $this->{'categoryDescription_'.$lc};
         }
     }
+
     public function getCategoryContentAttribute($value)
     {
         $lc = app()->getLocale();
-        if ('en' == $lc) {
+        if ($lc == 'en') {
             return $value;
         } else {
-            return $this->{'categoryContent_' . $lc};
+            return $this->{'categoryContent_'.$lc};
         }
     }
 
@@ -65,6 +65,7 @@ class Category extends Model
     {
         return $this->hasMany(Category::class, 'parent', 'id')->orderBy('sort', 'DESC');
     }
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'parent', 'id');
@@ -73,12 +74,14 @@ class Category extends Model
     public function getDetail($id, $type = '')
     {
         $detail = new Category;
-        if ($type == 'slug')
+        if ($type == 'slug') {
             $detail = $detail->where('slug', $id);
-        else
+        } else {
             $detail = $detail->where('id', $id);
+        }
 
         $detail = $detail->first();
+
         return $detail;
     }
 }

@@ -466,15 +466,15 @@ if (! function_exists('remove_accents')) {
             $chars = [];
             // Assume ISO-8859-1 if not UTF-8
             $chars['in'] = "\x80\x83\x8a\x8e\x9a\x9e"
-                . "\x9f\xa2\xa5\xb5\xc0\xc1\xc2"
-                . "\xc3\xc4\xc5\xc7\xc8\xc9\xca"
-                . "\xcb\xcc\xcd\xce\xcf\xd1\xd2"
-                . "\xd3\xd4\xd5\xd6\xd8\xd9\xda"
-                . "\xdb\xdc\xdd\xe0\xe1\xe2\xe3"
-                . "\xe4\xe5\xe7\xe8\xe9\xea\xeb"
-                . "\xec\xed\xee\xef\xf1\xf2\xf3"
-                . "\xf4\xf5\xf6\xf8\xf9\xfa\xfb"
-                . "\xfc\xfd\xff";
+                ."\x9f\xa2\xa5\xb5\xc0\xc1\xc2"
+                ."\xc3\xc4\xc5\xc7\xc8\xc9\xca"
+                ."\xcb\xcc\xcd\xce\xcf\xd1\xd2"
+                ."\xd3\xd4\xd5\xd6\xd8\xd9\xda"
+                ."\xdb\xdc\xdd\xe0\xe1\xe2\xe3"
+                ."\xe4\xe5\xe7\xe8\xe9\xea\xeb"
+                ."\xec\xed\xee\xef\xf1\xf2\xf3"
+                ."\xf4\xf5\xf6\xf8\xf9\xfa\xfb"
+                ."\xfc\xfd\xff";
 
             $chars['out'] = 'EfSZszYcYuAAAAAACEEEEIIIINOOOOOOUUUUYaaaaaaceeeeiiiinoooooouuuuyy';
 
@@ -575,39 +575,48 @@ if (! function_exists('msg_move_page')) {
     function msg_move_page($msg, $url = 'back', $isExit = 1)
     {
         if ($msg) {
-            echo "<script language='javascript'>alert('" . $msg . "');</script>";
+            session()->flash('swal_toast', [
+                'icon' => 'success',
+                'title' => $msg,
+            ]);
+            session()->save();
         }
+
         if ($url) {
+            $targetUrl = '/';
             switch ($url) {
                 case 'home':
-                    echo "<script>location.href='/'</script>";
+                    $targetUrl = '/';
                     break;
                 case 'back':
-                    echo "<script language='javascript'>history.go(-1);</script>";
+                    $targetUrl = back()->getTargetUrl();
                     break;
                 case 'close':
                     echo "<script language='javascript'>self.close();</script>";
-                    break;
+                    if ($isExit) {
+                        exit();
+                    }
+
+                    return;
                 case 'reload':
-                    echo "<script language='javascript'>document.location.reload();</script>";
-                    break;
                 case 'top_opener_reload':
-                    echo "<script language='javascript'>top.opener.document.location.reload();</script>";
-                    break;
-                case 'top_url':
-                    echo "<Script language='javascript'>top.document.location.href = '" . $url . "'</script>";
-                    break;
                 case 'parent_reload':
-                    echo "<script language='javascript'>parent.document.location.reload();</Script>";
+                    $targetUrl = url()->previous();
                     break;
                 case 'not':
-                    echo "<script language='javascript'>alert('" . $msg . "');</script>";
-                    break;
+                    return;
                 default:
-                    echo "<script language='javascript'>document.location.replace('" . $url . "');</script>";
+                    $targetUrl = $url;
                     break;
             }
+
+            if (! headers_sent()) {
+                header('Location: '.$targetUrl);
+            } else {
+                echo "<script language='javascript'>document.location.replace('".$targetUrl."');</script>";
+            }
         }
+
         if ($isExit) {
             exit();
         }
@@ -661,20 +670,28 @@ if (! function_exists('render_option_price')) {
 if (! function_exists('get_image')) {
     function get_image($item_image = '')
     {
-        $image = asset('assets/images/placeholder.png');
+        $placeholder = asset('assets/images/placeholder.png');
 
-        // replace space code
-        // $item_image = str_replace('%20', ' ', $item_image);
-
-        if ($item_image) {
-            if (File::exists(public_path($item_image))) {
-                $image = $item_image;
-            } elseif (File::exists(public_path(urldecode($item_image)))) {
-                $image = $item_image;
-            }
+        if (! $item_image) {
+            return $placeholder;
         }
 
-        return $image;
+        if (Str::startsWith($item_image, 'http://') || Str::startsWith($item_image, 'https://')) {
+            return $item_image;
+        }
+
+        $cleanPath = ltrim(urldecode($item_image), '/');
+        $rawCleanPath = ltrim($item_image, '/');
+
+        if (File::exists(public_path($cleanPath))) {
+            return asset($cleanPath);
+        }
+
+        if (File::exists(public_path($rawCleanPath))) {
+            return asset($rawCleanPath);
+        }
+
+        return $placeholder;
     }
 }
 
@@ -699,15 +716,15 @@ if (! function_exists('variations_traverse')) {
         $r = [];
         $pr = '';
         if (! is_numeric($parent_ind)) {
-            $pr = $parent_ind . '-';
+            $pr = $parent_ind.'-';
         }
         foreach ($array as $ind => $el) {
             if (is_array($el)) {
-                $r = array_merge($r, variations_traverse($el, $pr . (is_numeric($ind) ? '' : $ind)));
+                $r = array_merge($r, variations_traverse($el, $pr.(is_numeric($ind) ? '' : $ind)));
             } elseif (is_numeric($ind)) {
-                $r[] = $pr . $el;
+                $r[] = $pr.$el;
             } else {
-                $r[] = $pr . $ind . '-' . $el;
+                $r[] = $pr.$ind.'-'.$el;
             }
         }
 

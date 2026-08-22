@@ -2,7 +2,7 @@
 
 @section('seo')
     @php
-        $title_head = 'Admin Menu';
+        $title_head = __('admin.sidebar_menu');
         $seo = [
             'title' => $title_head,
             'keywords' => '',
@@ -46,10 +46,10 @@
 
                     <div class="card card-info card-outline">
                         <div class="card-header">
-                            <h3 class="card-title fs-3">{!! $title_head !!} List</h3>
+                            <h3 class="card-title fs-3">{!! $title_head !!}</h3>
                             <div class="card-tools">
-                                <a class="btn btn-warning btn-flat menu-sort-save" title="Save">
-                                    <i class="fa fa-save"></i> Save
+                                <a class="btn btn-warning btn-flat menu-sort-save" title="@lang('admin.save')">
+                                    <i class="fa fa-save"></i> @lang('admin.save')
                                 </a>
                             </div>
                         </div>
@@ -175,7 +175,7 @@
                 <div class="col-md-6">
                     <div class="card card-primary card-outline">
                         <div class="card-header align-items-center">
-                            <h3 class="card-title fs-3">{!! $title_head !!} Form</h3>
+                            <h3 class="card-title fs-3">@lang('admin.admin_menu_form')</h3>
                             @if ($layout == 'edit')
                                 <div class="card-tools">
                                     <a href="{{ route('admin.admin-menu.index') }}" class="btn btn-flat btn-danger" title="List">
@@ -189,7 +189,7 @@
                             @csrf
                             <div class="card-body">
                                 <div class="row {{ $errors->has('parent_id') ? ' text-red' : '' }}">
-                                    <label for="parent_id" class="col-sm-2 col-form-label">Parent</label>
+                                    <label for="parent_id" class="col-sm-2 col-form-label">@lang('admin.parent')</label>
                                     <div class="col-sm-10 ">
                                         <select class="form-control parent mb-3" name="parent_id">
                                             <option value="0" {{ old('parent', $menu['parent'] ?? '') == 0 ? 'selected' : '' }}>== ROOT ==</option>
@@ -207,7 +207,7 @@
                                 </div>
 
                                 <div class="row {{ $errors->has('title') ? ' text-red' : '' }}">
-                                    <label for="title" class="col-sm-2 col-form-label">Title</label>
+                                    <label for="title" class="col-sm-2 col-form-label">@lang('admin.title')</label>
                                     <div class="col-sm-10 ">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text"><i class="fas fa-pencil-alt"></i></span>
@@ -222,13 +222,13 @@
                                 </div>
 
                                 <div class="row {{ $errors->has('icon') ? ' text-red' : '' }}">
-                                    <label for="icon" class="col-sm-2 col-form-label">Icon</label>
+                                    <label for="icon" class="col-sm-2 col-form-label">@lang('admin.icon')</label>
                                     <div class="col-sm-10 ">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text">
                                                 <i class="fas fa-archive picker-target"></i>
                                             </span>
-                                            <input type="text" id="icon" class="form-control icp icp-auto {{ $errors->has('icon') ? ' is-invalid' : '' }} " name="icon" value="{!! old() ? old('icon') : $menu['icon'] ?? 'fas fa-bars' !!}" placeholder="Input Icon">
+                                            <input type="text" id="icon" class="form-control icp icp-auto {{ $errors->has('icon') ? ' is-invalid' : '' }} " name="icon" value="{!! old() ? old('icon') : $menu['icon'] ?? 'fas fa-bars' !!}" placeholder="@lang('admin.input_icon')">
                                         </div>
 
                                         @if ($errors->has('icon'))
@@ -240,11 +240,11 @@
                                 </div>
 
                                 <div class="row {{ $errors->has('uri') ? ' text-red' : '' }}">
-                                    <label for="uri" class="col-sm-2 col-form-label">Url</label>
+                                    <label for="uri" class="col-sm-2 col-form-label">@lang('admin.url')</label>
                                     <div class="col-sm-10 ">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text"><i class="fas fa-link"></i></span>
-                                            <input type="text" id="uri" name="uri" value="{!! old() ? old('uri') : $menu['uri'] ?? '' !!}" class="form-control uri {{ $errors->has('uri') ? ' is-invalid' : '' }}" placeholder="Input uri">
+                                            <input type="text" id="uri" name="uri" value="{!! old() ? old('uri') : $menu['uri'] ?? '' !!}" class="form-control uri {{ $errors->has('uri') ? ' is-invalid' : '' }}" placeholder="@lang('admin.input_uri')">
                                         </div>
                                         @if ($errors->has('uri'))
                                             <span class="text-sm">
@@ -255,11 +255,11 @@
                                 </div>
 
                                 <div class="row {{ $errors->has('sort') ? ' text-red' : '' }}">
-                                    <label for="sort" class="col-sm-2 col-form-label">Sort</label>
+                                    <label for="sort" class="col-sm-2 col-form-label">@lang('admin.sort')</label>
                                     <div class="col-sm-10 ">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text"><i class="fas fa-sort-numeric-down"></i></span>
-                                            <input type="number" style="width: 100px;" id="sort" name="sort" value="{!! old() ? old('sort') : $menu['sort'] ?? '' !!}" class="form-control sort {{ $errors->has('sort') ? ' is-invalid' : '' }}" placeholder="Input sort">
+                                            <input type="number" style="width: 100px;" id="sort" name="sort" value="{!! old() ? old('sort') : $menu['sort'] ?? '' !!}" class="form-control sort {{ $errors->has('sort') ? ' is-invalid' : '' }}" placeholder="@lang('admin.input_sort')">
                                         </div>
                                         @if ($errors->has('sort'))
                                             <span class="text-sm">
@@ -275,7 +275,7 @@
                                         @php $hidden = $menu['hidden'] ?? 0;@endphp
                                         <div class="form-check">
                                             <input type="checkbox" name="hidden" class="form-check-input" id="customCheck_show" value="1" {{ $hidden == 1 ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="customCheck_show">Ẩn menu</label>
+                                            <label class="form-check-label" for="customCheck_show">@lang('admin.hide_menu')</label>
                                         </div>
 
                                     </div>
@@ -286,8 +286,8 @@
                             <!-- /.card-body -->
                             <div class="card-footer">
                                 <div class="float-end">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                    <button type="reset" class="btn btn-warning">Reset</button>
+                                    <button type="submit" class="btn btn-primary">@lang('admin.submit')</button>
+                                    <button type="reset" class="btn btn-warning">@lang('admin.reset')</button>
                                 </div>
                             </div>
 

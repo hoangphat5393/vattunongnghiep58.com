@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Customer;
 
-use App\Customer;
-use Validator;
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
+use Validator;
 
 class AuthController extends Controller
 {
@@ -24,11 +23,17 @@ class AuthController extends Controller
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
     protected $guard = 'customer';
+
     protected $loginView = 'customer.auth.login';
+
     protected $registerView = 'customer.auth.register';
+
     protected $passwordView = 'customer.auth.password.email';
+
     protected $emailView = 'customer.auth.login';
+
     protected $username = 'username';
+
     /**
      * Where to redirect users after login / registration.
      *
@@ -49,7 +54,6 @@ class AuthController extends Controller
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
@@ -79,7 +83,6 @@ class AuthController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
      * @return User
      */
     protected function create(array $data)
@@ -93,10 +96,12 @@ class AuthController extends Controller
             'username' => $data['username'],
         ]);
     }
+
     public function email($token)
     {
         $this->notify(new ResetPasswordNotification($token));
     }
+
     public function username()
     {
         return 'username';

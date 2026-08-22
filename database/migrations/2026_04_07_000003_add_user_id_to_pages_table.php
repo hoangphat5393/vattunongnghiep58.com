@@ -8,12 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (!Schema::hasTable('pages')) {
+        if (! Schema::hasTable('pages')) {
             return;
         }
 
         Schema::table('pages', function (Blueprint $table) {
-            if (!Schema::hasColumn('pages', 'user_id')) {
+            if (! Schema::hasColumn('pages', 'user_id')) {
                 $table->unsignedBigInteger('user_id')->nullable()->after('id');
                 $table->index('user_id');
             }
@@ -22,7 +22,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (!Schema::hasTable('pages')) {
+        if (! Schema::hasTable('pages')) {
             return;
         }
 
@@ -34,4 +34,3 @@ return new class extends Migration
         });
     }
 };
-

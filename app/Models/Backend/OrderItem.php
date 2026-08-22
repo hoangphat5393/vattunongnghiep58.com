@@ -4,11 +4,14 @@ namespace App\Models\Backend;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class OrderItem extends Model
 {
     public $timestamps = true;
+
     protected $table = 'shop_order_items';
+
     protected $guarded = [];
 
     public function order(): BelongsTo
@@ -19,7 +22,7 @@ class OrderItem extends Model
     /**
      * Get the product associated with the OrderItem
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return HasOne
      */
     public function product(): BelongsTo
     {

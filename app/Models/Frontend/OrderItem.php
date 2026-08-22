@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class OrderItem extends Model
 {
     public $timestamps = true;
+
     protected $table = 'shop_order_items';
+
     protected $guarded = [];
 
     public function order(): BelongsTo

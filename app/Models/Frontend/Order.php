@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
+
     public $timestamps = true;
+
     protected $table = 'shop_orders';
+
     protected $primaryKey = 'cart_id';
+
     protected $guarded = [];
 
     public function items()

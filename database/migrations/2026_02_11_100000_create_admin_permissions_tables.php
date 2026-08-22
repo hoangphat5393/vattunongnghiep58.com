@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('admin_permission')) {
+        if (! Schema::hasTable('admin_permission')) {
             Schema::create('admin_permission', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
@@ -21,7 +21,7 @@ return new class extends Migration
             });
         }
 
-        if (!Schema::hasTable('admin_role_permission')) {
+        if (! Schema::hasTable('admin_role_permission')) {
             Schema::create('admin_role_permission', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('role_id');

@@ -1,4 +1,5 @@
-<?php
-// header("Access-Control-Allow-Origin: *");
-
-phpinfo();
+<?php
+
+// header("Access-Control-Allow-Origin: *");
+
+phpinfo();

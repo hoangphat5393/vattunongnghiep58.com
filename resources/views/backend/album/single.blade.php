@@ -6,7 +6,7 @@
     }
     $target = '_blank';
 
-    $title_head = $name ?? __('Albums Detail');
+    $title_head = isset($name) && $name !== '' ? $name : __('admin.album_detail');
     $id = $id ?? 0;
 
     if (request()->route()->named('admin.album.create')) {
@@ -43,7 +43,7 @@
                 </div>
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                         <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
                     </ol></nav>
                 </div>

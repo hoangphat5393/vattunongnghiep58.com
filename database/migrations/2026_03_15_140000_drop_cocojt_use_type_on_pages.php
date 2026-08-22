@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -12,11 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('pages')) {
+        if (! Schema::hasTable('pages')) {
             return;
         }
 
-        if (!Schema::hasColumn('pages', 'type')) {
+        if (! Schema::hasColumn('pages', 'type')) {
             Schema::table('pages', function (Blueprint $table) {
                 $table->string('type')->default('page')->after('id');
             });
@@ -33,10 +33,10 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (!Schema::hasTable('pages')) {
+        if (! Schema::hasTable('pages')) {
             return;
         }
-        if (!Schema::hasColumn('pages', 'cocojt')) {
+        if (! Schema::hasColumn('pages', 'cocojt')) {
             Schema::table('pages', function (Blueprint $table) {
                 $table->string('cocojt', 50)->nullable()->after('id')->index();
             });

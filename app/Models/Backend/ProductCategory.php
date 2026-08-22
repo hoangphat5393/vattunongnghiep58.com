@@ -2,9 +2,8 @@
 
 namespace App\Models\Backend;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\LocalizeController;
-
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Pivot product ↔ category (bảng product_categories).

@@ -24,7 +24,7 @@
                 @endif
             </td>
             <td class="text-center">
-                <input type="checkbox" id="hot-{{ $item->id }}" class="quick_change_value" @checked($item->hot == 1) value="1" value-off="0" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" data-toggle="toggle" data-on="Hot" data-off="Không" data-onstyle="danger" data-offstyle="light">
+                <input type="checkbox" id="hot-{{ $item->id }}" class="quick_change_value" @checked($item->hot == 1) value="1" value-off="0" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" data-toggle="toggle" data-on="Bán chạy" data-off="Không" data-onstyle="danger" data-offstyle="light">
                 <p class="my-2">{{ $item->updated_at }}</p>
                 <input type="checkbox" id="status-{{ $item->id }}" class="quick_change_value" @checked($item->status == 1) value="1" value-off="0" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" data-toggle="toggle" data-on="Công khai" data-off="Bản nháp" data-onstyle="success" data-offstyle="light">
             </td>

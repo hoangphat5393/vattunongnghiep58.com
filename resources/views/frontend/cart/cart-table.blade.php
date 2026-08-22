@@ -15,7 +15,7 @@
         </tr>
     </thead>
     <tbody class="divide-y divide-gray-100">
-        @foreach ($cart_items as $item)
+        @forelse ($cart_items as $item)
             <tr class="hover:bg-gray-50 transition cart-items cart__row_item">
                 <td class="py-4 px-4 md:px-6">
                     <div class="flex items-center gap-4">
@@ -78,7 +78,13 @@
                     </button>
                 </td>
             </tr>
-        @endforeach
+        @empty
+            <tr>
+                <td colspan="5" class="py-10 px-6 text-center text-gray-500 text-base font-medium">
+                    Giỏ hàng của bạn đang trống!
+                </td>
+            </tr>
+        @endforelse
     </tbody>
 </table>
 

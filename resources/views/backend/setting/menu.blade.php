@@ -1,7 +1,7 @@
 @extends('backend.layouts.master')
 @section('seo')
     @php
-        $title_head = 'Setting Menu';
+        $title_head = 'Cấu hình Menu';
         $seo = [
             'title' => $title_head,
             'keywords' => '',
@@ -31,7 +31,7 @@
                 </div>
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Trang chủ</a></li>
                         <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
                     </ol></nav>
                 </div>
@@ -75,15 +75,15 @@
     <script>
         var menus = {
             "oneThemeLocationNoMenus": "",
-            "moveUp": "Move up",
-            "moveDown": "Mover down",
-            "moveToTop": "Move top",
-            "moveUnder": "Move under of %s",
-            "moveOutFrom": "Out from under  %s",
-            "under": "Under %s",
-            "outFrom": "Out from %s",
-            "menuFocus": "%1$s. Element menu %2$d of %3$d.",
-            "subMenuFocus": "%1$s. Menu of subelement %2$d of %3$s."
+            "moveUp": "Di chuyển lên",
+            "moveDown": "Di chuyển xuống",
+            "moveToTop": "Chuyển lên đầu",
+            "moveUnder": "Chuyển thành mục con của %s",
+            "moveOutFrom": "Chuyển ra ngoài %s",
+            "under": "Dưới %s",
+            "outFrom": "Thoát khỏi %s",
+            "menuFocus": "%1$s. Mục menu %2$d trên %3$d.",
+            "subMenuFocus": "%1$s. Menu con %2$d trên %3$s."
         };
 
         var arraydata = [];
@@ -112,34 +112,5 @@
                 item.hidden = query !== '' && !text.includes(query);
             });
         });
-
-        // $(function() {
-        //     $('.icp-dd').iconpicker();
-        //     $('.icp').on('iconpickerSelected', function(e) {
-        //         $(this).parent().find('input').val(e.iconpickerValue);
-        //         $(this).parent().find('.dropdown-menu').removeClass('show');
-        //     });
-        // });
-
-        // $(function() {
-        //     $(document).on('click', '.btn-images', function() {
-        //         var id = $(this).attr('data');
-        //         window.open('/file-manager/fm-button?' + id, 'fm', 'width=1200,height=600');
-        //     });
-
-        //     $('.remove-icon').click(function(event) {
-        //         var img = $(this).data('img');
-        //         $(this).parent().find('img').attr('src', img);
-        //         $(this).parent().find('input[type="hidden"]').val('');
-        //         $(this).hide();
-        //     });
-        // });
-
-        // set file link
-        // function fmSetLink($url, id = "preview_image") {
-        //     const myArr = $url.split("storage/");
-        //     document.getElementById(id).src = $url;
-        //     document.querySelector('.' + id).value = myArr[1];
-        // }
     </script>
 @endpush

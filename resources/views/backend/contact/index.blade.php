@@ -49,7 +49,7 @@
 
                         {{-- card-header --}}
                         <div class="card-header">
-                            <h3 class="card-title">{{ $title_head }} @lang('admin.list')</h3>
+                            <h3 class="card-title">{{ $title_head }}</h3>
                         </div>
 
                         {{-- card-body --}}

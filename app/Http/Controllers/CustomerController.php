@@ -130,9 +130,9 @@ class CustomerController extends Controller
             $email_admin = 'huunamtn@gmail.com'; // setting_option('email_admin');
 
             $data_email = [
-                'content' => '<h1 style="font-size:22px;font-weight:normal;line-height:22px;margin:0 0 11px 0">Thân gửi, <span style="color: #F04F32">' . $new_cus->fullname . '</span></h1>
-                    <p style="font-size:12px;line-height:16px;margin:0 0 8px 0">Cảm ơn bạn đã đăng ký thành viên tại ' . url('/') . '</p>
-                    <p>Mật khẩu đăng nhập: ' . $data['password'] . '</p>',
+                'content' => '<h1 style="font-size:22px;font-weight:normal;line-height:22px;margin:0 0 11px 0">Thân gửi, <span style="color: #F04F32">'.$new_cus->fullname.'</span></h1>
+                    <p style="font-size:12px;line-height:16px;margin:0 0 8px 0">Cảm ơn bạn đã đăng ký thành viên tại '.url('/').'</p>
+                    <p>Mật khẩu đăng nhập: '.$data['password'].'</p>',
                 'email_admin' => $email_admin,
                 'subject' => 'Đăng ký tài khoản thành công',
                 'subject_sys' => 'Thông báo có tài khoản vừa đăng ký',
@@ -150,7 +150,7 @@ class CustomerController extends Controller
                 function ($message) use ($data_email) {
                     $message->from($data_email['email_admin'], $data_email['title']);
                     $message->to($data_email['email_admin'])
-                        ->subject($data_email['subject_sys'] . ' - Website: ' . $data_email['url_only']);
+                        ->subject($data_email['subject_sys'].' - Website: '.$data_email['url_only']);
                 }
             );
             Mail::send(
@@ -159,7 +159,7 @@ class CustomerController extends Controller
                 function ($message) use ($data_email) {
                     $message->from($data_email['email_admin'], $data_email['title']);
                     $message->to($data_email['email_admin'])
-                        ->subject($data_email['subject_sys'] . ' - Website: ' . $data_email['url_only']);
+                        ->subject($data_email['subject_sys'].' - Website: '.$data_email['url_only']);
                 }
             );
 
@@ -183,9 +183,9 @@ class CustomerController extends Controller
             $email_admin = setting_option('email_admin');
 
             $data_email = [
-                'content' => '<h1 style="font-size:22px;font-weight:normal;line-height:22px;margin:0 0 11px 0">Thân gửi, <span style="color: #F04F32">' . $new_cus->fullname . '</span></h1>
-                    <p style="font-size:12px;line-height:16px;margin:0 0 8px 0">Cảm ơn bạn đã đăng ký thành viên tại ' . url('/') . '</p>
-                    <p>Mật khẩu đăng nhập: ' . $password_auto . '</p>',
+                'content' => '<h1 style="font-size:22px;font-weight:normal;line-height:22px;margin:0 0 11px 0">Thân gửi, <span style="color: #F04F32">'.$new_cus->fullname.'</span></h1>
+                    <p style="font-size:12px;line-height:16px;margin:0 0 8px 0">Cảm ơn bạn đã đăng ký thành viên tại '.url('/').'</p>
+                    <p>Mật khẩu đăng nhập: '.$password_auto.'</p>',
                 'email_admin' => $email_admin,
                 'subject' => 'Đăng ký tài khoản thành công',
                 'subject_sys' => 'Thông báo có tài khoản vừa đăng ký',
@@ -203,7 +203,7 @@ class CustomerController extends Controller
                 function ($message) use ($data_email) {
                     $message->from($data_email['email_admin'], $data_email['title']);
                     $message->to($data_email['email_admin'])
-                        ->subject($data_email['subject_sys'] . ' - Website: ' . $data_email['url_only']);
+                        ->subject($data_email['subject_sys'].' - Website: '.$data_email['url_only']);
                 }
             );
             Mail::send(
@@ -212,7 +212,7 @@ class CustomerController extends Controller
                 function ($message) use ($data_email) {
                     $message->from($data_email['email_admin'], $data_email['title']);
                     $message->to($data_email['email_admin'])
-                        ->subject($data_email['subject_sys'] . ' - Website: ' . $data_email['url_only']);
+                        ->subject($data_email['subject_sys'].' - Website: '.$data_email['url_only']);
                 }
             );
 
@@ -312,7 +312,7 @@ class CustomerController extends Controller
                 function ($message) use ($data) {
                     $message->from($data['email_admin'], $data['title']);
                     $message->to($data['email_admin'])
-                        ->subject($data['subject_sys'] . ' - Website: ' . $data['url_only']);
+                        ->subject($data['subject_sys'].' - Website: '.$data['url_only']);
                 }
             );
 
@@ -320,7 +320,7 @@ class CustomerController extends Controller
 
             return response()->json([
                 'error' => 0,
-                'view' => view($this->templatePath . '.account.includes.register_success')->render(),
+                'view' => view($this->templatePath.'.account.includes.register_success')->render(),
                 'msg' => __('Register success'),
             ]);
 
@@ -386,7 +386,7 @@ class CustomerController extends Controller
             $wallet_check = 'error';
             $this->data['status'] = 'error';
         }
-        $walletView = $this->templatePath . '.dangtin.includes.wallet_check';
+        $walletView = $this->templatePath.'.dangtin.includes.wallet_check';
         $this->data['view'] = view()->exists($walletView)
             ? view($walletView, compact('wallet_check'))->render()
             : '';
@@ -408,7 +408,7 @@ class CustomerController extends Controller
             }
         }
 
-        return view($this->templatePath . '.customer.wishlist', ['data' => $this->data]);
+        return view($this->templatePath.'.customer.wishlist', ['data' => $this->data]);
     }
 
     public function subscription(Request $request)
@@ -420,7 +420,7 @@ class CustomerController extends Controller
                 'required',
                 'email',
                 'max:255',
-                Rule::unique('contacts', 'email')->where(fn($query) => $query->where('type', 'subscription')),
+                Rule::unique('contacts', 'email')->where(fn ($query) => $query->where('type', 'subscription')),
             ],
         ];
         $data = $request->all();
@@ -454,7 +454,7 @@ class CustomerController extends Controller
         //     'seo_description'   => '',
         //     'seo_keyword'   => '',
         // ];
-        return view($this->templatePath . '.account.auth.forget-password', $this->data);
+        return view($this->templatePath.'.account.auth.forget-password', $this->data);
     }
 
     public function actionForgetPassword(Request $rq)
@@ -487,12 +487,12 @@ class CustomerController extends Controller
                 'site_name' => $site_name,
             ];
             Mail::send(
-                $this->templatePath . '.mail.forget-password.forget-password',
+                $this->templatePath.'.mail.forget-password.forget-password',
                 $data,
                 function ($message) use ($data) {
                     $message->from($data['emailadmin'], $data['site_name']);
                     $message->to($data['email'])
-                        ->subject($data['otp'] . ' là mã OTP của ' . $data['site_name']);
+                        ->subject($data['otp'].' là mã OTP của '.$data['site_name']);
                 }
             );
 
@@ -518,7 +518,7 @@ class CustomerController extends Controller
 
             return redirect()->route('forgetPassword');
         } else {
-            return view($this->templatePath . '.account.auth.forget-password-step-2', $this->data);
+            return view($this->templatePath.'.account.auth.forget-password-step-2', $this->data);
         }
     }
 
@@ -530,7 +530,7 @@ class CustomerController extends Controller
         $customer_forget_pass_otp = Customer_forget_pass_otp::where('otp_mail', '=', $rq->otp_mail)
             ->where('otp_mail', '=', $_SESSION['otp_forget'])
             ->where('status', '=', 0)
-            ->whereRaw("TIME_TO_SEC('" . Carbon::now() . "') - TIME_TO_SEC(created_at) < 300 ")
+            ->whereRaw("TIME_TO_SEC('".Carbon::now()."') - TIME_TO_SEC(created_at) < 300 ")
             ->first();
         if ($customer_forget_pass_otp) {
             $_SESSION['otp_true'] = 1;
@@ -554,7 +554,7 @@ class CustomerController extends Controller
 
             return redirect()->route('forgetPassword');
         } else {
-            return view($this->templatePath . '.account.auth.forget-password-step-3', $this->data);
+            return view($this->templatePath.'.account.auth.forget-password-step-3', $this->data);
         }
     }
 
@@ -620,7 +620,7 @@ class CustomerController extends Controller
             ->first();
 
         if ($order) {
-            $view = view($this->templatePath . '.customer.order-view', compact('order'))->render();
+            $view = view($this->templatePath.'.customer.order-view', compact('order'))->render();
 
             return response()->json([
                 'error' => 1,
@@ -648,7 +648,7 @@ class CustomerController extends Controller
             ],
         ];
 
-        return view($this->templatePath . '.customer.my-point', $this->data);
+        return view($this->templatePath.'.customer.my-point', $this->data);
     }
 
     public function logoutCustomer()
@@ -663,7 +663,7 @@ class CustomerController extends Controller
             'seo_title' => 'Messages',
         ];
 
-        return view($this->templatePath . '.customer.messages', $this->data);
+        return view($this->templatePath.'.customer.messages', $this->data);
     }
 
     public function myReviews()

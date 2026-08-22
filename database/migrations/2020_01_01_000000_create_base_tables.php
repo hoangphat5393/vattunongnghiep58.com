@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('users')) {
+        if (! Schema::hasTable('users')) {
             Schema::create('users', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
@@ -29,7 +29,7 @@ return new class extends Migration
             });
         }
 
-        if (!Schema::hasTable('password_reset_tokens')) {
+        if (! Schema::hasTable('password_reset_tokens')) {
             Schema::create('password_reset_tokens', function (Blueprint $table) {
                 $table->string('email')->primary();
                 $table->string('token');
@@ -37,7 +37,7 @@ return new class extends Migration
             });
         }
 
-        if (!Schema::hasTable('pages')) {
+        if (! Schema::hasTable('pages')) {
             Schema::create('pages', function (Blueprint $table) {
                 $table->id();
                 $table->string('name')->nullable();
@@ -52,7 +52,7 @@ return new class extends Migration
             });
         }
 
-        if (!Schema::hasTable('posts')) {
+        if (! Schema::hasTable('posts')) {
             Schema::create('posts', function (Blueprint $table) {
                 $table->id();
                 $table->string('name')->nullable();
@@ -69,7 +69,7 @@ return new class extends Migration
             });
         }
 
-        if (!Schema::hasTable('post_categories')) {
+        if (! Schema::hasTable('post_categories')) {
             Schema::create('post_categories', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('post_id');
@@ -78,7 +78,7 @@ return new class extends Migration
             });
         }
 
-        if (!Schema::hasTable('admin_menus')) {
+        if (! Schema::hasTable('admin_menus')) {
             Schema::create('admin_menus', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('parent_id')->default(0);

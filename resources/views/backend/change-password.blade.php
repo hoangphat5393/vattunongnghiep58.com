@@ -2,7 +2,7 @@
 
 @section('seo')
     @php
-        $title_head = __('profile');
+        $title_head = __('admin.profile');
         $seo = [
             'title' => $title_head,
             'keywords' => '',
@@ -39,7 +39,7 @@
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                             <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
                         </ol>
                     </nav>
@@ -57,71 +57,16 @@
             <div class="row">
 
                 <div class="col-md-3">
-
                     <div class="card card-primary card-outline mb-3">
                         <div class="card-body box-profile">
-                            <div class="text-center">
+                            <div class="text-center mb-3">
                                 <img class="profile-user-img img-fluid img-circle" src="/assets/admin/assets/img/avatar5.png" alt="User profile picture">
                             </div>
 
-                            <h3 class="profile-username text-center">Nina Mcintire</h3>
+                            <h3 class="profile-username text-center h5 fw-bold">{{ Auth::guard('admin')->user()->name ?? 'Administrator' }}</h3>
 
-                            <p class="text-muted text-center">Software Engineer</p>
-
-                            <ul class="list-group list-group-unbordered mb-3">
-                                <li class="list-group-item">
-                                    <b>Followers</b> <a class="float-end">1,322</a>
-                                </li>
-                                <li class="list-group-item">
-                                    <b>Following</b> <a class="float-end">543</a>
-                                </li>
-                                <li class="list-group-item">
-                                    <b>Friends</b> <a class="float-end">13,287</a>
-                                </li>
-                            </ul>
-
-                            <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>
+                            <p class="text-muted text-center small mb-0">{{ Auth::guard('admin')->user()->email ?? 'admin@local' }}</p>
                         </div>
-                        <!-- /.card-body -->
-                    </div>
-
-                    <div class="card card-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">About Me</h3>
-                        </div>
-                        <!-- /.card-header -->
-                        <div class="card-body">
-                            <strong><i class="fas fa-book mr-1"></i> Education</strong>
-
-                            <p class="text-muted">
-                                B.S. in Computer Science from the University of Tennessee at Knoxville
-                            </p>
-
-                            <hr>
-
-                            <strong><i class="fas fa-map-marker-alt mr-1"></i> Location</strong>
-
-                            <p class="text-muted">Malibu, California</p>
-
-                            <hr>
-
-                            <strong><i class="fas fa-pencil-alt mr-1"></i> Skills</strong>
-
-                            <p class="text-muted">
-                                <span class="tag tag-danger">UI Design</span>
-                                <span class="tag tag-success">Coding</span>
-                                <span class="tag tag-info">Javascript</span>
-                                <span class="tag tag-warning">PHP</span>
-                                <span class="tag tag-primary">Node.js</span>
-                            </p>
-
-                            <hr>
-
-                            <strong><i class="far fa-file-alt mr-1"></i> Notes</strong>
-
-                            <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam fermentum enim neque.</p>
-                        </div>
-                        <!-- /.card-body -->
                     </div>
                 </div>
 
@@ -145,15 +90,19 @@
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
                                         <label for="post_title" class="form-label">@lang('admin.email')</label>
-                                        <input type="text" class="form-control title_slugify" id="post_title" name="email" placeholder="Email/Username" value="{{ Auth::guard('admin')->user()->email }}">
+                                        <input type="text" class="form-control" id="post_title" name="email" placeholder="@lang('admin.email')" value="{{ Auth::guard('admin')->user()->email }}">
                                     </div>
                                     <div class="col-md-6">
                                         <label for="name" class="form-label">@lang('admin.username')</label>
-                                        <input type="text" class="form-control slug_slugify" id="name" name="name" placeholder="Username" value="{{ Auth::guard('admin')->user()->name }}">
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="@lang('admin.username')" value="{{ Auth::guard('admin')->user()->name }}">
                                     </div>
                                     <div class="col-md-12">
-                                        <label for="check_pass" class="form-label">@lang('admin.change password')</label>
-                                        <input type="checkbox" value="" name="check_pass" id="check_pass">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" name="check_pass" id="check_pass">
+                                            <label class="form-check-label fw-bold" for="check_pass">
+                                                @lang('admin.change password')
+                                            </label>
+                                        </div>
                                         <input type="hidden" id="check_pass_value" name="check_pass_value" value="off">
                                     </div>
                                 </div>
@@ -163,38 +112,34 @@
                                     <div class="row g-3 mb-3">
                                         <div class="col-md-12">
                                             <label for="current_password" class="form-label">@lang('admin.current password')</label>
-                                            <input type="password" class="form-control" name="current_password" palceholder="@lang('admin.current password')" id="current_password" class="form-control" disabled>
+                                            <input type="password" class="form-control" name="current_password" placeholder="@lang('admin.current password')" id="current_password" disabled>
                                             <small class="text-error d-block mt-1" id="current-password-ajax-feedback" role="status"></small>
                                         </div>
                                         <div class="col-md-12">
                                             <label for="new_password" class="form-label">@lang('admin.new password')</label>
-                                            <input type="password" class="form-control" name="new_password" palceholder="@lang('admin.current password')" id="new_password" class="form-control" disabled>
+                                            <input type="password" class="form-control" name="new_password" placeholder="@lang('admin.new password')" id="new_password" disabled>
                                         </div>
                                         <div class="col-md-12">
                                             <label for="confirm_password" class="form-label">@lang('admin.confirm password')</label>
-                                            <input type="password" class="form-control" name="confirm_password" id="confirm_password" disabled>
+                                            <input type="password" class="form-control" name="confirm_password" placeholder="@lang('admin.confirm password')" id="confirm_password" disabled>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
-                                        <label for="name" class="form-label">@lang('admin.phone')</label>
-                                        <input type="text" class="form-control slug_slugify" id="phone" name="phone" placeholder="@lang('admin.phone')" value="{{ Auth::guard('admin')->user()->phone }}">
+                                        <label for="phone" class="form-label">@lang('admin.phone')</label>
+                                        <input type="text" class="form-control" id="phone" name="phone" placeholder="@lang('admin.phone')" value="{{ Auth::guard('admin')->user()->phone }}">
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="name" class="form-label">@lang('admin.address')</label>
-                                        <input type="text" class="form-control slug_slugify" id="address" name="address" placeholder="@lang('admin.address')" value="{{ Auth::guard('admin')->user()->address }}">
+                                        <label for="address" class="form-label">@lang('admin.address')</label>
+                                        <input type="text" class="form-control" id="address" name="address" placeholder="@lang('admin.address')" value="{{ Auth::guard('admin')->user()->address }}">
                                     </div>
                                 </div>
-                                {{-- <div class="form-group">
-                                    <label for="name">Ảnh đại diện</label>
-                                    <input type="file" class="form-control slug_slugify" id="avatar" name="avatar" placeholder="" value="">
-                                </div> --}}
                             </form>
                         </div>
                         <div class="card-footer">
-                            <input type="submit" class="btn btn-primary" value="@lang('admin.update')">
+                            <input type="submit" form="frm-updateinfo-useradmin" class="btn btn-primary" value="@lang('admin.update')">
                         </div>
                     </div>
                     {{-- end::card --}}
@@ -210,23 +155,20 @@
 @push('scripts')
     <script>
         $(function() {
-            $('input[name="check_pass"]').on('click', function() {
+            $('input[name="check_pass"]').on('change click', function() {
                 let check_pass_length = $('#check_pass:checked').length;
 
                 if (check_pass_length == 1) {
                     //show pass
-                    $('#current_password').removeAttr('disabled');
-                    $('#new_password').removeAttr('disabled');
-                    $('#confirm_password').removeAttr('disabled');
+                    $('#current_password, #new_password, #confirm_password').removeAttr('disabled');
                     $('#check_pass_value').val('on');
+                    $('.wrap-pass').stop(true, true).slideDown(350);
                 } else {
                     //hide pass
-                    $('#current_password').attr('disabled', 'true');
-                    $('#new_password').attr('disabled', 'true');
-                    $('#confirm_password').attr('disabled', 'true');
-                    $('#check_pass_value').val('off')
+                    $('#current_password, #new_password, #confirm_password').attr('disabled', 'true');
+                    $('#check_pass_value').val('off');
+                    $('.wrap-pass').stop(true, true).slideUp(300);
                 }
-                $('.wrap-pass').toggleClass('avtive-wpap-pass');
 
                 //check password equal
                 $('#current_password').on('change', function() {

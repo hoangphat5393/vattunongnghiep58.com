@@ -1,4 +1,4 @@
-<div class="mb-4 card">
+<div class="mb-4 card card-warning card-outline">
 
     <div class="card-header">
 

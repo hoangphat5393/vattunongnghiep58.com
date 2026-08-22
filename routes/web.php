@@ -122,17 +122,22 @@ Route::post('checkout-process', 'CartController@legacyCheckoutProcessRedirect')-
 Route::post('subscription', 'CustomerController@subscription')->name('subscription');
 
 // All Product
-Route::get('product', '\App\Http\Controllers\ProductController@index')->name('product');
+Route::get('san-pham', '\App\Http\Controllers\ProductController@index')->name('product');
+Route::get('product', '\App\Http\Controllers\ProductController@index')->name('product.all');
 
 // Product detail
-Route::get('product/{slug}-{id}.html', '\App\Http\Controllers\ProductController@productDetail')
+Route::get('san-pham/{slug}-{id}.html', '\App\Http\Controllers\ProductController@productDetail')
     ->where(['slug' => '[a-zA-Z0-9$-_.+!]+', 'id' => '[0-9]+'])
     ->name('product.detail');
+Route::get('product/{slug}-{id}.html', '\App\Http\Controllers\ProductController@productDetail')
+    ->where(['slug' => '[a-zA-Z0-9$-_.+!]+', 'id' => '[0-9]+']);
 
 // Product category
-Route::get('product/{slug}.html', '\App\Http\Controllers\ProductController@index')
+Route::get('san-pham/{slug}.html', '\App\Http\Controllers\ProductController@index')
     ->where(['slug' => '[a-zA-Z0-9$-_.+!]+'])
     ->name('product.category');
+Route::get('product/{slug}.html', '\App\Http\Controllers\ProductController@index')
+    ->where(['slug' => '[a-zA-Z0-9$-_.+!]+']);
 
 Route::post('quick-view', 'ProductController@quickView')->name('shop.quickView');
 Route::get('buy-now/{id}', 'ProductController@buyNow')->name('shop.buyNow');

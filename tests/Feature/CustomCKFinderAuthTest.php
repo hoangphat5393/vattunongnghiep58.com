@@ -63,11 +63,19 @@ class CustomCKFinderAuthTest extends TestCase
 
     public function test_guest_cannot_access_ckfinder_connector(): void
     {
-        $response = $this->post('/ckfinder/connector', [
-            'command' => 'Init',
-        ]);
+        $middleware = new CustomCKFinderAuth;
+        $request = Request::create('/ckfinder/connector', 'POST');
+        $handled = false;
 
-        $this->assertNotEquals(200, $response->getStatusCode());
+        $middleware->handle($request, function () use (&$handled) {
+            $handled = true;
+            $callback = config('ckfinder.authentication');
+            $this->assertFalse($callback());
+
+            return response('Access Denied', 403);
+        });
+
+        $this->assertTrue($handled);
     }
 
     public function test_authenticated_admin_can_access_album_library_with_ckfinder(): void

@@ -1,39 +1,19 @@
 <?php
 
-
-
 namespace App\Models\Backend;
 
+use App\Models\ProductPrice;
+// use Illuminate\Database\Eloquent\Casts\Attribute;
 
+use App\Traits\Filterable;
+use App\Traits\LocalizeController;
+// Traits
 
 use Illuminate\Database\Eloquent\Model;
 
-// use Illuminate\Database\Eloquent\Casts\Attribute;
-
-use App\Traits\LocalizeController;
-
-use App\Models\ShopCategory;
-
-use App\Models\ShopProductAttribute;
-
-use App\Models\ProductPrice;
-use Illuminate\Support\Facades\DB;
-
-
-
-// Traits
-
-use App\Traits\Filterable;
-
-
-
 class Product extends Model
-
 {
-
-    use LocalizeController, Filterable;
-
-
+    use Filterable, LocalizeController;
 
     public $timestamps = true;
 
@@ -41,73 +21,52 @@ class Product extends Model
 
     protected $guarded = [];
 
-
-
     /**
-
      * The attributes that should be cast.
 
      *
 
      * @var array
-
      */
-
     protected $casts = [
 
         // 'options' => 'array', // change option to column want to cast to array
 
         'meta' => 'array',
 
-        'meta_en' => 'array'
+        'meta_en' => 'array',
 
     ];
 
-
-
-
-
     public function getUser()
-
     {
 
         return $this->user ? $this->user->name : null;
 
     }
 
-
-
-    /*user detail*/
+    /* user detail */
 
     public function getUserPost()
-
     {
 
         return $this->belongsTo(User::class, 'user_id', 'id');
 
     }
-
-
 
     public function user()
-
     {
 
         return $this->belongsTo(User::class, 'user_id', 'id');
 
     }
 
-
-
     public function categories()
-
     {
 
         return $this->belongsToMany(Category::class, 'product_categories', 'product_id', 'category_id');
 
     }
-
-
 
     public function prices()
     {
@@ -115,21 +74,17 @@ class Product extends Model
     }
 
     public function filterName($query, $value)
-
     {
 
         if ($value) {
 
-            $query->where('name', 'like', '%' . $value . '%');
+            $query->where('name', 'like', '%'.$value.'%');
 
         }
 
     }
 
-
-
     public function filterCategoryId($query, $value)
-
     {
 
         if ($value) {
@@ -144,27 +99,22 @@ class Product extends Model
 
     }
 
-
-
     public function listClass()
-
     {
 
-        return array(
+        return [
 
-            'out-product'   => 'Ngoại thất',
+            'out-product' => 'Ngoại thất',
 
-            'in-product'   => 'Nội thất',
+            'in-product' => 'Nội thất',
 
-            'engine-product'   => 'Động cơ, An toàn',
+            'engine-product' => 'Động cơ, An toàn',
 
-            'operation-product'   => 'Vận hành',
+            'operation-product' => 'Vận hành',
 
-        );
+        ];
 
     }
-
-
 
     // public function promotions()
 
@@ -173,8 +123,6 @@ class Product extends Model
     //     return $this->hasMany(ShopProductPromotion::class);
 
     // }
-
-
 
     // public function products()
 
@@ -185,4 +133,3 @@ class Product extends Model
     // }
 
 }
-

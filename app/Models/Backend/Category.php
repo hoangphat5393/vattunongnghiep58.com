@@ -2,7 +2,6 @@
 
 namespace App\Models\Backend;
 
-
 // use App\Enums\ServerStatus;
 // use App\Enums\UserRole;
 // use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
@@ -12,24 +11,21 @@ namespace App\Models\Backend;
 // use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 // use Illuminate\Database\Eloquent\Casts\AsCollection;
 // use App\Collections\OptionCollection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\Filterable;
+use App\Traits\LocalizeController;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+// use DateTimeInterface;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use App\Models\Backend\User;
-
-// use DateTimeInterface;
-use App\Traits\LocalizeController;
-use App\Traits\Filterable;
 
 class Category extends Model
 {
     // use LocalizeController;
     // use HasFactory;
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 
     /**
      * Prepare a date for array / JSON serialization.
@@ -40,6 +36,7 @@ class Category extends Model
     // }
 
     public $timestamps = true;
+
     // protected $table = 'category';
     protected $guarded = [];
 
@@ -97,6 +94,6 @@ class Category extends Model
     // Filter Search
     public function filterName(Builder $query, string $value)
     {
-        return $query->where('name', 'LIKE', '%' . $value . '%');
+        return $query->where('name', 'LIKE', '%'.$value.'%');
     }
 }

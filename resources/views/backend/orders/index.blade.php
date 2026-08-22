@@ -1,7 +1,7 @@
 @extends('backend.layouts.master')
 @section('seo')
     @php
-        $title_head = __('admin.order manager');
+        $title_head = __('admin.orders');
         $seo = [
             'title' => $title_head . ' | ' . setting_option('seo-title-add'),
             'keywords' => setting_option('seo-keywords-add'),
@@ -53,7 +53,7 @@
                 <div class="col-md-12">
                     <div class="card card-primary card-outline mb-4">
                         <div class="card-header">
-                            <h3 class="card-title">{{ $title_head }} @lang('admin.list')</h3>
+                            <h3 class="card-title">{{ $title_head }}</h3>
                         </div>
                         <div class="card-body">
                             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">

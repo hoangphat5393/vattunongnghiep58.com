@@ -2,29 +2,17 @@
 
 namespace App\Exports;
 
-
-
 use App\Models\Frontend\User;
-use Maatwebsite\Excel\Concerns\FromQuery;
-
 use Maatwebsite\Excel\Concerns\Exportable;
-
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-
-
 class CustomerExport implements FromQuery, WithHeadings, WithMapping
-
 {
-
-	use Exportable;
-
-
+    use Exportable;
 
     public function __construct(string $from, string $to)
-
     {
 
         $this->from = $from;
@@ -33,9 +21,8 @@ class CustomerExport implements FromQuery, WithHeadings, WithMapping
 
     }
 
-
-
-    public function headings(): array {
+    public function headings(): array
+    {
 
         return [
 
@@ -43,27 +30,26 @@ class CustomerExport implements FromQuery, WithHeadings, WithMapping
 
             'Ngày sinh',
 
-            'Email',    
+            'Email',
 
-            "Số điện thoại",
+            'Số điện thoại',
 
-            "Tỉnh/Thành phố",
+            'Tỉnh/Thành phố',
 
-            "Quận/Huyện",
+            'Quận/Huyện',
 
-            "Phường/Xã",
+            'Phường/Xã',
 
-            "Địa chỉ",
+            'Địa chỉ',
 
-            "Ngày đăng ký"
+            'Ngày đăng ký',
 
         ];
 
     }
 
-
-
-    public function map($row): array {
+    public function map($row): array
+    {
 
         return [
 
@@ -83,21 +69,16 @@ class CustomerExport implements FromQuery, WithHeadings, WithMapping
 
             $row->address,
 
-            $row->created_at
+            $row->created_at,
 
         ];
 
     }
 
-
-
     public function query()
-
-    {	
+    {
 
         return User::query()->whereBetween('created_at', [$this->from, $this->to])->orderBy('created_at', 'DESC')->select('name', 'birthday', 'email', 'phone', 'province', 'district', 'ward', 'address', 'created_at');
 
     }
-
 }
-

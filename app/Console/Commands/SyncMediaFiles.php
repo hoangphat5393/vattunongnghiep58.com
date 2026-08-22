@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Backend\Page;
+use App\Models\Backend\Product;
+use App\Models\MediaFile;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use App\Models\MediaFile;
-use App\Models\Backend\Product;
-use App\Models\Backend\Page;
 use Illuminate\Support\Facades\Log;
 
 class SyncMediaFiles extends Command
@@ -40,9 +40,10 @@ class SyncMediaFiles extends Command
 
         foreach ($uploadPaths as $path) {
             if (File::exists($path)) {
-                if (!is_writable($path)) {
+                if (! is_writable($path)) {
                     $this->error("Directory $path is not writable!");
                     Log::error("Directory $path is not writable!");
+
                     return 1;
                 }
                 $this->info("Permissions check passed for $path");
@@ -58,6 +59,7 @@ class SyncMediaFiles extends Command
         $this->fixGalleryPaths(Product::class);
 
         $this->info('Media sync completed.');
+
         return 0;
     }
 
@@ -66,18 +68,18 @@ class SyncMediaFiles extends Command
         $files = File::allFiles($path);
         $count = 0;
 
-        $this->info("Scanning " . count($files) . " files in $path...");
+        $this->info('Scanning '.count($files)." files in $path...");
 
         foreach ($files as $file) {
             // Get relative path from public folder
-            $relativePath = str_replace(public_path() . DIRECTORY_SEPARATOR, '', $file->getRealPath());
+            $relativePath = str_replace(public_path().DIRECTORY_SEPARATOR, '', $file->getRealPath());
             $relativePath = str_replace('\\', '/', $relativePath); // Ensure forward slashes
 
             // Check if exists in media_files
             $exists = MediaFile::where('file_path', $relativePath)->exists();
 
-            if (!$exists) {
-                if (!$this->option('dry-run')) {
+            if (! $exists) {
+                if (! $this->option('dry-run')) {
                     try {
                         MediaFile::create([
                             'file_name' => $file->getFilename(),
@@ -88,7 +90,7 @@ class SyncMediaFiles extends Command
                         ]);
                         Log::info("Added media file: $relativePath");
                     } catch (\Exception $e) {
-                        Log::error("Failed to add media file $relativePath: " . $e->getMessage());
+                        Log::error("Failed to add media file $relativePath: ".$e->getMessage());
                     }
                 }
                 $count++;
@@ -99,7 +101,7 @@ class SyncMediaFiles extends Command
 
     private function fixGalleryPaths($modelClass)
     {
-        if (!class_exists($modelClass)) {
+        if (! class_exists($modelClass)) {
             return;
         }
 
@@ -126,7 +128,9 @@ class SyncMediaFiles extends Command
                     $changed = false;
                     foreach ($gallery as $key => $path) {
                         // Ensure path is string
-                        if (!is_string($path)) continue;
+                        if (! is_string($path)) {
+                            continue;
+                        }
 
                         $decoded = urldecode($path);
                         if ($path !== $decoded && File::exists(public_path($decoded))) {
@@ -136,7 +140,7 @@ class SyncMediaFiles extends Command
                     }
 
                     if ($changed) {
-                        if (!$this->option('dry-run')) {
+                        if (! $this->option('dry-run')) {
                             $record->gallery = serialize($gallery);
                             $record->save();
                             Log::info("Fixed $modelClass ID {$record->id} gallery paths.");
@@ -148,14 +152,14 @@ class SyncMediaFiles extends Command
             $this->info("Fixed $fixedCount gallery records for $modelClass.");
         } catch (\Exception $e) {
             // Column might not exist or other error
-            $this->error("Error checking gallery for $modelClass: " . $e->getMessage());
-            Log::error("Error checking gallery for $modelClass: " . $e->getMessage());
+            $this->error("Error checking gallery for $modelClass: ".$e->getMessage());
+            Log::error("Error checking gallery for $modelClass: ".$e->getMessage());
         }
     }
 
     private function fixModelPaths($modelClass, $column)
     {
-        if (!class_exists($modelClass)) {
+        if (! class_exists($modelClass)) {
             return;
         }
 
@@ -176,7 +180,7 @@ class SyncMediaFiles extends Command
                 if ($path !== $decoded) {
                     // Check if file exists at decoded path
                     if (File::exists(public_path($decoded))) {
-                        if (!$this->option('dry-run')) {
+                        if (! $this->option('dry-run')) {
                             $record->$column = $decoded;
                             $record->save();
                             Log::info("Fixed $modelClass ID {$record->id} image path: $path -> $decoded");
@@ -187,8 +191,8 @@ class SyncMediaFiles extends Command
             }
             $this->info("Fixed $fixedCount paths for $modelClass.");
         } catch (\Exception $e) {
-            $this->error("Error checking $modelClass: " . $e->getMessage());
-            Log::error("Error checking $modelClass: " . $e->getMessage());
+            $this->error("Error checking $modelClass: ".$e->getMessage());
+            Log::error("Error checking $modelClass: ".$e->getMessage());
         }
     }
 }

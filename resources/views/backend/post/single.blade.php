@@ -6,7 +6,7 @@
     if (!empty($edit_data)) {
         extract($edit_data->getAttributes());
         $title = $edit_data->name ?? '';
-        $title_head = $title !== '' ? $title : __('Edit news');
+        $title_head = $title !== '' ? $title : __('admin.edit_news');
         $slug = $slug ?? '';
         $description = $edit_data->description != '' ? htmlspecialchars_decode($edit_data->description) : '';
         $content = $edit_data->content != '' ? htmlspecialchars_decode($edit_data->content) : '';
@@ -20,7 +20,7 @@
         $seo_description = $seo_description ?? '';
         $id = (int) ($id ?? ($edit_data->id ?? 0));
     } else {
-        $title_head = $title ?? __('Add news');
+        $title_head = isset($title) && $title !== '' ? $title : __('admin.add_news');
         $id = (int) ($id ?? 0);
     }
 
@@ -59,7 +59,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                         <li class="breadcrumb-item active">{{ $title_head }}</li>
                     </ol></nav>
                 </div>
@@ -138,11 +138,11 @@
 
                         <div class="mb-4 card card-primary card-outline">
                             <div class="card-header">
-                                <h3 class="card-title">@lang('Infomation')</h3>
+                                <h3 class="card-title">@lang('admin.information')</h3>
                             </div>
                             <div class="card-body">
                                 <div class="mb-3 form-group">
-                                    <label for="sort" class="form-label col-form-label text-lg-right">@lang('Sort')</label>
+                                    <label for="sort" class="form-label col-form-label text-lg-right">@lang('admin.sort')</label>
                                     <input type="text" class="form-control" id="sort" name="sort" value="{{ $sort ?? 0 }}">
                                 </div>
                             </div>

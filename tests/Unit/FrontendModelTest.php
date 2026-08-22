@@ -2,32 +2,31 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use App\Models\Frontend\Category;
 use App\Models\Frontend\Product;
-use App\Models\Frontend\Page;
 use App\Models\Frontend\User;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Tests\TestCase;
 
 class FrontendModelTest extends TestCase
 {
     public function test_category_products_relationship()
     {
-        $category = new Category();
+        $category = new Category;
         $this->assertInstanceOf(BelongsToMany::class, $category->products());
     }
 
     public function test_category_parent_relationship()
     {
-        $category = new Category();
+        $category = new Category;
         $category->parent = 1; // Set dummy foreign key value
         $this->assertInstanceOf(BelongsTo::class, $category->parent());
     }
 
     public function test_user_roles_relationship()
     {
-        $user = new User();
+        $user = new User;
         $this->assertInstanceOf(BelongsToMany::class, $user->roles());
     }
 
@@ -43,8 +42,8 @@ class FrontendModelTest extends TestCase
             $this->assertNotNull($result);
         } catch (\Exception $e) {
             // If it's a connection error, we skip. If it's "addslashes" error or similar, it fails.
-            if (!str_contains($e->getMessage(), 'Connection refused') && !str_contains($e->getMessage(), 'Access denied')) {
-                // throw $e; 
+            if (! str_contains($e->getMessage(), 'Connection refused') && ! str_contains($e->getMessage(), 'Access denied')) {
+                // throw $e;
                 // For now, assuming DB might be inaccessible, we verify the method signature didn't crash PHP
                 $this->assertTrue(true);
             }

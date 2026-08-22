@@ -27,7 +27,7 @@
                 </div>
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">@lang('admin.home')</a></li>
                         <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
                     </ol></nav>
                 </div>

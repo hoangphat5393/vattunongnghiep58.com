@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\ServiceProvider;
 
 class MailConfigServiceProvider extends ServiceProvider
 {
@@ -25,7 +26,7 @@ class MailConfigServiceProvider extends ServiceProvider
     public function boot()
     {
         try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+            if (Schema::hasTable('settings')) {
                 $config = [
                     'transport' => 'smtp',
                     'host' => setting_option('smtp-host'),

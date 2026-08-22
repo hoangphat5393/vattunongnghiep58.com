@@ -2,13 +2,16 @@
 
 namespace App\Models\Frontend;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use App\Models\Backend\User;
+use App\Traits\Filterable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class Page extends Model
 {
-    use \Illuminate\Database\Eloquent\Factories\HasFactory, \App\Traits\Filterable;
+    use Filterable, HasFactory;
     // protected $table = 'page';
 
     protected $attributes = [
@@ -32,11 +35,12 @@ class Page extends Model
     {
         // Bảng pages dùng cột type (cocojt đã bỏ). Chỉ query theo type để tránh lỗi "Unknown column 'cocojt'".
         $table = $this->getTable();
-        if (\Illuminate\Support\Facades\Schema::hasColumn($table, 'type')) {
+        if (Schema::hasColumn($table, 'type')) {
             return $query->where(function ($q) {
                 $q->where('type', 'page')->orWhereNull('type');
             });
         }
+
         return $query;
     }
 
@@ -50,21 +54,22 @@ class Page extends Model
 
     public function filterName($query, $value)
     {
-        return $query->where('name', 'LIKE', '%' . $value . '%');
+        return $query->where('name', 'LIKE', '%'.$value.'%');
     }
 
     public function user()
     {
-        return $this->belongsTo(\App\Models\Backend\User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public static function search(string $keyword)
     {
-        $keyword = '%' . $keyword . '%';
+        $keyword = '%'.$keyword.'%';
         $result = self::select('id', 'name', 'slug', 'description')
             ->where('name', 'like', $keyword)
             ->orWhere('parent', 'like', $keyword)
             ->get();
+
         return $result;
     }
 
@@ -72,9 +77,10 @@ class Page extends Model
     public function getNameAttribute($value)
     {
         $lc = app()->getLocale();
-        if ('vi' == $lc) {
+        if ($lc == 'vi') {
             return $value;
         }
+
         return $this->{'name_en'} ?? $value;
     }
 
@@ -93,20 +99,20 @@ class Page extends Model
     public function getDescriptionAttribute($value)
     {
         $lc = app()->getLocale();
-        if ('vi' == $lc) {
+        if ($lc == 'vi') {
             return $value;
         } else {
-            return $this->{'description_' . $lc};
+            return $this->{'description_'.$lc};
         }
     }
 
     public function getContentAttribute($value)
     {
         $lc = app()->getLocale();
-        if ('vi' == $lc) {
+        if ($lc == 'vi') {
             return $value;
         } else {
-            return $this->{'content_' . $lc};
+            return $this->{'content_'.$lc};
         }
     }
 }

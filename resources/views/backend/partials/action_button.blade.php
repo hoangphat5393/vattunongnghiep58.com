@@ -10,11 +10,11 @@
 
 
 
-<div class="mb-4 card">
+<div class="mb-4 card card-success card-outline">
 
     <div class="card-header">
 
-        <h5>@lang('admin.Publish')</h5>
+        <h5 class="card-title mb-0">@lang('admin.Publish')</h5>
 
     </div> <!-- /.card-header -->
 

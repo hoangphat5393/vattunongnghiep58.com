@@ -1,84 +1,55 @@
 <?php
 
-
-
 namespace App\Http\Controllers\Customer;
 
-
-
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Controller;
-
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-
-use Illuminate\Support\Facades\Auth;
-
-use App\Models\Frontend\User;
 use App\Models\Discount_code;
-
+use App\Models\Frontend\User;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Mail;
+use Redirect;
 use Validator;
 
-use Mail;
-
-use Redirect;
-
-use App\Facades\WebService;
-
-
-
 class CustomerLoginController extends Controller
-
 {
-
     /**
-
      * Show the application’s login form.
 
      *
 
-     * @return \Illuminate\Http\Response
-
+     * @return Response
      */
-
     protected $guard = 'web';
 
     protected function guard()
-
     {
 
         return Auth::guard('web');
 
     }
 
-
-
     use AuthenticatesUsers;
 
     /**
-
      * Where to redirect users after login.
 
      *
 
      * @var string
-
      */
-
     protected $redirectTo = '/customer';
 
     /**
-
      * Create a new controller instance.
 
      *
 
      * @return void
-
      */
-
     public function __construct()
-
     {
 
         $this->middleware('auth')->except('logout');
@@ -86,16 +57,15 @@ class CustomerLoginController extends Controller
     }
 
     public function logout()
-
     {
 
         Auth::guard('web')->logout();
+
         return redirect()->route('index');
 
     }
 
     public function registerCustomer()
-
     {
 
         return view('customer.auth.register');
@@ -103,10 +73,9 @@ class CustomerLoginController extends Controller
     }
 
     public function createCustomer(Request $rq)
-
     {
 
-        $validation_rules = array(
+        $validation_rules = [
 
             'full_name' => 'required|max:255',
 
@@ -124,9 +93,9 @@ class CustomerLoginController extends Controller
 
             'address' => 'required|max:255',
 
-        );
+        ];
 
-        $messages = array(
+        $messages = [
 
             'full_name.required' => 'Hãy nhập họ của bạn',
 
@@ -162,25 +131,23 @@ class CustomerLoginController extends Controller
 
             'slt_ward.required' => 'Chọn phường/xã',
 
-        );
+        ];
 
         $validator = Validator::make($rq->all(), $validation_rules, $messages);
 
         if ($validator->fails()) {
 
-            return  Redirect::back()->withErrors($validator);
+            return Redirect::back()->withErrors($validator);
 
         }
 
-
-
-        $new_cus = new User();
+        $new_cus = new User;
 
         $new_cus->name = $rq->full_name;
 
         $new_cus->email = $rq->email;
 
-        $new_cus->birthday = $rq->birthday_year . '-' . $rq->birthday_month . '-' . $rq->birthday_day;
+        $new_cus->birthday = $rq->birthday_year.'-'.$rq->birthday_month.'-'.$rq->birthday_day;
 
         $new_cus->phone = $rq->phone;
 
@@ -195,11 +162,7 @@ class CustomerLoginController extends Controller
         $new_cus->password = bcrypt($rq->password);
         $new_cus->save();
 
-
-
         Auth::login($new_cus);
-
-
 
         // $check_discount_for_new_customer = Helpers::get_option_minhnn('on-off-discount-for-new-customer');
 
@@ -219,8 +182,6 @@ class CustomerLoginController extends Controller
 
         //     }
 
-
-
         //     $date = date("d");
 
         //     $month = date("m");
@@ -237,8 +198,6 @@ class CustomerLoginController extends Controller
 
         //     $convert_expired = date('d-m-Y H:i:s',strtotime($expired));
 
-
-
         //     $discount = new Discount_code;
 
         //     $discount->code = $code_discount;
@@ -252,8 +211,6 @@ class CustomerLoginController extends Controller
         //     $discount->status = 0;
 
         //     $discount->save();
-
-
 
         //     $data = array(
 
@@ -290,6 +247,4 @@ class CustomerLoginController extends Controller
         return redirect()->route('index');
 
     }
-
 }
-

@@ -26,7 +26,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                         <li class="breadcrumb-item active">{{ $title_head }}</li>
                     </ol></nav>
                 </div><!-- /.col -->
@@ -41,7 +41,7 @@
                 <div class="col-12">
                     <div class="mb-4 card card-primary card-outline">
                         <div class="card-header">
-                            <h3 class="card-title">{{ $title_head }} @lang('admin.list')</h3>
+                            <h3 class="card-title">{{ $title_head }}</h3>
                         </div> <!-- /.card-header -->
                         <div class="card-body">
                             <div class="d-flex flex-column flex-lg-row align-items-center justify-content-between">

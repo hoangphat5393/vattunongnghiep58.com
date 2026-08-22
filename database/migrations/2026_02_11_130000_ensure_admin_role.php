@@ -1,11 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-use App\Models\Backend\User;
 use App\Models\Backend\Role;
-use Illuminate\Support\Facades\DB;
+use App\Models\Backend\User;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -16,7 +13,7 @@ return new class extends Migration
     {
         // 1. Ensure Administrator Role exists
         $adminRole = Role::where('slug', 'administrator')->first();
-        if (!$adminRole) {
+        if (! $adminRole) {
             $adminRole = Role::create([
                 'name' => 'Administrator',
                 'slug' => 'administrator',
@@ -28,13 +25,13 @@ return new class extends Migration
 
         // 2. Assign to default admin (ID 1 or username 'admin')
         $adminUser = User::find(1);
-        if (!$adminUser) {
+        if (! $adminUser) {
             $adminUser = User::where('username', 'admin')->first();
         }
 
         if ($adminUser) {
             // Check if already has role
-            if (!$adminUser->roles()->where('slug', 'administrator')->exists()) {
+            if (! $adminUser->roles()->where('slug', 'administrator')->exists()) {
                 $adminUser->roles()->attach($adminRole->id);
             }
         }

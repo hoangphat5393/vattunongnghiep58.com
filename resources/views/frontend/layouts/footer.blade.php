@@ -14,16 +14,23 @@
                 <p class="text-leaf-200 mb-6">
                     Đồng hành cùng nhà nông Việt trên mọi nẻo đường. Chất lượng tạo nên uy tín vững bền.
                 </p>
+                <h3 class="font-bold text-lg mb-3">@lang('admin.social_networks')</h3>
                 <div class="flex gap-4">
-                    <a href="{{ setting_option('facebook') }}" rel="nofollow" target="_blank" class="mr-2">
-                        <img src="{{ asset('assets/images/facebook.png') }}" alt="Facebook" style="width: 30px; height: 30px; object-fit: contain;">
-                    </a>
-                    <a href="{{ setting_option('zalo') }}" rel="nofollow" target="_blank" class="mr-2">
-                        <img src="{{ asset('assets/images/icon/icon-zalo.webp') }}" alt="Zalo" style="width: 30px; height: 30px; object-fit: contain;">
-                    </a>
-                    <a href="{{ setting_option('youtube') }}" rel="nofollow" target="_blank">
-                        <img src="{{ asset('assets/images/youtube.png') }}" alt="Youtube" style="width: 30px; height: 30px; object-fit: contain;">
-                    </a>
+                    @if(setting_option('facebook'))
+                        <a href="{{ setting_option('facebook') }}" rel="nofollow" target="_blank" class="mr-2">
+                            <img src="{{ asset('assets/images/social/facebook.png') }}" alt="Facebook" style="width: 30px; height: 30px; object-fit: contain;">
+                        </a>
+                    @endif
+                    @if(setting_option('zalo') || setting_option('phone'))
+                        <a href="https://zalo.me/{{ str_replace([' ', '.'], '', setting_option('zalo', setting_option('phone'))) }}" title="{{ str_replace(' ', '', setting_option('phone', '0938.133.830')) }}" target="_blank">
+                            <img src="{{ asset('assets/images/social/zalo-icon.png') }}" alt="Zalo" class="img-fluid" style="width: 30px; height: 30px; object-fit: contain;">
+                        </a>
+                    @endif
+                    @if(setting_option('youtube'))
+                        <a href="{{ setting_option('youtube') }}" rel="nofollow" target="_blank">
+                            <img src="{{ asset('assets/images/social/youtube.png') }}" alt="Youtube" style="width: 30px; height: 30px; object-fit: contain;">
+                        </a>
+                    @endif
                 </div>
             </div>
             <div>

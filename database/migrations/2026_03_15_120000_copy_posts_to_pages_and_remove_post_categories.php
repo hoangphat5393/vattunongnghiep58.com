@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('posts')) {
+        if (! Schema::hasTable('posts')) {
             Schema::dropIfExists('post_categories');
+
             return;
         }
 
-        if (!Schema::hasColumn('pages', 'type')) {
+        if (! Schema::hasColumn('pages', 'type')) {
             Schema::table('pages', function (Blueprint $table) {
                 $table->string('type')->default('page')->after('id');
             });
@@ -36,7 +37,7 @@ return new class extends Migration
             $originalSlug = $slug;
             $count = 1;
             while (DB::table('pages')->where('slug', $slug)->exists()) {
-                $slug = $originalSlug . '-' . $count;
+                $slug = $originalSlug.'-'.$count;
                 $count++;
             }
 

@@ -1,59 +1,35 @@
 <?php
 
-
-
 namespace App\Models\Frontend;
 
-
-
-use Illuminate\Database\Eloquent\Model;
-
-use App\Models\Frontend\Category;
-
 use App\Models\ProductPrice;
+use App\Traits\Filterable;
 // use App\Models\Variable;
 
 // use App\Models\ProductPromotion;
 
-
-
 // Trait
 
-use App\Traits\Filterable;
-
-
-
-
+use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
-
 {
-
-
-
     use Filterable;
-
-
 
     // protected $table = 'product';
 
     // protected $primaryKey = 'id';
 
+    protected $sc_category = []; // array category id
 
-
-    protected  $sc_category = []; // array category id
-
-    protected  $game_id = []; // array game id
-
-
+    protected $game_id = []; // array game id
 
     public static function search(string $keyword)
-
     {
 
         // Eloquent binds parameters automatically, so addslashes is not needed and can double-escape
 
-        $keyword = '%' . $keyword . '%';
+        $keyword = '%'.$keyword.'%';
 
         $result = self::select('*')
 
@@ -65,78 +41,64 @@ class Product extends Model
 
     }
 
-
-
     public function getNameAttribute($value)
-
     {
 
         $lc = app()->getLocale();
 
-        if ('vi' == $lc) {
+        if ($lc == 'vi') {
 
             return $value;
 
         } else {
 
-            return $this->{'name_' . $lc} ?: $value;
+            return $this->{'name_'.$lc} ?: $value;
 
         }
 
     }
-
-
 
     public function getDescriptionAttribute($value)
-
     {
 
         $lc = app()->getLocale();
 
-        if ('vi' == $lc) {
+        if ($lc == 'vi') {
 
             return $value;
 
         } else {
 
-            return $this->{'description_' . $lc} ?: $value;
+            return $this->{'description_'.$lc} ?: $value;
 
         }
 
     }
-
-
 
     public function getContentAttribute($value)
-
     {
 
         $lc = app()->getLocale();
 
-        if ('vi' == $lc) {
+        if ($lc == 'vi') {
 
             return $value;
 
         } else {
 
-            return $this->{'content_' . $lc} ?: $value;
+            return $this->{'content_'.$lc} ?: $value;
 
         }
 
     }
 
-
-
     /**
-
      * Get product to array Catgory
 
+     *
      * @param   [array|int]  $arrCategory
-
      */
-
     public function getProductToCategory($arrCategory)
-
     {
 
         $this->setCategory($arrCategory);
@@ -146,19 +108,13 @@ class Product extends Model
     }
 
     /**
-
      * Set array category
 
      *
 
      * @param   [array|int]  $category
-
-     *
-
      */
-
     private function setCategory($category)
-
     {
 
         if (is_array($category)) {
@@ -167,7 +123,7 @@ class Product extends Model
 
         } else {
 
-            $this->sc_category = array((int)$category);
+            $this->sc_category = [(int) $category];
 
         }
 
@@ -175,10 +131,7 @@ class Product extends Model
 
     }
 
-
-
     public function getGame($arrGame)
-
     {
 
         $this->setGame($arrGame);
@@ -187,10 +140,7 @@ class Product extends Model
 
     }
 
-
-
     private function setGame($game_id)
-
     {
 
         if (is_array($game_id)) {
@@ -199,7 +149,7 @@ class Product extends Model
 
         } else {
 
-            $this->game_id = array((int)$game_id);
+            $this->game_id = [(int) $game_id];
 
         }
 
@@ -207,19 +157,16 @@ class Product extends Model
 
     }
 
-
-
     public function getProductsByCategoryId()
-
     {
 
         $list = (new Product);
 
         $tablePTC = (new ShopProductCategory)->getTable();
 
-        $list = $list->leftJoin($tablePTC, $tablePTC . '.product_id', $this->getTable() . '.id');
+        $list = $list->leftJoin($tablePTC, $tablePTC.'.product_id', $this->getTable().'.id');
 
-        $list = $list->whereIn($tablePTC . '.category_id', $this->sc_category);
+        $list = $list->whereIn($tablePTC.'.category_id', $this->sc_category);
 
         $list = $list->where('status', 1)->get();
 
@@ -227,24 +174,19 @@ class Product extends Model
 
     }
 
-
-
     public function getFinalPrice()
-
     {
 
-        if ($this->promotion > 0)
+        if ($this->promotion > 0) {
 
             return $this->promotion;
+        }
 
         return $this->price;
 
     }
 
-
-
     public function showPrice()
-
     {
 
         $priceFinal = $this->promotion ?? 0;
@@ -261,7 +203,7 @@ class Product extends Model
 
         }
 
-        return view(env('APP_THEME', 'demo') . '.product.includes.showPrice', [
+        return view(env('APP_THEME', 'demo').'.product.includes.showPrice', [
 
             'priceFinal' => $priceFinal,
 
@@ -335,8 +277,6 @@ class Product extends Model
 
     //     }
 
-
-
     //     return view(env('APP_THEME', 'theme') . '.product.includes.showPriceDetail', [
 
     //         'priceFinal' => $priceFinal,
@@ -349,8 +289,6 @@ class Product extends Model
 
     // }
 
-
-
     /*
 
     *Format price
@@ -358,7 +296,6 @@ class Product extends Model
     */
 
     public function getPrice()
-
     {
 
         $n = $this->price;
@@ -367,42 +304,42 @@ class Product extends Model
 
         $m = '';
 
-        if ($price_type == 1)
+        if ($price_type == 1) {
 
             $m = '/m²';
+        }
 
         if ($n > 0 || $n != '') {
 
-            $n = (0 + str_replace(",", "", $n));
-
-
+            $n = (0 + str_replace(',', '', $n));
 
             // is this a number?
 
-            if (!is_numeric($n)) return false;
-
-
+            if (! is_numeric($n)) {
+                return false;
+            }
 
             // now filter it;
 
-            if ($n > 1000000000000) return round(($n / 1000000000000), 1) . ' nghìn tỷ' . $m;
+            if ($n > 1000000000000) {
+                return round(($n / 1000000000000), 1).' nghìn tỷ'.$m;
+            } elseif ($n > 1000000000) {
+                return round(($n / 1000000000), 2).' tỷ'.$m;
+            } elseif ($n > 1000000) {
+                return round(($n / 1000000), 1).' triệu'.$m;
+            } elseif ($n > 1000) {
+                return round(($n / 1000), 1).' VNĐ'.$m;
+            }
 
-            else if ($n > 1000000000) return round(($n / 1000000000), 2) . ' tỷ' . $m;
+            return $n.$m;
 
-            else if ($n > 1000000) return round(($n / 1000000), 1) . ' triệu' . $m;
-
-            else if ($n > 1000) return round(($n / 1000), 1) . ' VNĐ' . $m;
-
-            return $n . $m;
-
-        } else
-
+        } else {
             return __('Giá thỏa thuận');
+        }
 
     }
 
     public function getPriceSub()
-
     {
 
         $n = $this->price;
@@ -423,43 +360,37 @@ class Product extends Model
 
         }
 
-
-
         if ($n > 0 || $n != '') {
 
-            $n = (0 + str_replace(",", "", $n));
-
-
+            $n = (0 + str_replace(',', '', $n));
 
             // is this a number?
 
-            if (!is_numeric($n)) return false;
-
-
+            if (! is_numeric($n)) {
+                return false;
+            }
 
             // now filter it;
 
-            if ($n > 1000000000000) return round(($n / 1000000000000), 1) . ' nghìn tỷ' . $m;
+            if ($n > 1000000000000) {
+                return round(($n / 1000000000000), 1).' nghìn tỷ'.$m;
+            } elseif ($n > 1000000000) {
+                return round(($n / 1000000000), 2).' tỷ'.$m;
+            } elseif ($n > 1000000) {
+                return round(($n / 1000000), 1).' triệu'.$m;
+            } elseif ($n > 1000) {
+                return round(($n / 1000), 1).' VNĐ'.$m;
+            }
 
-            else if ($n > 1000000000) return round(($n / 1000000000), 2) . ' tỷ' . $m;
+            return $n.$m;
 
-            else if ($n > 1000000) return round(($n / 1000000), 1) . ' triệu' . $m;
-
-            else if ($n > 1000) return round(($n / 1000), 1) . ' VNĐ' . $m;
-
-            return $n . $m;
-
-        } else
-
+        } else {
             return __('Giá thỏa thuận');
+        }
 
     }
 
-
-
     public function price_render($price) {}
-
-
 
     /*
 
@@ -468,12 +399,12 @@ class Product extends Model
     */
 
     public function getGallery()
-
     {
 
-        if ($this->gallery != '')
+        if ($this->gallery != '') {
 
             return unserialize($this->gallery);
+        }
 
         return [];
 
@@ -490,8 +421,6 @@ class Product extends Model
     //     return 0;
 
     // }
-
-
 
     // public function wishlist()
 
@@ -517,8 +446,6 @@ class Product extends Model
 
     //             $key = array_search($this->id, $wishlist);
 
-
-
     //         if ($key !== false)
 
     //             return true;
@@ -529,26 +456,21 @@ class Product extends Model
 
     // }
 
-
-
     public function getWishList()
-
     {
 
         return $this->hasMany('App\Models\Wishlist', 'product_id', 'id');
 
     }
 
-
-
-    /*user detail*/
+    /* user detail */
 
     public function getUser()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
-    /*theme info*/
+    /* theme info */
 
     // public function getInfo()
 
@@ -558,37 +480,26 @@ class Product extends Model
 
     // }
 
-
-
     public function getThongke()
-
     {
 
         return $this->hasOne('App\Models\Thongke', 'theme_id', 'id');
 
     }
 
-
-
     public function getPackage()
-
     {
 
         return $this->hasOne('App\Models\Package', 'id', 'package_id');
 
     }
 
-
-
     public function categories()
-
     {
 
         return $this->belongsToMany(Category::class, 'product_category', 'product_id', 'category_id');
 
     }
-
-
 
     public function prices()
     {
@@ -596,7 +507,6 @@ class Product extends Model
     }
 
     public function brands()
-
     {
 
         return $this->belongsToMany('App\Brand', 'shop_product_brand', 'product_id', 'brand_id');
@@ -604,17 +514,13 @@ class Product extends Model
     }
 
     public function element()
-
     {
 
         return $this->belongsToMany('App\Models\ShopElement', 'shop_product_element', 'product_id', 'element_id');
 
     }
 
-
-
     public function getAllVariable()
-
     {
 
         return $this->belongsToMany('App\Variable', 'theme_variable', 'theme_id', 'variable_id');
@@ -622,7 +528,6 @@ class Product extends Model
     }
 
     public function getVariable($variable_parent)
-
     {
 
         return $this->hasMany('App\Models\ThemeVariable', 'theme_id', 'id')->where('variable_parent', $variable_parent)->groupBy('variable_id')->orderBy('price')->get();
@@ -630,17 +535,13 @@ class Product extends Model
     }
 
     public function getVariables()
-
     {
 
         return $this->hasMany('App\Models\ThemeVariable', 'theme_id', 'id')->where('parent', 0)->orderBy('price');
 
     }
 
-
-
     public function FlashSale()
-
     {
 
         // $now = date('Y-m-d H:i');
@@ -650,6 +551,4 @@ class Product extends Model
         // return $list;
 
     }
-
 }
-

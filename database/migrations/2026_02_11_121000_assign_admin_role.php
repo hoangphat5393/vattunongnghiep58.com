@@ -1,10 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-use App\Models\Backend\User;
 use App\Models\Backend\Role;
+use App\Models\Backend\User;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -20,7 +18,7 @@ return new class extends Migration
             $superAdmins = User::where('admin_level', 99999)->get();
 
             foreach ($superAdmins as $user) {
-                if (!$user->roles()->where('roles.id', $adminRole->id)->exists()) {
+                if (! $user->roles()->where('roles.id', $adminRole->id)->exists()) {
                     $user->roles()->attach($adminRole->id);
                 }
             }

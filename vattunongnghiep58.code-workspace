@@ -1,11 +1,14 @@
 {
     "folders": [
         {
-            "path": ".",
+            "path": "."
         },
         {
-            "path": "../3nong",
+            "path": "../3nong"
         },
+        {
+            "path": "../new-admin-ui"
+        }
     ],
     "settings": {
         "xml.downloadExternalResources.enabled": true,

@@ -2,14 +2,18 @@
 
 namespace App\Models\Backend;
 
+use Auth;
+use DB;
 use Illuminate\Database\Eloquent\Model;
-use Auth, DB, Route;
+use Route;
 
 class AdminMenu extends Model
 {
     public $timestamps = true;
+
     // protected $table = 'admin_menu';
     protected $guarded = [];
+
     private static $getList = null;
 
     public static function getListAll()
@@ -17,6 +21,7 @@ class AdminMenu extends Model
         if (self::$getList == null) {
             self::$getList = self::orderBy('sort', 'asc')->get();
         }
+
         return self::$getList;
     }
 
@@ -25,13 +30,14 @@ class AdminMenu extends Model
         if (self::$getList == null) {
             self::$getList = self::orderBy('sort', 'asc')->where('hidden', 0)->get();
         }
+
         return self::$getList;
     }
 
     /**
      * Get list menu can visible for user
      *
-     * @return  [type]  [return description]
+     * @return [type]  [return description]
      */
     public static function getListVisible()
     {
@@ -40,9 +46,9 @@ class AdminMenu extends Model
 
         // $lc = app()->getLocale();
         // dd(app()->getLocale());
-        foreach ($list as  $menu) {
+        foreach ($list as $menu) {
             // dd($list);
-            if (!$menu->uri) {
+            if (! $menu->uri) {
                 $listVisible[] = $menu;
             } else {
                 if (Route::has($menu->uri)) {
@@ -58,13 +64,15 @@ class AdminMenu extends Model
         $groupVisible = $listVisible->groupBy('parent_id');
         foreach ($listVisible as $key => $value) {
             if ((isset($groupVisible[$value->id]) && count($groupVisible[$value->id]) == 0)
-                || (!isset($groupVisible[$value->id]) && !$value->uri)
+                || (! isset($groupVisible[$value->id]) && ! $value->uri)
             ) {
                 unset($listVisible[$key]);
+
                 continue;
             }
         }
         $listVisible = $listVisible->groupBy('parent_id');
+
         return $listVisible;
     }
 
@@ -73,26 +81,25 @@ class AdminMenu extends Model
      *
      * @param   [type]  $urlParent  [$urlParent description]
      * @param   [type]  $urlChild   [$urlChild description]
-     *
-     * @return  [type]              [return description]
+     * @return [type]              [return description]
      */
-    public static function  checkUrlIsChild($urlParent, $urlChild)
+    public static function checkUrlIsChild($urlParent, $urlChild)
     {
         $check = false;
         $urlParent = strtolower($urlParent);
         $urlChild = strtolower($urlChild);
         if ($urlChild) {
             if (
-                strpos($urlParent, $urlChild . '/') !== false
-                || strpos($urlParent, $urlChild . '?') !== false
+                strpos($urlParent, $urlChild.'/') !== false
+                || strpos($urlParent, $urlChild.'?') !== false
                 || $urlParent == $urlChild
             ) {
                 $check = true;
             }
         }
+
         return $check;
     }
-
 
     public function getTree($parent = 0, &$tree = null, $menus = null, &$st = '')
     {
@@ -100,8 +107,8 @@ class AdminMenu extends Model
         $tree = $tree ?? [];
         $lisMenu = $menus[$parent] ?? [];
         foreach ($lisMenu as $menu) {
-            $tree[$menu->id] = $st . ' ' . __($menu->title);
-            if (!empty($menus[$menu->id])) {
+            $tree[$menu->id] = $st.' '.__($menu->title);
+            if (! empty($menus[$menu->id])) {
                 $st .= '--';
                 $this->getTree($menu->id, $tree, $menus, $st);
                 $st = '';
@@ -136,11 +143,12 @@ Re-sort menu
                 $this->where('id', $key)->update($menu);
             }
             DB::connection('mysql')->commit();
-            $return = ['error' => 0, 'msg' => ""];
+            $return = ['error' => 0, 'msg' => ''];
         } catch (\Throwable $e) {
             DB::connection('mysql')->rollBack();
             $return = ['error' => 1, 'msg' => $e->getMessage()];
         }
+
         return $return;
     }
 
@@ -154,11 +162,13 @@ Re-sort menu
 
     /**
      * Create new menu
+     *
      * @return [type] [description]
      */
     public static function createMenu($dataInsert)
     {
         $dataUpdate = $dataInsert;
+
         return self::create($dataUpdate);
     }
 }

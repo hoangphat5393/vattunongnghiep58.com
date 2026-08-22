@@ -5,14 +5,13 @@
     if (isset($post)) {
         extract($post->getAttributes());
     }
-    $title_head = $name ?? __('Edit CSS');
+    $title_head = __('admin.theme_css');
     $id = $id ?? 0;
     $form_action = route('admin.css.update'); // update css file
 @endphp
 
 @section('seo')
     @php
-        $title_head = 'Theme CSS';
         $seo = [
             'title' => $title_head,
             'keywords' => '',
@@ -42,7 +41,7 @@
                 </div>
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end"><ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                         <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
                     </ol></nav>
                 </div>
@@ -74,12 +73,12 @@
                                 <div class="js-validation-messages mb-2 small" role="alert"></div>
 
                                 <div class="form-group">
-                                    <label for="description_en">CSS Content</label>
+                                    <label for="description_en">@lang('admin.css_content')</label>
                                     <textarea id="CSSTextarea" class="form-control" name="css_content">{!! $scssContent ?? '' !!}</textarea>
                                 </div>
 
                                 <div class="posts_tbl_setting clearfix text-center">
-                                    <button id="submit_setting" class="btn btn-primary pull-left" name="submit" type="submit">Save Changes</button>
+                                    <button id="submit_setting" class="btn btn-primary pull-left" name="submit" type="submit">@lang('admin.save_changes')</button>
                                 </div>
                             </div>
 

@@ -9,7 +9,33 @@ use Illuminate\Support\ServiceProvider;
 class CKFinderServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap.
+     * Register services.
+     */
+    public function register()
+    {
+        $this->app->bind('ckfinder.connector', function () {
+            if (! class_exists('\CKSource\CKFinder\CKFinder')) {
+                throw new \Exception(
+                    "Couldn't find CKFinder connector code. ".
+                    'Please run `artisan ckfinder:download` command first.'
+                );
+            }
+
+            $ckfinderConfig = config('ckfinder');
+
+            if (is_null($ckfinderConfig)) {
+                throw new \Exception(
+                    "Couldn't load CKFinder configuration file. ".
+                    'Please run `artisan vendor:publish --tag=ckfinder` command first.'
+                );
+            }
+
+            return new CKFinder($ckfinderConfig);
+        });
+    }
+
+    /**
+     * Bootstrap services.
      */
     public function boot()
     {
@@ -33,30 +59,6 @@ class CKFinderServiceProvider extends ServiceProvider
                 __DIR__.'/../views/setup.blade.php' => resource_path('views/vendor/ckfinder/setup.blade.php'),
                 __DIR__.'/../views/browser.blade.php' => resource_path('views/vendor/ckfinder/browser.blade.php'),
             ], ['ckfinder-views']);
-
-            return;
         }
-
-        $this->app->bind('ckfinder.connector', function () {
-            if (! class_exists('\CKSource\CKFinder\CKFinder')) {
-                throw new \Exception(
-                    "Couldn't find CKFinder conector code. ".
-                    'Please run `artisan ckfinder:download` command first.'
-                );
-            }
-
-            $ckfinderConfig = config('ckfinder');
-
-            if (is_null($ckfinderConfig)) {
-                throw new \Exception(
-                    "Couldn't load CKFinder configuration file. ".
-                    'Please run `artisan vendor:publish --tag=ckfinder` command first.'
-                );
-            }
-
-            $ckfinder = new CKFinder($ckfinderConfig);
-
-            return $ckfinder;
-        });
     }
 }

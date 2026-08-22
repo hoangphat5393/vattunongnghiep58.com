@@ -30,4 +30,3 @@ class ProductPrice extends Model
         return $this->belongsTo(FrontendProduct::class, 'product_id', 'id');
     }
 }
-

@@ -710,11 +710,29 @@ header .btn-call:hover {
 
 /*FOOTER*/
 .footer-area {
-    background-color: #28a745;
-    color: #fff;
+    background-color: #f7f7f7;
+    color: #333;
     padding-top: 3rem;
-    padding-bottom: 1.5rem;
-    font-family: verdana, geneva, sans-serif;
+    padding-bottom: 0;
+    margin-top: 0 !important;
+
+    a {
+        text-decoration: none;
+        color: #434657;
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+            color: var(--main-color, #448847);
+        }
+    }
+
+    .footer-copyright a {
+        color: #fff;
+
+        &:hover {
+            color: #ffd700;
+        }
+    }
 }
 
 .footer-area h2 {
@@ -725,11 +743,6 @@ header .btn-call:hover {
 .footer-area h2.footer-title {
     color: #ffd700;
     text-transform: uppercase;
-}
-
-.footer-area a {
-    text-decoration: none;
-    color: #fff;
 }
 
 /*END FOOTER*/

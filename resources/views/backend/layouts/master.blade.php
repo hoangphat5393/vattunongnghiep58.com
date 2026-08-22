@@ -212,6 +212,38 @@
 
     @stack('scripts-footer')
 
+    {{-- Global SweetAlert2 Toast Notifications (Top-Right) --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const showSwalToast = (icon, title) => {
+                if (typeof Swal !== 'undefined') {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3500,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                        }
+                    });
+                    Toast.fire({ icon: icon, title: title });
+                }
+            };
+
+            @if (session('swal_toast'))
+                showSwalToast("{{ is_array(session('swal_toast')) ? (session('swal_toast')['icon'] ?? 'success') : 'success' }}", "{!! addslashes(is_array(session('swal_toast')) ? (session('swal_toast')['title'] ?? '') : session('swal_toast')) !!}");
+            @elseif (session('success'))
+                showSwalToast('success', "{!! addslashes(session('success')) !!}");
+            @elseif (session('error'))
+                showSwalToast('error', "{!! addslashes(session('error')) !!}");
+            @elseif (session('status'))
+                showSwalToast('info', "{!! addslashes(session('status')) !!}");
+            @endif
+        });
+    </script>
+
 </body>
 
 </html>

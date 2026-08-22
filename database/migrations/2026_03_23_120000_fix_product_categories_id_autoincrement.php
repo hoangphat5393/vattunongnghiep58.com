@@ -26,7 +26,7 @@ return new class extends Migration
 
         try {
             DB::statement('ALTER TABLE `product_categories` MODIFY `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             // Có thể đã AUTO_INCREMENT hoặc khóa chính khác — bỏ qua
         }
     }

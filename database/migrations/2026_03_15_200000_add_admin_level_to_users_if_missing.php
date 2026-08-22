@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -14,11 +14,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (!Schema::hasTable('users')) {
+        if (! Schema::hasTable('users')) {
             return;
         }
 
-        if (!Schema::hasColumn('users', 'admin_level')) {
+        if (! Schema::hasColumn('users', 'admin_level')) {
             Schema::table('users', function (Blueprint $table) {
                 $table->integer('admin_level')->default(1);
             });

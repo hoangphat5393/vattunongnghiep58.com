@@ -2,10 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Backend\Permission;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Backend\Permission;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -42,6 +42,7 @@ class AuthServiceProvider extends ServiceProvider
                         if (method_exists($user, 'hasPermissionTo')) {
                             return $user->hasPermissionTo($permission->slug);
                         }
+
                         return false;
                     });
                 }

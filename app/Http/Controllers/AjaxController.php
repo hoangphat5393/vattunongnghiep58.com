@@ -170,7 +170,7 @@ class AjaxController extends Controller
 
         foreach ($district as $item) {
 
-            $html .= '<option value="' . $item->name . '">' . $item->name . '</option>';
+            $html .= '<option value="'.$item->name.'">'.$item->name.'</option>';
         }
 
         return $html;
@@ -199,7 +199,7 @@ class AjaxController extends Controller
 
         foreach ($ward as $item) {
 
-            $html .= '<option value="' . $item->name . '">' . $item->name . '</option>';
+            $html .= '<option value="'.$item->name.'">'.$item->name.'</option>';
         }
 
         return $html;
@@ -257,7 +257,7 @@ class AjaxController extends Controller
 
             curl_setopt_array($curl, [
 
-                CURLOPT_URL => 'https://services.giaohangtietkiem.vn/services/shipment/fee?' . http_build_query($data),
+                CURLOPT_URL => 'https://services.giaohangtietkiem.vn/services/shipment/fee?'.http_build_query($data),
 
                 CURLOPT_RETURNTRANSFER => true,
 
@@ -265,7 +265,7 @@ class AjaxController extends Controller
 
                 CURLOPT_HTTPHEADER => [
 
-                    'Token: ' . config('app.api_ghtk'),
+                    'Token: '.config('app.api_ghtk'),
 
                 ],
 
@@ -277,7 +277,7 @@ class AjaxController extends Controller
 
             $arr = json_decode($response);
 
-            $fee_html = '+' . WebService::formatMoney12($arr->fee->fee) . '<span class="woocommerce-Price-currencySymbol">' . setting_option('currency') . '</span>';
+            $fee_html = '+'.WebService::formatMoney12($arr->fee->fee).'<span class="woocommerce-Price-currencySymbol">'.setting_option('currency').'</span>';
 
             $arr = [
 
@@ -300,17 +300,17 @@ class AjaxController extends Controller
 
         $html = '';
 
-        $html .= '<a class="icon_cart_tbn_a action showcart" href="' . route('cart') . '" >
+        $html .= '<a class="icon_cart_tbn_a action showcart" href="'.route('cart').'" >
 
                             <span class="basel-cart-totals">
 
-                                <span class="basel-cart-number badge badge-notify my-cart-badge">' . Cart::count() . '</span>
+                                <span class="basel-cart-number badge badge-notify my-cart-badge">'.Cart::count().'</span>
 
                                 <span class="subtotal-divider">/</span>
 
                                 <span class="basel-cart-subtotal">
 
-                                   <span id="price_total_view1" class="woocommerce-Price-amount amount">' . WebService::formatMoney12(Cart::total()) . ' </span><span class="woocommerce-Price-currencySymbol">' . setting_option('currency') . '</span>
+                                   <span id="price_total_view1" class="woocommerce-Price-amount amount">'.WebService::formatMoney12(Cart::total()).' </span><span class="woocommerce-Price-currencySymbol">'.setting_option('currency').'</span>
 
                                 </span>
 
@@ -411,19 +411,19 @@ class AjaxController extends Controller
 
                     $money = $quantity * $price;
 
-                    $post_thumbnail_news = $url_img_sp . $Products->thubnail;
+                    $post_thumbnail_news = $url_img_sp.$Products->thubnail;
 
                     $html .= '<li class="woocommerce-mini-cart-item mini_cart_item">
 
-                                <a href="' . url('/') . '/cart/?remove=' . $id . '" class="remove remove_from_cart_button">×</a>
+                                <a href="'.url('/').'/cart/?remove='.$id.'" class="remove remove_from_cart_button">×</a>
 
-                                <a class="cart_item_title" href="' . get_permalink_by_id($cart_items->id) . '">
+                                <a class="cart_item_title" href="'.get_permalink_by_id($cart_items->id).'">
 
-                                    <img width="300" height="300" src="' . $post_thumbnail_news . '" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail wp-post-image" alt=""/>&nbsp;' . $name . '&nbsp;
+                                    <img width="300" height="300" src="'.$post_thumbnail_news.'" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail wp-post-image" alt=""/>&nbsp;'.$name.'&nbsp;
 
                                 </a>
 
-                                <span class="quantity">' . $quantity . ' × <span class="woocommerce-Price-amount amount">' . WebService::formatMoney12($price) . ' <span class="woocommerce-Price-currencySymbol"></span>' . setting_option('currency') . '</span></span>
+                                <span class="quantity">'.$quantity.' × <span class="woocommerce-Price-amount amount">'.WebService::formatMoney12($price).' <span class="woocommerce-Price-currencySymbol"></span>'.setting_option('currency').'</span></span>
 
                             </li>';
                 }
@@ -432,9 +432,9 @@ class AjaxController extends Controller
             $html .= '</ul>';
         }
 
-        $html .= '<p class="woocommerce-mini-cart__total total"><strong>Tổng tiền:</strong> <span class="woocommerce-Price-amount amount" id="price_total_view2">' . WebService::formatMoney12(Cart::total()) . '<span class="woocommerce-Price-currencySymbol">' . setting_option('currency') . '</span></span></p>
+        $html .= '<p class="woocommerce-mini-cart__total total"><strong>Tổng tiền:</strong> <span class="woocommerce-Price-amount amount" id="price_total_view2">'.WebService::formatMoney12(Cart::total()).'<span class="woocommerce-Price-currencySymbol">'.setting_option('currency').'</span></span></p>
 
-                    <p class="woocommerce-mini-cart__buttons buttons"><a href="' . url('/') . '/cart/" class="button checkout wc-forward mini-cart-checkout">Thanh toán</a></p>
+                    <p class="woocommerce-mini-cart__buttons buttons"><a href="'.url('/').'/cart/" class="button checkout wc-forward mini-cart-checkout">Thanh toán</a></p>
 
                 </div><!--widget_shopping_cart_content-->
 
@@ -562,7 +562,7 @@ class AjaxController extends Controller
 
                     if (strpos($thumbnail_thumb, 'placehold') !== false) {
 
-                        $thumbnail_thumb = $url_img . $thumbnail_thumb;
+                        $thumbnail_thumb = $url_img.$thumbnail_thumb;
                     }
                 } else {
 
@@ -571,7 +571,7 @@ class AjaxController extends Controller
 
                 if (! empty($data_customer->price_origin) && $data_customer->price_origin > 0) {
 
-                    $price_origin = number_format($data_customer->price_origin) . ' đ ';
+                    $price_origin = number_format($data_customer->price_origin).' đ ';
                 } else {
 
                     $price_origin = '';
@@ -579,21 +579,21 @@ class AjaxController extends Controller
 
                 if (! empty($data_customer->price_promotion) && $data_customer->price_promotion > 0) {
 
-                    $price_promotion = number_format($data_customer->price_promotion) . ' đ ';
+                    $price_promotion = number_format($data_customer->price_promotion).' đ ';
                 } else {
 
                     $price_promotion = 'Liên hệ';
                 }
 
-                $html .= '<div id="theme_cate_' . $k . '" class="item_product_list col-lg-4 col-md-4 col-sm-6 col-xs-6 item-page-category-product" data-open="0" data-id="' . $data_customer->id . '" data-parent="' . $data_customer->categoryParent . '" data-cate="' . $id_category . '">
+                $html .= '<div id="theme_cate_'.$k.'" class="item_product_list col-lg-4 col-md-4 col-sm-6 col-xs-6 item-page-category-product" data-open="0" data-id="'.$data_customer->id.'" data-parent="'.$data_customer->categoryParent.'" data-cate="'.$id_category.'">
 
                   <div class="product-item">
 
                       <div class="item-thumb">
 
-                          <a class="zoom" href="' . route('tintuc.details', [$data_customer->categorySlug, $data_customer->slug]) . '">
+                          <a class="zoom" href="'.route('tintuc.details', [$data_customer->categorySlug, $data_customer->slug]).'">
 
-                              <img src="' . $thumbnail_thumb . '" alt="' . $data_customer->thubnail_alt . '">
+                              <img src="'.$thumbnail_thumb.'" alt="'.$data_customer->thubnail_alt.'">
 
                           </a>
 
@@ -603,15 +603,15 @@ class AjaxController extends Controller
 
                           <h3 class="titleProduct">
 
-                              <a href="' . route('tintuc.details', [$data_customer->categorySlug, $data_customer->slug]) . '">' . $data_customer->title . '</a>
+                              <a href="'.route('tintuc.details', [$data_customer->categorySlug, $data_customer->slug]).'">'.$data_customer->title.'</a>
 
                           </h3>
 
                           <div class="flex product_price">
 
-                              <span class="price_sale">' . $price_promotion . '</span>
+                              <span class="price_sale">'.$price_promotion.'</span>
 
-                              <span class="current_price">' . $price_origin . '</span>
+                              <span class="current_price">'.$price_origin.'</span>
 
                           </div>
 
@@ -624,7 +624,7 @@ class AjaxController extends Controller
 
             $html .= '</div><!--row-listpro-->
 
-            <div class="page_navi clear">' . $data_customers->links() . '</div><!--page_navi-->';
+            <div class="page_navi clear">'.(string) $data_customers->links().'</div><!--page_navi-->';
         } else {
 
             $html .= '<div class="alert alert-danger">
@@ -971,9 +971,9 @@ class AjaxController extends Controller
 
                         if ($variable_childs) {
 
-                            $html_col_header .= '<div class="table-cell readonly">' . $variables->variable_theme_name . '</div>';
+                            $html_col_header .= '<div class="table-cell readonly">'.$variables->variable_theme_name.'</div>';
 
-                            $id_key_parent .= $variables->variable_themeID . ',';
+                            $id_key_parent .= $variables->variable_themeID.',';
 
                             foreach ($variable_childs as $variable_child) {
 
@@ -981,7 +981,7 @@ class AjaxController extends Controller
 
                                 // $array_key[$key_child]=array($variable_child->variable_theme_name);
 
-                                $array_child[$key_child] = $variable_child->variable_theme_name . '_' . $variable_child->variable_themeID;
+                                $array_child[$key_child] = $variable_child->variable_theme_name.'_'.$variable_child->variable_themeID;
 
                                 $group_child = $array_child;
                             }
@@ -1002,15 +1002,15 @@ class AjaxController extends Controller
 
                 // print_r($array_fitters);
 
-                $result .= '<input type="hidden" name="parent_variable_group" value="' . $id_key_parent . '"/>
+                $result .= '<input type="hidden" name="parent_variable_group" value="'.$id_key_parent.'"/>
 
                     <div class="edit-main variation-table">
 
                         <div class="table-header">
 
-                            <input type="hidden" name="number_parent_variable" id="number_parent_variable" value="' . $mh . '"/>
+                            <input type="hidden" name="number_parent_variable" id="number_parent_variable" value="'.$mh.'"/>
 
-                            ' . $html_col_header . '
+                            '.$html_col_header.'
 
                             <div class="table-cells">
 
@@ -1038,7 +1038,7 @@ class AjaxController extends Controller
 
                         $explode_ex = explode('_', $value);
 
-                        $result .= '<div class="table-cell readonly">' . $explode_ex[0] . '</div><input type="hidden" name="variable_' . $m . $k . '" value="' . $explode_ex[1] . '">';
+                        $result .= '<div class="table-cell readonly">'.$explode_ex[0].'</div><input type="hidden" name="variable_'.$m.$k.'" value="'.$explode_ex[1].'">';
                     }
 
                     $result .= '<div class="table-cells">
@@ -1047,7 +1047,7 @@ class AjaxController extends Controller
 
                                             <div class="anhduong-input__prefix">₫<span class="anhduong-input__prefix-split"></span><!----><!----></div>
 
-                                            <input type="text"  class="anhduong-input__input" name="price_aviable_' . $m . '">
+                                            <input type="text"  class="anhduong-input__input" name="price_aviable_'.$m.'">
 
                                         </div>
 
@@ -1059,13 +1059,13 @@ class AjaxController extends Controller
 
                                                     <div class="text_input_file_image_variable">
 
-                                                        <input class="myfile_gallery_store_select" type="text" value="" size="50" placeholder="Hình ảnh" name="text_upload_gallery_variable_' . $m . '">
+                                                        <input class="myfile_gallery_store_select" type="text" value="" size="50" placeholder="Hình ảnh" name="text_upload_gallery_variable_'.$m.'">
 
                                                     </div>
 
                                                     <div class="mybutton_upload_img">
 
-                                                        <input class="upload_gallery_variable_select" type="file"  id="upload_gallery_variable_' . $m . '" name="upload_gallery_variable_' . $m . '">UP
+                                                        <input class="upload_gallery_variable_select" type="file"  id="upload_gallery_variable_'.$m.'" name="upload_gallery_variable_'.$m.'">UP
 
                                                     </div>
 
@@ -1080,7 +1080,7 @@ class AjaxController extends Controller
                                 </div>';
                 }
 
-                $result .= '<input type="hidden" name="count_item_list" value="' . $m . '"/>
+                $result .= '<input type="hidden" name="count_item_list" value="'.$m.'"/>
 
                         </div>
 
@@ -1129,25 +1129,25 @@ class AjaxController extends Controller
             $data['districts'] = collect();
             if (Schema::hasTable('province')) {
                 $data['city'] = DB::table('province')
-                    ->where('name', 'like', '%' . $keyword . '%')
+                    ->where('name', 'like', '%'.$keyword.'%')
                     ->limit(10)
                     ->get();
             }
             if (Schema::hasTable('district')) {
                 $data['districts'] = DB::table('district')
-                    ->where('name', 'like', '%' . $keyword . '%')
+                    ->where('name', 'like', '%'.$keyword.'%')
                     ->limit(10)
                     ->get();
             }
 
             $data['products'] = Product::query()
                 ->where('status', 1)
-                ->where('name', 'like', '%' . $keyword . '%')
+                ->where('name', 'like', '%'.$keyword.'%')
                 ->limit(10)
                 ->get();
 
             $data['categories_place'] = Category::query()
-                ->where('name', 'like', '%' . $keyword . '%')
+                ->where('name', 'like', '%'.$keyword.'%')
                 ->limit(10)
                 ->get();
 
@@ -1163,7 +1163,7 @@ class AjaxController extends Controller
         return response()->json('');
     }
 
-    public function inputSearchText($type, Request $request)
+    public function inputSearchText(string $type, Request $request)
     {
 
         if ($type == 'street') {
@@ -1178,7 +1178,7 @@ class AjaxController extends Controller
             if (Schema::hasTable('street')) {
                 $streets = DB::table('street')
                     ->distinct()
-                    ->where('name', 'like', '%' . $keyword . '%')
+                    ->where('name', 'like', '%'.$keyword.'%')
                     ->where('district_id', $district)
                     ->pluck('name');
             }

@@ -22,13 +22,13 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6">
-                    <h1 class="mb-0">Lọc sản phẩm</h1>
+                    <h1 class="mb-0">@lang('admin.filter_products')</h1>
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Lọc sản phẩm</li>
+                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
+                            <li class="breadcrumb-item active">@lang('admin.filter_products')</li>
                         </ol>
                     </nav>
                 </div><!-- /.col -->
@@ -43,7 +43,7 @@
                 <div class="col-12">
                     <div class="mb-4 card card-primary card-outline">
                         <div class="card-header">
-                            <h3 class="card-title">Lọc sản phẩm</h3>
+                            <h3 class="card-title">@lang('admin.filter_products')</h3>
                         </div> <!-- /.card-header -->
                         <div class="card-body">
                             <div class="clearfix">

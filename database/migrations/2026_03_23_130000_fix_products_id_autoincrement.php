@@ -40,18 +40,18 @@ return new class extends Migration
 
         try {
             DB::statement('ALTER TABLE `products` MODIFY `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             // Một số phiên bản / engine: thử INT thay vì BIGINT
             try {
                 DB::statement('ALTER TABLE `products` MODIFY `id` INT UNSIGNED NOT NULL AUTO_INCREMENT');
-            } catch (\Throwable $e2) {
+            } catch (Throwable $e2) {
                 throw $e;
             }
         }
 
         $next = (int) DB::table('products')->max('id');
         if ($next > 0) {
-            DB::statement('ALTER TABLE `products` AUTO_INCREMENT = ' . ($next + 1));
+            DB::statement('ALTER TABLE `products` AUTO_INCREMENT = '.($next + 1));
         }
     }
 

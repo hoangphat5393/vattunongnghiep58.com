@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Backend\User;
 use Closure;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CheckAdminPermission
@@ -10,8 +12,7 @@ class CheckAdminPermission
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
+     * @param  Request  $request
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -22,7 +23,7 @@ class CheckAdminPermission
                 return $next($request);
             }
 
-            $allPermissions = \App\Models\Backend\User::allPermissions();
+            $allPermissions = User::allPermissions();
             foreach ($allPermissions as $permission) {
                 if ($permission->passRequest($request)) {
                     return $next($request);

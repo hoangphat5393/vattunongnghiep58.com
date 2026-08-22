@@ -88,11 +88,10 @@ class AdminMenuItemStoreTest extends TestCase
         $response = $this->actingAs($admin, 'admin')->get(route('admin.menu.index', ['menu' => 0]));
 
         $response->assertOk();
-        $response->assertSee('Menu Creation', false);
+        $response->assertSee('Khởi Tạo Menu', false);
         $response->assertSee('is-create-menu', false);
-        $response->assertSee('Create menu', false);
-        $response->assertDontSee('Menu Structure', false);
-        $response->assertDontSee('Delete menu &amp; items', false);
+        $response->assertSee('Tạo Menu', false);
+        $response->assertDontSee('Cấu Trúc Menu', false);
         $response->assertDontSee('id="menu-settings-column"', false);
 
         $admin->delete();

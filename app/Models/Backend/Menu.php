@@ -1,17 +1,17 @@
 <?php
 
 // namespace Harimayco\Menu\Models;
+
 namespace App\Models\Backend;
 
+use App\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-use App\Traits\Filterable;
-
 class Menu extends Model
 {
-    use HasFactory, Filterable;
+    use Filterable, HasFactory;
 
     protected $guarded = [];
 
