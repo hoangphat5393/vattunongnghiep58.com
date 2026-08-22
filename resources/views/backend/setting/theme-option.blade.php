@@ -2,7 +2,7 @@
 
 @section('seo')
     @php
-        $title_head = 'Theme Option';
+        $title_head = __('admin.theme_option');
         $seo = [
             'title' => $title_head,
             'keywords' => '',
@@ -294,7 +294,7 @@
                 <div class="col-sm-6">
                     <nav aria-label="breadcrumb" class="float-sm-end">
                         <ol class="breadcrumb mb-0">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.home')</a></li>
                             <li class="breadcrumb-item active" aria-current="page">{{ $title_head }}</li>
                         </ol>
                     </nav>
@@ -335,37 +335,37 @@
                                                                 <i class="fa fa-sort"></i>
                                                             </div>
                                                             <div class="left_item_theme left_genate">
-                                                                <input type="text" class="form-control" value="{{ $setting->name }}" placeholder="Please enter Name Field" name="header_option[line][name][]" />
+                                                                <input type="text" class="form-control" value="{{ $setting->name }}" placeholder="@lang('admin.please_enter_name_field')" name="header_option[line][name][]" />
                                                             </div>
                                                             <div class="right_item_theme right_genate">
-                                                                <input type="text" class="form-control regular-text" placeholder="Please enter Value Field" name="header_option[line][value][]" value="{{ $setting->content }}" />
-                                                                <input type="button" class="btn btn-danger button button-secondary tbl_button_delete_clean" value="Delete" name="delete_tbl">
+                                                                <input type="text" class="form-control regular-text" placeholder="@lang('admin.please_enter_value_field')" name="header_option[line][value][]" value="{{ $setting->content }}" />
+                                                                <input type="button" class="btn btn-danger button button-secondary tbl_button_delete_clean" value="@lang('admin.delete')" name="delete_tbl">
                                                             </div>
                                                         </div>
                                                     @elseif($setting->type == 'text')
                                                         <div class="group_item_theme" data-id="{{ $setting->id }}">
                                                             <div class="icon_change_postion"><i class="fa fa-sort"></i></div>
                                                             <div class="left_item_theme left_genate">
-                                                                <input type="text" class="form-control" value="{{ $setting->name }}" placeholder="Please enter Name Field" name="header_option[text][name][]" />
+                                                                <input type="text" class="form-control" value="{{ $setting->name }}" placeholder="@lang('admin.please_enter_name_field')" name="header_option[text][name][]" />
                                                             </div>
                                                             <div class="right_item_theme right_genate">
                                                                 <textarea class="form-control regular-area" id="header_option_text_{{ $index }}" name="header_option[text][value][]" rows="5">{!! $setting->content !!}</textarea>
                                                             </div>
                                                             <div class="action">
-                                                                <input type="button" class="btn btn-danger button button-secondary tbl_button_delete_clean" value="Delete" name="delete_tbl">
+                                                                <input type="button" class="btn btn-danger button button-secondary tbl_button_delete_clean" value="@lang('admin.delete')" name="delete_tbl">
                                                             </div>
                                                         </div>
                                                     @elseif($setting->type == 'editor')
                                                         <div class="group_item_theme" data-id="{{ $setting->id }}">
                                                             <div class="icon_change_postion"><i class="fa fa-sort"></i></div>
                                                             <div class="left_item_theme left_genate">
-                                                                <input type="text" class="form-control" value="{{ $setting->name }}" placeholder="Please enter Name Field" name="header_option[editor][name][]" />
+                                                                <input type="text" class="form-control" value="{{ $setting->name }}" placeholder="@lang('admin.please_enter_name_field')" name="header_option[editor][name][]" />
                                                             </div>
                                                             <div class="right_item_theme right_genate">
                                                                 <textarea class="form-control regular-area" id="header_option_text_{{ $index }}" name="header_option[editor][value][]" rows="5">{!! htmlspecialchars_decode($setting->content) !!}</textarea>
                                                             </div>
                                                             <div class="action">
-                                                                <input type="button" class="btn btn-danger button button-secondary tbl_button_delete_clean" value="Delete" name="delete_tbl">
+                                                                <input type="button" class="btn btn-danger button button-secondary tbl_button_delete_clean" value="@lang('admin.delete')" name="delete_tbl">
                                                             </div>
                                                         </div>
                                                         @push('scripts')
@@ -390,16 +390,16 @@
                                     {{-- group_item_auto_theme --}}
                                     <div class="tbl_create_theme_add d-flex">
                                         <div class="left_item_theme">
-                                            <b><i>Choose Field Create</i></b>
+                                            <b><i>@lang('admin.choose_field_create')</i></b>
                                         </div>
                                         <div class="right_item_theme d-flex">
                                             <select name="option_choise_add" class="form-control select_option_choise">
                                                 <option value="line">line</option>
-                                                <option value="content_editor">Mutiline with Editor</option>
-                                                <option value="content">Mutiline</option>
-                                                <option value="img">Image</option>
+                                                <option value="content_editor">@lang('admin.multiline_editor')</option>
+                                                <option value="content">@lang('admin.multiline')</option>
+                                                <option value="img">@lang('admin.image')</option>
                                             </select>
-                                            <button id="create_option" type="button" class="btn btn-primary create_option_class">Create Option</button>
+                                            <button id="create_option" type="button" class="btn btn-primary create_option_class">@lang('admin.create_option')</button>
                                         </div>
                                     </div>
 
@@ -407,9 +407,9 @@
 
 
                                 <div class="posts_tbl_setting  text-center">
-                                    <button id="submit_setting" class="btn btn-primary pull-left" name="submit" type="submit">Save Changes</button>
+                                    <button id="submit_setting" class="btn btn-primary pull-left" name="submit" type="submit">@lang('admin.save_changes')</button>
                                     <p>
-                                        <strong>Use:</strong> <i style="color: #FF0000;">setting_option('name');</i>
+                                        <strong>@lang('admin.use'):</strong> <i style="color: #FF0000;">setting_option('name');</i>
                                     </p>
                                 </div>
                             </form>
@@ -432,6 +432,67 @@
 @push('scripts')
     <script>
         $(function() {
+            $(document).on('submit', '#frm-theme-option', function(e) {
+                e.preventDefault();
+                var $form = $(this);
+                var $btn = $('#submit_setting');
+                var originalHtml = $btn.html();
+
+                $btn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-1"></i> Đang lưu...');
+
+                if (typeof CKEDITOR !== 'undefined') {
+                    for (var instance in CKEDITOR.instances) {
+                        CKEDITOR.instances[instance].updateElement();
+                    }
+                }
+
+                var formData = new FormData(this);
+
+                $.ajax({
+                    url: $form.attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        $btn.prop('disabled', false).html(originalHtml);
+                        if (typeof Swal !== 'undefined') {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3500,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+                            Toast.fire({
+                                icon: 'success',
+                                title: response.message || 'Cấu hình cài đặt đã được lưu thành công!'
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        $btn.prop('disabled', false).html(originalHtml);
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: 'Có lỗi xảy ra khi lưu cấu hình!',
+                                showConfirmButton: false,
+                                timer: 4000
+                            });
+                        }
+                    }
+                });
+            });
+
             $(".right_item_theme").delegate("#create_option", "click", function(event) {
                 event.preventDefault();
                 var choise_option = $(this).parent().find('.select_option_choise').val();
@@ -441,22 +502,22 @@
                             <i class="fa fa-sort"></i>
                         </div>
                         <div class="left_item_theme left_genate">
-                            <input type="text" class="form-control" value="" placeholder="Please enter Name Field" name="header_option[line][name][]" />
+                            <input type="text" class="form-control" value="" placeholder="@lang('admin.please_enter_name_field')" name="header_option[line][name][]" />
                         </div>
                         <div class="right_item_theme right_genate">
-                            <input type="text" class="form-control regular-text" placeholder="Please enter Value Field" name="header_option[line][value][]" value="" />
-                            <input type="button" class="btn btn-danger button button-secondary tbl_button_delete_clean" value="Delete" name="delete_tbl">
+                            <input type="text" class="form-control regular-text" placeholder="@lang('admin.please_enter_value_field')" name="header_option[line][value][]" value="" />
+                            <input type="button" class="btn btn-danger button button-secondary tbl_button_delete_clean" value="@lang('admin.delete')" name="delete_tbl">
                         </div>
                     </div>`;
                 var content = `<div class="group_item_theme">
                     <div class="icon_change_postion"><i class="fa fa-sort"></i></div>
-                    <div class="left_item_theme left_genate"><input type="text" class="form-control" value="" placeholder="Please enter Name Field"  name="header_option[text][name][]" /></div>
-                    <div class="right_item_theme right_genate"><textarea class="form-control regular-area" name="header_option[text][value][]" cols="5" rows="5" placeholder="Please enter Value Field"></textarea><input type="button" class="btn btn-danger button button-secondary tbl_button_delete_clean" value="Delete" name="delete_tbl"></div>
+                    <div class="left_item_theme left_genate"><input type="text" class="form-control" value="" placeholder="@lang('admin.please_enter_name_field')"  name="header_option[text][name][]" /></div>
+                    <div class="right_item_theme right_genate"><textarea class="form-control regular-area" name="header_option[text][value][]" cols="5" rows="5" placeholder="@lang('admin.please_enter_value_field')"></textarea><input type="button" class="btn btn-danger button button-secondary tbl_button_delete_clean" value="@lang('admin.delete')" name="delete_tbl"></div>
                     </div>`;
                 var content_editor = `<div class="group_item_theme">
                     <div class="icon_change_postion"><i class="fa fa-sort"></i></div>
-                    <div class="left_item_theme left_genate"><input type="text" class="form-control" value="" placeholder="Please enter Name Field" name="header_option[editor][name][]" /></div>
-                    <div class="right_item_theme right_genate"><textarea class="form-control regular-area" name="header_option[editor][value][]" cols="5" rows="5" placeholder="Please enter Value Field"></textarea><input type="button" class="btn btn-danger button button-secondary tbl_button_delete_clean" value="Delete" name="delete_tbl"></div>
+                    <div class="left_item_theme left_genate"><input type="text" class="form-control" value="" placeholder="@lang('admin.please_enter_name_field')" name="header_option[editor][name][]" /></div>
+                    <div class="right_item_theme right_genate"><textarea class="form-control regular-area" name="header_option[editor][value][]" cols="5" rows="5" placeholder="@lang('admin.please_enter_value_field')"></textarea><input type="button" class="btn btn-danger button button-secondary tbl_button_delete_clean" value="@lang('admin.delete')" name="delete_tbl"></div>
                 </div>`;
 
                 var image_input = $('.inlcude-image').find('.group_item_theme').clone();
@@ -497,7 +558,15 @@
                         });
                         break;
                     default:
-                        alert('Select one option');
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'warning',
+                            title: "@lang('admin.choose_field_create')",
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true
+                        });
                 }
             });
 
@@ -505,16 +574,16 @@
                 event.preventDefault();
                 var elem = $(this).parent().parent();
                 $.confirm({
-                    'title': 'Delete Confirmation',
-                    'message': 'You are about to delete this option. <br />It cannot be restored at a later time! Continue?',
+                    'title': "@lang('admin.delete_confirmation')",
+                    'message': "@lang('admin.confirm_delete_option')",
                     'buttons': {
-                        'Yes': {
+                        "@lang('admin.btn_yes')": {
                             'class': 'blue',
                             'action': function() {
                                 elem.remove();
                             }
                         },
-                        'No': {
+                        "@lang('admin.btn_no')": {
                             'class': 'gray',
                             'action': function() {} // Nothing to do in this case. You can as well omit the action property.
                         }
