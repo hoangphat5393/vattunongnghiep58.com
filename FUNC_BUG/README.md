@@ -13,6 +13,7 @@ Tài liệu này lưu trữ danh mục các lỗi đã từng xảy ra, phân t�
 | :--- | :--- | :--- | :--- |
 | **ENV-01** | **Truy cập domain ảo (`.test`) bị tự động tải file `index.php` (1.892 B) về máy** | File cấu hình Virtual Host của Laragon đặt sai `DocumentRoot` (trỏ vào thư mục cha thay vì `/public`) kết hợp xung đột `AddHandler` của cPanel. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/01_BUG_VIRTUALHOST_AUTO_DOWNLOAD_FILE.md) |
 | **ENV-02** | **Lỗi `InvalidArgumentException: Please provide a valid cache path` khi chạy composer trên server** | Hàm `realpath(storage_path('framework/views'))` trả về `false` do thư mục chưa được tạo khi git clone/pull lên server. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/04_BUG_INVALID_CACHE_PATH_STORAGE_VIEWS.md) |
+| **ENV-03** | **Lỗi `404 Not Found (The resource requested could not be found on this server!)` khi deploy lên cPanel LiteSpeed** | Quyền thư mục vi phạm suEXEC (`0775`/`0777`), thiếu `vendor/` sau khi pull, hoặc Document Root chưa trỏ vào `/public`. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/06_BUG_CPANEL_LITESPEED_404_DEPLOYMENT.md) |
 
 ---
 

@@ -33,7 +33,7 @@ class BackendP1HardeningTest extends TestCase
         $response = $this->get(route('index'));
 
         $response->assertOk();
-        $response->assertSee(route('customer.login'), false);
+        $response->assertDontSee(route('customer.login'), false);
     }
 
     public function test_guest_customer_route_redirects_to_customer_login(): void

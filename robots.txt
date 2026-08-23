@@ -1,0 +1,11 @@
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: *
+Disallow: /cart
+Disallow: /checkout
+Disallow: /admin/
+Allow: /

@@ -52,6 +52,7 @@
                         </form>
                     </div>
                 @else
+                    {{-- Đăng nhập/Đăng ký tạm ẩn theo yêu cầu khách hàng
                     @if (\Illuminate\Support\Facades\Route::has('customer.login'))
                         <a href="{{ route('customer.login') }}" class="hidden md:block font-bold text-leaf-700 hover:text-leaf-500 no-underline">
                             Đăng nhập
@@ -62,6 +63,7 @@
                             Đăng ký
                         </a>
                     @endif
+                    --}}
                 @endauth
                 <a href="{{ route('cart') }}" class="relative bg-leaf-100 p-2 rounded-full text-leaf-700 hover:bg-leaf-200 transition">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,6 +148,7 @@
                     </button>
                 </form>
             @else
+                {{-- Đăng nhập/Đăng ký tạm ẩn theo yêu cầu khách hàng
                 @if (\Illuminate\Support\Facades\Route::has('customer.login'))
                     <a href="{{ route('customer.login') }}" class="block rounded-md px-2 py-2 font-bold no-underline text-gray-700 hover:bg-leaf-50 hover:text-leaf-600">
                         Đăng nhập
@@ -156,6 +159,7 @@
                         Đăng ký
                     </a>
                 @endif
+                --}}
             @endauth
             @if ($headerMenu)
                 @foreach ($headerMenu->items as $item)

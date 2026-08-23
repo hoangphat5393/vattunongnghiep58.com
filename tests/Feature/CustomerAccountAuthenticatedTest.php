@@ -139,8 +139,8 @@ class CustomerAccountAuthenticatedTest extends TestCase
 
         $this->get(route('index'))
             ->assertOk()
-            ->assertSee('Đăng nhập', false)
-            ->assertSee('Đăng ký', false);
+            ->assertDontSee(route('customer.login'), false)
+            ->assertDontSee(route('customer.register'), false);
     }
 
     public function test_customer_can_logout(): void
