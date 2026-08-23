@@ -13,6 +13,7 @@ class DocumentationCleanupTest extends TestCase
         'docs/ui-upgrade.md',
         'bug_hunt_prompt.txt',
         'CHANGELOG.md',
+        'docs/REFACTOR_3NONG_PLAYBOOK.md',
     ];
 
     public function test_removed_historical_docs_do_not_exist(): void
@@ -30,6 +31,7 @@ class DocumentationCleanupTest extends TestCase
         $this->assertStringNotContainsString('frontend-tailwind-v4-canonicalization.md', $recommendations);
         $this->assertStringNotContainsString('ui-upgrade.md', $recommendations);
         $this->assertStringNotContainsString('bug_hunt_prompt.txt', $recommendations);
+        $this->assertStringNotContainsString('REFACTOR_3NONG_PLAYBOOK.md', $recommendations);
     }
 
     public function test_core_documentation_files_remain(): void
@@ -44,7 +46,6 @@ class DocumentationCleanupTest extends TestCase
         $this->assertFileExists(base_path('docs/TABLE_GLOSSARY.md'));
         $this->assertFileExists(base_path('docs/ROUTE_GLOSSARY.md'));
         $this->assertFileExists(base_path('docs/DB_AUDIT.md'));
-        $this->assertFileExists(base_path('docs/REFACTOR_3NONG_PLAYBOOK.md'));
     }
 
     public function test_backend_audit_playbook_lists_p0_items(): void

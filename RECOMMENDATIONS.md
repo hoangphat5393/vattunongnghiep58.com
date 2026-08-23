@@ -16,7 +16,6 @@
 | [MASTER.md](MASTER.md)                                                     | **Tài liệu master** — nghiệp vụ, luồng, schema, tính năng |
 | [docs/TABLE_GLOSSARY.md](docs/TABLE_GLOSSARY.md)                           | Bảng ↔ model ↔ legacy (tra cứu DB)                        |
 | [docs/ROUTE_GLOSSARY.md](docs/ROUTE_GLOSSARY.md)                           | Route ↔ URL ↔ controller (tra cứu routing)                |
-| [docs/REFACTOR_3NONG_PLAYBOOK.md](docs/REFACTOR_3NONG_PLAYBOOK.md)         | Kế hoạch port `3nong` theo chuẩn này                      |
 | [docs/DB_AUDIT.md](docs/DB_AUDIT.md)                                       | Rà soát bảng thừa / code mồ côi + kế hoạch dọn            |
 
 ## Kiểm chứng

@@ -4,7 +4,7 @@
 > Dùng làm **chuẩn tham chiếu** khi refactor / build lại dự án khác (vd. `3nong`).  
 > **Cập nhật:** 2026-07-10 · Laravel **13** · PHP **8.3+**
 
-**Tài liệu kỹ thuật chi tiết hơn:** [docs/PROJECT_ANALYSIS.md](docs/PROJECT_ANALYSIS.md) · [docs/TABLE_GLOSSARY.md](docs/TABLE_GLOSSARY.md) · [docs/ROUTE_GLOSSARY.md](docs/ROUTE_GLOSSARY.md) · [docs/REFACTOR_3NONG_PLAYBOOK.md](docs/REFACTOR_3NONG_PLAYBOOK.md) · [RECOMMENDATIONS.md](RECOMMENDATIONS.md)
+**Tài liệu kỹ thuật chi tiết hơn:** [docs/PROJECT_ANALYSIS.md](docs/PROJECT_ANALYSIS.md) · [docs/TABLE_GLOSSARY.md](docs/TABLE_GLOSSARY.md) · [docs/ROUTE_GLOSSARY.md](docs/ROUTE_GLOSSARY.md) · [RECOMMENDATIONS.md](RECOMMENDATIONS.md)
 
 ---
 
@@ -437,39 +437,7 @@ pnpm run build
 
 ---
 
-## 10. Dùng làm chuẩn refactor `3nong`
-
-**Playbook chi tiết:** [docs/REFACTOR_3NONG_PLAYBOOK.md](docs/REFACTOR_3NONG_PLAYBOOK.md)
-
-Khi port sang dự án khác, ưu tiên giữ theo thứ tự:
-
-| Ưu tiên | Hạng mục                                | Lý do                                         |
-| ------- | --------------------------------------- | --------------------------------------------- |
-| P0      | Auth khách (`/auth/*`, `/account/*`)    | Core ecommerce                                |
-| P0      | Cart + checkout + `shop_orders`         | Doanh thu                                     |
-| P0      | CSRF + RBAC admin                       | Bảo mật                                       |
-| P1      | Product catalog + categories            | Storefront                                    |
-| P1      | Contact + email templates               | Vận hành                                      |
-| P1      | Admin CRUD (product, post, page, order) | CMS                                           |
-| P2      | Menu builder, theme options             | Cấu hình                                      |
-| P3      | Legacy (wallet, wishlist, theme cũ)     | **Không port** — vattun đã dọn (xem DB_AUDIT) |
-
-**Checklist so sánh với `3nong`:**
-
-- [ ] Route name có khớp `customer.*` không?
-- [ ] Bảng đơn: `invoice` → `shop_orders` + `shop_order_items`?
-- [ ] Khách và admin có chung `users` không? (không tách `customer`)
-- [ ] Checkout offline (không VNPay/PayPal) — đúng scope?
-- [ ] `post` + `article` → gộp `pages` + `type`?
-- [ ] `cat` đa loại → `categories` + pivot?
-- [ ] Email template có mã `code` không?
-- [ ] Newsletter → `contacts` (`type=subscription`)?
-- [ ] Test coverage cho auth + checkout + ACL?
-- [ ] Frontend dùng `http.js` + `AppRoutes` / `AdminRoutes`?
-
----
-
-## 11. Tài liệu liên quan
+## 10. Tài liệu liên quan
 
 | File                                                                       | Nội dung                 |
 | -------------------------------------------------------------------------- | ------------------------ |
@@ -486,7 +454,7 @@ Khi port sang dự án khác, ưu tiên giữ theo thứ tự:
 
 ---
 
-## 12. Lịch sử cập nhật MASTER
+## 11. Lịch sử cập nhật MASTER
 
 | Ngày       | Thay đổi                                                     |
 | ---------- | ------------------------------------------------------------ |

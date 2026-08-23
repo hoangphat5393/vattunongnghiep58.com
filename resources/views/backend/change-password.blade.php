@@ -42,6 +42,7 @@
                 opacity: 0;
                 transform: translateY(-8px);
             }
+
             100% {
                 opacity: 1;
                 transform: translateY(0);
@@ -98,12 +99,15 @@
                     <div class="card card-primary card-outline mb-3">
                         <div class="card-body box-profile">
                             <div class="text-center mb-3">
-                                <img class="profile-user-img img-fluid img-circle" src="/assets/admin/assets/img/avatar5.png" alt="User profile picture">
+                                <img class="profile-user-img img-fluid img-circle"
+                                    src="/assets/admin/assets/img/avatar5.png" alt="User profile picture">
                             </div>
 
-                            <h3 class="profile-username text-center h5 fw-bold">{{ Auth::guard('admin')->user()->name ?? 'Administrator' }}</h3>
+                            <h3 class="profile-username text-center h5 fw-bold">
+                                {{ Auth::guard('admin')->user()->name ?? 'Administrator' }}</h3>
 
-                            <p class="text-muted text-center small mb-0">{{ Auth::guard('admin')->user()->email ?? 'admin@local' }}</p>
+                            <p class="text-muted text-center small mb-0">
+                                {{ Auth::guard('admin')->user()->email ?? 'admin@local' }}</p>
                         </div>
                     </div>
                 </div>
@@ -118,7 +122,8 @@
                         </div>
 
                         <div class="card-body">
-                            <form id="frm-updateinfo-useradmin" action="{{ route('admin.postChangePassword') }}" method="POST">
+                            <form id="frm-updateinfo-useradmin" action="{{ route('admin.postChangePassword') }}"
+                                method="POST">
                                 @csrf
                                 @if (session('success'))
                                     <div class="alert alert-success small py-2 mb-3">
@@ -132,16 +137,24 @@
 
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
-                                        <label for="post_title" class="form-label fw-semibold">@lang('admin.email') <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control" id="post_title" name="email" placeholder="@lang('admin.email')" value="{{ Auth::guard('admin')->user()->email }}" required>
+                                        <label for="post_title" class="form-label fw-semibold">@lang('admin.email') <span
+                                                class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="post_title" name="email"
+                                            placeholder="@lang('admin.email')"
+                                            value="{{ Auth::guard('admin')->user()->email }}" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="name" class="form-label fw-semibold">@lang('admin.username') <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="name" name="name" placeholder="@lang('admin.username')" value="{{ Auth::guard('admin')->user()->name }}" required>
+                                        <label for="name" class="form-label fw-semibold">@lang('admin.username') <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name"
+                                            placeholder="@lang('admin.username')"
+                                            value="{{ Auth::guard('admin')->user()->name }}" required>
                                     </div>
                                     <div class="col-md-12">
-                                        <div class="form-check form-switch form-check-switch-custom d-flex align-items-center mt-2">
-                                            <input class="form-check-input" type="checkbox" role="switch" value="" name="check_pass" id="check_pass">
+                                        <div
+                                            class="form-check form-switch form-check-switch-custom d-flex align-items-center mt-2">
+                                            <input class="form-check-input" type="checkbox" role="switch" value=""
+                                                name="check_pass" id="check_pass">
                                             <label class="form-check-label fw-bold user-select-none" for="check_pass">
                                                 <i class="fa-solid fa-key text-primary me-1"></i> @lang('admin.change password')
                                             </label>
@@ -155,36 +168,55 @@
                                     <div class="password-collapse-card">
                                         <div class="d-flex align-items-center mb-3 text-muted small">
                                             <i class="fa-solid fa-shield-halved me-2 text-warning fs-6"></i>
-                                            <span>Vui lòng nhập mật khẩu hiện tại để xác thực và thiết lập mật khẩu mới</span>
+                                            <span>Vui lòng nhập mật khẩu hiện tại để xác thực và thiết lập mật khẩu
+                                                mới</span>
                                         </div>
                                         <div class="row g-3">
                                             <div class="col-md-12">
-                                                <label for="current_password" class="form-label fw-semibold">@lang('admin.current password') <span class="text-danger">*</span></label>
+                                                <label for="current_password"
+                                                    class="form-label fw-semibold">@lang('admin.current password') <span
+                                                        class="text-danger">*</span></label>
                                                 <div class="input-group">
-                                                    <span class="input-group-text bg-white"><i class="fa-solid fa-lock text-muted"></i></span>
-                                                    <input type="password" class="form-control" name="current_password" placeholder="@lang('admin.current password')" id="current_password" autocomplete="current-password" disabled>
-                                                    <button class="btn btn-outline-secondary toggle-password-visibility" type="button" tabindex="-1" title="Hiện/ẩn mật khẩu">
+                                                    <span class="input-group-text bg-white"><i
+                                                            class="fa-solid fa-lock text-muted"></i></span>
+                                                    <input type="password" class="form-control" name="current_password"
+                                                        placeholder="@lang('admin.current password')" id="current_password"
+                                                        autocomplete="current-password" disabled>
+                                                    <button class="btn btn-outline-secondary toggle-password-visibility"
+                                                        type="button" tabindex="-1" title="Hiện/ẩn mật khẩu">
                                                         <i class="fa-regular fa-eye"></i>
                                                     </button>
                                                 </div>
-                                                <small class="text-error d-block mt-1" id="current-password-ajax-feedback" role="status"></small>
+                                                <small class="text-error d-block mt-1" id="current-password-ajax-feedback"
+                                                    role="status"></small>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="new_password" class="form-label fw-semibold">@lang('admin.new password') <span class="text-danger">*</span></label>
+                                                <label for="new_password" class="form-label fw-semibold">@lang('admin.new password')
+                                                    <span class="text-danger">*</span></label>
                                                 <div class="input-group">
-                                                    <span class="input-group-text bg-white"><i class="fa-solid fa-key text-muted"></i></span>
-                                                    <input type="password" class="form-control" name="new_password" placeholder="@lang('admin.new password')" id="new_password" autocomplete="new-password" disabled>
-                                                    <button class="btn btn-outline-secondary toggle-password-visibility" type="button" tabindex="-1" title="Hiện/ẩn mật khẩu">
+                                                    <span class="input-group-text bg-white"><i
+                                                            class="fa-solid fa-key text-muted"></i></span>
+                                                    <input type="password" class="form-control" name="new_password"
+                                                        placeholder="@lang('admin.new password')" id="new_password"
+                                                        autocomplete="new-password" disabled>
+                                                    <button class="btn btn-outline-secondary toggle-password-visibility"
+                                                        type="button" tabindex="-1" title="Hiện/ẩn mật khẩu">
                                                         <i class="fa-regular fa-eye"></i>
                                                     </button>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="confirm_password" class="form-label fw-semibold">@lang('admin.confirm password') <span class="text-danger">*</span></label>
+                                                <label for="confirm_password"
+                                                    class="form-label fw-semibold">@lang('admin.confirm password') <span
+                                                        class="text-danger">*</span></label>
                                                 <div class="input-group">
-                                                    <span class="input-group-text bg-white"><i class="fa-solid fa-check-double text-muted"></i></span>
-                                                    <input type="password" class="form-control" name="confirm_password" placeholder="@lang('admin.confirm password')" id="confirm_password" autocomplete="new-password" disabled>
-                                                    <button class="btn btn-outline-secondary toggle-password-visibility" type="button" tabindex="-1" title="Hiện/ẩn mật khẩu">
+                                                    <span class="input-group-text bg-white"><i
+                                                            class="fa-solid fa-check-double text-muted"></i></span>
+                                                    <input type="password" class="form-control" name="confirm_password"
+                                                        placeholder="@lang('admin.confirm password')" id="confirm_password"
+                                                        autocomplete="new-password" disabled>
+                                                    <button class="btn btn-outline-secondary toggle-password-visibility"
+                                                        type="button" tabindex="-1" title="Hiện/ẩn mật khẩu">
                                                         <i class="fa-regular fa-eye"></i>
                                                     </button>
                                                 </div>
@@ -196,11 +228,15 @@
                                 <div class="row g-3 mb-3">
                                     <div class="col-md-6">
                                         <label for="phone" class="form-label fw-semibold">@lang('admin.phone')</label>
-                                        <input type="text" class="form-control" id="phone" name="phone" placeholder="@lang('admin.phone')" value="{{ Auth::guard('admin')->user()->phone }}">
+                                        <input type="text" class="form-control" id="phone" name="phone"
+                                            placeholder="@lang('admin.phone')"
+                                            value="{{ Auth::guard('admin')->user()->phone }}">
                                     </div>
                                     <div class="col-md-6">
                                         <label for="address" class="form-label fw-semibold">@lang('admin.address')</label>
-                                        <input type="text" class="form-control" id="address" name="address" placeholder="@lang('admin.address')" value="{{ Auth::guard('admin')->user()->address }}">
+                                        <input type="text" class="form-control" id="address" name="address"
+                                            placeholder="@lang('admin.address')"
+                                            value="{{ Auth::guard('admin')->user()->address }}">
                                     </div>
                                 </div>
                             </form>
