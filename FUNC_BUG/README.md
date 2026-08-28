@@ -11,9 +11,9 @@ Tài liệu này lưu trữ danh mục các lỗi đã từng xảy ra, phân t�
 
 | Mã Lỗi | Tên Lỗi & Hiện Tượng | Nguyên Nhân Chính | Tài Liệu Chi Tiết |
 | :--- | :--- | :--- | :--- |
-| **ENV-01** | **Truy cập domain ảo (`.test`) bị tự động tải file `index.php` (1.892 B) về máy** | File cấu hình Virtual Host của Laragon đặt sai `DocumentRoot` (trỏ vào thư mục cha thay vì `/public`) kết hợp xung đột `AddHandler` của cPanel. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/01_BUG_VIRTUALHOST_AUTO_DOWNLOAD_FILE.md) |
-| **ENV-02** | **Lỗi `InvalidArgumentException: Please provide a valid cache path` khi chạy composer trên server** | Hàm `realpath(storage_path('framework/views'))` trả về `false` do thư mục chưa được tạo khi git clone/pull lên server. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/04_BUG_INVALID_CACHE_PATH_STORAGE_VIEWS.md) |
-| **ENV-03** | **Lỗi `404 Not Found (The resource requested could not be found on this server!)` khi deploy lên cPanel LiteSpeed** | Quyền thư mục vi phạm suEXEC (`0775`/`0777`), thiếu `vendor/` sau khi pull, hoặc Document Root chưa trỏ vào `/public`. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/06_BUG_CPANEL_LITESPEED_404_DEPLOYMENT.md) |
+| **ENV-01** | **Truy cập domain ảo (`.test`) bị tự động tải file `index.php` (1.892 B) về máy** | File cấu hình Virtual Host của Laragon đặt sai `DocumentRoot` (trỏ vào thư mục cha thay vì `/public`) kết hợp xung đột `AddHandler` của cPanel. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/01_VIRTUALHOST_DOWNLOAD_PHP.md) |
+| **ENV-02** | **Lỗi `InvalidArgumentException: Please provide a valid cache path` khi chạy composer trên server** | Hàm `realpath(storage_path('framework/views'))` trả về `false` do thư mục chưa được tạo khi git clone/pull lên server. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/04_STORAGE_VIEWS_CACHE.md) |
+| **ENV-03** | **Lỗi `404 Not Found (The resource requested could not be found on this server!)` khi deploy lên cPanel LiteSpeed** | Quyền thư mục vi phạm suEXEC (`0775`/`0777`), thiếu `vendor/` sau khi pull, hoặc Document Root chưa trỏ vào `/public`. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/06_CPANEL_404_DEPLOY.md) |
 
 ---
 
@@ -22,9 +22,9 @@ Tài liệu này lưu trữ danh mục các lỗi đã từng xảy ra, phân t�
 
 | Mã Lỗi | Tên Lỗi & Hiện Tượng | Nguyên Nhân Chính | Tài Liệu Chi Tiết |
 | :--- | :--- | :--- | :--- |
-| **SRC-01** | **CKFinder: Mã 109 ("Invalid request") & HTTP 500 Internal Server Error** | Xung đột token CSRF riêng của CKFinder trong Iframe và Service Binding sai phương thức trong `CKFinderServiceProvider`. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/02_BUG_CKFINDER_109_500.md) |
-| **CODE-02** | **Lỗi cú pháp Blade Parse Error do nhúng `@include` sai bên trong thẻ `@script`** | Thẻ `@script` của Livewire/Blade xử lý nội dung như Javascript thuần, nhúng `@include` vào bên trong gây lỗi cú pháp PHP/Blade khi compile view. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/03_BUG_BLADE_SYNTAX_PARSE_ERROR.md) |
-| **CODE-03** | **Lỗi "Hệ thống phát hiện hành vi bất thường" khi gửi Form liên hệ trên Local/Dev** | Google reCAPTCHA v3 trả về `false` do domain `.test` không nằm trong whitelist, dẫn đến biểu thức `false < 0.3` đánh giá thành `true`. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/05_BUG_RECAPTCHA_BLOCK_ON_LOCAL_ENVIRONMENT.md) |
+| **SRC-01** | **CKFinder: Mã 109 ("Invalid request") & HTTP 500 Internal Server Error** | Xung đột token CSRF riêng của CKFinder trong Iframe và Service Binding sai phương thức trong `CKFinderServiceProvider`. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/02_CKFINDER_109_500.md) |
+| **CODE-02** | **Lỗi cú pháp Blade Parse Error do nhúng `@include` sai bên trong thẻ `@script`** | Thẻ `@script` của Livewire/Blade xử lý nội dung như Javascript thuần, nhúng `@include` vào bên trong gây lỗi cú pháp PHP/Blade khi compile view. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/03_BLADE_PARSE_ERROR.md) |
+| **CODE-03** | **Lỗi "Hệ thống phát hiện hành vi bất thường" khi gửi Form liên hệ trên Local/Dev** | Google reCAPTCHA v3 trả về `false` do domain `.test` không nằm trong whitelist, dẫn đến biểu thức `false < 0.3` đánh giá thành `true`. | [Xem chi tiết](file:///e:/web/vattunongnghiep58/FUNC_BUG/05_RECAPTCHA_LOCAL.md) |
 
 ---
 

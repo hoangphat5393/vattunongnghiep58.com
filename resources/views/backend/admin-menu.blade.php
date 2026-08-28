@@ -314,22 +314,21 @@
             var id = $(this).data('id');
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
-                    confirmButton: 'btn btn-success',
-                    cancelButton: 'btn btn-danger'
+                    confirmButton: 'btn btn-danger mx-1',
+                    cancelButton: 'btn btn-secondary mx-1'
                 },
-                buttonsStyling: true,
-            })
+                buttonsStyling: false,
+            });
 
             swalWithBootstrapButtons.fire({
                 title: '{{ __('action.delete_confirm') }}',
                 text: "",
-                type: 'warning',
+                icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: '{{ __('action.confirm_yes') }}',
-                confirmButtonColor: "#DD6B55",
                 cancelButtonText: '{{ __('action.confirm_no') }}',
                 reverseButtons: true,
-
+                showLoaderOnConfirm: true,
                 preConfirm: function() {
                     return axios.post('{{ $urlDeleteItem ?? '' }}', {
                             id: id,
@@ -338,38 +337,42 @@
                         .then(function(response) {
                             const data = response.data;
                             if (data.error == 1) {
-                                alertMsg('error', 'Cancelled', data.msg);
-                                return;
-                            } else {
-                                alertMsg('success', 'Success');
-                                window.location.replace('{{ route('admin.admin-menu.index') }}');
+                                Swal.showValidationMessage(data.msg || 'Không thể xóa mục này!');
+                                return false;
                             }
+                            return data;
                         })
                         .catch(function(e) {
-                            console.error(e);
+                            Swal.showValidationMessage('Lỗi kết nối máy chủ!');
                         });
-                }
-
+                },
+                allowOutsideClick: () => !Swal.isLoading()
             }).then((result) => {
-                if (result.value) {
-                    alertMsg('success', '{{ __('action.delete_confirm_deleted_msg') }}', '{{ __('action.delete_confirm_deleted') }}');
-                } else if (
-                    // Read more about handling dismissals
-                    result.dismiss === Swal.DismissReason.cancel
-                ) {
-                    // swalWithBootstrapButtons.fire(
-                    //   'Cancelled',
-                    //   'Your imaginary file is safe :)',
-                    //   'error'
-                    // )
+                if (result.isConfirmed) {
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true
+                    });
+                    Toast.fire({
+                        icon: 'success',
+                        title: '{{ __('action.delete_confirm_deleted_msg') }}'
+                    });
+                    setTimeout(function() {
+                        window.location.replace('{{ route('admin.admin-menu.index') }}');
+                    }, 800);
                 }
-            })
-
+            });
         });
 
         $('#menu-sort').nestable();
         $('.menu-sort-save').click(function() {
-            $('#loading').show();
+            var $btn = $(this);
+            var originalHtml = $btn.html();
+            $btn.prop('disabled', true).addClass('disabled').html('<i class="fa fa-spinner fa-spin"></i> Đang lưu...');
+
             var serialize = $('#menu-sort').nestable('serialize');
             var menu = JSON.stringify(serialize);
             axios.post('{{ route('admin.admin-menu.update_sort') }}', {
@@ -377,17 +380,64 @@
                     menu: menu
                 })
                 .then(function(response) {
-                    $('#loading').hide();
+                    $btn.prop('disabled', false).removeClass('disabled').html(originalHtml);
                     const data = response.data;
                     if (data.error == 0) {
-                        location.reload();
+                        if (typeof Swal !== 'undefined') {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+                            Toast.fire({
+                                icon: 'success',
+                                title: data.msg || 'Thứ tự Menu Admin đã được lưu thành công!'
+                            });
+                        } else {
+                            alert('Thứ tự Menu Admin đã được lưu thành công!');
+                        }
                     } else {
-                        alertMsg('error', data.msg, 'Cancelled');
+                        if (typeof Swal !== 'undefined') {
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'top-end',
+                                showConfirmButton: false,
+                                timer: 3500,
+                                timerProgressBar: true
+                            });
+                            Toast.fire({
+                                icon: 'error',
+                                title: data.msg || 'Có lỗi xảy ra khi lưu menu!'
+                            });
+                        } else {
+                            alert(data.msg || 'Có lỗi xảy ra khi lưu menu!');
+                        }
                     }
                 })
                 .catch(function(e) {
-                    $('#loading').hide();
+                    $btn.prop('disabled', false).removeClass('disabled').html(originalHtml);
                     console.error(e);
+                    if (typeof Swal !== 'undefined') {
+                        const Toast = Swal.mixin({
+                            toast: true,
+                            position: 'top-end',
+                            showConfirmButton: false,
+                            timer: 3500,
+                            timerProgressBar: true
+                        });
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Lỗi kết nối máy chủ khi lưu menu!'
+                        });
+                    } else {
+                        alert('Lỗi kết nối máy chủ!');
+                    }
                 });
         });
 

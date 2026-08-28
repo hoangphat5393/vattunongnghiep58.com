@@ -8,6 +8,12 @@
         },
         {
             "path": "../new-admin-ui"
+        },
+        {
+            "path": "../new_template"
+        },
+        {
+            "path": "../salondungtokyo"
         }
     ],
     "settings": {

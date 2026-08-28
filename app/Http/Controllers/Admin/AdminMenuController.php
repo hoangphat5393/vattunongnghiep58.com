@@ -294,8 +294,10 @@ class AdminMenuController extends Controller
         }
 
         $response = (new AdminMenu)->reSort($newTree);
+        if (($response['error'] ?? 0) === 0) {
+            $response['msg'] = 'Thứ tự Menu Admin đã được lưu thành công!';
+        }
 
-        return $response;
-
+        return response()->json($response);
     }
 }
