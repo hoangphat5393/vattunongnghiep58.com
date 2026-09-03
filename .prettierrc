@@ -1,14 +1,21 @@
-{
-    "semi": true,
-    "tabWidth": 4,
-    "trailingComma": "all",
-    "printWidth": 400,
-    "overrides": [
-        {
-            "files": "*.js",
-            "options": {
-                "singleQuote": true
-            }
-        }
-    ]
-}
+{
+    "semi": true,
+    "tabWidth": 4,
+    "trailingComma": "all",
+    "printWidth": 400,
+    "overrides": [
+        {
+            "files": "*.js",
+            "options": {
+                "singleQuote": true
+            }
+        },
+        {
+            "files": "*.md",
+            "options": {
+                "tabWidth": 2,
+                "proseWrap": "preserve"
+            }
+        }
+    ]
+}
