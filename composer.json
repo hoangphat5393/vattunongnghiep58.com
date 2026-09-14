@@ -36,6 +36,7 @@
         "gornymedia/laravel-shortcodes": "@dev",
         "intervention/image": "^3.11",
         "josiasmontag/laravel-recaptchav3": "^1.0",
+        "laravel/ai": "^0.11.2",
         "laravel/framework": "^13.0",
         "laravel/sanctum": "^4.3",
         "laravel/socialite": "^5.26",

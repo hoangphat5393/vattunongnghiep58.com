@@ -28,6 +28,13 @@
       0 => 'Lunaweb\\RecaptchaV3\\Providers\\RecaptchaV3ServiceProvider',
     ),
   ),
+  'laravel/ai' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Laravel\\Ai\\AiServiceProvider',
+    ),
+  ),
   'laravel/boost' => 
   array (
     'providers' => 

@@ -97,6 +97,9 @@
 
     @include('frontend.layouts.app-routes')
 
+    {{-- AI Chatbot Assistant Widget --}}
+    @include('frontend.components.ai-chat-widget')
+
     @stack('scripts')
 
 

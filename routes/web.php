@@ -165,6 +165,10 @@ Route::get('contact-completed', 'ContactController@completed')->name('contact_co
 
 Route::get('search', 'SearchController@index')->name('search');
 
+// AI Chat Assistant
+Route::post('ai-chat', 'AiChatController@chat')->name('ai.chat');
+Route::post('ai-chat/reset', 'AiChatController@reset')->name('ai.chat.reset');
+
 // Page
 Route::get('{slug}', 'PageController@page')->name('page');
 

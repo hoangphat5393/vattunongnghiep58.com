@@ -16,6 +16,7 @@
 | [MASTER.md](MASTER.md)                                                     | **Tài liệu master** — nghiệp vụ, luồng, schema, tính năng |
 | [docs/TABLE_GLOSSARY.md](docs/TABLE_GLOSSARY.md)                           | Bảng ↔ model ↔ legacy (tra cứu DB)                        |
 | [docs/ROUTE_GLOSSARY.md](docs/ROUTE_GLOSSARY.md)                           | Route ↔ URL ↔ controller (tra cứu routing)                |
+| [docs/ADVANCED_FEATURES_PLAYBOOK.md](docs/ADVANCED_FEATURES_PLAYBOOK.md)   | Cẩm nang tính năng nâng cao (Chatbot AI, Gemini SDK, Persistent State) |
 | [docs/DB_AUDIT.md](docs/DB_AUDIT.md)                                       | Rà soát bảng thừa / code mồ côi + kế hoạch dọn            |
 
 ## Kiểm chứng
