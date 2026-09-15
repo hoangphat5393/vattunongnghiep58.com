@@ -66,4 +66,12 @@ PROMPT;
     {
         return [];
     }
+
+    /**
+     * Get the model that the agent should use.
+     */
+    public function model(): string
+    {
+        return (string) (config('ai.providers.gemini.models.text.default') ?? 'gemini-3.5-flash');
+    }
 }

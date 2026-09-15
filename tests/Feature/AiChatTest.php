@@ -60,7 +60,7 @@ class AiChatTest extends TestCase
      */
     public function test_ai_chat_sends_prompt_and_receives_reply(): void
     {
-        if (empty(env('GEMINI_API_KEY'))) {
+        if (empty(config('ai.providers.gemini.key'))) {
             $this->markTestSkipped('GEMINI_API_KEY is not configured in .env');
         }
 

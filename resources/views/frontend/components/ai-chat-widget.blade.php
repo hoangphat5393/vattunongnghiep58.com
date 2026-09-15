@@ -153,10 +153,15 @@
     display: block;
 }
 
+#ai-chat-launcher.ai-active .ai-badge-pulse {
+    display: none;
+}
+
 .ai-badge-pulse {
     position: absolute;
-    top: -6px;
-    left: -14px;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
     background: #ff9800;
     color: #fff;
     font-size: 11px;
@@ -522,8 +527,8 @@
 }
 
 @keyframes aiBadgeFloat {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-3px); }
 }
 
 @keyframes aiMsgFadeIn {
