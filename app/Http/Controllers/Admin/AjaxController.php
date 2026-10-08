@@ -22,9 +22,7 @@ use Auth;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class AjaxController extends Controller
@@ -35,18 +33,6 @@ class AjaxController extends Controller
      * @return void
      */
     public function __construct() {}
-
-    /**
-     * Reset AUTO_INCREMENT sau bulk delete (MySQL). Bỏ qua trên SQLite (test env).
-     */
-    private function resetTableAutoIncrement(string $table): void
-    {
-        if (Schema::getConnection()->getDriverName() === 'sqlite') {
-            return;
-        }
-
-        DB::statement("ALTER TABLE `{$table}` AUTO_INCREMENT = 1");
-    }
 
     /**
      * Show the application dashboard.
@@ -86,8 +72,6 @@ class AjaxController extends Controller
                 }
                 $loadDelete = Page::whereIn('id', $arr)->delete();
 
-                $this->resetTableAutoIncrement((new Page)->getTable());
-
                 return 1;
                 break;
 
@@ -110,9 +94,6 @@ class AjaxController extends Controller
                     }
                 }
 
-                $this->resetTableAutoIncrement((new Menu)->getTable());
-                $this->resetTableAutoIncrement((new MenuItems)->getTable());
-
                 return 1;
                 break;
             case 'post':
@@ -124,16 +105,12 @@ class AjaxController extends Controller
             case 'post-category':
                 Category::whereIn('id', $arr)->delete();
 
-                $this->resetTableAutoIncrement((new Category)->getTable());
-
                 return 1;
                 break;
             case 'product':
                 // Xóa pivot trước (product_categories), rồi xóa sản phẩm
                 ProductCategory::whereIn('product_id', $arr)->delete();
                 Product::whereIn('id', $arr)->delete();
-
-                $this->resetTableAutoIncrement((new Product)->getTable());
 
                 return 1;
                 break;
@@ -142,8 +119,6 @@ class AjaxController extends Controller
 
                 // DELETE DATA FROM PIVOT TABLE
                 ProductCategory::whereIn('category_id', $arr)->delete();
-
-                $this->resetTableAutoIncrement((new Category)->getTable());
 
                 return 1;
                 break;
@@ -162,8 +137,6 @@ class AjaxController extends Controller
             case 'contact':
                 Contact::whereIn('id', $arr)->delete();
 
-                $this->resetTableAutoIncrement((new Contact)->getTable());
-
                 return 1;
                 break;
             case 'subscription':
@@ -171,8 +144,6 @@ class AjaxController extends Controller
                     ->where('type', 'subscription')
                     ->whereIn('id', $arr)
                     ->delete();
-
-                $this->resetTableAutoIncrement((new Contact)->getTable());
 
                 return 1;
                 break;
@@ -192,8 +163,6 @@ class AjaxController extends Controller
                         $item->delete();
                     }
                 }
-
-                $this->resetTableAutoIncrement((new Slider)->getTable());
 
                 return 1;
                 break;

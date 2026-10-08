@@ -64,6 +64,28 @@ class BackendP1HardeningTest extends TestCase
         $admin->delete();
     }
 
+    public function test_ajax_delete_page_removes_records_successfully(): void
+    {
+        $admin = $this->createAdministrator();
+        $page = Page::create([
+            'name' => 'Ajax Delete Test Page',
+            'slug' => 'ajax-delete-test-page-'.time(),
+            'type' => 'page',
+            'status' => 1,
+            'sort' => 1,
+        ]);
+
+        $response = $this->actingAs($admin, 'admin')->post(route('admin.bulk.delete'), [
+            'type' => 'page',
+            'seq_list' => [$page->id],
+        ]);
+
+        $response->assertOk();
+        $this->assertDatabaseMissing('pages', ['id' => $page->id]);
+
+        $admin->delete();
+    }
+
     public function test_user_without_permission_cannot_access_product_index(): void
     {
         $user = User::create([
