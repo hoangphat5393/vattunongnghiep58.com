@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\Frontend\Order;
 use App\Models\Frontend\OrderItem;
 use App\Models\Frontend\Product;
-use App\Models\Frontend\ShopOrderPaymentStatus;
-use App\Models\Frontend\ShopOrderStatus;
 use App\Models\Frontend\User;
 // use App\Models\Frontend\Province
 use App\Models\ProductPrice;
@@ -38,8 +38,8 @@ class CartController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->data['statusOrder'] = ShopOrderStatus::getIdAll();
-        $this->data['orderPayment'] = ShopOrderPaymentStatus::getIdAll();
+        $this->data['statusOrder'] = OrderStatus::asArray();
+        $this->data['orderPayment'] = PaymentStatus::asArray();
     }
 
     public function cart()

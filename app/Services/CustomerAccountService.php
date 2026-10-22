@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Models\Frontend\Order;
 use App\Models\Frontend\OrderItem;
-use App\Models\Frontend\ShopOrderPaymentStatus;
-use App\Models\Frontend\ShopOrderStatus;
 use App\Models\Frontend\User;
 use App\Models\ShopPaymentMethod;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -82,19 +82,19 @@ class CustomerAccountService
     }
 
     /**
-     * @return array<int|string, string>
+     * @return array<int, string>
      */
     public function orderStatusLabels(): array
     {
-        return ShopOrderStatus::getIdAll();
+        return OrderStatus::asArray();
     }
 
     /**
-     * @return array<int|string, string>
+     * @return array<int, string>
      */
     public function orderPaymentLabels(): array
     {
-        return ShopOrderPaymentStatus::getIdAll();
+        return PaymentStatus::asArray();
     }
 
     /**

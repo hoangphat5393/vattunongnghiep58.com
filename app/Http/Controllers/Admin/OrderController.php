@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Order\UpdateOrderDetail;
 use App\Models\Backend\Order;
-use App\Models\Backend\ShopOrderPaymentStatus;
-use App\Models\Backend\ShopOrderStatus;
 use Auth;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
@@ -21,8 +21,8 @@ class OrderController extends Controller
 
     public function __construct()
     {
-        // $this->statusOrder    = ShopOrderStatus::getIdAll();
-        // $this->orderPayment    = ShopOrderPaymentStatus::getIdAll();
+        $this->statusOrder = OrderStatus::asArray();
+        $this->orderPayment = PaymentStatus::asArray();
     }
 
     /**
@@ -112,13 +112,8 @@ class OrderController extends Controller
     {
         $data['order_detail'] = Order::where('id', $id)->first();
         if ($data['order_detail']) {
-            $data['orderPayment'] = [0 => 'Chưa thanh toán', 1 => 'Đã thanh toán'];
-            $data['statusOrder'] = [
-                0 => 'Chờ xác nhận',
-                1 => 'Đang xử lý',
-                2 => 'Hoàn thành',
-                3 => 'Đã hủy',
-            ];
+            $data['orderPayment'] = PaymentStatus::asArray();
+            $data['statusOrder'] = OrderStatus::asArray();
 
             return view('backend.orders.single', $data);
         } else {

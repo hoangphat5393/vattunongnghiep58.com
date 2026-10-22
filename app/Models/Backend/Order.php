@@ -2,6 +2,8 @@
 
 namespace App\Models\Backend;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -19,6 +21,31 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class, 'order_id', 'id');
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'status' => OrderStatus::class,
+            'payment_status' => PaymentStatus::class,
+        ];
+    }
+
+    public function statusLabel(): string
+    {
+        return $this->status instanceof OrderStatus
+            ? $this->status->label()
+            : (OrderStatus::tryFrom((int) $this->status)?->label() ?? 'Chờ xác nhận');
+    }
+
+    public function paymentStatusLabel(): string
+    {
+        return $this->payment_status instanceof PaymentStatus
+            ? $this->payment_status->label()
+            : (PaymentStatus::tryFrom((int) $this->payment_status)?->label() ?? 'Chưa thanh toán');
     }
 
     // --- Backward Compatibility Accessors & Mutators ---
@@ -95,7 +122,9 @@ class Order extends Model
 
     public function getCartStatusAttribute()
     {
-        return $this->attributes['status'] ?? null;
+        return $this->status instanceof OrderStatus
+            ? $this->status->value
+            : ($this->attributes['status'] ?? null);
     }
 
     public function setCartStatusAttribute($value): void
@@ -105,7 +134,9 @@ class Order extends Model
 
     public function getCartPaymentAttribute()
     {
-        return $this->attributes['payment_status'] ?? null;
+        return $this->payment_status instanceof PaymentStatus
+            ? $this->payment_status->value
+            : ($this->attributes['payment_status'] ?? null);
     }
 
     public function setCartPaymentAttribute($value): void

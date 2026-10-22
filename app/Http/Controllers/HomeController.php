@@ -8,7 +8,6 @@ use App\Models\Frontend\User;
 use App\Models\Rating_Product;
 use App\Models\Sponser;
 use App\Models\Theme;
-use App\Models\User_register_email;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -198,22 +197,6 @@ class HomeController extends Controller
     public function amp()
     {
         return view('amp');
-    }
-
-    public function postUserRegisterEmail(Request $request)
-    {
-        if ($request->email_register != '') {
-            $check = User_register_email::where('email', '=', $request->email_register)->first();
-            if ($check) {
-                return redirect()->back();
-            } else {
-                $data = new User_register_email;
-                $data->email = $request->email_register;
-                $data->save();
-
-                return redirect()->back();
-            }
-        }
     }
 
     public function registerCustomer()

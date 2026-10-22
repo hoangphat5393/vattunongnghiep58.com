@@ -10,8 +10,6 @@ use App\Models\Customer_forget_pass_otp;
 use App\Models\Frontend\Contact;
 use App\Models\Frontend\Order;
 use App\Models\Frontend\Product;
-use App\Models\Frontend\ShopOrderPaymentStatus;
-use App\Models\Frontend\ShopOrderStatus;
 use App\Models\Frontend\User;
 use App\Models\Join_Category_Theme;
 use App\Models\ThemeInfo;
@@ -19,7 +17,6 @@ use App\Models\ThemeInfo;
 use App\Traits\LocalizeController;
 use Auth;
 use Carbon\Carbon;
-use Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
@@ -42,11 +39,6 @@ class CustomerController extends Controller
     public function __construct()
     {
         parent::__construct();
-        // $this->data['statusOrder']    = ShopOrderStatus::getIdAll();
-        // $this->data['orderPayment']    = ShopOrderPaymentStatus::getIdAll();
-
-        // CART
-        // $this->data['carts'] = Cart::content();
     }
 
     public function index()

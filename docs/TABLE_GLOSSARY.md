@@ -69,14 +69,13 @@
 
 | Bảng                        | Model                                                             | Alias / legacy     | Nghiệp vụ               | PK            | Trạng thái                  |
 | --------------------------- | ----------------------------------------------------------------- | ------------------ | ----------------------- | ------------- | --------------------------- |
-| `shop_orders`               | `Frontend\Order`, `Backend\Order`, **`Addtocard`**                | `addtocard`        | Header đơn hàng         | **`cart_id`** | active                      |
-| `shop_order_items`          | `Frontend\OrderItem`, `Backend\OrderItem`, **`Addtocard_Detail`** | `addtocard_detail` | Dòng chi tiết đơn       | `id`          | active                      |
-| `shop_order_status`         | `Frontend\ShopOrderStatus`                                        | —                  | Trạng thái đơn (lookup) | `id`          | active                      |
-| `shop_order_payment_status` | `Frontend\ShopOrderPaymentStatus`                                 | —                  | Trạng thái thanh toán   | `id`          | active                      |
-| `shop_payment_method`       | `Backend\ShopPaymentMethod`                                       | —                  | Phương thức thanh toán  | `id`          | low-use                     |
+| `orders`                    | `Frontend\Order`, `Backend\Order`, `App\Models\Order`             | `shop_orders`      | Header đơn hàng         | `id`          | active                      |
+| `order_items`               | `Frontend\OrderItem`, `Backend\OrderItem`                         | `shop_order_items` | Dòng chi tiết đơn       | `id`          | active                      |
+| `shop_order_status`         | `App\Enums\OrderStatus`                                           | —                  | Trạng thái đơn          | —             | refactored to PHP Enum      |
+| `shop_order_payment_status` | `App\Enums\PaymentStatus`                                         | —                  | Trạng thái thanh toán   | —             | refactored to PHP Enum      |
+| `shop_payment_method`       | `Backend\ShopPaymentMethod`, `App\Models\ShopPaymentMethod`       | —                  | Phương thức thanh toán  | `id`          | active                      |
 | `shop_currencies`           | `Backend\ShopCurrency`                                            | —                  | Tiền tệ                 | `id`          | active                      |
 | `contact_payment`           | `Backend\ContactPayment`                                          | —                  | Liên hệ thanh toán      | `id`          | low-use (bảng có thể thiếu) |
-| `orders`                    | `Backend\Orders`                                                  | —                  | Bảng đơn cũ / song song | `id`          | legacy — bảng không tồn tại |
 
 > **PK đặc biệt:** `shop_orders.cart_id` — route account dùng `{id_cart}` trỏ vào cột này, không phải `id`.
 

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Jobs\Job_SendMail;
 use App\Models\Addtocard;
 use App\Models\Addtocard_Detail;
 use App\Models\ContactPayment;
 use App\Models\Frontend\EmailTemplate;
 use App\Models\Frontend\Product;
-use App\Models\Frontend\ShopOrderPaymentStatus;
-use App\Models\Frontend\ShopOrderStatus;
 use App\Models\Frontend\User;
 use App\Models\Page;
 use App\Support\EmailTemplateCodes;
@@ -33,8 +33,8 @@ class CheckoutController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->data['statusOrder'] = ShopOrderStatus::getIdAll();
-        $this->data['orderPayment'] = ShopOrderPaymentStatus::getIdAll();
+        $this->data['statusOrder'] = OrderStatus::asArray();
+        $this->data['orderPayment'] = PaymentStatus::asArray();
     }
 
     public function checkout()
