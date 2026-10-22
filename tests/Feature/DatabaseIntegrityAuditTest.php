@@ -68,8 +68,8 @@ class DatabaseIntegrityAuditTest extends TestCase
         $this->assertContains('product_categories.category_id -> categories.id', $fkList);
         $this->assertContains('role_user.user_id -> users.id', $fkList);
         $this->assertContains('role_user.role_id -> roles.id', $fkList);
-        $this->assertContains('shop_orders.user_id -> users.id', $fkList);
-        $this->assertContains('shop_order_items.cart_id -> shop_orders.cart_id', $fkList);
+        $this->assertContains('orders.user_id -> users.id', $fkList);
+        $this->assertContains('order_items.order_id -> orders.id', $fkList);
         $this->assertContains('product_prices.product_id -> products.id', $fkList);
         $this->assertContains('menu_items.menu_id -> menus.id', $fkList);
         $this->assertContains('permission_role.role_id -> roles.id', $fkList);
@@ -100,15 +100,15 @@ class DatabaseIntegrityAuditTest extends TestCase
         $this->assertNotEmpty($sampleProduct->name);
 
         // 2. Orders and Order Items Join
-        $orderCount = $db->table('shop_orders')->count();
+        $orderCount = $db->table('orders')->count();
         $this->assertGreaterThan(0, $orderCount, 'Orders table must contain data');
 
-        $ordersWithItems = $db->table('shop_orders')
-            ->join('shop_order_items', 'shop_orders.cart_id', '=', 'shop_order_items.cart_id')
-            ->select('shop_orders.cart_id', 'shop_order_items.price_label', 'shop_order_items.price')
+        $ordersWithItems = $db->table('orders')
+            ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+            ->select('orders.id', 'order_items.price_label', 'order_items.price')
             ->get();
 
-        $this->assertNotEmpty($ordersWithItems, 'Shop orders should join cleanly with order items via cart_id');
+        $this->assertNotEmpty($ordersWithItems, 'Orders should join cleanly with order items via order_id');
 
         // 3. User & Roles Join
         $userCount = $db->table('users')->count();
@@ -177,12 +177,12 @@ class DatabaseIntegrityAuditTest extends TestCase
             ->count();
         $this->assertEquals(0, $orphanRoleUser, 'Zero orphan role_user allowed');
 
-        // No orphaned shop_order_items (cart_id)
-        $orphanOrderItems = $db->table('shop_order_items')
-            ->leftJoin('shop_orders', 'shop_order_items.cart_id', '=', 'shop_orders.cart_id')
-            ->whereNull('shop_orders.cart_id')
+        // No orphaned order_items (order_id)
+        $orphanOrderItems = $db->table('order_items')
+            ->leftJoin('orders', 'order_items.order_id', '=', 'orders.id')
+            ->whereNull('orders.id')
             ->count();
-        $this->assertEquals(0, $orphanOrderItems, 'Zero orphan shop_order_items allowed for cart_id');
+        $this->assertEquals(0, $orphanOrderItems, 'Zero orphan order_items allowed for order_id');
     }
 
     /**

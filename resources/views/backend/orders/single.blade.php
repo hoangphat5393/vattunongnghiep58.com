@@ -17,7 +17,7 @@
         if (!empty($order_detail->cart_content)) {
             $cart_content_cart = @unserialize($order_detail->cart_content);
         }
-        $order_products = \App\Models\Backend\OrderItem::where('cart_id', $order_detail->cart_id)->get();
+        $order_products = $order_detail->items;
     @endphp
     @include('backend.partials.seo')
 @endsection

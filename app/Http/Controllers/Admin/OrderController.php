@@ -19,11 +19,6 @@ class OrderController extends Controller
 
     public $orderPayment;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         // $this->statusOrder    = ShopOrderStatus::getIdAll();
@@ -42,7 +37,6 @@ class OrderController extends Controller
         ];
 
         if (Auth::guard('admin')->user()->admin_level == 99999) {
-
             $db = Order::select('*');
 
             if (request('search_name') != '') {
@@ -50,10 +44,10 @@ class OrderController extends Controller
             }
 
             $count_item = $db->count();
-            $data_order = $db->orderByDesc('cart_id')->paginate(40)->appends($appends);
+            $data_order = $db->orderByDesc('id')->paginate(40)->appends($appends);
         } else {
             $data_order = Order::where('user_id', '=', Auth::guard('admin')->user()->id)
-                ->orderByDesc('cart_id')
+                ->orderByDesc('id')
                 ->paginate(40)
                 ->appends($appends);
             $count_item = Order::where('user_id', '=', Auth::guard('admin')->user()->id)
@@ -70,45 +64,41 @@ class OrderController extends Controller
      */
     public function listOrder()
     {
-        // $data['order_status'] = $this->orderStatus();
         $data['orderPayment'] = $this->orderPayment;
         $data['statusOrder'] = $this->statusOrder;
         $list = (new Order);
-        if (request('cart_status') != '') {
-            $list = $list->where('cart_status', request('cart_status'));
+
+        $statusFilter = request('status') ?? request('cart_status');
+        if ($statusFilter !== null && $statusFilter !== '') {
+            $list = $list->where('status', $statusFilter);
         }
-        if (request('cart_code') != '') {
-            $list = $list->where('cart_code', request('cart_code'));
+
+        $codeFilter = request('code') ?? request('cart_code');
+        if ($codeFilter !== null && $codeFilter !== '') {
+            $list = $list->where('code', $codeFilter);
         }
-        $data['data_order'] = $list->orderBy('cart_id')->paginate(20);
+
+        $data['data_order'] = $list->orderByDesc('id')->paginate(20);
 
         return view('backend.orders.index', $data);
     }
 
     public function searchOrder(Request $rq)
     {
-        $data_order = Order::select('shop_orders.*')
-            ->orderBy('shop_orders.created_at', 'DESC')
-            ->paginate(20);
-        $query = '';
+        $query = Order::query();
 
-        if ($rq->search_title != '' && $rq->order_status == '') {
-            $data_order = Order::select('shop_orders.*')
-                ->where('shop_orders.cart_code', 'LIKE', '%'.$rq->search_title.'%')
-                ->orderBy('shop_orders.created_at', 'DESC')
-                ->paginate(20);
-        } elseif ($rq->search_title == '' && $rq->order_status != '') {
-            $data_order = Order::select('shop_orders.*')
-                ->where('shop_orders.cart_status', '=', $rq->order_status)
-                ->orderBy('shop_orders.created_at', 'DESC')
-                ->paginate(20);
-        } else {
-            $data_order = Order::select('shop_orders.*')
-                ->where('shop_orders.cart_code', 'LIKE', '%'.$rq->search_title.'%')
-                ->where('shop_orders.cart_status', '=', $rq->order_status)
-                ->orderBy('shop_orders.created_at', 'DESC')
-                ->paginate(20);
+        $searchTitle = $rq->search_title ?? $rq->code;
+        $orderStatus = $rq->order_status ?? $rq->status;
+
+        if ($searchTitle != '') {
+            $query->where('code', 'LIKE', '%'.$searchTitle.'%');
         }
+
+        if ($orderStatus !== null && $orderStatus !== '') {
+            $query->where('status', '=', $orderStatus);
+        }
+
+        $data_order = $query->orderBy('created_at', 'DESC')->paginate(20);
 
         return view('backend.orders.filter')->with(['data_order' => $data_order]);
     }
@@ -120,7 +110,7 @@ class OrderController extends Controller
 
     public function orderDetail($id)
     {
-        $data['order_detail'] = Order::where('cart_id', $id)->first();
+        $data['order_detail'] = Order::where('id', $id)->first();
         if ($data['order_detail']) {
             $data['orderPayment'] = [0 => 'Chưa thanh toán', 1 => 'Đã thanh toán'];
             $data['statusOrder'] = [
@@ -139,19 +129,20 @@ class OrderController extends Controller
     public function postOrderDetail(UpdateOrderDetail $request)
     {
         $data = $request->validated();
-        $cart_id = (int) $data['cart_id'];
+        $id = (int) ($data['id'] ?? $data['cart_id'] ?? 0);
         $content = htmlspecialchars($data['admin_note'] ?? '');
-        $status_order = (int) $data['cart_status'];
-        if ($cart_id > 0) {
+        $status_order = (int) ($data['status'] ?? $data['cart_status'] ?? 0);
+
+        if ($id > 0) {
             $dataUpdate = [
-                'cart_note' => $content,
-                'cart_status' => $status_order,
-                'cart_payment' => $data['cart_payment'] ?? 0,
-                'shipping_cost' => $data['shipping_cost'] ?? 0,
+                'note' => $content,
+                'status' => $status_order,
+                'payment_status' => (int) ($data['payment_status'] ?? $data['cart_payment'] ?? 0),
+                'shipping_cost' => (float) ($data['shipping_cost'] ?? 0),
             ];
-            Order::where('cart_id', $cart_id)->update($dataUpdate);
+            Order::where('id', $id)->update($dataUpdate);
             $msg = 'Order has been Updated';
-            $url = route('admin.order.detail', [$cart_id]);
+            $url = route('admin.order.detail', [$id]);
             msg_move_page($msg, $url);
         }
     }

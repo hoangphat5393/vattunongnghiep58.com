@@ -195,19 +195,19 @@ abstract class TestCase extends BaseTestCase
             });
         }
 
-        if (! Schema::hasTable('shop_orders')) {
-            Schema::create('shop_orders', function (Blueprint $table) {
-                $table->id('cart_id');
+        if (! Schema::hasTable('orders')) {
+            Schema::create('orders', function (Blueprint $table) {
+                $table->id('id');
                 $table->unsignedBigInteger('user_id')->nullable();
                 $table->string('name')->nullable();
-                $table->string('cart_email')->nullable();
-                $table->string('cart_phone')->nullable();
-                $table->string('cart_address')->nullable();
-                $table->longText('cart_note')->nullable();
-                $table->string('cart_code')->nullable();
-                $table->integer('cart_status')->default(0);
-                $table->integer('cart_payment')->default(0);
-                $table->decimal('cart_total', 12, 2)->default(0);
+                $table->string('email')->nullable();
+                $table->string('phone')->nullable();
+                $table->string('address')->nullable();
+                $table->longText('note')->nullable();
+                $table->string('code')->nullable();
+                $table->integer('status')->default(0);
+                $table->integer('payment_status')->default(0);
+                $table->decimal('total', 12, 2)->default(0);
                 $table->timestamps();
             });
         }

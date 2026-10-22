@@ -11,7 +11,8 @@ Tài liệu này tổng hợp kiến trúc, cơ sở dữ liệu, luồng dữ l
 
 - **Mục đích:** Website thương mại điện tử / giới thiệu sản phẩm nông nghiệp (thương hiệu giao diện: _Vật Tư 58_, _Nông Nghiệp Sạch_), hỗ trợ **danh mục sản phẩm**, **giỏ hàng**, **đặt hàng / thanh toán**, **tin bài / trang tĩnh**, **tìm kiếm**, **liên hệ**, và **khu vực quản trị** (CMS + đơn hàng + phân quyền).
 - **Công nghệ lõi:**
-    - **Backend:** PHP **8.4+**, **Laravel 12**, Eloquent ORM.
+    - **Backend:** PHP **8.3+**, **Laravel 13 (v13.37.0)**, Eloquent ORM.
+    - **Database:** **PostgreSQL 16** (Port 5432, UTF-8, Sequence ID Management, 16 Foreign Keys).
     - **Auth:** Guard `web` (khách hàng) và guard `admin` (quản trị — model dùng bảng `users`).
     - **Frontend:** Blade + **Vite 7**, **Tailwind CSS 4**, jQuery / Axios / Swiper / AOS (bundle `resources/js/app.js`).
     - **Thư viện đáng chú ý:** `surfsidemedia/shoppingcart`, `gornymedia/laravel-shortcodes`, `ckfinder/ckfinder-laravel-package`, `intervention/image`, Socialite, reCAPTCHA v3, Mailgun.
@@ -70,15 +71,15 @@ Tài liệu này tổng hợp kiến trúc, cơ sở dữ liệu, luồng dữ l
 
 Danh sách bảng thực tế (**35 bảng**, sau cleanup 2026-07-10):
 
-`admin_menus`, `album_items`, `albums`, `cache`, `cache_locks`, `categories`, `contacts`, `countries`, `customer_forget_pass_otp`, `email_templates`, `failed_jobs`, `import_log`, `jobs`, `media_files`, `menu_items`, `menus`, `migrations`, `pages`, `password_reset_tokens`, `permission_role`, `permissions`, `product_categories`, `product_prices`, `products`, `role_user`, `roles`, `sessions`, `settings`, `shop_currencies`, `shop_order_items`, `shop_order_payment_status`, `shop_order_status`, `shop_orders`, `shop_payment_method`, `users`.
+`admin_menus`, `album_items`, `albums`, `cache`, `cache_locks`, `categories`, `contacts`, `countries`, `customer_forget_pass_otp`, `email_templates`, `failed_jobs`, `import_log`, `jobs`, `media_files`, `menu_items`, `menus`, `migrations`, `order_items`, `orders`, `pages`, `password_reset_tokens`, `permission_role`, `permissions`, `product_categories`, `product_prices`, `products`, `role_user`, `roles`, `sessions`, `settings`, `shop_currencies`, `shop_order_payment_status`, `shop_order_status`, `shop_payment_method`, `users`.
 
-_(Đã drop: `admins`, `payments`, `payment_request`, `password_resets`, `user_password_auto`, `settings_cost`, `shipping_order`. Đơn hàng: `addtocard`/`addtocard_detail` đã rename → `shop_orders`/`shop_order_items`.)_
+_(Đã drop: `admins`, `payments`, `payment_request`, `password_resets`, `user_password_auto`, `settings_cost`, `shipping_order`. Đơn hàng: Đã chuẩn hóa thành `orders`/`order_items` với PK `id` và FK `order_id`.)_
 
 ### 3.3. Quan hệ logic (ORM / nghiệp vụ)
 
 - **Sản phẩm — danh mục (n-n):** bảng trung gian **`product_categories`** (`product_id`, `category_id`) — có **index FK** trên `product_id` và `category_id`.
 - **Trang / bài viết:** bảng **`pages`**, phân biệt **`type`** (ví dụ `page` / `post`) — thay cho mô hình `posts` cũ (đã migrate/loại bỏ qua migrations).
-- **Đơn hàng:** **`shop_orders`** (header, PK `cart_id`) + **`shop_order_items`** (chi tiết) — model `Frontend\Order` / `OrderItem`; alias legacy `Addtocard`.
+- **Đơn hàng:** **`orders`** (header, PK `id`) + **`order_items`** (chi tiết, FK `order_id`) — model `Frontend\Order` / `OrderItem`; hỗ trợ bridge accessors tương thích ngược.
 - **ACL:** `users` ↔ `roles` qua **`role_user`**; `roles` ↔ `permissions` qua **`permission_role`**. Guard admin dùng model `Backend\User` với **`$table = 'users'`** — bảng `admins` **đã drop**.
 - **Newsletter:** `POST /subscription` → bản ghi `contacts` với `type=subscription` (không bảng `subscription`).
 

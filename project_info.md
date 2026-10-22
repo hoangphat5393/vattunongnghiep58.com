@@ -57,5 +57,9 @@
 - **Màu sắc chủ đạo:**
   - Xanh lá cây nông nghiệp (`#15803d` / `#16a34a`): Tượng trưng cho sự sinh trưởng, mùa màng bội thu.
   - Vàng lúa chín (`#eab308` / `#f59e0b`): Tượng trưng cho sự no ấm, năng lượng mặt trời.
-- **Nền tảng kỹ thuật:** Laravel 13, PHP 8.3+, Vite 7, Tailwind CSS 4, AdminLTE 4.1.
+- **Nền tảng kỹ thuật (Tech Stack):**
+  - **Framework & Runtime:** PHP 8.3+, Laravel 13 (v13.37.0)
+  - **Cơ sở dữ liệu (Database):** PostgreSQL 16 (Port 5432, UTF-8, Sequence ID Management, 16 Foreign Keys)
+  - **Frontend Storefront:** Blade, Vite 7, Tailwind CSS 4, Axios, jQuery, Swiper, AOS
+  - **Trang Quản trị (Admin):** AdminLTE 4.1 (Bootstrap 5.3), Axios, FontAwesome Pro, CKFinder
 - **Tài liệu hệ thống chi tiết:** Xem thêm tại [MASTER.md](MASTER.md) và [docs/PROJECT_ANALYSIS.md](docs/PROJECT_ANALYSIS.md).

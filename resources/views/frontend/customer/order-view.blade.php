@@ -1,8 +1,7 @@
 @php
 
-    $id = $order->cart_id ?? 0;
-
-    $order_details = \App\Models\Frontend\OrderItem::where('cart_id', $id)->get();
+    $id = $order->id ?? 0;
+    $order_details = $order->items ?? collect();
 
 @endphp
 

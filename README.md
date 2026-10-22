@@ -1,6 +1,6 @@
 # Vật Tư Nông Nghiệp 58
 
-Website thương mại điện tử / CMS — **Laravel 13**, **PHP 8.3+**, **Vite 7**, **Tailwind CSS 4**.
+Website thương mại điện tử / CMS — **Laravel 13**, **PHP 8.3+**, **PostgreSQL 16**, **Vite 7**, **Tailwind CSS 4**.
 
 ## Chạy nhanh
 
@@ -36,6 +36,8 @@ php artisan test --compact
 
 ## Stack tóm tắt
 
+- **Backend:** Laravel 13, PHP 8.3+, Eloquent ORM
+- **Database:** PostgreSQL 16 (Port 5432, UTF-8, Sequence ID Management, 16 Foreign Keys)
 - **Frontend:** Blade + Vite (`resources/js/app.js` → `http.js`, `auth-forms.js`, `custom.js`, axios, jQuery)
 - **Admin:** AdminLTE 4.1, `public/assets/js/js_admin.js` (axios, `AdminRoutes`)
 - **Auth:** guard `web` (khách), `admin` (bảng `users`)

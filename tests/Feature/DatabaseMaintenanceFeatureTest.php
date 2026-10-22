@@ -83,7 +83,7 @@ class DatabaseMaintenanceFeatureTest extends TestCase
         $this->assertContains('products', $tables);
         $this->assertContains('categories', $tables);
         $this->assertContains('pages', $tables);
-        $this->assertContains('shop_orders', $tables);
+        $this->assertContains('orders', $tables);
 
         foreach ($stats as $item) {
             $this->assertArrayHasKey('table', $item);

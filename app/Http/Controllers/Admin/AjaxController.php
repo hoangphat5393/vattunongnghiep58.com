@@ -129,8 +129,8 @@ class AjaxController extends Controller
                 return 1;
                 break;
             case 'order':
-                $loadDelete = Order::whereIn('cart_id', $arr)->delete();
-                $addToCardDelete = OrderItem::whereIn('cart_id', $arr)->delete();
+                $loadDelete = Order::whereIn('id', $arr)->delete();
+                $addToCardDelete = OrderItem::whereIn('order_id', $arr)->delete();
 
                 return 1;
                 break;
@@ -420,10 +420,15 @@ class AjaxController extends Controller
         ];
 
         // Whitelist allowed columns for safety
-        $allowedColumns = ['status', 'sort', 'is_home', 'is_hot', 'cart_status', 'cart_payment'];
+        $allowedColumns = ['status', 'sort', 'is_home', 'is_hot', 'cart_status', 'cart_payment', 'payment_status'];
 
         if (in_array($modelClass, $allowedModels) && in_array($column, $allowedColumns)) {
-            (new $modelClass)::where($column == 'cart_status' || $column == 'cart_payment' ? 'cart_id' : 'id', $id)->update([$column => $value]);
+            $targetCol = match ($column) {
+                'cart_status' => 'status',
+                'cart_payment' => 'payment_status',
+                default => $column,
+            };
+            (new $modelClass)::where('id', $id)->update([$targetCol => $value]);
 
             return response()->json(['success' => true]);
         }

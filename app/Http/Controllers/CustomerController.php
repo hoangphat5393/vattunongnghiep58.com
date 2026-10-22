@@ -6,9 +6,9 @@ use App\Http\Controllers\Account\AccountController;
 use App\Http\Controllers\Auth\CustomerAuthController;
 use App\Http\Requests\UpdateCustomerPasswordRequest;
 use App\Http\Requests\UpdateCustomerProfileRequest;
-use App\Models\Addtocard;
 use App\Models\Customer_forget_pass_otp;
 use App\Models\Frontend\Contact;
+use App\Models\Frontend\Order;
 use App\Models\Frontend\Product;
 use App\Models\Frontend\ShopOrderPaymentStatus;
 use App\Models\Frontend\ShopOrderStatus;
@@ -614,8 +614,8 @@ class CustomerController extends Controller
     public function orderView()
     {
         $id = request()->id;
-        $order = Addtocard::query()
-            ->where('cart_id', $id)
+        $order = Order::query()
+            ->where('id', $id)
             ->where('user_id', Auth::id())
             ->first();
 

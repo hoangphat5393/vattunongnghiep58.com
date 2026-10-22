@@ -116,7 +116,7 @@ class AccountController extends Controller
         $this->data['orderStatus'] = $this->accountService->orderStatusLabels();
 
         $this->data['seo'] = [
-            'seo_title' => 'Đơn hàng - '.$order->cart_code,
+            'seo_title' => 'Đơn hàng - '.($order->code ?? $order->cart_code),
         ];
 
         return view($this->templatePath.'.account.orderdetail', ['data' => $this->data]);

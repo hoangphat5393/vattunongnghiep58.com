@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Models\Addtocard;
+use App\Models\Frontend\Order;
 use App\Models\Frontend\User;
 use App\Services\CustomerAccountService;
 use Illuminate\Database\Schema\Blueprint;
@@ -24,14 +24,14 @@ class CustomerAccountServiceTest extends TestCase
 
         $this->service = app(CustomerAccountService::class);
 
-        if (! Schema::hasTable('shop_orders')) {
-            Schema::create('shop_orders', function (Blueprint $table) {
-                $table->id('cart_id');
+        if (! Schema::hasTable('orders')) {
+            Schema::create('orders', function (Blueprint $table) {
+                $table->id('id');
                 $table->unsignedBigInteger('user_id')->nullable();
-                $table->string('cart_email')->nullable();
-                $table->string('cart_code')->nullable();
-                $table->integer('cart_status')->default(0);
-                $table->decimal('cart_total', 12, 2)->default(0);
+                $table->string('email')->nullable();
+                $table->string('code')->nullable();
+                $table->integer('status')->default(0);
+                $table->decimal('total', 12, 2)->default(0);
                 $table->timestamps();
             });
         }
@@ -39,12 +39,12 @@ class CustomerAccountServiceTest extends TestCase
 
     public function test_link_guest_orders_to_user_assigns_user_id_by_email(): void
     {
-        $order = Addtocard::create([
+        $order = Order::create([
             'user_id' => null,
-            'cart_email' => 'guest-link@example.com',
-            'cart_code' => 'ORD-GUEST-LINK',
-            'cart_status' => 0,
-            'cart_total' => 100000,
+            'email' => 'guest-link@example.com',
+            'code' => 'ORD-GUEST-LINK',
+            'status' => 0,
+            'total' => 100000,
         ]);
 
         $linked = $this->service->linkGuestOrdersToUser(42, 'guest-link@example.com');
@@ -59,8 +59,6 @@ class CustomerAccountServiceTest extends TestCase
             'fullname' => 'Before Name',
             'email' => 'profile-service@example.com',
             'password' => bcrypt('secret123'),
-            'phone' => '0900000000',
-            'address' => 'Old address',
             'status' => 1,
         ]);
 
@@ -84,17 +82,17 @@ class CustomerAccountServiceTest extends TestCase
             'status' => 1,
         ]);
 
-        $order = Addtocard::create([
+        $order = Order::create([
             'user_id' => $user->id,
-            'cart_email' => 'owner-service@example.com',
-            'cart_code' => 'ORD-OWN',
-            'cart_status' => 0,
-            'cart_total' => 50000,
+            'email' => 'owner-service@example.com',
+            'code' => 'ORD-OWN',
+            'status' => 0,
+            'total' => 50000,
         ]);
 
-        $found = $this->service->findOrderForUserOrAbort($user->id, $order->cart_id);
+        $found = $this->service->findOrderForUserOrAbort($user->id, $order->id);
 
-        $this->assertSame((int) $order->cart_id, (int) $found->cart_id);
+        $this->assertSame((int) $order->id, (int) $found->id);
     }
 
     public function test_find_order_for_user_or_abort_blocks_other_users(): void
@@ -113,16 +111,16 @@ class CustomerAccountServiceTest extends TestCase
             'status' => 1,
         ]);
 
-        $order = Addtocard::create([
+        $order = Order::create([
             'user_id' => $owner->id,
-            'cart_email' => 'owner2@example.com',
-            'cart_code' => 'ORD-BLOCK',
-            'cart_status' => 0,
-            'cart_total' => 50000,
+            'email' => 'owner2@example.com',
+            'code' => 'ORD-BLOCK',
+            'status' => 0,
+            'total' => 50000,
         ]);
 
         $this->expectException(HttpException::class);
 
-        $this->service->findOrderForUserOrAbort($intruder->id, $order->cart_id);
+        $this->service->findOrderForUserOrAbort($intruder->id, $order->id);
     }
 }

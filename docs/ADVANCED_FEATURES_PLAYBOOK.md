@@ -39,12 +39,12 @@ Hệ sinh thái hiện đã triển khai thành công Chatbot AI trên 3 dự á
 ### 2.1. Môi trường & Thư viện (Packages)
 
 - **PHP:** `^8.2` hoặc `^8.3`
-- **Laravel Framework:** `v11.x`, `v12.x` hoặc `v13.x`
+- **Laravel Framework:** `v13.x` (Hiện tại: `v13.37.0`)
 - **Package AI chính thức:** `laravel/ai` (phiên bản `^0.11` trở lên)
   ```bash
   composer require laravel/ai
   ```
-- **Database Engine:** MySQL / MariaDB.
+- **Database Engine:** PostgreSQL 16 (Port 5432).
 
 ### 2.2. API Key & Nhà Cung Cấp AI (AI Provider)
 

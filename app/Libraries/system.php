@@ -593,7 +593,7 @@ if (! function_exists('msg_move_page')) {
                     break;
                 case 'close':
                     echo "<script language='javascript'>self.close();</script>";
-                    if ($isExit) {
+                    if ($isExit && ! app()->runningUnitTests()) {
                         exit();
                     }
 
@@ -617,7 +617,7 @@ if (! function_exists('msg_move_page')) {
             }
         }
 
-        if ($isExit) {
+        if ($isExit && ! app()->runningUnitTests()) {
             exit();
         }
     }

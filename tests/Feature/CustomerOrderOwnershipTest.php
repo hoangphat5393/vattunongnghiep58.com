@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Middleware\Currency;
-use App\Models\Addtocard;
+use App\Models\Frontend\Order;
 use App\Models\Frontend\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,19 +15,19 @@ class CustomerOrderOwnershipTest extends TestCase
     {
         parent::setUp();
 
-        if (! Schema::hasTable('shop_orders')) {
-            Schema::create('shop_orders', function (Blueprint $table) {
-                $table->id('cart_id');
+        if (! Schema::hasTable('orders')) {
+            Schema::create('orders', function (Blueprint $table) {
+                $table->id('id');
                 $table->unsignedBigInteger('user_id')->nullable();
                 $table->string('name')->nullable();
-                $table->string('cart_email')->nullable();
-                $table->string('cart_phone')->nullable();
-                $table->string('cart_address')->nullable();
-                $table->longText('cart_note')->nullable();
-                $table->string('cart_code')->nullable();
-                $table->integer('cart_status')->default(0);
-                $table->integer('cart_payment')->default(0);
-                $table->decimal('cart_total', 12, 2)->default(0);
+                $table->string('email')->nullable();
+                $table->string('phone')->nullable();
+                $table->string('address')->nullable();
+                $table->longText('note')->nullable();
+                $table->string('code')->nullable();
+                $table->integer('status')->default(0);
+                $table->integer('payment_status')->default(0);
+                $table->decimal('total', 12, 2)->default(0);
                 $table->timestamps();
             });
         }
@@ -42,13 +42,13 @@ class CustomerOrderOwnershipTest extends TestCase
             });
         }
 
-        if (! Schema::hasTable('shop_order_items')) {
-            Schema::create('shop_order_items', function (Blueprint $table) {
+        if (! Schema::hasTable('order_items')) {
+            Schema::create('order_items', function (Blueprint $table) {
                 $table->id();
-                $table->unsignedBigInteger('cart_id');
+                $table->unsignedBigInteger('order_id');
                 $table->unsignedBigInteger('product_id')->nullable();
                 $table->decimal('price', 12, 2)->default(0);
-                $table->integer('quanlity')->default(1);
+                $table->integer('quantity')->default(1);
                 $table->timestamps();
             });
         }
@@ -72,17 +72,17 @@ class CustomerOrderOwnershipTest extends TestCase
             'status' => 1,
         ]);
 
-        $order = Addtocard::create([
+        $order = Order::create([
             'user_id' => $owner->id,
             'name' => 'Owner Order',
-            'cart_email' => 'owner@example.com',
-            'cart_code' => 'ORD-001',
-            'cart_status' => 0,
-            'cart_total' => 100000,
+            'email' => 'owner@example.com',
+            'code' => 'ORD-001',
+            'status' => 0,
+            'total' => 100000,
         ]);
 
         $this->actingAs($intruder)
-            ->get(route('customer.orders.show', ['id_cart' => $order->cart_id]))
+            ->get(route('customer.orders.show', ['id_cart' => $order->id]))
             ->assertForbidden();
     }
 
@@ -97,17 +97,17 @@ class CustomerOrderOwnershipTest extends TestCase
             'status' => 1,
         ]);
 
-        $order = Addtocard::create([
+        $order = Order::create([
             'user_id' => $owner->id,
             'name' => 'Owner Order',
-            'cart_email' => 'owner2@example.com',
-            'cart_code' => 'ORD-002',
-            'cart_status' => 0,
-            'cart_total' => 100000,
+            'email' => 'owner2@example.com',
+            'code' => 'ORD-002',
+            'status' => 0,
+            'total' => 100000,
         ]);
 
         $this->actingAs($owner)
-            ->get(route('customer.orders.show', ['id_cart' => $order->cart_id]))
+            ->get(route('customer.orders.show', ['id_cart' => $order->id]))
             ->assertOk();
     }
 
@@ -115,13 +115,13 @@ class CustomerOrderOwnershipTest extends TestCase
     {
         $this->withoutMiddleware(Currency::class);
 
-        $order = Addtocard::create([
+        $order = Order::create([
             'user_id' => null,
             'name' => 'Guest Order',
-            'cart_email' => 'claim@example.com',
-            'cart_code' => 'ORD-GUEST',
-            'cart_status' => 0,
-            'cart_total' => 50000,
+            'email' => 'claim@example.com',
+            'code' => 'ORD-GUEST',
+            'status' => 0,
+            'total' => 50000,
         ]);
 
         User::create([
@@ -154,20 +154,20 @@ class CustomerOrderOwnershipTest extends TestCase
 
         $orderData = [
             'name' => 'Checkout User',
-            'cart_email' => 'checkout@example.com',
-            'cart_phone' => '0900000000',
-            'cart_address' => 'Test address',
-            'cart_note' => 'Note',
-            'cart_total' => 120000,
+            'email' => 'checkout@example.com',
+            'phone' => '0900000000',
+            'address' => 'Test address',
+            'note' => 'Note',
+            'total' => 120000,
             'user_id' => auth()->id(),
         ];
 
-        $order = Addtocard::create($orderData);
+        $order = Order::create($orderData);
 
-        $this->assertDatabaseHas('shop_orders', [
-            'cart_id' => $order->cart_id,
+        $this->assertDatabaseHas('orders', [
+            'id' => $order->id,
             'user_id' => $user->id,
-            'cart_email' => 'checkout@example.com',
+            'email' => 'checkout@example.com',
         ]);
     }
 }

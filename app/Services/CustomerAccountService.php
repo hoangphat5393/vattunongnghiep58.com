@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Addtocard;
-use App\Models\Addtocard_Detail;
+use App\Models\Frontend\Order;
+use App\Models\Frontend\OrderItem;
 use App\Models\Frontend\ShopOrderPaymentStatus;
 use App\Models\Frontend\ShopOrderStatus;
 use App\Models\Frontend\User;
@@ -17,13 +17,13 @@ class CustomerAccountService
 {
     public function linkGuestOrdersToUser(int $userId, string $email): int
     {
-        if (! Schema::hasTable('shop_orders')) {
+        if (! Schema::hasTable('orders')) {
             return 0;
         }
 
-        return Addtocard::query()
+        return Order::query()
             ->whereNull('user_id')
-            ->where('cart_email', $email)
+            ->where('email', $email)
             ->update(['user_id' => $userId]);
     }
 
@@ -51,16 +51,16 @@ class CustomerAccountService
 
     public function paginatedOrdersForUser(int $userId, int $perPage = 10): LengthAwarePaginator
     {
-        return Addtocard::query()
+        return Order::query()
             ->where('user_id', $userId)
-            ->orderByDesc('cart_id')
+            ->orderByDesc('id')
             ->paginate($perPage);
     }
 
-    public function findOrderForUserOrAbort(int $userId, int|string $cartId): Addtocard
+    public function findOrderForUserOrAbort(int $userId, int|string $orderId): Order
     {
-        $order = Addtocard::query()
-            ->where('cart_id', $cartId)
+        $order = Order::query()
+            ->where('id', $orderId)
             ->where('user_id', $userId)
             ->first();
 
@@ -72,12 +72,12 @@ class CustomerAccountService
     }
 
     /**
-     * @return Collection<int, Addtocard_Detail>
+     * @return Collection<int, OrderItem>
      */
-    public function orderDetailsWithProducts(Addtocard $order): Collection
+    public function orderDetailsWithProducts(Order $order): Collection
     {
-        return Addtocard_Detail::with('product')
-            ->where('cart_id', $order->cart_id)
+        return OrderItem::with('product')
+            ->where('order_id', $order->id)
             ->get();
     }
 
@@ -107,5 +107,13 @@ class CustomerAccountService
             ->get()
             ->pluck('name', 'code')
             ->toArray();
+    }
+
+    /**
+     * @return array<int|string, string>
+     */
+    public function paymentMethodLabels(): array
+    {
+        return ShopPaymentMethod::pluck('name', 'id')->toArray();
     }
 }

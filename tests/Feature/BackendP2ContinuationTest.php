@@ -155,14 +155,14 @@ class BackendP2ContinuationTest extends TestCase
 
     public function test_order_update_validates_cart_id(): void
     {
-        if (! Schema::hasTable('shop_orders')) {
-            Schema::create('shop_orders', function (Blueprint $table) {
-                $table->id('cart_id');
+        if (! Schema::hasTable('orders')) {
+            Schema::create('orders', function (Blueprint $table) {
+                $table->id('id');
                 $table->string('name')->nullable();
-                $table->integer('cart_status')->default(0);
-                $table->integer('cart_payment')->default(0);
+                $table->integer('status')->default(0);
+                $table->integer('payment_status')->default(0);
                 $table->decimal('shipping_cost', 12, 2)->default(0);
-                $table->longText('cart_note')->nullable();
+                $table->longText('note')->nullable();
                 $table->timestamps();
             });
         }

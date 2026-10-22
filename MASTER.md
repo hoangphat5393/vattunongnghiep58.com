@@ -46,6 +46,7 @@ Website **thương mại điện tử + CMS** cho ngành nông nghiệp:
 | Lớp           | Công nghệ                                                             |
 | ------------- | --------------------------------------------------------------------- |
 | Backend       | Laravel 13, Eloquent, Form Request                                    |
+| Database      | PostgreSQL 16 (Port 5432, UTF-8, Sequence ID Management, 16 FKs)     |
 | Storefront    | Blade + Vite 7 + Tailwind CSS 4                                       |
 | Storefront JS | axios qua `resources/js/http.js`, `auth-forms.js`, `window.AppRoutes` |
 | Admin         | AdminLTE 4 + jQuery + axios (`js_admin.js`, `window.AdminRoutes`)     |
