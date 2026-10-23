@@ -34,7 +34,7 @@
                                             <div class="group overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition duration-300 hover:shadow-xl">
                                                 <div class="relative h-64 overflow-hidden">
                                                     <a href="{{ route('product.detail', [$item2['slug'], $item2['id']]) }}" class="block h-full w-full">
-                                                        <img src="{{ get_image($item2['image']) }}" alt="{{ $item2['name'] }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-110" loading="lazy" />
+                                                        <img src="{{ get_image($item2['image']) }}" alt="{{ $item2['name'] }}" class="h-full w-full object-cover transition duration-500 group-hover:scale-110" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='{{ asset('assets/images/placeholder.png') }}';this.classList.add('img-fallback');" />
                                                     </a>
                                                 </div>
                                                 <div class="p-4">

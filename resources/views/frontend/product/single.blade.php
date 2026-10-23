@@ -291,7 +291,7 @@
                         <div class="relative p-4 bg-white rounded-3xl border border-gray-100 shadow-lg transition duration-300 hover:shadow-2xl hover:-translate-y-2 group">
                             <div class="overflow-hidden relative mb-4 h-64 rounded-2xl">
                                 <a href="{{ route('product.detail', [$related->slug, $related->id]) }}" class="block w-full h-full">
-                                    <img src="{{ get_image($related->image) }}" alt="{{ $related->name }}" class="object-cover w-full h-full" />
+                                    <img src="{{ get_image($related->image) }}" alt="{{ $related->name }}" class="object-cover w-full h-full" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='{{ asset('assets/images/placeholder.png') }}';this.classList.add('img-fallback');" />
                                 </a>
                             </div>
                             <h3 class="mb-1 text-lg font-bold text-gray-800 transition group-hover:text-leaf-600 line-clamp-2">

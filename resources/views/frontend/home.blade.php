@@ -41,7 +41,7 @@
                     <div class="relative">
                         <div class="absolute inset-0 bg-leaf-200 rounded-full transform rotate-6 scale-95 opacity-50">
                         </div>
-                        <img src="{{ asset('upload/images/bang_hieu.jpg') }}" alt="Vườn rau" class="relative rounded-4xl shadow-2xl border-4 border-white object-cover h-120 w-full transform -rotate-3 hover:rotate-0 transition duration-500" />
+                        <img src="{{ asset('upload/images/bang_hieu.jpg') }}" alt="Vườn rau" class="relative rounded-4xl shadow-2xl border-4 border-white object-cover h-120 w-full transform -rotate-3 hover:rotate-0 transition duration-500" loading="eager" fetchpriority="high" decoding="async" />
                         <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-xl animate-bounce">
                             <div class="flex items-center gap-3">
                                 <div class="bg-yellow-100 p-2 rounded-full text-yellow-600">
@@ -72,7 +72,7 @@
                         @foreach ($home_categories as $hotCat)
                             <a href="{{ route('product.category', $hotCat['slug'] ?? $hotCat['id']) }}" class="group flex max-w-[140px] flex-col items-center sm:max-w-none">
                                 <div class="mb-4 flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-2 border-leaf-100 bg-leaf-50 transition duration-300 group-hover:border-leaf-500 group-hover:shadow-md md:h-32 md:w-32">
-                                    <img src="{{ get_image($hotCat['image'] ?? '') }}" alt="{{ $hotCat['name'] }}" class="h-full w-full object-cover opacity-90 transition group-hover:scale-105 group-hover:opacity-100" loading="lazy" width="128" height="128" />
+                                    <img src="{{ get_image($hotCat['image'] ?? '') }}" alt="{{ $hotCat['name'] }}" class="h-full w-full object-cover opacity-90 transition group-hover:scale-105 group-hover:opacity-100" loading="lazy" decoding="async" width="128" height="128" onerror="this.onerror=null;this.src='{{ asset('assets/images/placeholder.png') }}';" />
                                 </div>
                                 <span class="text-center text-sm font-bold text-gray-800 transition group-hover:text-leaf-700 md:text-base">
                                     {{ $hotCat['name'] }}
@@ -99,7 +99,7 @@
                                     <div class="bg-white rounded-3xl p-4 shadow-lg hover:shadow-2xl hover:-translate-y-2 transition duration-300 border border-gray-100 relative group">
                                         <div class="h-64 rounded-2xl overflow-hidden mb-4 relative">
                                             <a href="{{ route('product.detail', [$item2['slug'], $item2['id']]) }}" class="block w-full h-full">
-                                                <img src="{{ get_image($item2['image']) }}" alt="{{ $item2['name'] }}" class="w-full h-full object-cover" />
+                                                <img src="{{ get_image($item2['image']) }}" alt="{{ $item2['name'] }}" class="w-full h-full object-cover" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='{{ asset('assets/images/placeholder.png') }}';this.classList.add('img-fallback');" />
                                             </a>
                                         </div>
                                         <h3 class="font-bold text-lg text-gray-800 mb-1 group-hover:text-leaf-600 transition line-clamp-2">
@@ -153,7 +153,7 @@
                                 $badgeColor = $index % 2 === 0 ? 'bg-leaf-500' : 'bg-yellow-500';
                             @endphp
                             <div class="group relative rounded-3xl overflow-hidden h-80 shadow-lg">
-                                <img src="{{ get_image($item['image']) }}" alt="{{ $item['title'] }}" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110" />
+                                <img src="{{ get_image($item['image']) }}" alt="{{ $item['title'] }}" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='{{ asset('assets/images/placeholder.png') }}';" />
                                 <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent">
                                 </div>
                                 <div class="absolute bottom-0 left-0 p-8 text-white">

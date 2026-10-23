@@ -52,6 +52,8 @@ Thumbs.db
 !/storage/framework/testing/.gitignore
 !/storage/framework/views/.gitignore
 !/storage/logs/.gitignore
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
 .phpunit.result.cache
 .phpunit.cache/
 public/upload/files/

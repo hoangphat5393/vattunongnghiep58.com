@@ -67,3 +67,43 @@
         transform: rotate(180deg);
     }
 }
+
+/* ==========================================================================
+   TẦNG 1: TỐI ƯU MẠNG CHẬM & TRẢI NGHIỆM SKELETON / SHIMMER LOADING
+   ========================================================================== */
+
+@keyframes skeletonShimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Khung ảnh sản phẩm (h-64) hiển thị hiệu ứng Shimmer khi đang tải ảnh */
+.h-64 {
+    background: #f1f3f5 linear-gradient(90deg, #f1f3f5 0%, #e2e5e9 35%, #f1f3f5 70%);
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.8s infinite linear;
+}
+
+.h-64 img {
+    background: transparent;
+    transition: transform 0.4s ease, opacity 0.3s ease;
+}
+
+/* Khung tròn danh mục hot */
+.h-28.w-28,
+.h-32.w-32 {
+    background: #f1f3f5 linear-gradient(90deg, #f1f3f5 0%, #e2e5e9 35%, #f1f3f5 70%);
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.8s infinite linear;
+}
+
+/* Fallback ảnh lỗi / timeout */
+img.img-fallback {
+    object-fit: contain !important;
+    padding: 24px;
+    background-color: #f8f9fa !important;
+}
