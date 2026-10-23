@@ -72,8 +72,8 @@
 | `orders`                    | `Frontend\Order`, `Backend\Order`, `App\Models\Order`             | `shop_orders`      | Header đơn hàng         | `id`          | active                      |
 | `order_items`               | `Frontend\OrderItem`, `Backend\OrderItem`                         | `shop_order_items` | Dòng chi tiết đơn       | `id`          | active                      |
 | `shop_order_status`         | `App\Enums\OrderStatus`                                           | —                  | Trạng thái đơn          | —             | refactored to PHP Enum      |
-| `shop_order_payment_status` | `App\Enums\PaymentStatus`                                         | —                  | Trạng thái thanh toán   | —             | refactored to PHP Enum      |
-| `order_payment_methods`     | `OrderPaymentMethod`, `Backend\ShopPaymentMethod`                 | `shop_payment_method` | Phương thức thanh toán  | `id`          | active                      |
+| `payment_methods`           | `PaymentMethod`                                                   | `shop_payment_method`, `order_payment_methods` | Danh mục cổng thanh toán | `id`          | active                      |
+| `order_payments`            | `OrderPayment`                                                    | —                  | Nhật ký giao dịch đơn hàng | `id`          | active                      |
 | `shop_currencies`           | `Backend\ShopCurrency`                                            | —                  | Tiền tệ                 | `id`          | active                      |
 | `contact_payment`           | `Backend\ContactPayment`                                          | —                  | Liên hệ thanh toán      | `id`          | low-use (bảng có thể thiếu) |
 

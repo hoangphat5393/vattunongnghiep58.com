@@ -109,8 +109,9 @@ class AccountController extends Controller
     {
         $order = $this->accountService->findOrderForUserOrAbort(Auth::id(), $id_cart);
 
-        $this->data['order_payment_methods'] = $this->accountService->activePaymentMethodLabels();
-        $this->data['shop_payment_method'] = $this->data['order_payment_methods'];
+        $this->data['payment_methods'] = $this->accountService->activePaymentMethodLabels();
+        $this->data['order_payment_methods'] = $this->data['payment_methods'];
+        $this->data['shop_payment_method'] = $this->data['payment_methods'];
         $this->data['order'] = $order;
         $this->data['order_detail'] = $this->accountService->orderDetailsWithProducts($order);
         $this->data['orderPayment'] = $this->accountService->orderPaymentLabels();

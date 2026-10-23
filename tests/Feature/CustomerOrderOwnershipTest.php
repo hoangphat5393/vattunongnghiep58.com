@@ -32,8 +32,8 @@ class CustomerOrderOwnershipTest extends TestCase
             });
         }
 
-        if (! Schema::hasTable('order_payment_methods')) {
-            Schema::create('order_payment_methods', function (Blueprint $table) {
+        if (! Schema::hasTable('payment_methods')) {
+            Schema::create('payment_methods', function (Blueprint $table) {
                 $table->id();
                 $table->string('name')->nullable();
                 $table->string('code')->nullable();

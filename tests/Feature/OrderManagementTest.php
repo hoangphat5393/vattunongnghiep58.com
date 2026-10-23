@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Backend\Role;
 use App\Models\Backend\User;
 use App\Models\Frontend\Order;
+use App\Models\OrderPayment;
 use App\Services\DatabaseMaintenanceService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
@@ -187,5 +188,53 @@ class OrderManagementTest extends TestCase
         $this->assertSame('orders', $result['table']);
         $this->assertSame('id', $result['pk']);
         $this->assertGreaterThan(0, $result['next_id']);
+    }
+
+    /**
+     * Test order_payments table and JSONB payload casting.
+     */
+    public function test_order_payments_relationship_and_json_payload(): void
+    {
+        $this->assertTrue(Schema::hasTable('payment_methods'));
+        $this->assertTrue(Schema::hasTable('order_payments'));
+        $this->assertTrue(Schema::hasColumn('orders', 'paid_amount'));
+
+        $order = Order::create([
+            'name' => 'Khách Test Thanh Toán',
+            'phone' => '0988776655',
+            'email' => 'payment_test@example.com',
+            'total' => 500000,
+            'paid_amount' => 500000,
+            'status' => 1,
+            'payment_status' => 1,
+        ]);
+
+        $payment = OrderPayment::create([
+            'order_id' => $order->id,
+            'gateway' => 'vnpay',
+            'amount' => 500000,
+            'currency' => 'VND',
+            'transaction_code' => 'VNP1482910',
+            'status' => 'success',
+            'payload' => [
+                'vnp_BankCode' => 'NCB',
+                'vnp_BankTranNo' => 'VNP1482910',
+                'vnp_CardType' => 'ATM',
+                'vnp_ResponseCode' => '00',
+            ],
+            'paid_at' => now(),
+        ]);
+
+        $this->assertDatabaseHas('order_payments', [
+            'id' => $payment->id,
+            'gateway' => 'vnpay',
+            'transaction_code' => 'VNP1482910',
+            'status' => 'success',
+        ]);
+
+        $freshOrder = Order::with('payments')->find($order->id);
+        $this->assertCount(1, $freshOrder->payments);
+        $this->assertSame('NCB', $freshOrder->payments->first()->payload['vnp_BankCode']);
+        $this->assertSame('00', $freshOrder->payments->first()->payload['vnp_ResponseCode']);
     }
 }

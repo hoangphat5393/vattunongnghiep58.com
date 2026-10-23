@@ -7,7 +7,7 @@ use App\Enums\PaymentStatus;
 use App\Models\Frontend\Order;
 use App\Models\Frontend\OrderItem;
 use App\Models\Frontend\User;
-use App\Models\OrderPaymentMethod;
+use App\Models\PaymentMethod;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
@@ -102,7 +102,7 @@ class CustomerAccountService
      */
     public function activePaymentMethodLabels(): array
     {
-        return OrderPaymentMethod::query()
+        return PaymentMethod::query()
             ->where('status', 1)
             ->get()
             ->pluck('name', 'code')
@@ -114,6 +114,6 @@ class CustomerAccountService
      */
     public function paymentMethodLabels(): array
     {
-        return OrderPaymentMethod::pluck('name', 'id')->toArray();
+        return PaymentMethod::pluck('name', 'id')->toArray();
     }
 }
