@@ -48,7 +48,6 @@
 | `permission_role`          | —                                                    | thay `admin_role_permission` | Pivot role ↔ permission        | —    | active     |
 | `password_reset_tokens`    | —                                                    | Laravel default              | Reset mật khẩu (token)         | —    | active     |
 | `customer_forget_pass_otp` | `Backend\Customer_forget_pass_otp`                   | —                            | OTP quên mật khẩu (3 bước)     | `id` | active     |
-| `user_password_auto`       | `Backend\UserPasswordAuto`                           | —                            | Mật khẩu tạm / auto            | `id` | low-use    |
 | `user_register_email`      | `Backend\User_register_email`, `User_register_email` | —                            | Log email đăng ký              | `id` | low-use    |
 | `sessions`                 | —                                                    | Laravel                      | Session driver DB              | `id` | active     |
 
