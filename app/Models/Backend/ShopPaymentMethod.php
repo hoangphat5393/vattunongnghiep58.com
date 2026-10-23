@@ -2,13 +2,6 @@
 
 namespace App\Models\Backend;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\OrderPaymentMethod;
 
-class ShopPaymentMethod extends Model
-{
-    public $timestamps = false;
-
-    protected $table = 'shop_payment_method';
-
-    protected $guarded = [];
-}
+class ShopPaymentMethod extends OrderPaymentMethod {}
