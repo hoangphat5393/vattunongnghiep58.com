@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Http\Middleware\Currency;
-use App\Models\Addtocard;
+use App\Models\Frontend\Order;
 use App\Models\Frontend\User;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -71,7 +71,7 @@ class CustomerAccountAuthenticatedTest extends TestCase
 
         $user = $this->createActiveUser(['email' => 'orders@example.com']);
 
-        Addtocard::create([
+        Order::create([
             'user_id' => $user->id,
             'name' => 'Test Customer',
             'cart_email' => 'orders@example.com',

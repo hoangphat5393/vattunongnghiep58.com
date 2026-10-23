@@ -109,15 +109,8 @@ Route::get('checkout', 'CartController@checkout')->name('cart.checkout');
 Route::post('checkout', 'CartController@checkoutConfirm')->name('cart.checkout.submit');
 Route::get('checkout-completed', 'CartController@completed')->name('checkout_completed');
 
-// Route::post('checkout', 'CheckoutController@submit')->name('checkout.submit');
-
-// Route::get('payment', 'PayPalTestController@index');
 // Legacy checkout-process (Stripe/quick-buy cũ) → redirect sang checkout mới (IMP-012)
 Route::post('checkout-process', 'CartController@legacyCheckoutProcessRedirect')->name('cart_checkout.process');
-// Route::post('checkout-charge', 'PayPalTestController@charge')->name('cart.checkout.charge');
-// Route::get('payment-success/{id?}', 'PayPalTestController@paymentStrip_success');
-// Route::get('paymentsuccess', 'PayPalTestController@payment_success');
-// Route::get('paymenterror', 'PayPalTestController@payment_error');
 
 Route::post('subscription', 'CustomerController@subscription')->name('subscription');
 

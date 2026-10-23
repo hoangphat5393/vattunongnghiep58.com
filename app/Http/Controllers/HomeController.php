@@ -10,7 +10,6 @@ use App\Models\Sponser;
 use App\Models\Theme;
 use Auth;
 use Carbon\Carbon;
-use DB;
 use Hash;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -95,37 +94,15 @@ class HomeController extends Controller
         $html_post = '';
         $url_img = 'images/article';
         if ($key_search != '') {
-            // $data_posts = Page::posts()->with('categories')->where('pages.title', 'LIKE', '%' . $key_search . '%')
-            // ->orderBy('pages.created_at')
-            // ->select('post.*')
-            // ->get();
-
-            $name_product = $rq->query_string;
-            $data_customers = DB::table('category_theme')
-                ->join('join_category_theme', 'category_theme.categoryID', '=', 'join_category_theme.id_category_theme')
-                ->join('theme', 'join_category_theme.id_theme', '=', 'theme.id')
-                ->where('theme.title', 'like', '%'.$name_product.'%')
-                ->where('theme.status', '=', 0)
-                // ->orderBy('theme.price_promotion',$order)
-                ->groupBy('theme.slug')
-                ->orderByRaw('theme.order_short DESC')
-                ->select('theme.*', 'category_theme.categoryName', 'category_theme.categorySlug', 'category_theme.categoryDescription', 'category_theme.categoryID', 'category_theme.categoryContent', 'category_theme.categoryContent_en', 'category_theme.categoryDescription_en')
+            $data_posts = Page::posts()->where('pages.name', 'LIKE', '%'.$key_search.'%')
+                ->orderByDesc('pages.created_at')
+                ->limit(10)
                 ->get();
 
-            foreach ($data_customers as $value_post) {
-                if (! empty($value_post->thubnail) && $value_post->thubnail != '') {
-                    // $thumbnail_thumb= Helpers::getThumbnail($url_img,$value_post->thubnail, 80, 74, "resize");
-                    // if(strpos($thumbnail_thumb, 'placehold') !== false):
-                    //     $thumbnail_thumb=$url_img.$thumbnail_thumb;
-                    // endif;
-                    $thubnail = $value_post->thubnail;
-                    $thumbnail_thumb = 'images/product/'.$thubnail;
-                } else {
-                    $thumbnail_thumb = 'https://dummyimage.com/80x74/000/fff';
-                }
-
-                $link_url = route('tintuc.details', [$value_post->categorySlug, $value_post->slug]);
-                $title_post = $value_post->title;
+            foreach ($data_posts as $value_post) {
+                $thumbnail_thumb = ! empty($value_post->thumbnail) ? 'images/article/'.$value_post->thumbnail : 'https://dummyimage.com/80x74/000/fff';
+                $link_url = route('tintuc.details', [$value_post->slug]);
+                $title_post = $value_post->name;
                 $html_post .= '  
                     <div class="box-list">
                     <div class="img-post-ajax">

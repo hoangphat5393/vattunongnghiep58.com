@@ -11,14 +11,11 @@ use App\Models\Frontend\Contact;
 use App\Models\Frontend\Order;
 use App\Models\Frontend\Product;
 use App\Models\Frontend\User;
-use App\Models\Join_Category_Theme;
-use App\Models\ThemeInfo;
 // use App\Libraries\Helpers;
 use App\Traits\LocalizeController;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Mail;
 use Redirect;
@@ -347,13 +344,6 @@ class CustomerController extends Controller
     {
         $db = Product::where('id', $id)->where('user_id', auth()->user()->id)->first();
         if ($db && $db->delete()) {
-            if (Schema::hasTable('theme_info')) {
-                ThemeInfo::where('theme_id', $id)->delete();
-            }
-            if (Schema::hasTable('join_category_theme')) {
-                Join_Category_Theme::where('theme_id', $id)->delete();
-            }
-
             return redirect()->back();
         }
     }

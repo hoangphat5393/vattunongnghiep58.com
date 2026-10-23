@@ -8,13 +8,11 @@ use App\Models\Discount_for_brand;
 use App\Models\Frontend\Category;
 use App\Models\Frontend\Product;
 use App\Models\Frontend\User;
-use App\Models\Join_Category_Theme;
-use App\Models\Theme;
-use App\Models\Variable_Theme;
+use App\Models\ProductCategory;
 use App\Models\Wishlist;
-use App\Traits\LocalizeController;
 // use App\Libraries\Helpers;
 
+use App\Traits\LocalizeController;
 use Auth;
 use Cart;
 use DB;
@@ -491,152 +489,6 @@ class AjaxController extends Controller
         exit();
     }
 
-    public function ajax_get_cate_on_size()
-    {
-
-        $slug = $_GET['cate_slug'];
-
-        $size = $_GET['size'];
-
-        $html = '';
-
-        $category_themes = DB::table('category_theme')
-
-            ->where('category_theme.categorySlug', '=', $slug)
-
-            ->select('category_theme.*')
-
-            ->first();
-
-        $id_category = $category_themes->categoryID;
-
-        $data_customers = DB::table('category_theme')
-
-            ->join('join_category_theme', 'category_theme.categoryID', '=', 'join_category_theme.id_category_theme')
-
-            ->join('theme', 'join_category_theme.id_theme', '=', 'theme.id')
-
-            ->join('theme_join_variable_theme', 'theme.id', '=', 'theme_join_variable_theme.id_theme')
-
-            ->join('variable_theme', 'theme_join_variable_theme.variable_themeID', '=', 'variable_theme.variable_themeID')
-
-            ->where('category_theme.categorySlug', '=', $slug)
-
-            ->whereIn('variable_theme.variable_themeID', $size)
-
-            ->where('theme.status', '=', 0)
-
-            ->groupBy('theme.slug')
-
-            ->orderByRaw('theme.updated DESC')
-
-            ->select('theme.*', 'category_theme.categoryName', 'category_theme.categorySlug', 'category_theme.categoryDescription', 'category_theme.categoryID', 'category_theme.categoryContent', 'category_theme.categoryContent_en', 'category_theme.categoryDescription_en', 'variable_theme.variable_theme_name', 'category_theme.categorySlug', 'category_theme.categoryParent')
-
-            ->paginate(config('app.item_list_category_product'));
-
-        if (count($data_customers) > 0) {
-
-            $html .= '<div class="row row-listpro">';
-
-            $k = 0;
-
-            $thumbnail_thumb = '';
-
-            $url_img = '';
-
-            $ahref = '';
-
-            $price_origin = '';
-
-            $price_promotion = '';
-
-            foreach ($data_customers as $data_customer) {
-
-                $k++;
-
-                $url_img = 'images/product';
-
-                if (! empty($data_customer->thubnail) && $data_customer->thubnail != '') {
-
-                    $thumbnail_thumb = getThumbnail($url_img, $data_customer->thubnail, 350, 485, 'resize');
-
-                    if (strpos($thumbnail_thumb, 'placehold') !== false) {
-
-                        $thumbnail_thumb = $url_img.$thumbnail_thumb;
-                    }
-                } else {
-
-                    $thumbnail_thumb = 'https://dummyimage.com/350x485/000/fff';
-                }
-
-                if (! empty($data_customer->price_origin) && $data_customer->price_origin > 0) {
-
-                    $price_origin = number_format($data_customer->price_origin).' đ ';
-                } else {
-
-                    $price_origin = '';
-                }
-
-                if (! empty($data_customer->price_promotion) && $data_customer->price_promotion > 0) {
-
-                    $price_promotion = number_format($data_customer->price_promotion).' đ ';
-                } else {
-
-                    $price_promotion = 'Liên hệ';
-                }
-
-                $html .= '<div id="theme_cate_'.$k.'" class="item_product_list col-lg-4 col-md-4 col-sm-6 col-xs-6 item-page-category-product" data-open="0" data-id="'.$data_customer->id.'" data-parent="'.$data_customer->categoryParent.'" data-cate="'.$id_category.'">
-
-                  <div class="product-item">
-
-                      <div class="item-thumb">
-
-                          <a class="zoom" href="'.route('tintuc.details', [$data_customer->categorySlug, $data_customer->slug]).'">
-
-                              <img src="'.$thumbnail_thumb.'" alt="'.$data_customer->thubnail_alt.'">
-
-                          </a>
-
-                      </div>
-
-                      <div class="pro_info">
-
-                          <h3 class="titleProduct">
-
-                              <a href="'.route('tintuc.details', [$data_customer->categorySlug, $data_customer->slug]).'">'.$data_customer->title.'</a>
-
-                          </h3>
-
-                          <div class="flex product_price">
-
-                              <span class="price_sale">'.$price_promotion.'</span>
-
-                              <span class="current_price">'.$price_origin.'</span>
-
-                          </div>
-
-                      </div>
-
-                  </div>
-
-              </div>';
-            }
-
-            $html .= '</div><!--row-listpro-->
-
-            <div class="page_navi clear">'.(string) $data_customers->links().'</div><!--page_navi-->';
-        } else {
-
-            $html .= '<div class="alert alert-danger">
-
-               <strong>Trống!</strong> Hiện tại chưa có bài viết nào cho mục này.
-
-           </div>';
-        }
-
-        return $html;
-    }
-
     public function update_new_item_status(Request $request)
     {
 
@@ -772,35 +624,15 @@ class AjaxController extends Controller
 
         $array_combo = explode(', ', $id_combo);
 
-        if (Cart::content()->count() > 0) {
-
+        if (! empty($id_combo) && Cart::content()->count() > 0) {
             foreach (Cart::content() as $cart_item) {
-
                 $id_product = $cart_item->id;
+                $cate = ProductCategory::where('product_id', $id_product)->get();
 
-                $cate = Join_Category_Theme::join('category_theme', 'category_theme.categoryID', '=', 'join_category_theme.id_category_theme')
-
-                    ->where('join_category_theme.id_theme', '=', $id_product)
-
-                    ->select('category_theme.categoryName', 'category_theme.categoryID')
-
-                    ->groupBy()
-
-                    ->get();
-
-                if ($cate) {
-
-                    $html_cate = '';
-
+                if ($cate->isNotEmpty()) {
                     foreach ($cate as $item_cate) {
-
-                        if (in_array($item_cate->categoryID, $array_combo)) {
-
-                            $result = -1;
-
-                            return $result;
-
-                            break;
+                        if (in_array($item_cate->category_id, $array_combo)) {
+                            return -1;
                         }
                     }
                 }
@@ -914,187 +746,6 @@ class AjaxController extends Controller
 
             return $result;
         }
-    }
-
-    public function loadVariable()
-    {
-
-        $result = '';
-
-        $child_parent = [];
-
-        $slug_variable_parrent = '';
-
-        $group_child = [];
-
-        $html_col_header = '';
-
-        $datas = json_decode(stripslashes($_POST['data']));
-
-        $id_key_parent = '';
-
-        $count_item = count($datas);
-
-        if ($datas && count($datas) > 0) {
-
-            $mh = 0;
-
-            for ($i = 0; $i < count($datas); $i++) {
-
-                $mh++;
-
-                $variable_child = '';
-
-                $key_child = '';
-
-                $array_child = [];
-
-                $variable_id = (int) $datas[$i];
-
-                if ($variable_id > 0) {
-
-                    $variables = Variable_Theme::where('variable_themeID', $variable_id)
-
-                        ->where('variable_theme_status', 0)
-
-                        ->first();
-
-                    if ($variables) {
-
-                        $slug_variable_parrent = $variables->variable_theme_slug;
-
-                        $variable_childs = Variable_Theme::where('variable_theme_parent', $variable_id)
-
-                            ->where('variable_theme_status', 0)
-
-                            ->get();
-
-                        if ($variable_childs) {
-
-                            $html_col_header .= '<div class="table-cell readonly">'.$variables->variable_theme_name.'</div>';
-
-                            $id_key_parent .= $variables->variable_themeID.',';
-
-                            foreach ($variable_childs as $variable_child) {
-
-                                $key_child = $variable_child->variable_theme_slug;
-
-                                // $array_key[$key_child]=array($variable_child->variable_theme_name);
-
-                                $array_child[$key_child] = $variable_child->variable_theme_name.'_'.$variable_child->variable_themeID;
-
-                                $group_child = $array_child;
-                            }
-                        }
-                    }
-                }
-
-                $child_parent[$slug_variable_parrent] = $group_child;
-            }
-
-            // print_r($child_parent);
-
-            $array_fitters = variations($child_parent);
-
-            if ($array_fitters && count($array_fitters) > 0) {
-
-                $id_key_parent = substr($id_key_parent, 0, -1);
-
-                // print_r($array_fitters);
-
-                $result .= '<input type="hidden" name="parent_variable_group" value="'.$id_key_parent.'"/>
-
-                    <div class="edit-main variation-table">
-
-                        <div class="table-header">
-
-                            <input type="hidden" name="number_parent_variable" id="number_parent_variable" value="'.$mh.'"/>
-
-                            '.$html_col_header.'
-
-                            <div class="table-cells">
-
-                                <div class="table-cell">Giá</div>
-
-                                <div class="table-cell table-cell-two">Image</div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="table-body">';
-
-                $explode_ex = [];
-
-                for ($m = 0; $m < count($array_fitters); $m++) {
-
-                    $result .= '<div class="table-row">';
-
-                    $k = 0;
-
-                    foreach ($array_fitters[$m] as $key => $value) {
-
-                        $k++;
-
-                        $explode_ex = explode('_', $value);
-
-                        $result .= '<div class="table-cell readonly">'.$explode_ex[0].'</div><input type="hidden" name="variable_'.$m.$k.'" value="'.$explode_ex[1].'">';
-                    }
-
-                    $result .= '<div class="table-cells">
-
-                                        <div class="table-cell">
-
-                                            <div class="anhduong-input__prefix">₫<span class="anhduong-input__prefix-split"></span><!----><!----></div>
-
-                                            <input type="text"  class="anhduong-input__input" name="price_aviable_'.$m.'">
-
-                                        </div>
-
-                                        <div class="table-cell table-cell-two">
-
-                                            <div class="group_variable_images clear">
-
-                                                <div class="inside clear">
-
-                                                    <div class="text_input_file_image_variable">
-
-                                                        <input class="myfile_gallery_store_select" type="text" value="" size="50" placeholder="Hình ảnh" name="text_upload_gallery_variable_'.$m.'">
-
-                                                    </div>
-
-                                                    <div class="mybutton_upload_img">
-
-                                                        <input class="upload_gallery_variable_select" type="file"  id="upload_gallery_variable_'.$m.'" name="upload_gallery_variable_'.$m.'">UP
-
-                                                    </div>
-
-                                                </div><!--inside-->
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>';
-                }
-
-                $result .= '<input type="hidden" name="count_item_list" value="'.$m.'"/>
-
-                        </div>
-
-                    </div>';
-            } else {
-
-                $result = '';
-            }
-        } else {
-
-            $result = '';
-        }
-
-        return $result;
     }
 
     public function searchSelect(Request $request)

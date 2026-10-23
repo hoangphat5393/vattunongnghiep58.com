@@ -146,8 +146,6 @@
 
 | Class alias                      | Extends                       | Bảng thực tế          |
 | -------------------------------- | ----------------------------- | --------------------- |
-| `App\Models\Addtocard`           | `Frontend\Order`              | `shop_orders`         |
-| `App\Models\Addtocard_Detail`    | `Frontend\OrderItem`          | `shop_order_items`    |
 | `App\Models\User_register_email` | `Backend\User_register_email` | `user_register_email` |
 
 ---

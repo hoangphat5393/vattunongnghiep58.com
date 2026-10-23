@@ -393,51 +393,6 @@ class CartController extends Controller
     //     session()->forget('cart_code');
     // }
 
-    // public function success()
-    // {
-    //     $cart_code = session()->get('cart_code');
-    //     if ($cart_code) {
-    //         $cart = \App\Models\Addtocard::where('cart_code', $cart_code)->first();
-
-    //         $content_success = \App\Models\Page::find(94);
-
-    //         $link = '<a href="' . route('cart.view', $cart->cart_code) . '" title="">' . $cart->cart_code . '</a>';
-    //         $content_success->content = str_replace('{$order_link}', $link, $content_success->content);
-    //         // dd($content_success);
-    //         $this->data['cart'] = $cart;
-    //         $this->data['seo'] = [
-    //             'seo_title' => $content_success->title,
-
-    //         ];
-    //         $this->data['content_success'] = $content_success;
-    //         return view($this->templatePath . '.cart.checkout-success', $this->data);
-    //     }
-    //     return redirect(url('/'));
-    // }
-
-    // public function view($id)
-    // {
-    //     if ($id) {
-    //         // $this->data['order_status'] = $this->orderStatus();
-    //         // $this->data['orderPayment'] = $this->orderPayment();
-    //         // dd($this->orderPayment);
-    //         $this->data['order'] = \App\Models\Addtocard::where('cart_code', $id)->first();
-    //         $this->data['order_detail'] = $order_detail = \App\Models\Addtocard_Detail::where('cart_id', $this->data['order']->cart_id)->get();
-
-    //         $total_price = isset($order_detail->total) ? $order_detail->total : 0;
-
-    //         // $data = Addtocard::where('user_id', Auth::user()->id)->where('cart_id', $id_cart)->first();
-    //         if ($this->data['order']) {
-    //             $this->data['seo'] = [
-    //                 'seo_title' => 'Đơn hàng - ' . $this->data['order']->cart_code,
-
-    //             ];
-    //             return view($this->templatePath . '.cart.view', $this->data);
-    //         } else
-    //             return view('errors.404');
-    //     }
-    // }
-
     public function orderStatus()
     {
         $data = [
