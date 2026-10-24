@@ -1,7 +1,7 @@
 <?php
 
+use App\Models\Backend\Currency;
 use App\Models\Backend\Setting;
-use App\Models\Backend\ShopCurrency;
 use App\Models\Frontend\Product;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
@@ -626,7 +626,7 @@ if (! function_exists('msg_move_page')) {
 if (! function_exists('render_price')) {
     function render_price(float $money, $currency = null, $rate = null, $space_between_symbol = false, $useSymbol = true)
     {
-        return ShopCurrency::render($money, $currency, $rate, $space_between_symbol, $useSymbol);
+        return Currency::render($money, $currency, $rate, $space_between_symbol, $useSymbol);
     }
 }
 

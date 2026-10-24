@@ -51,8 +51,8 @@ abstract class TestCase extends BaseTestCase
             }
         }
 
-        if (! Schema::hasTable('shop_currencies')) {
-            Schema::create('shop_currencies', function (Blueprint $table) {
+        if (! Schema::hasTable('currencies')) {
+            Schema::create('currencies', function (Blueprint $table) {
                 $table->id();
                 $table->string('code')->unique();
                 $table->string('name')->nullable();
@@ -65,9 +65,9 @@ abstract class TestCase extends BaseTestCase
             });
         }
 
-        $currencyExists = DB::table('shop_currencies')->where('code', 'VND')->exists();
+        $currencyExists = DB::table('currencies')->where('code', 'VND')->exists();
         if (! $currencyExists) {
-            DB::table('shop_currencies')->insert([
+            DB::table('currencies')->insert([
                 'code' => 'VND',
                 'name' => 'VND',
                 'symbol' => '₫',

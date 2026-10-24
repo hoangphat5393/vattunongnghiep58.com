@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Backend\Currency;
+use App\Models\Backend\ShopCurrency;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
@@ -57,5 +59,18 @@ class LegacyTablesDroppedTest extends TestCase
     {
         $this->assertNull(Route::getRoutes()->getByName('customer.vnpay'));
         $this->assertNull(Route::getRoutes()->getByName('customer.payment.point'));
+    }
+
+    public function test_currencies_table_and_model_standardized(): void
+    {
+        $this->assertTrue(Schema::hasTable('currencies'), 'Table [currencies] must exist.');
+        $this->assertFalse(Schema::hasTable('shop_currencies'), 'Legacy table [shop_currencies] must not exist.');
+
+        $currency = new Currency;
+        $this->assertSame('currencies', $currency->getTable());
+
+        $shopCurrency = new ShopCurrency;
+        $this->assertInstanceOf(Currency::class, $shopCurrency);
+        $this->assertSame('currencies', $shopCurrency->getTable());
     }
 }
