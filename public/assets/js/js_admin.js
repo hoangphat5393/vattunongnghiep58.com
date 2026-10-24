@@ -64,12 +64,8 @@
             }
         });
 
-        $('#selectall').on('click', function () {
-            if ($(this).is(':checked')) {
-                $(':checkbox').prop('checked', true);
-            } else {
-                $(':checkbox').prop('checked', false);
-            }
+        $(document).on('change click', '#selectall', function () {
+            window.select_all(this);
         });
 
         const place_select = $('.place_select');
@@ -133,17 +129,23 @@
             });
     };
 
-    window.select_all = function select_all() {
-        $('#table_index')
-            .find(':checkbox')
-            .each(function () {
-                if ($(this).is(':checked')) {
-                    $(':checkbox').prop('checked', true);
-                } else {
-                    $(':checkbox').prop('checked', false);
-                }
-            });
+    window.select_all = function select_all(el) {
+        const target = el || document.getElementById('selectall');
+        const isChecked = target ? $(target).is(':checked') : $('#selectall').is(':checked');
+        $('#table_index tbody input[name="seq_list[]"], input[name="seq_list[]"]')
+            .not('.quick_change_value')
+            .not('.form-check-input')
+            .not('.switch-status')
+            .not('.switch-hot')
+            .prop('checked', isChecked);
     };
+
+    $(document).on('change', 'input[name="seq_list[]"]', function () {
+        const $list = $('input[name="seq_list[]"]');
+        const total = $list.length;
+        const checked = $list.filter(':checked').length;
+        $('#selectall').prop('checked', total > 0 && total === checked);
+    });
 
     window.delete_post = function delete_post(url) {
         const post_list = $('input[name="post_list[]"]:checked')
@@ -188,6 +190,24 @@
             _token: getMetaContentByName('csrf-token'),
             type: type,
             seq_list: seq_list,
+        })
+            .then(function () {
+                location.reload();
+            })
+            .catch(function (e) {
+                console.error(e);
+            });
+    };
+
+    window.delete_single_id = function delete_single_id(type, id) {
+        if (!confirm('Bạn có chắc chắn muốn xóa mục này?')) {
+            return false;
+        }
+
+        adminPost(window.AdminRoutes?.bulkDelete || admin_url + '/bulk-delete', {
+            _token: getMetaContentByName('csrf-token'),
+            type: type,
+            seq_list: [id],
         })
             .then(function () {
                 location.reload();
@@ -443,7 +463,7 @@
             const type = $(this).attr('type');
             const id = $(this).attr('data-id');
             const model = $(this).attr('data-model');
-            const column = $(this).prop('id');
+            const column = $(this).attr('data-column') || $(this).prop('id');
             const reload = $(this)[0].hasAttribute('reload-on-change');
             let value;
 

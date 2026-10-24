@@ -420,7 +420,7 @@ class AjaxController extends Controller
         ];
 
         // Whitelist allowed columns for safety
-        $allowedColumns = ['status', 'sort', 'is_home', 'is_hot', 'cart_status', 'cart_payment', 'payment_status'];
+        $allowedColumns = ['status', 'sort', 'is_home', 'is_hot', 'hot', 'cart_status', 'cart_payment', 'payment_status'];
 
         if (in_array($modelClass, $allowedModels) && in_array($column, $allowedColumns)) {
             $targetCol = match ($column) {

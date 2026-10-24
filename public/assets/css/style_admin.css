@@ -714,3 +714,65 @@ i.handle {
 #showBtn {
     margin-right: 8px;
 }
+
+/* Custom Modern Switch Styles */
+.form-switch .form-check-input.switch-hot {
+    background-color: #e2e8f0;
+    border-color: #cbd5e1;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%2394a3b8'/%3e%3c/svg%3e");
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, background-position 0.15s ease-in-out;
+}
+
+.form-switch .form-check-input.switch-hot:checked {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-switch .form-check-input.switch-status {
+    background-color: #e2e8f0;
+    border-color: #cbd5e1;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%2394a3b8'/%3e%3c/svg%3e");
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, background-position 0.15s ease-in-out;
+}
+
+.form-switch .form-check-input.switch-status:checked {
+    background-color: #198754;
+    border-color: #198754;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.cat-thumb-box {
+    display: inline-block;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--bs-border-color, #dee2e6);
+    background-color: var(--bs-body-bg, #fff);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cat-thumb-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.cat-thumb-img {
+    width: 90px;
+    height: 60px;
+    object-fit: cover;
+    display: block;
+}
+
+.cat-thumb-placeholder {
+    width: 90px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bs-secondary-bg, #f8f9fa);
+    color: var(--bs-secondary-color, #6c757d);
+}

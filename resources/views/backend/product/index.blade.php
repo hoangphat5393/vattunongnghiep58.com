@@ -77,50 +77,59 @@
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-bordered table-hover list-data v-center" id="table_index">
+                                <table class="table table-bordered table-hover list-data align-middle" id="table_index">
                                     <thead>
                                         <tr>
-                                            <th class="text-center" style="width:50px">
+                                            <th class="text-center" style="width:45px">
                                                 <div class="icheck-info d-inline">
                                                     <input type="checkbox" id="selectall" onclick="select_all()">
-                                                    <label for="selectall">
-                                                    </label>
+                                                    <label for="selectall"></label>
                                                 </div>
                                             </th>
-                                            <th scope="col" class="text-center" style="width:100px">@lang('admin.priority')</th>
-                                            <th scope="col" class="text-center">@lang('admin.name')</th>
-                                            <th scope="col" class="text-center">@lang('admin.thumbnail')</th>
-                                            <th scope="col" class="text-center" style="min-width: 140px;">Giá</th>
-                                            <th scope="col" class="text-center">@lang('admin.category')</th>
-                                            <th scope="col" class="text-center">@lang('admin.created date')</th>
+                                            <th scope="col" class="text-center" style="width:80px">@lang('admin.sort')</th>
+                                            <th scope="col">Tên sản phẩm</th>
+                                            <th scope="col" class="text-center" style="width:120px">@lang('admin.thumbnail')</th>
+                                            <th scope="col" style="min-width: 150px;">Giá</th>
+                                            <th scope="col" class="text-center" style="width:130px">@lang('admin.category')</th>
+                                            <th scope="col" class="text-center" style="width:100px"><i class="fa-solid fa-fire text-danger me-1"></i> Bán chạy</th>
+                                            <th scope="col" class="text-center" style="width:105px"><i class="fa-solid fa-eye text-primary me-1"></i> Trạng thái</th>
+                                            <th scope="col" class="text-center" style="width:130px">@lang('admin.created date')</th>
+                                            <th scope="col" class="text-center" style="width:110px">Hành động</th>
                                         </tr>
                                     </thead>
 
                                     <tbody>
-                                        @foreach ($products as $item)
+                                        @forelse ($products as $item)
                                             <tr>
                                                 <td class="text-center">
                                                     <div class="icheck-info d-inline">
-                                                        <input type="checkbox" id="{{ $item->id }}" name="seq_list[]" value="{{ $item->id }}">
-                                                        <label for="{{ $item->id }}"></label>
+                                                        <input type="checkbox" id="product-{{ $item->id }}" name="seq_list[]" value="{{ $item->id }}">
+                                                        <label for="product-{{ $item->id }}"></label>
                                                     </div>
                                                 </td>
                                                 <td class="text-center">
-                                                    <input type="text" id="sort" class="text-center form-control quick_change_value" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" value="{{ $item->sort }}" reload-on-change>
+                                                    <input type="number" id="sort-{{ $item->id }}" class="text-center form-control form-control-sm quick_change_value mx-auto" style="max-width: 65px;" data-id="{{ $item->id }}" data-column="sort" data-model="{{ get_class($item) }}" value="{{ $item->sort }}" reload-on-change>
                                                 </td>
                                                 <td>
-                                                    <a class="row-title me-3" href="{{ route('admin.product.edit', [$item->id]) }}">
-                                                        <b>{{ $item->name }}</b>
+                                                    <a class="text-decoration-none fw-bold text-dark fs-6" href="{{ route('admin.product.edit', [$item->id]) }}">
+                                                        {{ $item->name }}
                                                     </a>
-                                                    <br>
-                                                    <a class="link to-link fw-bold" href="{{ route('product.detail', [$item->slug, $item->id]) }}" target="_blank">
-                                                        <span>URL: </span>{{ route('product.detail', [$item->slug, $item->id]) }}
-                                                    </a>
+                                                    <div class="mt-1">
+                                                        <a class="text-decoration-none text-muted small" href="{{ route('product.detail', [$item->slug, $item->id]) }}" target="_blank" title="Xem trên website">
+                                                            <i class="fa-solid fa-arrow-up-right-from-square me-1 text-primary"></i>/product/{{ $item->slug }}-{{ $item->id }}.html
+                                                        </a>
+                                                    </div>
                                                 </td>
                                                 <td class="text-center">
-                                                    @if ($item->image != '')
-                                                        <img src="{{ get_image($item->image) }}" style="height: 70px;">
-                                                    @endif
+                                                    <div class="cat-thumb-box">
+                                                        @if (!empty($item->image))
+                                                            <img src="{{ get_image($item->image) }}" class="cat-thumb-img" alt="{{ $item->name }}" loading="lazy">
+                                                        @else
+                                                            <div class="cat-thumb-placeholder">
+                                                                <i class="fa-regular fa-image fs-5"></i>
+                                                            </div>
+                                                        @endif
+                                                    </div>
                                                 </td>
                                                 <td class="text-start">
                                                     @php
@@ -163,18 +172,60 @@
                                                     @php
                                                         $categories = $item->categories;
                                                     @endphp
-                                                    @foreach ($categories as $k => $category)
-                                                        <a class="link" target="_blank" href="{{ route('admin.product-category.edit', $category->id) }}">{{ $category->name }}</a> </br>
-                                                    @endforeach
+                                                    @if ($categories && $categories->count() > 0)
+                                                        @foreach ($categories as $category)
+                                                            <a class="badge bg-light text-primary border text-decoration-none d-inline-block mb-1" target="_blank" href="{{ route('admin.product-category.edit', $category->id) }}">
+                                                                <i class="fa-regular fa-folder me-1"></i>{{ $category->name }}
+                                                            </a><br>
+                                                        @endforeach
+                                                    @else
+                                                        <span class="text-muted small">-</span>
+                                                    @endif
                                                 </td>
-
                                                 <td class="text-center">
-                                                    <input type="checkbox" id="hot" class="quick_change_value" @checked($item->hot == 1) value="1" value-off="0" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" data-toggle="toggle" data-on="Bán chạy" data-off="Không" data-onstyle="danger" data-offstyle="light">
-                                                    <p class="my-2">{{ $item->updated_at }}</p>
-                                                    <input type="checkbox" id="status" class="quick_change_value" @checked($item->status == 1) value="1" value-off="0" data-id="{{ $item->id }}" data-model="{{ get_class($item) }}" data-toggle="toggle" data-on="Công khai" data-off="Bản nháp" data-onstyle="success" data-offstyle="light">
+                                                    <div class="form-check form-switch d-inline-flex align-items-center justify-content-center m-0">
+                                                        <input class="form-check-input quick_change_value switch-hot" type="checkbox" role="switch"
+                                                            id="hot-{{ $item->id }}" data-column="hot" data-id="{{ $item->id }}"
+                                                            data-model="{{ get_class($item) }}" value="1" value-off="0"
+                                                            @checked($item->hot == 1) title="{{ $item->hot ? 'Đang bật Bán chạy (Click để tắt)' : 'Đang tắt Bán chạy (Click để bật)' }}"
+                                                            style="cursor: pointer; width: 2.3rem; height: 1.25rem;">
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="form-check form-switch d-inline-flex align-items-center justify-content-center m-0">
+                                                        <input class="form-check-input quick_change_value switch-status" type="checkbox" role="switch"
+                                                            id="status-{{ $item->id }}" data-column="status" data-id="{{ $item->id }}"
+                                                            data-model="{{ get_class($item) }}" value="1" value-off="0"
+                                                            @checked($item->status == 1) title="{{ $item->status ? 'Đang công khai (Click để chuyển bản nháp)' : 'Đang là bản nháp (Click để công khai)' }}"
+                                                            style="cursor: pointer; width: 2.3rem; height: 1.25rem;">
+                                                    </div>
+                                                </td>
+                                                <td class="text-center text-muted" style="font-size: 0.84rem;">
+                                                    <div><i class="fa-regular fa-calendar-check me-1 text-secondary"></i>{{ $item->created_at ? $item->created_at->format('d/m/Y') : ($item->updated_at ? $item->updated_at->format('d/m/Y') : '-') }}</div>
+                                                    <small class="text-secondary">{{ $item->created_at ? $item->created_at->format('H:i:s') : ($item->updated_at ? $item->updated_at->format('H:i:s') : '') }}</small>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="btn-group btn-group-sm" role="group">
+                                                        <a href="{{ route('product.detail', [$item->slug, $item->id]) }}" target="_blank" class="btn btn-outline-secondary" title="Xem trên website">
+                                                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                                        </a>
+                                                        <a href="{{ route('admin.product.edit', [$item->id]) }}" class="btn btn-outline-primary" title="@lang('admin.Edit')">
+                                                            <i class="fa-solid fa-pen-to-square"></i>
+                                                        </a>
+                                                        <button type="button" class="btn btn-outline-danger" onclick="delete_single_id('product', {{ $item->id }})" title="@lang('admin.Delete')">
+                                                            <i class="fa-solid fa-trash-can"></i>
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
-                                        @endforeach
+                                        @empty
+                                            <tr>
+                                                <td colspan="10" class="text-center py-4 text-muted">
+                                                    <i class="fa-solid fa-box-open fs-2 d-block mb-2"></i>
+                                                    Không có sản phẩm nào.
+                                                </td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>

@@ -71,20 +71,22 @@
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-bordered table-hover list-data v-center" id="table_index">
+                                <table class="table table-bordered table-hover list-data align-middle" id="table_index">
                                     <thead>
                                         <tr>
-                                            <th scope="col" class="text-center" style="width:50px">
+                                            <th scope="col" class="text-center" style="width:45px">
                                                 <div class="icheck-info d-inline">
                                                     <input type="checkbox" id="selectall" onclick="select_all()">
-                                                    <label for="selectall">
-                                                    </label>
+                                                    <label for="selectall"></label>
                                                 </div>
                                             </th>
-                                            <th scope="col" class="text-center" style="width:100px">@lang('admin.sort')</th>
-                                            <th scope="col" class="text-center">@lang('admin.name')</th>
-                                            <th scope="col" class="text-center">@lang('admin.thumbnail')</th>
-                                            <th scope="col" class="text-center">@lang('admin.created date')</th>
+                                            <th scope="col" class="text-center" style="width:80px">@lang('admin.sort')</th>
+                                            <th scope="col">Tên danh mục</th>
+                                            <th scope="col" class="text-center" style="width:120px">@lang('admin.thumbnail')</th>
+                                            <th scope="col" class="text-center" style="width:100px"><i class="fa-solid fa-fire text-danger me-1"></i> Bán chạy</th>
+                                            <th scope="col" class="text-center" style="width:105px"><i class="fa-solid fa-eye text-primary me-1"></i> Trạng thái</th>
+                                            <th scope="col" class="text-center" style="width:130px">@lang('admin.created date')</th>
+                                            <th scope="col" class="text-center" style="width:100px">Hành động</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -94,6 +96,13 @@
                                                 'categories' => $categories,
                                                 'childrenMap' => $childrenMap ?? collect(),
                                             ])
+                                        @else
+                                            <tr>
+                                                <td colspan="8" class="text-center py-4 text-muted">
+                                                    <i class="fa-regular fa-folder-open fs-2 d-block mb-2"></i>
+                                                    Không có danh mục nào.
+                                                </td>
+                                            </tr>
                                         @endif
                                     </tbody>
                                 </table>
