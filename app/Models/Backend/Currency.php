@@ -226,7 +226,7 @@ class Currency extends Model
         parent::boot();
 
         static::deleting(function ($model) {
-            if (defined('SC_GUARD_CURRENCY') && in_array($model->id, SC_GUARD_CURRENCY)) {
+            if (in_array($model->code, ['VND', 'USD'])) {
                 return false;
             }
         });
