@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Ai\Agents\AgriculturalAdvisorAgent;
 use Tests\TestCase;
 
 class AiChatTest extends TestCase
@@ -60,9 +61,7 @@ class AiChatTest extends TestCase
      */
     public function test_ai_chat_sends_prompt_and_receives_reply(): void
     {
-        if (empty(config('ai.providers.gemini.key'))) {
-            $this->markTestSkipped('GEMINI_API_KEY is not configured in .env');
-        }
+        AgriculturalAdvisorAgent::fake(['Bà con có thể sử dụng hoạt chất Tricyclazole hoặc Isoprothiolane để phòng trị bệnh đạo ôn lá lúa.']);
 
         $response = $this->postJson('/ai-chat', [
             'message' => 'Chào chuyên gia, cho tôi hỏi đạo ôn lá lúa thì xịt thuốc gì?',

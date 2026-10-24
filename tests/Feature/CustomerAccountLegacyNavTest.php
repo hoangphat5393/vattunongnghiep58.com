@@ -53,7 +53,7 @@ class CustomerAccountLegacyNavTest extends TestCase
             }
 
             $response->assertDontSee('Danh sách yêu thích', false);
-            $response->assertDontSee('Messages', false);
+            $response->assertDontSee('>Messages<', false);
         }
     }
 

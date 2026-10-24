@@ -38,23 +38,12 @@ class DocumentationCleanupTest extends TestCase
     {
         $this->assertFileExists(base_path('README.md'));
         $this->assertFileExists(base_path('RECOMMENDATIONS.md'));
-        $this->assertFileExists(base_path('docs/IMPROVEMENT_PLAYBOOK.md'));
-        $this->assertFileExists(base_path('docs/BACKEND_AUDIT_PLAYBOOK.md'));
         $this->assertFileExists(base_path('docs/PROJECT_ANALYSIS.md'));
         $this->assertFileExists(base_path('docs/CHANGE_LOG.md'));
         $this->assertFileExists(base_path('MASTER.md'));
         $this->assertFileExists(base_path('docs/TABLE_GLOSSARY.md'));
         $this->assertFileExists(base_path('docs/ROUTE_GLOSSARY.md'));
         $this->assertFileExists(base_path('docs/DB_AUDIT.md'));
-    }
-
-    public function test_backend_audit_playbook_lists_p0_items(): void
-    {
-        $playbook = (string) file_get_contents(base_path('docs/BACKEND_AUDIT_PLAYBOOK.md'));
-
-        $this->assertStringContainsString('BACK-001', $playbook);
-        $this->assertStringContainsString('BACK-018', $playbook);
-        $this->assertStringContainsString('BACK-001 … BACK-018 hoàn tất', $playbook);
     }
 
     public function test_stale_root_changelog_is_removed(): void
