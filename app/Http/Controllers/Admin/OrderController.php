@@ -34,27 +34,44 @@ class OrderController extends Controller
     {
         $appends = [
             'search_name' => request('search_name'),
+            'status' => request('status'),
+            'payment_status' => request('payment_status'),
         ];
 
-        if (Auth::guard('admin')->user()->admin_level == 99999) {
-            $db = Order::select('*');
+        $db = Order::with('items.product');
 
-            if (request('search_name') != '') {
-                $db->where('name', 'like', '%'.request('search_name').'%');
-            }
-
-            $count_item = $db->count();
-            $data_order = $db->orderByDesc('id')->paginate(40)->appends($appends);
-        } else {
-            $data_order = Order::where('user_id', '=', Auth::guard('admin')->user()->id)
-                ->orderByDesc('id')
-                ->paginate(40)
-                ->appends($appends);
-            $count_item = Order::where('user_id', '=', Auth::guard('admin')->user()->id)
-                ->count();
+        if (Auth::guard('admin')->user()->admin_level != 99999) {
+            $db->where('user_id', '=', Auth::guard('admin')->user()->id);
         }
 
-        return view('backend.orders.index')->with(['data' => $data_order, 'total_item' => $count_item]);
+        if (request('search_name') != '') {
+            $term = trim(request('search_name'));
+            $cleanCode = ltrim($term, '#');
+            $db->where(function ($q) use ($term, $cleanCode) {
+                $q->where('name', 'like', '%'.$term.'%')
+                    ->orWhere('code', 'like', '%'.$cleanCode.'%')
+                    ->orWhere('phone', 'like', '%'.$term.'%')
+                    ->orWhere('email', 'like', '%'.$term.'%');
+            });
+        }
+
+        if (request()->filled('status') && request('status') !== 'all') {
+            $db->where('status', (int) request('status'));
+        }
+
+        if (request()->filled('payment_status') && request('payment_status') !== 'all') {
+            $db->where('payment_status', (int) request('payment_status'));
+        }
+
+        $count_item = $db->count();
+        $data_order = $db->orderByDesc('id')->paginate(20)->appends($appends);
+
+        return view('backend.orders.index')->with([
+            'data' => $data_order,
+            'total_item' => $count_item,
+            'statusOrder' => $this->statusOrder,
+            'orderPayment' => $this->orderPayment,
+        ]);
     }
 
     /**

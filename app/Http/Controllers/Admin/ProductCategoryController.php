@@ -69,7 +69,7 @@ class ProductCategoryController extends Controller
      */
     public function store(StoreProductCategory $request)
     {
-        $data = request()->except(['created_at', 'submit']);
+        $data = $request->except(['_token', '_method', 'created_at', 'submit', 'id']);
 
         if ($request->slug) {
             $data['slug'] = addslashes($request->slug);
@@ -132,7 +132,7 @@ class ProductCategoryController extends Controller
      */
     public function update(UpdateProductCategory $request, ProductCategory $productCategory)
     {
-        $data = request()->except(['created_at', 'submit', 'admin_id']);
+        $data = $request->except(['_token', '_method', 'created_at', 'submit', 'admin_id', 'id']);
 
         if ($request->slug) {
             $data['slug'] = addslashes($request->slug);

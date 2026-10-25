@@ -745,6 +745,10 @@ i.handle {
 }
 
 .cat-thumb-box {
+    width: 90px;
+    height: 60px;
+    max-width: 90px;
+    max-height: 60px;
     display: inline-block;
     position: relative;
     border-radius: 8px;
@@ -761,8 +765,10 @@ i.handle {
 }
 
 .cat-thumb-img {
-    width: 90px;
-    height: 60px;
+    width: 90px !important;
+    height: 60px !important;
+    max-width: 90px !important;
+    max-height: 60px !important;
     object-fit: cover;
     display: block;
 }

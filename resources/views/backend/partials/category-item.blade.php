@@ -17,13 +17,18 @@
                 <span>{{ $category->name }}</span>
             </label>
             @php
-                $children = isset($childrenMap) ? $childrenMap->get($category->id, collect()) : collect();
+                $visited = $visited ?? [];
+                $children = (isset($childrenMap) && $category->id > 0 && !in_array($category->id, $visited, true))
+                    ? $childrenMap->get($category->id, collect())
+                    : collect();
+                $nextVisited = array_merge($visited, [$category->id]);
             @endphp
             @if ($children->isNotEmpty())
                 @include('backend.partials.category-item', [
                     'categories' => $children,
                     'level' => $level + 1,
                     'childrenMap' => $childrenMap ?? collect(),
+                    'visited' => $nextVisited,
                 ])
             @endif
         </li>

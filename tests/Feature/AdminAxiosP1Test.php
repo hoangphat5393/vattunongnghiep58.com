@@ -113,6 +113,7 @@ class AdminAxiosP1Test extends TestCase
         if (($data['error'] ?? 1) === 1 && (
             str_contains((string) ($data['msg'] ?? ''), 'Unknown database')
             || str_contains((string) ($data['msg'] ?? ''), 'actively refused')
+            || str_contains((string) ($data['msg'] ?? ''), 'server has gone away')
         )) {
             $child->delete();
             $parent->delete();

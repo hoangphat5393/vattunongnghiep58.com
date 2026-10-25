@@ -23,15 +23,34 @@ class Contact extends Model
 
     public function filterName(Builder $query, string $value)
     {
+        return $query->where(function ($q) use ($value) {
+            $q->where('name', 'LIKE', '%'.$value.'%')
+                ->orWhere('email', 'LIKE', '%'.$value.'%')
+                ->orWhere('phone', 'LIKE', '%'.$value.'%');
+        });
+    }
 
-        return $query->where('name', 'LIKE', '%'.$value.'%');
-
+    public function filterKeyword(Builder $query, string $value)
+    {
+        return $query->where(function ($q) use ($value) {
+            $q->where('name', 'LIKE', '%'.$value.'%')
+                ->orWhere('email', 'LIKE', '%'.$value.'%')
+                ->orWhere('phone', 'LIKE', '%'.$value.'%');
+        });
     }
 
     public function filterEmail(Builder $query, string $value)
     {
-
         return $query->where('email', 'LIKE', '%'.$value.'%');
+    }
 
+    public function filterPhone(Builder $query, string $value)
+    {
+        return $query->where('phone', 'LIKE', '%'.$value.'%');
+    }
+
+    public function filterType(Builder $query, string $value)
+    {
+        return $query->where('type', $value);
     }
 }

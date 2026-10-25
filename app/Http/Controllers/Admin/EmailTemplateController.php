@@ -15,7 +15,7 @@ class EmailTemplateController extends Controller
     {
         $data = EmailTemplate::filter($request)->orderByDesc('sort')->paginate(20)->appends($request->all());
 
-        $total_item = $data->count();
+        $total_item = $data->total();
 
         return view('backend.email-template.index', compact('data', 'total_item'));
     }

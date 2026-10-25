@@ -30,11 +30,11 @@
             </td>
 
             <td class="text-center">
-                <div class="cat-thumb-box">
+                <div class="cat-thumb-box" style="width: 90px; height: 60px; max-width: 90px; max-height: 60px; overflow: hidden; display: inline-block;">
                     @if (!empty($item->image))
-                        <img src="{{ get_image($item->image) }}" class="cat-thumb-img" alt="{{ $item->name }}" loading="lazy">
+                        <img src="{{ get_image($item->image) }}" class="cat-thumb-img" alt="{{ $item->name }}" loading="lazy" style="width: 90px; height: 60px; object-fit: cover; display: block;">
                     @else
-                        <div class="cat-thumb-placeholder">
+                        <div class="cat-thumb-placeholder" style="width: 90px; height: 60px; display: flex; align-items: center; justify-content: center;">
                             <i class="fa-regular fa-image fs-5"></i>
                         </div>
                     @endif
@@ -62,8 +62,11 @@
             </td>
 
             <td class="text-center text-muted" style="font-size: 0.84rem;">
-                <div><i class="fa-regular fa-calendar-check me-1 text-secondary"></i>{{ $item->created_at ? $item->created_at->format('d/m/Y') : '-' }}</div>
-                <small class="text-secondary">{{ $item->created_at ? $item->created_at->format('H:i:s') : '' }}</small>
+                @php
+                    $rawDate = $item->created_at ?: $item->updated_at;
+                @endphp
+                <div><i class="fa-regular fa-calendar-check me-1 text-secondary"></i>{{ $rawDate ? \Carbon\Carbon::parse($rawDate)->format('d/m/Y') : '-' }}</div>
+                <small class="text-secondary">{{ $rawDate ? \Carbon\Carbon::parse($rawDate)->format('H:i:s') : '' }}</small>
             </td>
 
             <td class="text-center">
@@ -79,13 +82,18 @@
         </tr>
 
         @php
-            $children = isset($childrenMap) ? $childrenMap->get($item->id, collect()) : collect();
+            $visited = $visited ?? [];
+            $children = (isset($childrenMap) && $item->id > 0 && !in_array($item->id, $visited, true))
+                ? $childrenMap->get($item->id, collect())
+                : collect();
+            $nextVisited = array_merge($visited, [$item->id]);
         @endphp
         @if ($children->isNotEmpty())
             @include('backend.product-category.includes.category_item', [
                 'categories' => $children,
                 'level' => $level + 1,
                 'childrenMap' => $childrenMap ?? collect(),
+                'visited' => $nextVisited,
             ])
         @endif
     @endforeach

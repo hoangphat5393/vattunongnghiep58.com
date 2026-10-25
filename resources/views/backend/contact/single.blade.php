@@ -55,7 +55,9 @@
                     @method('PUT')
                 @endif
                 @csrf
-                <input type="hidden" name="id" value="{{ $id ?? 0 }}">
+                @if ($id)
+                    <input type="hidden" name="id" value="{{ $id }}">
+                @endif
                 <div class="row">
                     <div class="col-md-9">
                         <div class="mb-4 card card-primary card-outline">

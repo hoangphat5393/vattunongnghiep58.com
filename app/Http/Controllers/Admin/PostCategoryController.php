@@ -60,7 +60,7 @@ class PostCategoryController extends Controller
 
     public function post(Request $request)
     {
-        $data = request()->except(['_token', 'tab_lang', 'gallery', 'category_id', 'created_at', 'submit', 'custom_field']);
+        $data = request()->except(['_token', 'tab_lang', 'gallery', 'category_id', 'created_at', 'submit', 'custom_field', 'id']);
 
         // id post
         $sid = $request->id ?? 0;
