@@ -24,69 +24,84 @@ return [
 
     'failed' => 'Thất bại',
 
-    'delete confirm' => 'Are you sure to delete this item ?',
+    'delete confirm' => 'Bạn có chắc chắn muốn xóa mục này?',
 
-    'delete success' => 'delete success !',
+    'delete success' => 'Xóa thành công!',
 
-    'delete failed' => 'delete failed !',
+    'delete failed' => 'Xóa thất bại!',
 
-    'update success' => 'update success !',
+    'update success' => 'Cập nhật thành công!',
 
-    'save success' => 'save success !',
+    'save success' => 'Lưu thành công!',
 
-    'refresh success' => 'refresh success !',
+    'refresh success' => 'Làm mới thành công!',
 
-    'login successful' => 'login successful',
+    'login successful' => 'Đăng nhập thành công!',
 
-    'select icon' => 'Select image',
+    'select icon' => 'Chọn biểu tượng',
 
-    'select file' => 'Select file',
+    'select file' => 'Chọn tập tin',
 
-    'select image' => 'Select image',
+    'select image' => 'Chọn hình ảnh',
 
-    'more' => 'More',
+    'more' => 'Xem thêm',
 
-    'more_info' => 'See full information',
+    'more_info' => 'Xem chi tiết',
 
-    'deny' => 'Access denied',
+    'deny' => 'Truy cập bị từ chối',
 
-    'deny_msg' => 'You need permission to access the system!',
+    'deny_msg' => 'Bạn cần được cấp quyền để truy cập hệ thống!',
 
-    'deny_content' => 'Permission denied!',
+    'deny_content' => 'Quyền truy cập bị từ chối!',
 
-    'data_not_found' => 'Data not found!',
+    'data_not_found' => 'Không tìm thấy dữ liệu!',
 
-    'data_not_found_detail' => 'Data not found :msg',
+    'data_not_found_detail' => 'Không tìm thấy dữ liệu :msg',
 
-    'data_not_found_msg' => 'The data you are accessing does not exist.',
+    'data_not_found_msg' => 'Dữ liệu bạn đang truy cập không tồn tại.',
 
-    'administrator' => 'Administrator',
+    'administrator' => 'Quản trị viên',
 
-    'roles' => 'roles',
+    'roles' => 'Vai trò',
+    'role' => 'Vai trò',
+    'role_group' => 'Nhóm vai trò',
+    'role group' => 'Nhóm vai trò',
+    'role_name' => 'Tên vai trò',
 
-    'permission' => 'permission',
+    'permission' => 'Phân quyền',
+    'permissions' => 'Phân quyền',
+    'permission_group' => 'Nhóm quyền',
+    'permission group' => 'Nhóm quyền',
+    'permission_name' => 'Tên quyền',
 
-    'permissions' => 'permissions',
-
-    'permission group' => 'permission group',
+    'http' => [
+        'path' => 'Đường dẫn HTTP',
+    ],
+    'http.path' => 'Đường dẫn HTTP',
 
     'route' => 'Route',
 
-    'confirm' => 'confirm',
+    'confirm' => 'Xác nhận',
 
-    'cancel' => 'cancel',
+    'cancel' => 'Hủy',
 
-    'slug' => 'slug',
+    'slug' => 'Đường dẫn (Slug)',
 
-    'role' => 'role',
+    'created_at' => 'Ngày tạo',
 
-    'role group' => 'role group',
+    'updated at' => 'Ngày cập nhật',
+    'updated_at' => 'Ngày cập nhật',
 
-    'created_at' => 'created At',
+    'bank_transfer' => 'Chuyển khoản ngân hàng',
 
-    'updated at' => 'updated at',
+    'post' => 'Bài viết',
+    'post_list' => 'Danh sách bài viết',
+    'album_library' => 'Thư viện ảnh',
+    'service' => 'Dịch vụ',
+    'service_list' => 'Tất cả dịch vụ',
+    'email_template' => 'Mẫu Email',
 
-    'alert' => 'alert',
+    'alert' => 'Thông báo',
 
     'parent_id' => 'Parent',
 
@@ -659,4 +674,10 @@ return [
     'btn_yes' => 'Đồng ý',
     'btn_no' => 'Hủy',
     'usage_guide' => 'Cách dùng:',
+    'Link name' => 'Tên liên kết',
+    'Sub title' => 'Tiêu đề phụ',
+    'Add image' => 'Thêm hình ảnh',
+    'Close' => 'Đóng',
+    'Save' => 'Lưu',
+    'Update' => 'Cập nhật',
 ];

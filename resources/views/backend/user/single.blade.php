@@ -95,12 +95,12 @@
 
                                         <div class="row g-3 mb-3">
                                             <div class="col-md-6">
-                                                <label for="name" class="form-label">@lang('admin.name')</label>
-                                                <input type="text" class="form-control" id="name" name="name" placeholder="@lang('admin.name')" value="{{ old('name', $name ?? '') }}">
+                                                <label for="name" class="form-label">Họ tên</label>
+                                                <input type="text" class="form-control" id="name" name="name" placeholder="Họ tên" value="{{ old('name', $name ?? ($fullname ?? '')) }}">
                                             </div>
                                             <div class="col-md-6">
-                                                <label for="name" class="form-label">@lang('admin.username')</label>
-                                                <input type="text" class="form-control" id="name" name="name" placeholder="@lang('admin.username')" value="{{ $username ?? '' }}" readonly>
+                                                <label for="username" class="form-label">Tên đăng nhập</label>
+                                                <input type="text" class="form-control" id="username" name="username" placeholder="Tên đăng nhập" value="{{ old('username', $username ?? '') }}" {{ $id ? 'readonly' : '' }}>
                                             </div>
                                         </div>
 
@@ -177,27 +177,42 @@
 @push('scripts')
     <script type="text/javascript">
         $(function() {
-            //xử lý validate
+            var isCreate = {{ $id == 0 ? 'true' : 'false' }};
             $("#formEdit").validate({
                 errorLabelContainer: '#formEdit .js-validation-messages',
                 rules: {
                     email: {
                         required: true,
-                        // email: true
+                        email: true
                     },
                     name: "required",
-                    password: "required",
-                    repassword: {
-                        equalTo: "#password"
+                    password: {
+                        required: function() {
+                            return isCreate || $('#check_pass').is(':checked');
+                        },
+                        minlength: 6
                     },
+                    password_confirmation: {
+                        required: function() {
+                            return $('#password').val().length > 0;
+                        },
+                        equalTo: "#password"
+                    }
                 },
                 messages: {
                     email: {
                         required: "Vui lòng nhập Email",
+                        email: "Email không đúng định dạng"
                     },
-                    name: "Vui lòng nhập tên",
-                    password: "Vui lòng nhập mật khẩu",
-                    repassword: "Mật khẩu không chính xác",
+                    name: "Vui lòng nhập họ tên",
+                    password: {
+                        required: "Vui lòng nhập mật khẩu",
+                        minlength: "Mật khẩu tối thiểu 6 ký tự"
+                    },
+                    password_confirmation: {
+                        required: "Vui lòng xác nhận mật khẩu",
+                        equalTo: "Mật khẩu xác nhận không khớp"
+                    }
                 },
 
                 invalidHandler: function(event, validator) {
@@ -208,8 +223,12 @@
             });
 
             //check change pass
-            $('input[name="check_pass"]').click(function() {
-                $('.wrap-pass').toggleClass('avtive-wpap-pass');
+            $('input[name="check_pass"]').on('change', function() {
+                if ($(this).is(':checked')) {
+                    $('.wrap-pass').slideDown(200);
+                } else {
+                    $('.wrap-pass').slideUp(200);
+                }
             });
         });
     </script>

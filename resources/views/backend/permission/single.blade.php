@@ -1,8 +1,9 @@
 @extends('backend.layouts.master')
 
 @php
-    if (isset($data_admin)) {
-        extract($data_admin->toArray());
+    $item = $permission ?? $data_admin ?? null;
+    if ($item) {
+        extract($item->toArray());
     }
 
     $title_head = __('admin.Permissions');
@@ -73,7 +74,7 @@
                                     </span>
                                 @endif
 
-                                <ul class="nav nav-tabs hidden" id="tabLang" role="tablist">
+                                <ul class="nav nav-tabs d-none" id="tabLang" role="tablist">
                                     <li class="nav-item">
                                         <a class="nav-link active" id="vi-tab" data-toggle="tab" href="#vi" role="tab" aria-controls="vi" aria-selected="true">@lang('admin.Vietnamese')</a>
                                     </li>
@@ -84,34 +85,49 @@
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="vi" role="tabpanel" aria-labelledby="vi-tab">
                                         <div class="mb-3 form-group">
-                                            <label for="name" class="form-label">@lang('admin.name')</label>
+                                            <label for="name" class="form-label">@lang('admin.permission_name')</label>
                                             <input type="text" class="form-control title_slugify" id="name" name="name" value="{{ $name ?? '' }}">
                                         </div>
 
                                     </div>
                                     <div class="tab-pane fade" id="en" role="tabpanel" aria-labelledby="en-tab">
                                         <div class="mb-3 form-group">
-                                            <label for="name_en" class="form-label">@lang('admin.name')</label>
+                                            <label for="name_en" class="form-label">@lang('admin.permission_name')</label>
                                             <input type="text" class="form-control title_slugify" id="name_en" name="name_en" value="{{ $name_en ?? '' }}">
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="mb-3 form-group">
-                                    <label for="slug" class="form-label">Slug</label>
+                                    <label for="slug" class="form-label">@lang('admin.slug')</label>
                                     <input type="text" class="form-control" id="slug" name="slug" value="{{ $slug ?? '' }}">
                                 </div>
                                 <div class="mb-3 form-group">
                                     @php
-                                        $old_http_uri = isset($http_uri) && $http_uri != '' ? explode(',', $http_uri) : [];
+                                        $old_http_uri = isset($http_uri) && $http_uri != '' ? (is_array($http_uri) ? $http_uri : explode(',', $http_uri)) : [];
+                                        $old_http_uri = array_map('trim', $old_http_uri);
+                                        $renderedValues = [];
                                     @endphp
 
-                                    <label for="post_description" class="form-label">HTTP PATH</label>
+                                    <label for="post_description" class="form-label">@lang('admin.http.path')</label>
                                     <select name="http_uri[]" id="admin_level" class="form-control select2" multiple="multiple" onautocomplete="off">
                                         <option value=""></option>
                                         @foreach ($routeAdmin as $route)
-                                            {{-- @php --}}
-                                            <option value="{{ $route['uri'] }}" {{ in_array($route['uri'], $old_http_uri) ? 'selected' : '' }}>{{ $route['name'] ? $route['method'] . '::' . $route['name'] : $route['uri'] }}</option>
+                                            @php
+                                                $renderedValues[] = $route['uri'];
+                                                $wildcardCheck = preg_replace('/\{[^}]+\}/', '*', $route['uri']);
+                                                $isSelected = in_array($route['uri'], $old_http_uri) || in_array($wildcardCheck, $old_http_uri);
+                                            @endphp
+                                            <option value="{{ $route['uri'] }}" {{ $isSelected ? 'selected' : '' }}>
+                                                {{ $route['name'] ? $route['method'] . '::' . $route['name'] : $route['uri'] }}
+                                            </option>
+                                        @endforeach
+
+                                        {{-- Render any saved values from database that are not in routeAdmin list --}}
+                                        @foreach ($old_http_uri as $oldUri)
+                                            @if (!empty($oldUri) && !in_array($oldUri, $renderedValues))
+                                                <option value="{{ $oldUri }}" selected>{{ $oldUri }}</option>
+                                            @endif
                                         @endforeach
                                     </select>
                                 </div>
@@ -134,24 +150,12 @@
             $("#frm-create-useradmin").validate({
                 errorLabelContainer: '#frm-create-useradmin .js-validation-messages',
                 rules: {
-                    email: {
-                        required: true,
-                        // email: true
-                    },
                     name: "required",
-                    password: "required",
-                    repassword: {
-                        equalTo: "#password"
-                    },
+                    slug: "required"
                 },
                 messages: {
-                    email: {
-                        required: "Vui lòng nhập Email",
-                        // email: "Email không hợp lệ"
-                    },
-                    name: "Nhập tên nhân viên",
-                    password: "Nhập mật khẩu",
-                    repassword: "Mật khẩu không chính xác",
+                    name: "Vui lòng nhập tên quyền",
+                    slug: "Vui lòng nhập mã slug"
                 },
 
                 invalidHandler: function(event, validator) {
@@ -160,11 +164,6 @@
                     }, 500);
                 }
             });
-
-            //check change pass
-            // $('#check_change_pass').click(function() {
-            //     $('.wrap-password').css();
-            // });
         });
     </script>
 

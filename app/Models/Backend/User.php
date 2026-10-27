@@ -23,7 +23,6 @@ class User extends Authenticatable
     protected static $allViewPermissions = null;
 
     protected $fillable = [
-        'fullname',
         'name',
         'username',
         'birthday',
@@ -42,10 +41,15 @@ class User extends Authenticatable
 
     protected $hidden = ['password', 'remember_token'];
 
-    /** Tương thích bảng users có fullname (sau refactor ACL), hiển thị qua ->name */
-    public function getNameAttribute()
+    /** Tương thích ngược nếu code cũ gọi ->fullname */
+    public function getFullnameAttribute()
     {
-        return $this->attributes['fullname'] ?? $this->attributes['name'] ?? null;
+        return $this->attributes['name'] ?? $this->attributes['username'] ?? null;
+    }
+
+    public function setFullnameAttribute($value)
+    {
+        $this->attributes['name'] = $value;
     }
 
     public static function user()

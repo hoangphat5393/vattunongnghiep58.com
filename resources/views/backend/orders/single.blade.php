@@ -83,7 +83,7 @@
                                                 @if ($order_detail->payment_method == 'cash')
                                                     <div>- Thanh toán bằng tiền mặt khi nhận hàng</div>
                                                 @elseif($order_detail->payment_method == 'bank_transfer')
-                                                    <div class="mb-3">- @lang('bank_transfer')</div>
+                                                    <div class="mb-3">- @lang('admin.bank_transfer')</div>
                                                     {!! htmlspecialchars_decode(setting_option('banks')) !!}
                                                 @endif
                                             </td>

@@ -135,9 +135,9 @@
                             <div class="card-body">
 
                                 <div class="mb-3 text-end">
-                                    <button type="button" id="openCKFinder" class="btn btn-outline-primary me-2" data-parent="{{ $id }}"><i class="fa-regular fa-image"></i> @lang('admin.add image')</button>
-                                    <button type="button" class="btn btn-outline-info create-item me-2" data="0" data-parent="{{ $id }}"><i class="fa-regular fa-images"></i> @lang('admin.add images')</button>
-                                    <button type="button" class="btn btn-outline-danger delete-item" data="0" data-parent="{{ $id }}"><i class="fa-regular fa-trash-list"></i> @lang('admin.delete all')</button>
+                                    <button type="button" class="btn btn-outline-info create-item me-2" data="0" data-parent="{{ $id }}"><i class="fa-regular fa-image"></i> @lang('admin.add image')</button>
+                                    <button type="button" id="openCKFinder" class="btn btn-outline-primary me-2" data-parent="{{ $id }}"><i class="fa-regular fa-images"></i> @lang('admin.add images')</button>
+                                    <button type="button" class="btn btn-outline-danger delete-item" data="0" data-parent="{{ $id }}"><i class="fa-solid fa-trash-can"></i> @lang('admin.delete all')</button>
                                 </div>
 
                                 <div class="col-lg-12">
@@ -162,24 +162,28 @@
     <div class="content-html"></div>
 
     {{-- Modal --}}
-    <div class="modal fade" id="albumItemModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
+    <div class="modal fade" id="albumItemModal" tabindex="-1" aria-labelledby="albumItemModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">@lang('admin.Add image')</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                    <h5 class="modal-title fs-5 fw-bold" id="albumItemModalLabel">@lang('admin.add image')</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                </div>
+
+                <div class="modal-footer bg-light">
+                    <div class="js-validation-messages-modal col-lg-12 small text-danger" role="alert"></div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal">
+                        <i class="fa-solid fa-xmark me-1"></i> @lang('admin.close')
                     </button>
-                </div>
-
-                <div class="modal-body">
-                </div>
-
-                <div class="modal-footer">
-                    <div class="js-validation-messages-modal col-lg-12 small" role="alert"></div>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('admin.Close')</button>
-                    <button type="button" class="btn btn-info post-slider" data-parent="{{ $id }}">@lang('admin.Save')</button>
-                    <button type="button" class="btn btn-danger update-item" data-id="" data-parent="{{ $id }}">@lang('admin.Update')</button>
+                    <button type="button" class="btn btn-info text-white post-slider" data-parent="{{ $id }}">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> @lang('admin.save')
+                    </button>
+                    <button type="button" class="btn btn-primary update-item" data-id="" data-parent="{{ $id }}">
+                        <i class="fa-solid fa-check me-1"></i> @lang('admin.update')
+                    </button>
                 </div>
             </div>
         </div>
@@ -188,14 +192,94 @@
 
 @push('scripts')
     <script>
-        // var button1 = document.getElementById('ckfinder-popup-1');
-        // var button2 = document.getElementById('ckfinder-popup-2');
+        function showAlbumModal() {
+            var modalEl = document.getElementById('albumItemModal');
+            if (window.bootstrap && bootstrap.Modal) {
+                bootstrap.Modal.getOrCreateInstance(modalEl).show();
+            } else {
+                $("#albumItemModal").modal("show");
+            }
+        }
 
-        // var width = window.innerWidth > 768 ? '80%' : '100%'; // Sử dụng 80% nếu màn hình rộng hơn 768px, 100% cho màn hình nhỏ hơn
-        // var height = window.innerHeight > 600 ? '80%' : '100%'; // Sử dụng 80% nếu chiều cao màn hình lớn hơn 600px, 100% cho màn hình nhỏ hơn
+        function hideAlbumModal() {
+            var modalEl = document.getElementById('albumItemModal');
+            if (window.bootstrap && bootstrap.Modal) {
+                var inst = bootstrap.Modal.getInstance(modalEl);
+                if (inst) {
+                    inst.hide();
+                }
+            }
+            $("#albumItemModal").modal("hide");
+        }
+
+        window.chooseAlbumImage = function(inputId, imgId) {
+            if (typeof CKFinder === 'undefined') {
+                console.error('CKFinder is not defined');
+                return;
+            }
+
+            CKFinder.modal({
+                chooseFiles: true,
+                width: 1000,
+                height: 600,
+                onInit: function(finder) {
+                    finder.on('files:choose', function(evt) {
+                        var file = evt.data.files.first();
+                        if (file) {
+                            var url = file.getUrl();
+                            var inputEl = document.getElementById(inputId);
+                            if (inputEl) {
+                                inputEl.value = url;
+                                $(inputEl).trigger('change');
+                            }
+                            var imgEl = document.getElementById(imgId);
+                            if (imgEl) {
+                                imgEl.src = url;
+                            }
+                            $('#' + imgId).attr('src', url);
+                            $('.' + imgId).attr('src', url);
+                        }
+                    });
+
+                    finder.on('file:choose:resizedImage', function(evt) {
+                        var url = evt.data.resizedUrl;
+                        var inputEl = document.getElementById(inputId);
+                        if (inputEl) {
+                            inputEl.value = url;
+                            $(inputEl).trigger('change');
+                        }
+                        var imgEl = document.getElementById(imgId);
+                        if (imgEl) {
+                            imgEl.src = url;
+                        }
+                        $('#' + imgId).attr('src', url);
+                        $('.' + imgId).attr('src', url);
+                    });
+                }
+            });
+        };
+
+        window.clearAlbumImage = function(inputId, imgId) {
+            var inputEl = document.getElementById(inputId);
+            var imgEl = document.getElementById(imgId);
+            var placeholder = '{{ asset('assets/images/placeholder.png') }}';
+            if (inputEl) {
+                inputEl.value = '';
+                $(inputEl).trigger('change');
+            }
+            if (imgEl) {
+                imgEl.src = placeholder;
+            }
+            $('#' + imgId).attr('src', placeholder);
+            $('.' + imgId).attr('src', placeholder);
+        };
+
+        $(document).on("click", "#albumItemModal [data-bs-dismiss='modal'], #albumItemModal [data-dismiss='modal'], #albumItemModal .btn-close", function(e) {
+            e.preventDefault();
+            hideAlbumModal();
+        });
 
         document.getElementById('openCKFinder').onclick = function() {
-
             var parent_id = $(this).data("parent");
 
             CKFinder.modal({
@@ -203,32 +287,15 @@
                 width: 1000,
                 height: 600,
                 onInit: function(finder) {
-                    // finder.on('files:choose', function(evt) {
-                    //     var file = evt.data.files.first();
-                    //     console.log('Đường dẫn file:', file.getUrl());
-                    //     // Xử lý đường dẫn file, ví dụ: hiển thị trong input
-
-                    // });
-
                     finder.on('files:choose', function(e) {
                         var files = e.data.files;
-
-                        // Mảng để lưu các đường dẫn
                         var fileUrls = [];
 
-                        // Lặp qua danh sách các file và lấy đường dẫn
                         files.forEach(function(file) {
                             fileUrls.push(file.getUrl());
                         });
 
-                        // Gửi danh sách đường dẫn đến máy chủ để lưu vào DB
                         storeFileUrls(fileUrls, parent_id);
-                    });
-
-                    finder.on('file:choose:resizedImage', function(evt) {
-                        var output = document.getElementById(elementId);
-                        output.value = evt.data.resizedUrl;
-                        if (view_img != '') $('.' + view_img).attr('src', evt.data.resizedUrl);
                     });
                 },
             });
@@ -241,9 +308,7 @@
                 })
                 .then(response => {
                     if (response.data.success) {
-                        console.log('Lưu file dẫn file thành công.');
                         $("#album_items").html(response.data.view);
-                        // $(".slider-list").html(response.data.view);
                     } else {
                         console.error('Lỗi khi lưu đường dẫn file:', response.data.error);
                     }
@@ -255,34 +320,82 @@
     </script>
 
     <script>
+        function showModalError(messages) {
+            var alertBox = $("#albumItemModal .modal-error-alert");
+            if (alertBox.length) {
+                alertBox.find(".modal-error-content").html(messages);
+                alertBox.removeClass("d-none");
+                $("#albumItemModal .modal-body").animate({ scrollTop: 0 }, 200);
+            } else {
+                alert(messages.replace(/<br>/g, "\n"));
+            }
+        }
+
+        function clearModalError() {
+            var alertBox = $("#albumItemModal .modal-error-alert");
+            alertBox.addClass("d-none");
+            alertBox.find(".modal-error-content").html("");
+            $("#form-editSlider .form-control").removeClass("is-invalid");
+        }
+
+        $(document).on("input change", "#form-editSlider input, #form-editSlider textarea", function() {
+            $(this).removeClass("is-invalid");
+            if ($("#form-editSlider .form-control.is-invalid").length === 0) {
+                $("#albumItemModal .modal-error-alert").addClass("d-none");
+            }
+        });
+
+        function validateAlbumItemForm() {
+            clearModalError();
+            var nameInput = $("#form-editSlider input[name='name']");
+            var nameVal = (nameInput.val() || "").trim();
+
+            if (!nameVal) {
+                nameInput.addClass("is-invalid");
+                showModalError("Vui lòng nhập Tiêu đề.");
+                nameInput.focus();
+                return false;
+            }
+            return true;
+        }
+
+        function handleModalFormError(error) {
+            if (error.response && error.response.data) {
+                var resData = error.response.data;
+                var errorList = [];
+                if (resData.errors) {
+                    for (var field in resData.errors) {
+                        if (resData.errors.hasOwnProperty(field)) {
+                            errorList.push(resData.errors[field].join('<br>'));
+                            $('#form-editSlider [name="' + field + '"]').addClass('is-invalid');
+                        }
+                    }
+                }
+                var msg = errorList.length > 0 ? errorList.join('<br>') : (resData.message || 'Lỗi lưu dữ liệu.');
+                showModalError(msg);
+            } else {
+                showModalError('Có lỗi xảy ra khi kết nối máy chủ.');
+            }
+        }
+
         // OPEN FORM TO CREATE NEWS ALBUM ITEMS
         $(document).on("click", ".create-item", function() {
-
             var parent_id = $(this).data("parent");
 
-            $('.post-slider').removeClass("d-none");
+            $('.post-slider').removeClass("d-none").prop("disabled", false);
             $('.update-item').addClass("d-none");
+            $('#albumItemModalLabel').text("@lang('admin.add image')");
 
             if (parent_id) {
                 axios.get(`{{ url('/admin/album') }}/${parent_id}/album_item/create`)
                     .then((res) => {
                         if (res.data.view != "") {
                             $("#albumItemModal .modal-body").html(res.data.view);
-                            $("#albumItemModal").modal("show");
+                            clearModalError();
+                            showAlbumModal();
 
                             editorQuote("description");
                             editorQuote("description_en");
-
-                            $(".ckfinder-popup").each(function(index, el) {
-                                var id = $(this).attr("id"),
-                                    input = $(this).attr("data"),
-                                    view_img = $(this).data("show");
-
-                                var button1 = document.getElementById(id);
-                                button1.onclick = function() {
-                                    selectFileWithCKFinder(input, view_img);
-                                };
-                            });
                         }
                     })
                     .catch((e) => console.log(e));
@@ -290,65 +403,41 @@
         });
 
         // ALBUM ITEMS STORE NEWS
-        $(function() {
-            var sliderModal = $("#albumItemModal");
+        $(document).on("click", ".post-slider", function() {
+            var parent_id = $(this).data("parent");
 
-            if (sliderModal.length > 0) {
-                $("#form-inserSlider, #form-editSlider").validate({
-                    errorLabelContainer: '#albumItemModal .js-validation-messages-modal',
-                    onfocusout: false,
-                    onkeyup: false,
-                    onclick: false,
-                    rules: {
-                        name: "required",
-                        src: "required",
-                    },
-                    messages: {
-                        name: "Vui lòng nhập tên",
-                        src: "Chọn hình ảnh",
-                    },
-                    errorElement: "div",
-                    invalidHandler: function(event, validator) {},
-                });
-
-                $(document).on("click", ".post-slider", function() {
-
-                    var parent_id = $(this).data("parent");
-
-                    for (instance in CKEDITOR.instances) {
-                        CKEDITOR.instances[instance].updateElement();
-                    }
-                    //rest of your code
-
-                    var type = $(this).attr("data");
-
-                    from = $("#form-editSlider");
-
-                    // var form = document.getElementById('frm-slider');
-                    // var fdnew = new FormData(form);
-
-                    if (from.valid()) {
-                        var dataString = from.serialize();
-                        axios.post(`{{ url('/admin/album') }}/${parent_id}/album_item`, dataString)
-                            .then((res) => {
-                                if (res.data.view != "") {
-                                    // $('#inserSlider form')[0].reset();
-                                    $("#albumItemModal").modal("hide");
-                                    // $(".slider-list").html(res.data.view);
-                                    $("#album_items").html(res.data.view);
-                                }
-                            })
-                            .catch((e) => console.log(e));
-                    }
-                });
+            for (var instance in CKEDITOR.instances) {
+                CKEDITOR.instances[instance].updateElement();
             }
+
+            if (!validateAlbumItemForm()) {
+                return;
+            }
+
+            var from = $("#form-editSlider");
+            var dataString = from.serialize();
+            var btn = $(this);
+            btn.prop("disabled", true);
+
+            axios.post(`{{ url('/admin/album') }}/${parent_id}/album_item`, dataString)
+                .then((res) => {
+                    btn.prop("disabled", false);
+                    if (res.data.view != "") {
+                        hideAlbumModal();
+                        $("#album_items").html(res.data.view);
+                    }
+                })
+                .catch((error) => {
+                    btn.prop("disabled", false);
+                    handleModalFormError(error);
+                });
         });
 
         // EDIT ALBUM ITEMS
         $(document).on("click", ".edit-slider", function() {
-
             $('.post-slider').addClass("d-none");
-            $('.update-item').removeClass("d-none");
+            $('.update-item').removeClass("d-none").prop("disabled", false);
+            $('#albumItemModalLabel').text("@lang('admin.edit')");
 
             var id = $(this).attr("data"),
                 parent = $(this).data("parent");
@@ -357,64 +446,47 @@
                 axios.get(`{{ url('/admin/album_item') }}/${id}/edit`)
                     .then((res) => {
                         if (res.data.view != "") {
-
-                            console.log(id);
                             $("#albumItemModal").find('.update-item').attr('data-id', id);
-
                             $("#albumItemModal .modal-body").html(res.data.view);
-                            $("#albumItemModal").modal("show");
+                            clearModalError();
+                            showAlbumModal();
 
                             editorQuote("description");
                             editorQuote("description_en");
-
-                            $(".ckfinder-popup").each(function(index, el) {
-                                var id = $(this).attr("id"),
-                                    input = $(this).attr("data"),
-                                    view_img = $(this).data("show");
-
-                                var button1 = document.getElementById(id);
-                                button1.onclick = function() {
-                                    selectFileWithCKFinder(input, view_img, id);
-                                };
-                            });
                         }
                     })
                     .catch((e) => console.log(e));
             }
         });
 
-
         // ALBUM ITEMS UPDATE
         $(document).on("click", ".update-item", function() {
-
-            // var parent_id = $(this).data("parent");
-            var parent_id = $(this).data("parent");
-
-            for (instance in CKEDITOR.instances) {
+            for (var instance in CKEDITOR.instances) {
                 CKEDITOR.instances[instance].updateElement();
             }
-            //rest of your code
 
-            // var id = $(this).data("id");
-            var id = $(this).attr("data-id");
-            // console.log('update-item');
-            // console.log($(this));
-            // console.log(id);
-
-            from = $("#form-editSlider");
-
-            if (from.valid()) {
-                var dataString = from.serialize();
-                axios.put(`{{ url('/admin/album_item') }}/${id}`, dataString)
-                    .then((res) => {
-                        if (res.data.view != "") {
-                            // $('#inserSlider form')[0].reset();
-                            $("#albumItemModal").modal("hide");
-                            $("#album_items").html(res.data.view);
-                        }
-                    })
-                    .catch((e) => console.log(e));
+            if (!validateAlbumItemForm()) {
+                return;
             }
+
+            var id = $(this).attr("data-id");
+            var from = $("#form-editSlider");
+            var dataString = from.serialize();
+            var btn = $(this);
+            btn.prop("disabled", true);
+
+            axios.put(`{{ url('/admin/album_item') }}/${id}`, dataString)
+                .then((res) => {
+                    btn.prop("disabled", false);
+                    if (res.data.view != "") {
+                        hideAlbumModal();
+                        $("#album_items").html(res.data.view);
+                    }
+                })
+                .catch((error) => {
+                    btn.prop("disabled", false);
+                    handleModalFormError(error);
+                });
         });
     </script>
 

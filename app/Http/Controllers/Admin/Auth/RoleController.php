@@ -27,11 +27,20 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        $roles = Role::filter($request)
-            ->orderBy('id')
+        $search = $request->input('name') ?: $request->input('search_name');
+        $query = Role::with('permissions');
+
+        if (! empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('slug', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $roles = $query->orderBy('id')
             ->paginate(20)
             ->appends($request->all());
-        $total_item = $roles->count();
+        $total_item = $roles->total();
 
         return view('backend.role.index', compact('roles', 'total_item'));
     }

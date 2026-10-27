@@ -53,17 +53,26 @@ class UserAdminController extends Controller
 
     public function index()
     {
+        $search = request('name') ?: request('search_name');
         $appends = [
-            'search_name' => request('search_name'),
+            'name' => $search,
+            'search_name' => $search,
         ];
-        if (Auth::guard('admin')->user()->isAdministrator() || Auth::guard('admin')->user()->roles()->count() > 0) {
-            $db = Admin::select('*');
+        $data = collect();
+        $count_item = 0;
 
-            if (request('search_name') != '') {
-                $db->where('name', 'like', '%'.request('search_name').'%');
+        if (Auth::guard('admin')->user()->isAdministrator() || Auth::guard('admin')->user()->roles()->count() > 0) {
+            $db = Admin::with('roles');
+
+            if (! empty($search)) {
+                $db->where(function ($q) use ($search) {
+                    $q->where('name', 'like', '%'.$search.'%')
+                        ->orWhere('username', 'like', '%'.$search.'%')
+                        ->orWhere('email', 'like', '%'.$search.'%');
+                });
             }
-            $count_item = $db->count();
             $data = $db->orderBy('id')->paginate(20)->appends($appends);
+            $count_item = $data->total();
         }
 
         return view('backend.user.index')->with(['users' => $data, 'total_item' => $count_item]);
@@ -107,7 +116,6 @@ class UserAdminController extends Controller
     public function post(Request $request)
     {
         $data = $request->only([
-            'fullname',
             'name',
             'username',
             'birthday',
@@ -121,6 +129,10 @@ class UserAdminController extends Controller
             'district',
             'ward',
         ]);
+
+        if (empty($data['name']) && $request->filled('fullname')) {
+            $data['name'] = $request->input('fullname');
+        }
 
         // id post
         $sid = $request->id ?? 0;

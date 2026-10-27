@@ -18,8 +18,8 @@ class UpdateUserAdmin extends FormRequest
 
         return [
             'id' => ['nullable', 'integer'],
+            'name' => ['required', 'string', 'max:255'],
             'fullname' => ['nullable', 'string', 'max:255'],
-            'name' => ['nullable', 'string', 'max:255'],
             'username' => [
                 'required',
                 'string',

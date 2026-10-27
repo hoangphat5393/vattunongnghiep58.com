@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Backend\Album;
+use App\Models\Backend\AlbumItem;
 use App\Models\Backend\Category;
 use App\Models\Backend\Contact;
 use App\Models\Backend\District;
@@ -163,6 +165,10 @@ class AjaxController extends Controller
                         $item->delete();
                     }
                 }
+
+            case 'album':
+                AlbumItem::whereIn('album_id', $arr)->delete();
+                Album::whereIn('id', $arr)->delete();
 
                 return 1;
                 break;
@@ -382,6 +388,31 @@ class AjaxController extends Controller
                             $newImage->created_at = Carbon::now(); // changing the created_at date
                             $newImage->save(); // saving it to the database
                         }
+                    }
+                    $i++;
+                }
+
+                return 1;
+                break;
+            case 'album':
+                $i = 1;
+                foreach ($arr as $id) {
+                    $album = Album::with('items')->find($id);
+                    if (! $album) {
+                        continue;
+                    }
+                    $newAlbum = $album->replicate();
+                    $newAlbum->name = $newAlbum->name.' (Bản sao)';
+                    $newAlbum->created_at = Carbon::now();
+                    $newAlbum->save();
+
+                    Album::where('id', $newAlbum->id)->update(['sort' => $newAlbum->id]);
+
+                    foreach ($album->items as $item) {
+                        $newItem = $item->replicate();
+                        $newItem->album_id = $newAlbum->id;
+                        $newItem->created_at = Carbon::now();
+                        $newItem->save();
                     }
                     $i++;
                 }

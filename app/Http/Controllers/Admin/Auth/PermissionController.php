@@ -24,20 +24,32 @@ class PermissionController extends Controller
     {
         $routes = app()->routes->getRoutes();
         foreach ($routes as $route) {
-            if (Str::startsWith($route->uri(), SC_ADMIN_PREFIX)) {
+            $uri = $route->uri();
+            if (Str::startsWith($uri, SC_ADMIN_PREFIX)) {
                 $prefix = SC_ADMIN_PREFIX ? $route->getPrefix() : ltrim($route->getPrefix(), '/');
                 $routeAdmin[$prefix] = [
                     'uri' => 'ANY::'.$prefix.'/*',
                     'name' => $prefix.'/*',
                     'method' => 'ANY',
                 ];
+
+                $wildcardUri = preg_replace('/\{[^}]+\}/', '*', $uri);
+                $subPrefix = explode('/', $wildcardUri)[1] ?? '';
+                if ($subPrefix && $subPrefix !== '*') {
+                    $routeAdmin['ANY::admin/'.$subPrefix.'/*'] = [
+                        'uri' => 'ANY::admin/'.$subPrefix.'/*',
+                        'name' => 'admin/'.$subPrefix.'/*',
+                        'method' => 'ANY',
+                    ];
+                }
+
                 foreach ($route->methods as $key => $method) {
-                    if ($method != 'HEAD' && ! collect($this->without())->first(function ($exp) use ($route) {
-                        return Str::startsWith($route->uri, $exp);
+                    if ($method != 'HEAD' && ! collect($this->without())->first(function ($exp) use ($uri) {
+                        return Str::startsWith($uri, $exp);
                     })) {
                         $routeAdmin[] = [
-                            'uri' => $method.'::'.$route->uri,
-                            'name' => $route->uri,
+                            'uri' => $method.'::'.$wildcardUri,
+                            'name' => $wildcardUri,
                             'method' => $method,
                         ];
                     }
@@ -55,11 +67,22 @@ class PermissionController extends Controller
      */
     public function index(Request $request)
     {
-        $permissions = Permission::filter($request)
-            ->orderBy('id')
+        $query = Permission::query();
+
+        if ($search = $request->input('name') ?: $request->input('keyword')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('slug', 'like', "%{$search}%")
+                    ->orWhere('http_uri', 'like', "%{$search}%");
+            });
+        }
+
+        $permissions = $query
+            ->orderBy('id', 'desc')
             ->paginate(20)
             ->appends($request->all());
-        $total_item = $permissions->count();
+
+        $total_item = $permissions->total();
 
         return view('backend.permission.index', compact('permissions', 'total_item'));
     }

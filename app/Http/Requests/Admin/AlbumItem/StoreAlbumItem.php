@@ -28,6 +28,15 @@ class StoreAlbumItem extends FormRequest
         ];
     }
 
+    public function attributes(): array
+    {
+        return [
+            'name' => 'Tiêu đề',
+            'link' => 'Liên kết',
+            'image' => 'Hình ảnh',
+        ];
+    }
+
     public function getSanitized(): array
     {
         return $this->validated();

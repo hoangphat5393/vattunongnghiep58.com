@@ -1,7 +1,8 @@
 @extends('backend.layouts.master')
 @php
-    if (isset($data_role)) {
-        extract($data_role->toArray());
+    $item = $role ?? $data_role ?? null;
+    if ($item) {
+        extract($item->toArray());
     }
     $title_head = __('admin.role_group');
     $date_update = $updated_at ?? date('Y-m-d H:i:s');
@@ -74,7 +75,7 @@
                                     </span>
                                 @endif
 
-                                <ul class="nav nav-tabs hidden" id="tabLang" role="tablist">
+                                <ul class="nav nav-tabs d-none" id="tabLang" role="tablist">
                                     <li class="nav-item">
                                         <a class="nav-link active" id="vi-tab" data-toggle="tab" href="#vi" role="tab" aria-controls="vi" aria-selected="true">@lang('admin.Vietnamese')</a>
                                     </li>
@@ -85,21 +86,21 @@
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="vi" role="tabpanel" aria-labelledby="vi-tab">
                                         <div class="mb-3 form-group">
-                                            <label for="name" class="form-label">@lang('admin.name')</label>
+                                            <label for="name" class="form-label">@lang('admin.role_name')</label>
                                             <input type="text" class="form-control title_slugify" id="name" name="name" value="{{ $name ?? '' }}">
                                         </div>
 
                                     </div>
                                     <div class="tab-pane fade" id="en" role="tabpanel" aria-labelledby="en-tab">
                                         <div class="mb-3 form-group">
-                                            <label for="name_en" class="form-label">@lang('admin.name')</label>
+                                            <label for="name_en" class="form-label">@lang('admin.role_name')</label>
                                             <input type="text" class="form-control title_slugify" id="name_en" name="name_en" value="{{ $name_en ?? '' }}">
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="mb-3 form-group">
-                                    <label for="slug" class="form-label">Slug</label>
+                                    <label for="slug" class="form-label">@lang('admin.slug')</label>
                                     <input type="text" class="form-control" id="slug" name="slug" value="{{ $slug ?? '' }}">
                                 </div>
 
@@ -114,7 +115,7 @@
                                         }
                                     @endphp
 
-                                    <label for="post_description" class="form-label">@lang('Permission')</label>
+                                    <label for="post_description" class="form-label">@lang('admin.permission')</label>
                                     <select name="permission[]" id="admin_level" class="form-control select2" multiple="multiple" onautocomplete="off">
                                         <option value=""></option>
                                         @foreach ($permission as $k => $v)
@@ -141,24 +142,12 @@
             $("#frm-create-useradmin").validate({
                 errorLabelContainer: '#frm-create-useradmin .js-validation-messages',
                 rules: {
-                    email: {
-                        required: true,
-                        // email: true
-                    },
                     name: "required",
-                    password: "required",
-                    repassword: {
-                        equalTo: "#password"
-                    },
+                    slug: "required"
                 },
                 messages: {
-                    email: {
-                        required: "Vui lòng nhập Email",
-                        // email: "Email không hợp lệ"
-                    },
-                    name: "Nhập tên nhân viên",
-                    password: "Nhập mật khẩu",
-                    repassword: "Mật khẩu không chính xác",
+                    name: "Vui lòng nhập tên vai trò",
+                    slug: "Vui lòng nhập mã slug"
                 },
 
                 invalidHandler: function(event, validator) {
@@ -167,11 +156,6 @@
                     }, 500);
                 }
             });
-
-            //check change pass
-            // $('#check_change_pass').click(function() {
-            //     $('.wrap-password').css();
-            // });
         });
     </script>
     {{-- <script type="text/javascript">
