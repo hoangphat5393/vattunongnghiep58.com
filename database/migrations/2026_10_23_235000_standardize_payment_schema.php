@@ -29,13 +29,14 @@ return new class extends Migration
         if (! Schema::hasTable('order_payments')) {
             Schema::create('order_payments', function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
+                $table->integer('order_id');
+                $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
                 $table->string('gateway', 50)->index();
                 $table->decimal('amount', 15, 2);
                 $table->string('currency', 10)->default('VND');
                 $table->string('transaction_code', 100)->nullable()->index();
                 $table->string('status', 30)->default('pending')->index();
-                $table->jsonb('payload')->nullable();
+                $table->json('payload')->nullable();
                 $table->timestamp('paid_at')->nullable();
                 $table->timestamps();
             });

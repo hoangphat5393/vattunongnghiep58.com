@@ -20,6 +20,9 @@
         },
         {
             "path": "../AI_support"
+        },
+        {
+            "path": "../landinpage"
         }
     ],
     "settings": {

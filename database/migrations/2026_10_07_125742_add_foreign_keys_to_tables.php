@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -12,41 +11,55 @@ return new class extends Migration
      */
     public function up(): void
     {
+        $conn = Schema::getConnection();
+
         // 1. Dọn dẹp dữ liệu mồ côi (Orphan records)
-        DB::table('product_categories')
-            ->whereNotIn('product_id', DB::table('products')->select('id'))
+        $conn->table('product_categories')
+            ->whereNotIn('product_id', $conn->table('products')->select('id'))
             ->delete();
 
-        DB::table('product_categories')
-            ->whereNotIn('category_id', DB::table('categories')->select('id'))
+        $conn->table('product_categories')
+            ->whereNotIn('category_id', $conn->table('categories')->select('id'))
             ->delete();
 
-        DB::table('shop_order_items')
+        $conn->table('shop_order_items')
             ->whereNotNull('product_price_id')
-            ->whereNotIn('product_price_id', DB::table('product_prices')->select('id'))
+            ->whereNotIn('product_price_id', $conn->table('product_prices')->select('id'))
             ->update(['product_price_id' => null]);
 
-        DB::table('shop_orders')
+        $conn->table('shop_orders')
             ->whereNotNull('user_id')
-            ->whereNotIn('user_id', DB::table('users')->select('id'))
+            ->whereNotIn('user_id', $conn->table('users')->select('id'))
             ->update(['user_id' => null]);
 
-        DB::table('shop_order_items')
+        $conn->table('shop_order_items')
             ->whereNotNull('user_id')
-            ->whereNotIn('user_id', DB::table('users')->select('id'))
+            ->whereNotIn('user_id', $conn->table('users')->select('id'))
             ->update(['user_id' => null]);
 
-        DB::table('pages')
+        $conn->table('pages')
             ->whereNotNull('user_id')
-            ->whereNotIn('user_id', DB::table('users')->select('id'))
+            ->whereNotIn('user_id', $conn->table('users')->select('id'))
             ->update(['user_id' => null]);
 
         // 2. Đồng bộ kiểu cột (Type cast sang bigint để khớp khóa chính id của users & products)
-        DB::statement('ALTER TABLE product_categories ALTER COLUMN product_id TYPE bigint');
-        DB::statement('ALTER TABLE role_user ALTER COLUMN user_id TYPE bigint');
-        DB::statement('ALTER TABLE shop_orders ALTER COLUMN user_id TYPE bigint');
-        DB::statement('ALTER TABLE shop_order_items ALTER COLUMN product_id TYPE bigint');
-        DB::statement('ALTER TABLE shop_order_items ALTER COLUMN user_id TYPE bigint');
+        if ($conn->getDriverName() === 'pgsql') {
+            $conn->statement('ALTER TABLE product_categories ALTER COLUMN product_id TYPE bigint');
+            $conn->statement('ALTER TABLE role_user ALTER COLUMN user_id TYPE bigint');
+            $conn->statement('ALTER TABLE shop_orders ALTER COLUMN user_id TYPE bigint');
+            $conn->statement('ALTER TABLE shop_order_items ALTER COLUMN product_id TYPE bigint');
+            $conn->statement('ALTER TABLE shop_order_items ALTER COLUMN user_id TYPE bigint');
+        } else {
+            $conn->statement('ALTER TABLE product_categories MODIFY COLUMN product_id bigint unsigned');
+            $conn->statement('ALTER TABLE role_user MODIFY COLUMN user_id bigint unsigned');
+            $conn->statement('ALTER TABLE role_user MODIFY COLUMN role_id int');
+            $conn->statement('ALTER TABLE permission_role MODIFY COLUMN permission_id int');
+            $conn->statement('ALTER TABLE permission_role MODIFY COLUMN role_id int');
+            $conn->statement('ALTER TABLE menu_items MODIFY COLUMN menu_id int');
+            $conn->statement('ALTER TABLE shop_orders MODIFY COLUMN user_id bigint unsigned');
+            $conn->statement('ALTER TABLE shop_order_items MODIFY COLUMN product_id bigint unsigned');
+            $conn->statement('ALTER TABLE shop_order_items MODIFY COLUMN user_id bigint unsigned');
+        }
 
         // 3. Thêm các ràng buộc khóa ngoại (Foreign Keys)
         Schema::table('product_categories', function (Blueprint $table) {

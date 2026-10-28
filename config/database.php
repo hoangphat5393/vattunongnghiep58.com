@@ -63,6 +63,22 @@ return [
             ]) : [],
         ],
 
+        'mysql_sync' => [
+            'driver' => 'mysql',
+            'host' => env('MYSQL_SYNC_HOST', '127.0.0.1'),
+            'port' => env('MYSQL_SYNC_PORT', '3306'),
+            'database' => env('MYSQL_SYNC_DATABASE', 'vattunnongnghiep58'),
+            'username' => env('MYSQL_SYNC_USERNAME', 'root'),
+            'password' => env('MYSQL_SYNC_PASSWORD', '1'),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => false,
+            'engine' => null,
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),

@@ -61,5 +61,5 @@
   - **Framework & Runtime:** PHP 8.3+, Laravel 13 (v13.37.0)
   - **Cơ sở dữ liệu (Database):** PostgreSQL 16 (Port 5432, UTF-8, Sequence ID Management, 16 Foreign Keys)
   - **Frontend Storefront:** Blade, Vite 7, Tailwind CSS 4, Axios, jQuery, Swiper, AOS
-  - **Trang Quản trị (Admin):** AdminLTE 4.1 (Bootstrap 5.3), Axios, FontAwesome Pro, CKFinder
-- **Tài liệu hệ thống chi tiết:** Xem thêm tại [MASTER.md](MASTER.md) và [docs/PROJECT_ANALYSIS.md](docs/PROJECT_ANALYSIS.md).
+  - **Công cụ đồng bộ Database:** Tích hợp tính năng 1-Click đồng bộ & xuất file dump SQL MySQL (`export_mysql.bat` hoặc `composer export-mysql`). Chi tiết xem tại [docs/POSTGRES_TO_MYSQL_SYNC_GUIDE.md](docs/POSTGRES_TO_MYSQL_SYNC_GUIDE.md).
+- **Tài liệu hệ thống chi tiết:** Xem thêm tại [MASTER.md](MASTER.md), [docs/PROJECT_ANALYSIS.md](docs/PROJECT_ANALYSIS.md) và [docs/POSTGRES_TO_MYSQL_SYNC_GUIDE.md](docs/POSTGRES_TO_MYSQL_SYNC_GUIDE.md).
