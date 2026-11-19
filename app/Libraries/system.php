@@ -545,6 +545,7 @@ if (! function_exists('msg_move_page')) {
     function msg_move_page($msg, $url = 'back', $isExit = 1)
     {
         if ($msg) {
+            session()->flash('success', $msg);
             session()->flash('swal_toast', [
                 'icon' => 'success',
                 'title' => $msg,

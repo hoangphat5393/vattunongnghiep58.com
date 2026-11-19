@@ -56,17 +56,20 @@ function deletemenu() {
     if (r == true) {
         $('#spincustomu2').show();
         axios
-            .delete(`admin/menu/${id}`)
+            .delete((typeof admin_url !== 'undefined' ? admin_url : '/admin') + `/menu/${id}`)
             .then((response) => {
                 const resp = response.data;
                 if (!resp.error) {
-                    alert(resp.message);
+                    window.showSwalToast?.('success', resp.message || 'Đã xóa menu thành công!');
                     window.location = menuwr;
                 } else {
-                    alert(resp.message);
+                    window.showSwalToast?.('error', resp.message || 'Không thể xóa menu này!');
                 }
             })
-            .catch((e) => console.error(e));
+            .catch((e) => {
+                console.error(e);
+                window.showSwalToast?.('error', 'Xóa menu thất bại!');
+            });
 
         $('#spincustomu2').hide();
     } else {
@@ -177,11 +180,15 @@ $('.add_custom_menu').on('click', function () {
 
     var idmenu = $('#idmenu').val();
     axios
-        .post(`admin/menu/${idmenu}/menuitems`, data)
+        .post((typeof admin_url !== 'undefined' ? admin_url : '/admin') + `/menu/${idmenu}/menuitems`, data)
         .then((response) => {
+            window.showSwalToast?.('success', 'Đã thêm mục menu thành công!');
             location.reload();
         })
-        .catch((e) => console.error(e));
+        .catch((e) => {
+            console.error(e);
+            window.showSwalToast?.('error', 'Thêm mục menu thất bại!');
+        });
 
     $('#spincustomu').hide();
 });
@@ -231,11 +238,15 @@ function addMenuItem(id = 0, type = 'page', labelmenu = '', linkmenu = '', slug 
     };
 
     axios
-        .post(`admin/menu/${idmenu}/menuitems`, data)
+        .post((typeof admin_url !== 'undefined' ? admin_url : '/admin') + `/menu/${idmenu}/menuitems`, data)
         .then((response) => {
+            window.showSwalToast?.('success', 'Đã thêm mục menu thành công!');
             location.reload();
         })
-        .catch((e) => console.error(e));
+        .catch((e) => {
+            console.error(e);
+            window.showSwalToast?.('error', 'Thêm mục menu thất bại!');
+        });
 
     $('#spincustomu').hide();
 }
@@ -306,13 +317,20 @@ function updateitem(id = 0) {
         $('#spincustomu2').show();
     }
     axios
-        .post(`admin/menu/${idmenu}/updateMenuItem`, data)
+        .post((typeof admin_url !== 'undefined' ? admin_url : '/admin') + `/menu/${idmenu}/updateMenuItem`, data)
         .then((response) => {
             if (id) {
                 $('#spincustomu2').hide();
+                window.showSwalToast?.('success', 'Cập nhật mục menu thành công!');
             }
         })
-        .catch((e) => console.error(e));
+        .catch((e) => {
+            console.error(e);
+            if (id) {
+                $('#spincustomu2').hide();
+            }
+            window.showSwalToast?.('error', 'Cập nhật mục menu thất bại!');
+        });
 }
 // End Cusome js
 
@@ -328,11 +346,16 @@ function actualizarmenu() {
     $('#spincustomu2').show();
 
     axios
-        .post(`admin/menu/generatemenu`, data)
+        .post((typeof admin_url !== 'undefined' ? admin_url : '/admin') + `/menu/generatemenu`, data)
         .then((response) => {
             $('#spincustomu2').hide();
+            window.showSwalToast?.('success', 'Đã lưu cấu hình menu thành công!');
         })
-        .catch((e) => console.error(e));
+        .catch((e) => {
+            console.error(e);
+            $('#spincustomu2').hide();
+            window.showSwalToast?.('error', 'Lưu cấu hình menu thất bại!');
+        });
 }
 
 function deleteitem(id) {
@@ -343,11 +366,14 @@ function deleteitem(id) {
     $('#spincustomu').hide();
 
     axios
-        .delete(`admin/menu/${idmenu}/${id}`)
+        .delete((typeof admin_url !== 'undefined' ? admin_url : '/admin') + `/menu/${idmenu}/${id}`)
         .then((response) => {
-            // location.reload();
+            window.showSwalToast?.('success', 'Đã xóa mục menu thành công!');
         })
-        .catch((e) => console.error(e));
+        .catch((e) => {
+            console.error(e);
+            window.showSwalToast?.('error', 'Xóa mục menu thất bại!');
+        });
 }
 
 // async function deletemenu() {
@@ -365,13 +391,17 @@ function createnewmenu() {
             menuname: $('#menu-name').val(),
         };
         axios
-            .post(`admin/menu`, data)
+            .post((typeof admin_url !== 'undefined' ? admin_url : '/admin') + `/menu`, data)
             .then((response) => {
+                window.showSwalToast?.('success', 'Tạo menu mới thành công!');
                 window.location = menuwr + '?menu=' + response.data.resp;
             })
-            .catch((e) => console.error(e));
+            .catch((e) => {
+                console.error(e);
+                window.showSwalToast?.('error', 'Tạo menu mới thất bại!');
+            });
     } else {
-        alert('Enter menu name!');
+        window.showSwalToast?.('warning', 'Vui lòng nhập tên menu!');
         $('#menu-name').trigger('focus');
         return false;
     }

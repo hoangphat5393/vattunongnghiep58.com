@@ -55,6 +55,7 @@ class AjaxController extends Controller
         foreach ($check_data as $id) {
             $arr[] = (int) $id;
         }
+        session()->flash('success', __('Đã xóa dữ liệu thành công!'));
         switch ($type) {
 
             case 'page':
@@ -197,6 +198,7 @@ class AjaxController extends Controller
         if ($type == 'category-post' || $type == 'category-product') {
             $type = 'category';
         }
+        session()->flash('success', __('Đã nhân bản dữ liệu thành công!'));
         switch ($type) {
             case 'page':
                 // Replicate Post + Category
@@ -448,6 +450,11 @@ class AjaxController extends Controller
             'App\Models\Backend\Slider',
             'App\Models\Backend\OrderItem',
             'App\Models\Backend\Order',
+            'App\Models\Backend\Album',
+            'App\Models\Backend\AlbumItem',
+            'App\Models\Backend\Contact',
+            'App\Models\Backend\EmailTemplate',
+            'App\Models\Backend\User',
         ];
 
         // Whitelist allowed columns for safety
@@ -461,7 +468,7 @@ class AjaxController extends Controller
             };
             (new $modelClass)::where('id', $id)->update([$targetCol => $value]);
 
-            return response()->json(['success' => true]);
+            return response()->json(['success' => true, 'message' => __('Cập nhật thành công!')]);
         }
 
         return response()->json(['success' => false, 'message' => 'Unauthorized action'], 403);

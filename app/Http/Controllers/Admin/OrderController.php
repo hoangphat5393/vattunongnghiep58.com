@@ -153,9 +153,10 @@ class OrderController extends Controller
                 'shipping_cost' => (float) ($data['shipping_cost'] ?? 0),
             ];
             Order::where('id', $id)->update($dataUpdate);
-            $msg = 'Order has been Updated';
-            $url = route('admin.order.detail', [$id]);
-            msg_move_page($msg, $url);
+
+            return redirect()->route('admin.order.detail', [$id])->with('success', __('Cập nhật đơn hàng thành công!'));
         }
+
+        return redirect()->route('admin.order.index')->with('error', __('Không tìm thấy đơn hàng!'));
     }
 }

@@ -175,14 +175,12 @@ class PostController extends Controller
         //     $product->categories()->sync($category_id);
         // }
 
+        $msg = $sid > 0 ? __('Cập nhật bài viết thành công!') : __('Thêm bài viết thành công!');
         if ($save == 'apply') {
-            $msg = 'Data has been Updated';
-            $url = route('admin.post.edit', [$post_id]);
-            msg_move_page($msg, $url);
-            // return redirect(route('admin.postEdit', array($post_id)));
-        } else {
-            return redirect(route('admin.post.index'));
+            return redirect()->route('admin.post.edit', [$post_id])->with('success', $msg);
         }
+
+        return redirect()->route('admin.post.index')->with('success', $msg);
     }
 
     /**

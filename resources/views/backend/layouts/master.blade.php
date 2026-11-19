@@ -214,32 +214,42 @@
 
     {{-- Global SweetAlert2 Toast Notifications (Top-Right) --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const showSwalToast = (icon, title) => {
-                if (typeof Swal !== 'undefined') {
-                    const Toast = Swal.mixin({
-                        toast: true,
-                        position: 'top-end',
-                        showConfirmButton: false,
-                        timer: 3500,
-                        timerProgressBar: true,
-                        didOpen: (toast) => {
-                            toast.onmouseenter = Swal.stopTimer;
-                            toast.onmouseleave = Swal.resumeTimer;
-                        }
-                    });
-                    Toast.fire({ icon: icon, title: title });
-                }
-            };
+        window.showSwalToast = function(icon, title) {
+            if (!title) {
+                return;
+            }
+            if (typeof Swal !== 'undefined') {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3500,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({ icon: icon || 'success', title: title });
+            }
+        };
 
+        document.addEventListener('DOMContentLoaded', function() {
             @if (session('swal_toast'))
-                showSwalToast("{{ is_array(session('swal_toast')) ? (session('swal_toast')['icon'] ?? 'success') : 'success' }}", "{!! addslashes(is_array(session('swal_toast')) ? (session('swal_toast')['title'] ?? '') : session('swal_toast')) !!}");
+                window.showSwalToast(
+                    @json(is_array(session('swal_toast')) ? (session('swal_toast')['icon'] ?? 'success') : 'success'),
+                    @json(is_array(session('swal_toast')) ? (session('swal_toast')['title'] ?? '') : session('swal_toast'))
+                );
             @elseif (session('success'))
-                showSwalToast('success', "{!! addslashes(session('success')) !!}");
+                window.showSwalToast('success', @json(session('success')));
             @elseif (session('error'))
-                showSwalToast('error', "{!! addslashes(session('error')) !!}");
+                window.showSwalToast('error', @json(session('error')));
+            @elseif (session('warning'))
+                window.showSwalToast('warning', @json(session('warning')));
+            @elseif ($errors->any())
+                window.showSwalToast('error', @json($errors->first()));
             @elseif (session('status'))
-                showSwalToast('info', "{!! addslashes(session('status')) !!}");
+                window.showSwalToast('info', @json(session('status')));
             @endif
         });
     </script>

@@ -63,12 +63,10 @@ class PageController extends Controller
 
         $save = $request->submit ?? 'apply';
         if ($save == 'apply') {
-            $msg = 'Page has been created successfully';
-            $url = route('admin.page.edit', [$insert_id]);
-            msg_move_page($msg, $url);
-        } else {
-            return redirect(route('admin.page.index'));
+            return redirect()->route('admin.page.edit', [$insert_id])->with('success', __('Thêm trang thành công!'));
         }
+
+        return redirect()->route('admin.page.index')->with('success', __('Thêm trang thành công!'));
     }
 
     /**
@@ -112,12 +110,10 @@ class PageController extends Controller
 
         $save = $request->submit ?? 'apply';
         if ($save == 'apply') {
-            $msg = 'Page has been updated successfully';
-            $url = route('admin.page.edit', [$request->id]);
-            msg_move_page($msg, $url);
-        } else {
-            return redirect(route('admin.page.index'));
+            return redirect()->route('admin.page.edit', [$request->id])->with('success', __('Cập nhật trang thành công!'));
         }
+
+        return redirect()->route('admin.page.index')->with('success', __('Cập nhật trang thành công!'));
     }
 
     /**

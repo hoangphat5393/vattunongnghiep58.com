@@ -103,12 +103,10 @@ class ProductController extends Controller
 
         $save = $request->submit ?? 'apply';
         if ($save == 'apply') {
-            $msg = 'Product has been created successfully';
-            $url = route('admin.product.edit', [$insert_id]);
-            msg_move_page($msg, $url);
-        } else {
-            return redirect(route('admin.product.index'));
+            return redirect()->route('admin.product.edit', [$insert_id])->with('success', __('Thêm sản phẩm thành công!'));
         }
+
+        return redirect()->route('admin.product.index')->with('success', __('Thêm sản phẩm thành công!'));
     }
 
     /**
@@ -162,12 +160,10 @@ class ProductController extends Controller
 
         $save = $request->submit ?? 'apply';
         if ($save == 'apply') {
-            $msg = 'Product has been updated successfully';
-            $url = route('admin.product.edit', [$id]);
-            msg_move_page($msg, $url);
-        } else {
-            return redirect(route('admin.product.index'));
+            return redirect()->route('admin.product.edit', [$id])->with('success', __('Cập nhật sản phẩm thành công!'));
         }
+
+        return redirect()->route('admin.product.index')->with('success', __('Cập nhật sản phẩm thành công!'));
     }
 
     /**

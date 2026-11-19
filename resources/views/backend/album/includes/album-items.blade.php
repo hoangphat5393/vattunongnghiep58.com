@@ -93,53 +93,33 @@
 
 
         function updateOrder(items) {
-
-            // Sử dụng Axios để gửi yêu cầu cập nhật thứ tự
-
             axios.post(`{{ route('admin.albumItem.update_sort') }}`, {
                     sort: items
-
                 })
-
                 .then(function(response) {
-
-                    console.log('Order updated:', response.data);
-
+                    window.showSwalToast?.('success', 'Cập nhật thứ tự hình ảnh thành công!');
                 })
-
                 .catch(function(error) {
-
                     console.error('Error updating order:', error);
-
+                    window.showSwalToast?.('error', 'Cập nhật thứ tự thất bại!');
                 });
-
         }
 
-
-
         // DELETE ALBUM ITEM
-
         $(document).on("click", ".delete-slider", function() {
-
             var id = $(this).attr("data");
 
-
-
             if (id) {
-
                 axios.delete(`{{ url('/admin/album_item') }}/${id}`)
                     .then((res) => {
-
                         $("#album_items").html(res.data.view);
-
-                        // if (res.data.view != "") $(".slider-list").html(res.data.view);
-
+                        window.showSwalToast?.('success', 'Đã xóa hình ảnh thành công!');
                     })
-
-                    .catch((e) => console.log(e));
-
+                    .catch((e) => {
+                        console.error(e);
+                        window.showSwalToast?.('error', 'Xóa hình ảnh thất bại!');
+                    });
             }
-
         });
     </script>
 @endpush

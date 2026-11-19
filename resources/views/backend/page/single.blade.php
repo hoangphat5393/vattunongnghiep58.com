@@ -183,13 +183,17 @@
             if (!form) return;
 
             form.addEventListener('submit', function(event) {
+                if (typeof window.syncAllCkEditors === 'function') {
+                    window.syncAllCkEditors();
+                }
+
                 var errorContainer = document.querySelector('#formEdit .js-validation-messages');
                 if (errorContainer) {
                     errorContainer.innerHTML = '';
                 }
 
                 var errors = [];
-                var nameInput = form.querySelector('[name=\"name\"]');
+                var nameInput = form.querySelector('[name="name"]');
 
                 if (nameInput && !nameInput.value.trim()) {
                     errors.push('Nhập tiêu đề trang');
@@ -197,6 +201,9 @@
 
                 if (errors.length) {
                     event.preventDefault();
+                    if (typeof window.showSwalToast === 'function') {
+                        window.showSwalToast('error', errors[0]);
+                    }
                     if (errorContainer) {
                         var list = document.createElement('ul');
                         list.className = 'error list-unstyled mb-0 small';

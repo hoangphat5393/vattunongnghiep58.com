@@ -35,6 +35,35 @@
         },
     };
 
+    function notifyToast(icon, title) {
+        if (!title) {
+            return;
+        }
+        if (typeof window.showSwalToast === 'function' && window.showSwalToast !== notifyToast) {
+            window.showSwalToast(icon, title);
+            return;
+        }
+        if (typeof Swal !== 'undefined') {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3500,
+                timerProgressBar: true,
+                didOpen: function (toast) {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                },
+            });
+            Toast.fire({
+                icon: icon || 'success',
+                title: title,
+            });
+        }
+    }
+
+    window.showSwalToast = window.showSwalToast || notifyToast;
+
     function getMetaContentByName(name, content) {
         const attr = content == null ? 'content' : content;
         const meta = document.querySelector("meta[name='" + name + "']");
@@ -45,6 +74,10 @@
         return window.http.postForm(url, data, config);
     }
 
+    function adminPostText(url, data) {
+        return window.http.postText(url, data);
+    }
+
     function getCheckedSeqList() {
         return $('input[name="seq_list[]"]:checked')
             .map(function () {
@@ -53,9 +86,56 @@
             .get();
     }
 
+    function adminToggleCheckbox(endpoint, productId, checkboxSelector) {
+        const check = $(checkboxSelector + ':checkbox:checked').length > 0 ? 1 : 0;
+
+        return adminPostText(admin_url + endpoint, {
+            _token: getMetaContentByName('csrf-token'),
+            check: check,
+            sid: productId,
+        })
+            .then(function () {
+                notifyToast('success', 'Cập nhật trạng thái thành công!');
+            })
+            .catch(function (e) {
+                console.error(e);
+                notifyToast('error', 'Cập nhật trạng thái thất bại!');
+            });
+    }
+
     window.getMetaContentByName = getMetaContentByName;
 
+    // Hook jQuery Validate to sync CKEditor & display top-right toast on validation failure
+    if (typeof $ !== 'undefined' && $.fn && typeof $.fn.validate === 'function') {
+        const originalValidate = $.fn.validate;
+        $.fn.validate = function (options) {
+            const opts = Object.assign({}, options);
+            const userInvalidHandler = opts.invalidHandler;
+
+            opts.invalidHandler = function (event, validator) {
+                if (typeof userInvalidHandler === 'function') {
+                    userInvalidHandler.call(this, event, validator);
+                } else {
+                    $('html, body').animate({ scrollTop: 0 }, 500);
+                }
+
+                if (validator && validator.errorList && validator.errorList.length > 0) {
+                    notifyToast('error', validator.errorList[0].message);
+                }
+            };
+
+            return originalValidate.call(this, opts);
+        };
+    }
+
     $(function () {
+        // Sync CKEditor instances before any form submit
+        $(document).on('click', 'button[type="submit"], input[type="submit"]', function () {
+            if (typeof window.syncAllCkEditors === 'function') {
+                window.syncAllCkEditors();
+            }
+        });
+
         $('.nav-sidebar .has-treeview').each(function () {
             if ($(this).find('a').hasClass('active')) {
                 $(this).addClass('menu-open');
@@ -95,7 +175,7 @@
                     },
                     No: {
                         class: 'gray',
-                        action: function () { },
+                        action: function () {},
                     },
                 },
             });
@@ -103,7 +183,7 @@
 
         if (typeof $.fn.select2 !== 'undefined') {
             $('.select2, .multi-select2').select2({
-                width: '100%'
+                width: '100%',
             });
         }
     });
@@ -162,13 +242,11 @@
                 $('input[name="post_list[]"]:checked').each(function () {
                     $('.item-' + $(this).val()).remove();
                 });
-                $.alert({
-                    title: 'Delete done',
-                    content: '',
-                });
+                notifyToast('success', 'Đã xóa dữ liệu thành công!');
             })
             .catch(function (e) {
                 console.error(e);
+                notifyToast('error', 'Xóa dữ liệu thất bại!');
             });
     };
 
@@ -176,7 +254,7 @@
         const seq_list = getCheckedSeqList();
 
         if (seq_list.length === 0) {
-            alert('Vui lòng chọn mục cần xóa!');
+            notifyToast('warning', 'Vui lòng chọn mục cần xóa!');
             return false;
         }
 
@@ -185,7 +263,7 @@
             info_user_admin = 'Xóa tài khoản nhân viên sẽ xóa tất cả sản phẩm, đơn hàng thuộc tài khoản này! \n';
         }
 
-        if (!confirm(info_user_admin + 'Are you sure delete?')) {
+        if (!confirm(info_user_admin + 'Bạn có chắc chắn muốn xóa các mục đã chọn?')) {
             return false;
         }
 
@@ -199,6 +277,7 @@
             })
             .catch(function (e) {
                 console.error(e);
+                notifyToast('error', e.response?.data?.message || 'Xóa dữ liệu thất bại!');
             });
     };
 
@@ -217,6 +296,7 @@
             })
             .catch(function (e) {
                 console.error(e);
+                notifyToast('error', e.response?.data?.message || 'Xóa dữ liệu thất bại!');
             });
     };
 
@@ -224,11 +304,11 @@
         const seq_list = getCheckedSeqList();
 
         if (seq_list.length === 0) {
-            alert('Chọn dữ liệu cần tạo!');
+            notifyToast('warning', 'Vui lòng chọn dữ liệu cần nhân bản!');
             return false;
         }
 
-        if (!confirm('Are you sure replicate?')) {
+        if (!confirm('Bạn có chắc chắn muốn nhân bản các mục đã chọn?')) {
             return false;
         }
 
@@ -242,27 +322,80 @@
             })
             .catch(function (e) {
                 console.error(e);
+                notifyToast('error', e.response?.data?.message || 'Nhân bản dữ liệu thất bại!');
             });
+    };
+
+    window.update_theme_fast = function update_theme_fast(product_id) {
+        const origin_price = $('#origin-price-' + product_id).val();
+        const promotion_price = $('#promotion-price-' + product_id).val();
+        const start_event = $('#start-event-' + product_id).val();
+        const end_event = $('#end-event-' + product_id).val();
+
+        adminPostText(admin_url + '/ajax/process_theme_fast', {
+            _token: getMetaContentByName('csrf-token'),
+            id: product_id,
+            origin_price: origin_price,
+            promotion_price: promotion_price,
+            start_event: start_event,
+            end_event: end_event,
+        })
+            .then(function (res) {
+                $('#alert_' + product_id).html(res.data).show();
+                notifyToast('success', 'Cập nhật nhanh thành công!');
+            })
+            .catch(function (e) {
+                console.error(e);
+                notifyToast('error', 'Cập nhật nhanh thất bại!');
+            });
+    };
+
+    window.new_item_click = function new_item_click(product_id) {
+        adminToggleCheckbox('/ajax/process_new_item', product_id, '#toggle-new-item-' + product_id);
+    };
+
+    window.flash_sale_click = function flash_sale_click(product_id) {
+        adminToggleCheckbox('/ajax/process_flash_sale', product_id, '#toggle-flash-sale-' + product_id);
+    };
+
+    window.sale_top_week_click = function sale_top_week_click(product_id) {
+        adminToggleCheckbox('/ajax/process_sale_top_week', product_id, '#toggle-sale-top-week-' + product_id);
+    };
+
+    window.propose_click = function propose_click(product_id) {
+        adminToggleCheckbox('/ajax/process_propose', product_id, '#toggle-propose-' + product_id);
+    };
+
+    window.store_status_click = function store_status_click(product_id) {
+        adminToggleCheckbox('/ajax/process_store_status', product_id, '#toggle-store-status-' + product_id);
     };
 
     window.loadFile = function loadFile(event) {
         const output = document.getElementById('output');
-        output.src = URL.createObjectURL(event.target.files[0]);
+        if (output && event.target.files[0]) {
+            output.src = URL.createObjectURL(event.target.files[0]);
+        }
     };
 
     window.loadFileIcon = function loadFileIcon(event) {
         const output = document.getElementById('output_icon');
-        output.src = URL.createObjectURL(event.target.files[0]);
+        if (output && event.target.files[0]) {
+            output.src = URL.createObjectURL(event.target.files[0]);
+        }
     };
 
     window.loadFileSlishow_pc = function loadFileSlishow_pc(event) {
         const output = document.getElementById('output_slishow_pc');
-        output.src = URL.createObjectURL(event.target.files[0]);
+        if (output && event.target.files[0]) {
+            output.src = URL.createObjectURL(event.target.files[0]);
+        }
     };
 
     window.loadFileSlishow_mobile = function loadFileSlishow_mobile(event) {
         const output = document.getElementById('output_slishow_mobile');
-        output.src = URL.createObjectURL(event.target.files[0]);
+        if (output && event.target.files[0]) {
+            output.src = URL.createObjectURL(event.target.files[0]);
+        }
     };
 
     window.number_format = function number_format(number, decimals, dec_point, thousands_sep) {
@@ -313,7 +446,10 @@
             id = 'preview_image';
         }
         const myArr = $url.split('storage/');
-        document.getElementById(id).value = myArr[1];
+        const el = document.getElementById(id);
+        if (el) {
+            el.value = myArr[1];
+        }
         $('.' + id).attr('src', $url);
         document.getElementsByClassName(id).src = 'test.jpg';
     };
@@ -336,7 +472,9 @@
     }
 
     window.editorQuote = function editorQuote(text) {
-        CKEDITOR.replace(text, simpleEditorConfig());
+        if (typeof CKEDITOR !== 'undefined' && document.getElementById(text)) {
+            CKEDITOR.replace(text, simpleEditorConfig());
+        }
     };
 
     /** Nội dung (content): cùng toolbar đơn giản như mô tả (editorQuote). */
@@ -362,7 +500,7 @@
         const defaultMessage = message || 'Nhập nội dung';
 
         $.validator.addMethod('ckeditor_required', function (value, element) {
-            const editor = CKEDITOR.instances[element.id];
+            const editor = typeof CKEDITOR !== 'undefined' && CKEDITOR.instances ? CKEDITOR.instances[element.id] : null;
             if (editor) {
                 const plain = editor
                     .getData()
@@ -386,10 +524,12 @@
             const id = $(this).attr('id');
             const input = $(this).attr('data');
             const view_img = $(this).data('show');
-            const button1 = document.getElementById(id);
-            button1.onclick = function () {
-                selectFileWithCKFinder(input, view_img);
-            };
+            const button1 = id ? document.getElementById(id) : null;
+            if (button1) {
+                button1.onclick = function () {
+                    selectFileWithCKFinder(input, view_img);
+                };
+            }
         });
 
         $(document).on('click', '.ckfinder-gallery', function () {
@@ -470,7 +610,7 @@
     };
 
     $(function () {
-        $('.quick_change_value').on('change', function () {
+        $(document).on('change', '.quick_change_value', function () {
             const type = $(this).attr('type');
             const id = $(this).attr('data-id');
             const model = $(this).attr('data-model');
@@ -494,13 +634,16 @@
                 column: column,
                 value: value,
             })
-                .then(function () {
+                .then(function (res) {
                     if (reload) {
                         location.reload();
+                    } else {
+                        notifyToast('success', res.data?.message || 'Cập nhật thành công!');
                     }
                 })
                 .catch(function (e) {
                     console.error(e);
+                    notifyToast('error', e.response?.data?.message || 'Cập nhật thất bại!');
                 });
         });
     });
@@ -534,7 +677,7 @@
             msg = '';
         }
         if (typeof position === 'undefined') {
-            position = 'bottom-end';
+            position = 'top-end';
         }
 
         const Toast = Swal.mixin({
@@ -543,9 +686,10 @@
             position: position,
             showConfirmButton: false,
             timer: 3000,
+            timerProgressBar: true,
         });
         Toast.fire({
-            type: type,
+            icon: type,
             title: msg,
         });
     };
@@ -558,24 +702,18 @@
             msg = '';
         }
 
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-        });
-        Toast.fire({
-            type: type,
-            title: msg,
-        });
+        notifyToast(type, msg);
     };
 
     const formEdit = document.getElementById('formEdit');
     if (formEdit) {
         document.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                $('#submit_form_save').trigger('click');
+            if (event.key === 'Enter' && event.target && event.target.tagName !== 'TEXTAREA') {
+                const saveBtn = document.getElementById('submit_form_save') || formEdit.querySelector('button[type="submit"][value="apply"], button[type="submit"]');
+                if (saveBtn) {
+                    event.preventDefault();
+                    $(saveBtn).trigger('click');
+                }
             }
         });
     }
@@ -587,10 +725,10 @@
             navigator.clipboard
                 .writeText(text)
                 .then(function () {
-                    alertJs('success', 'Copied to clipboard!');
+                    notifyToast('success', 'Đã sao chép vào bộ nhớ tạm!');
                 })
                 .catch(function () {
-                    alertJs('error', 'Copied fail!');
+                    notifyToast('error', 'Sao chép thất bại!');
                 });
         });
     });

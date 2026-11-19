@@ -37,12 +37,10 @@ class EmailTemplateController extends Controller
         $save = $request->submit ?? 'apply';
 
         if ($save == 'apply') {
-            $msg = 'Email template has been created successfully';
-            $url = route('admin.email-template.edit', [$insert_id]);
-            msg_move_page($msg, $url);
-        } else {
-            return redirect(route('admin.email-template.index'));
+            return redirect()->route('admin.email-template.edit', [$insert_id])->with('success', __('Thêm mẫu email thành công!'));
         }
+
+        return redirect()->route('admin.email-template.index')->with('success', __('Thêm mẫu email thành công!'));
     }
 
     public function show(EmailTemplate $emailTemplate, $id)
@@ -73,12 +71,10 @@ class EmailTemplateController extends Controller
         $save = $request->submit ?? 'apply';
 
         if ($save == 'apply') {
-            $msg = 'Email template has been updated successfully';
-            $url = route('admin.email-template.edit', [$request->id]);
-            msg_move_page($msg, $url);
-        } else {
-            return redirect(route('admin.email-template.index'));
+            return redirect()->route('admin.email-template.edit', [$request->id])->with('success', __('Cập nhật mẫu email thành công!'));
         }
+
+        return redirect()->route('admin.email-template.index')->with('success', __('Cập nhật mẫu email thành công!'));
     }
 
     public function destroy(EmailTemplate $emailTemplate, $id)

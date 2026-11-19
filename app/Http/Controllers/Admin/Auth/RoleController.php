@@ -82,7 +82,12 @@ class RoleController extends Controller
             $role->administrators()->attach($administrators);
         }
 
-        return redirect()->route('admin.role.index')->with('success');
+        $save = $request->submit ?? 'apply';
+        if ($save == 'apply') {
+            return redirect()->route('admin.role.edit', [$role->id])->with('success', __('Thêm nhóm quyền thành công!'));
+        }
+
+        return redirect()->route('admin.role.index')->with('success', __('Thêm nhóm quyền thành công!'));
     }
 
     /**
@@ -143,14 +148,10 @@ class RoleController extends Controller
 
         $save = $data['submit'] ?? 'apply';
         if ($save == 'apply') {
-            $msg = 'Permission has been Updated';
-            $url = route('admin.role.edit', [$id]);
-            msg_move_page($msg, $url);
-        } else {
-            return redirect(route('admin.role.index'));
+            return redirect()->route('admin.role.edit', [$id])->with('success', __('Cập nhật nhóm quyền thành công!'));
         }
 
-        return redirect()->route('admin.role.index')->with('success', sc_language_render('action.edit_success'));
+        return redirect()->route('admin.role.index')->with('success', __('Cập nhật nhóm quyền thành công!'));
     }
 
     /**

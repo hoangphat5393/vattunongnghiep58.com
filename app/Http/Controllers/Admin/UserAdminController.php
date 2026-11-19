@@ -174,27 +174,24 @@ class UserAdminController extends Controller
             $admin->roles()->sync($role_id);
         }
 
+        $msg = $sid > 0 ? __('Cập nhật thành viên thành công!') : __('Thêm thành viên thành công!');
         if ($save == 'apply') {
-            $msg = 'Post has been Updated';
-            $url = route('admin.user.edit', [$post_id]);
-            msg_move_page($msg, $url);
-        } else {
-            return redirect(route('admin.userList'));
+            return redirect()->route('admin.user.edit', [$post_id])->with('success', $msg);
         }
+
+        return redirect()->route('admin.userList')->with('success', $msg);
     }
 
     public function deleteUserAdmin($id)
     {
         $user_current = Auth::guard('admin')->user();
         if (Auth::guard('admin')->check() && $user_current->id != $id) {
-            $loadDelete = Admin::find($id)->delete();
-            $msg = 'Admin account has been Delete';
-            $url = route('admin.userList');
-            msg_move_page($msg, $url);
+            Admin::find($id)?->delete();
+
+            return redirect()->route('admin.userList')->with('success', __('Đã xóa tài khoản thành công!'));
         }
-        $msg = 'Không thực hiện được thao tác này';
-        $url = route('admin.userList');
-        msg_move_page($msg, $url);
+
+        return redirect()->route('admin.userList')->with('error', __('Không thực hiện được thao tác này!'));
     }
 
     public function without()

@@ -279,27 +279,30 @@
             hideAlbumModal();
         });
 
-        document.getElementById('openCKFinder').onclick = function() {
-            var parent_id = $(this).data("parent");
+        var openCKFinderBtn = document.getElementById('openCKFinder');
+        if (openCKFinderBtn) {
+            openCKFinderBtn.onclick = function() {
+                var parent_id = $(this).data("parent");
 
-            CKFinder.modal({
-                chooseFiles: true,
-                width: 1000,
-                height: 600,
-                onInit: function(finder) {
-                    finder.on('files:choose', function(e) {
-                        var files = e.data.files;
-                        var fileUrls = [];
+                CKFinder.modal({
+                    chooseFiles: true,
+                    width: 1000,
+                    height: 600,
+                    onInit: function(finder) {
+                        finder.on('files:choose', function(e) {
+                            var files = e.data.files;
+                            var fileUrls = [];
 
-                        files.forEach(function(file) {
-                            fileUrls.push(file.getUrl());
+                            files.forEach(function(file) {
+                                fileUrls.push(file.getUrl());
+                            });
+
+                            storeFileUrls(fileUrls, parent_id);
                         });
-
-                        storeFileUrls(fileUrls, parent_id);
-                    });
-                },
-            });
-        };
+                    },
+                });
+            };
+        }
 
         function storeFileUrls(fileUrls, parent_id) {
             axios
@@ -309,12 +312,15 @@
                 .then(response => {
                     if (response.data.success) {
                         $("#album_items").html(response.data.view);
+                        window.showSwalToast?.('success', response.data.message || 'Đã thêm hình ảnh vào album!');
                     } else {
                         console.error('Lỗi khi lưu đường dẫn file:', response.data.error);
+                        window.showSwalToast?.('error', response.data.message || 'Thêm hình ảnh thất bại!');
                     }
                 })
                 .catch(error => {
                     console.error('Lỗi khi gửi yêu cầu:', error);
+                    window.showSwalToast?.('error', 'Lỗi kết nối khi thêm hình ảnh!');
                 });
         }
     </script>
@@ -326,9 +332,8 @@
                 alertBox.find(".modal-error-content").html(messages);
                 alertBox.removeClass("d-none");
                 $("#albumItemModal .modal-body").animate({ scrollTop: 0 }, 200);
-            } else {
-                alert(messages.replace(/<br>/g, "\n"));
             }
+            window.showSwalToast?.('error', messages.replace(/<br\s*\/?>/gi, " "));
         }
 
         function clearModalError() {
@@ -425,6 +430,7 @@
                     if (res.data.view != "") {
                         hideAlbumModal();
                         $("#album_items").html(res.data.view);
+                        window.showSwalToast?.('success', 'Thêm hình ảnh thành công!');
                     }
                 })
                 .catch((error) => {
@@ -481,6 +487,7 @@
                     if (res.data.view != "") {
                         hideAlbumModal();
                         $("#album_items").html(res.data.view);
+                        window.showSwalToast?.('success', 'Cập nhật hình ảnh thành công!');
                     }
                 })
                 .catch((error) => {

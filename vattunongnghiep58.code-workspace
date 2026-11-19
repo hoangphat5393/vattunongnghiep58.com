@@ -13,9 +13,6 @@
             "path": "../new_template"
         },
         {
-            "path": "../salondungtokyo"
-        },
-        {
             "path": "../note"
         },
         {
@@ -23,6 +20,12 @@
         },
         {
             "path": "../landinpage"
+        },
+        {
+            "path": "../my_wordpress"
+        },
+        {
+            "path": "../salondungtokyo"
         }
     ],
     "settings": {

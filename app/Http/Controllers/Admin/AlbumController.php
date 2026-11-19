@@ -68,16 +68,10 @@ class AlbumController extends Controller
         $save = $request->submit ?? 'apply';
 
         if ($save == 'apply') {
-
-            $msg = 'Album has been created successfully';
-
-            $url = route('admin.album.edit', $insert_id);
-
-            msg_move_page($msg, $url);
-        } else {
-
-            return redirect(route('admin.album.index'));
+            return redirect()->route('admin.album.edit', $insert_id)->with('success', __('Thêm album thành công!'));
         }
+
+        return redirect()->route('admin.album.index')->with('success', __('Thêm album thành công!'));
     }
 
     /**
@@ -130,16 +124,10 @@ class AlbumController extends Controller
         }
 
         if ($save == 'apply') {
-
-            $msg = 'Album has been updated successfully';
-
-            $url = route('admin.album.edit', [$sid]);
-
-            msg_move_page($msg, $url);
-        } else {
-
-            return redirect(route('admin.album.index'));
+            return redirect()->route('admin.album.edit', [$sid])->with('success', __('Cập nhật album thành công!'));
         }
+
+        return redirect()->route('admin.album.index')->with('success', __('Cập nhật album thành công!'));
     }
 
     /**

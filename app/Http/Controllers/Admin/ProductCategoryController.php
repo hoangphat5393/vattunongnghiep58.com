@@ -92,12 +92,10 @@ class ProductCategoryController extends Controller
         $save = $request->submit ?? 'apply';
 
         if ($save == 'apply') {
-            $msg = 'Category has been created successfully';
-            $url = route('admin.product-category.edit', [$insert_id]);
-            msg_move_page($msg, $url);
-        } else {
-            return redirect(route('admin.product-category.index'));
+            return redirect()->route('admin.product-category.edit', [$insert_id])->with('success', __('Thêm danh mục sản phẩm thành công!'));
         }
+
+        return redirect()->route('admin.product-category.index')->with('success', __('Thêm danh mục sản phẩm thành công!'));
     }
 
     /**
@@ -151,12 +149,10 @@ class ProductCategoryController extends Controller
         $save = $request->submit ?? 'apply';
 
         if ($save == 'apply') {
-            $msg = 'Product category has been updated successfully';
-            $url = route('admin.product-category.edit', [$sid]);
-            msg_move_page($msg, $url);
-        } else {
-            return redirect(route('admin.product-category.index'));
+            return redirect()->route('admin.product-category.edit', [$sid])->with('success', __('Cập nhật danh mục sản phẩm thành công!'));
         }
+
+        return redirect()->route('admin.product-category.index')->with('success', __('Cập nhật danh mục sản phẩm thành công!'));
     }
 
     /**

@@ -28,17 +28,17 @@ class PermissionController extends Controller
             if (Str::startsWith($uri, SC_ADMIN_PREFIX)) {
                 $prefix = SC_ADMIN_PREFIX ? $route->getPrefix() : ltrim($route->getPrefix(), '/');
                 $routeAdmin[$prefix] = [
-                    'uri' => 'ANY::'.$prefix.'/*',
-                    'name' => $prefix.'/*',
+                    'uri' => 'ANY::' . $prefix . '/*',
+                    'name' => $prefix . '/*',
                     'method' => 'ANY',
                 ];
 
                 $wildcardUri = preg_replace('/\{[^}]+\}/', '*', $uri);
                 $subPrefix = explode('/', $wildcardUri)[1] ?? '';
                 if ($subPrefix && $subPrefix !== '*') {
-                    $routeAdmin['ANY::admin/'.$subPrefix.'/*'] = [
-                        'uri' => 'ANY::admin/'.$subPrefix.'/*',
-                        'name' => 'admin/'.$subPrefix.'/*',
+                    $routeAdmin['ANY::admin/' . $subPrefix . '/*'] = [
+                        'uri' => 'ANY::admin/' . $subPrefix . '/*',
+                        'name' => 'admin/' . $subPrefix . '/*',
                         'method' => 'ANY',
                     ];
                 }
@@ -48,7 +48,7 @@ class PermissionController extends Controller
                         return Str::startsWith($uri, $exp);
                     })) {
                         $routeAdmin[] = [
-                            'uri' => $method.'::'.$wildcardUri,
+                            'uri' => $method . '::' . $wildcardUri,
                             'name' => $wildcardUri,
                             'method' => $method,
                         ];
@@ -114,12 +114,10 @@ class PermissionController extends Controller
 
         $save = $request->submit ?? 'apply';
         if ($save == 'apply') {
-            $msg = 'Permission has been created successfully';
-            $url = route('admin.permission.edit', [$insert_id]);
-            msg_move_page($msg, $url);
-        } else {
-            return redirect(route('admin.permission.index'));
+            return redirect()->route('admin.permission.edit', [$insert_id])->with('success', __('Thêm quyền thành công!'));
         }
+
+        return redirect()->route('admin.permission.index')->with('success', __('Thêm quyền thành công!'));
     }
 
     /**
@@ -167,12 +165,10 @@ class PermissionController extends Controller
         $save = $request->submit ?? 'apply';
 
         if ($save == 'apply') {
-            $msg = 'Permission has been updated successfully';
-            $url = route('admin.permission.edit', [$id]);
-            msg_move_page($msg, $url);
-        } else {
-            return redirect(route('admin.permission.index'));
+            return redirect()->route('admin.permission.edit', [$id])->with('success', __('Cập nhật quyền thành công!'));
         }
+
+        return redirect()->route('admin.permission.index')->with('success', __('Cập nhật quyền thành công!'));
     }
 
     /**
@@ -192,15 +188,15 @@ class PermissionController extends Controller
 
     public function without()
     {
-        $prefix = SC_ADMIN_PREFIX ? SC_ADMIN_PREFIX.'/' : '';
+        $prefix = SC_ADMIN_PREFIX ? SC_ADMIN_PREFIX . '/' : '';
 
         return [
-            $prefix.'login',
-            $prefix.'logout',
-            $prefix.'forgot',
-            $prefix.'deny',
-            $prefix.'locale',
-            $prefix.'uploads',
+            $prefix . 'login',
+            $prefix . 'logout',
+            $prefix . 'forgot',
+            $prefix . 'deny',
+            $prefix . 'locale',
+            $prefix . 'uploads',
         ];
     }
 }
