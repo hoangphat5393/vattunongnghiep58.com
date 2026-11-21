@@ -23,20 +23,18 @@ DROP TABLE IF EXISTS `admin_menus`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `admin_menus` (
-  `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `parent_id` int NOT NULL DEFAULT '0',
-  `sort` int NOT NULL DEFAULT '0',
-  `title` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `icon` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `uri` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `type` int NOT NULL DEFAULT '0',
-  `hidden` int NOT NULL DEFAULT '0',
-  `key` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` bigint NOT NULL,
+  `parent_id` tinyint NOT NULL,
+  `sort` tinyint NOT NULL,
+  `title` varchar(100) COLLATE utf8mb4_vi_0900_ai_ci DEFAULT NULL,
+  `icon` varchar(50) COLLATE utf8mb4_vi_0900_ai_ci DEFAULT NULL,
+  `uri` varchar(255) COLLATE utf8mb4_vi_0900_ai_ci DEFAULT NULL,
+  `type` tinyint NOT NULL,
+  `hidden` tinyint NOT NULL,
+  `key` varchar(50) COLLATE utf8mb4_vi_0900_ai_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `admin_menu_key_unique` (`key`)
-) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vi_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -632,7 +630,7 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -641,7 +639,7 @@ CREATE TABLE `migrations` (
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (1,'2026_10_07_094818_create_admin_menus_table',1),(2,'2026_10_07_094818_create_agent_conversation_messages_table',1),(3,'2026_10_07_094818_create_agent_conversations_table',1),(4,'2026_10_07_094818_create_album_items_table',1),(5,'2026_10_07_094818_create_albums_table',1),(6,'2026_10_07_094818_create_cache_locks_table',1),(7,'2026_10_07_094818_create_cache_table',1),(8,'2026_10_07_094818_create_categories_table',1),(9,'2026_10_07_094818_create_contacts_table',1),(10,'2026_10_07_094818_create_countries_table',1),(11,'2026_10_07_094818_create_customer_forget_pass_otp_table',1),(12,'2026_10_07_094818_create_email_templates_table',1),(13,'2026_10_07_094818_create_failed_jobs_table',1),(14,'2026_10_07_094818_create_import_log_table',1),(15,'2026_10_07_094818_create_jobs_table',1),(16,'2026_10_07_094818_create_media_files_table',1),(17,'2026_10_07_094818_create_menu_items_table',1),(18,'2026_10_07_094818_create_menus_table',1),(19,'2026_10_07_094818_create_pages_table',1),(20,'2026_10_07_094818_create_password_reset_tokens_table',1),(21,'2026_10_07_094818_create_permission_role_table',1),(22,'2026_10_07_094818_create_permissions_table',1),(23,'2026_10_07_094818_create_product_categories_table',1),(24,'2026_10_07_094818_create_product_prices_table',1),(25,'2026_10_07_094818_create_products_table',1),(26,'2026_10_07_094818_create_role_user_table',1),(27,'2026_10_07_094818_create_roles_table',1),(28,'2026_10_07_094818_create_sessions_table',1),(29,'2026_10_07_094818_create_settings_table',1),(30,'2026_10_07_094818_create_shop_currencies_table',1),(31,'2026_10_07_094818_create_shop_order_items_table',1),(32,'2026_10_07_094818_create_shop_order_payment_status_table',1),(33,'2026_10_07_094818_create_shop_order_status_table',1),(34,'2026_10_07_094818_create_shop_orders_table',1),(35,'2026_10_07_094818_create_shop_payment_method_table',1),(36,'2026_10_07_094818_create_users_table',1),(37,'2026_10_07_125742_add_foreign_keys_to_tables',1),(38,'2026_10_22_113327_refactor_shop_orders_to_orders_table',1),(39,'2026_10_22_182622_drop_legacy_shop_status_tables',1),(40,'2026_10_23_215500_rename_shop_payment_method_to_order_payment_methods',1),(41,'2026_10_23_235000_standardize_payment_schema',1),(42,'2026_10_24_130000_rename_shop_currencies_to_currencies',1),(43,'2026_10_27_154729_standardize_users_name_columns',1);
+INSERT INTO `migrations` VALUES (1,'2026_10_07_094818_create_admin_menus_table',1),(2,'2026_10_07_094818_create_agent_conversation_messages_table',1),(3,'2026_10_07_094818_create_agent_conversations_table',1),(4,'2026_10_07_094818_create_album_items_table',1),(5,'2026_10_07_094818_create_albums_table',1),(6,'2026_10_07_094818_create_cache_locks_table',1),(7,'2026_10_07_094818_create_cache_table',1),(8,'2026_10_07_094818_create_categories_table',1),(9,'2026_10_07_094818_create_contacts_table',1),(10,'2026_10_07_094818_create_countries_table',1),(11,'2026_10_07_094818_create_customer_forget_pass_otp_table',1),(12,'2026_10_07_094818_create_email_templates_table',1),(13,'2026_10_07_094818_create_failed_jobs_table',1),(14,'2026_10_07_094818_create_import_log_table',1),(15,'2026_10_07_094818_create_jobs_table',1),(16,'2026_10_07_094818_create_media_files_table',1),(17,'2026_10_07_094818_create_menu_items_table',1),(18,'2026_10_07_094818_create_menus_table',1),(19,'2026_10_07_094818_create_pages_table',1),(20,'2026_10_07_094818_create_password_reset_tokens_table',1),(21,'2026_10_07_094818_create_permission_role_table',1),(22,'2026_10_07_094818_create_permissions_table',1),(23,'2026_10_07_094818_create_product_categories_table',1),(24,'2026_10_07_094818_create_product_prices_table',1),(25,'2026_10_07_094818_create_products_table',1),(26,'2026_10_07_094818_create_role_user_table',1),(27,'2026_10_07_094818_create_roles_table',1),(28,'2026_10_07_094818_create_sessions_table',1),(29,'2026_10_07_094818_create_settings_table',1),(30,'2026_10_07_094818_create_shop_currencies_table',1),(31,'2026_10_07_094818_create_shop_order_items_table',1),(32,'2026_10_07_094818_create_shop_order_payment_status_table',1),(33,'2026_10_07_094818_create_shop_order_status_table',1),(34,'2026_10_07_094818_create_shop_orders_table',1),(35,'2026_10_07_094818_create_shop_payment_method_table',1),(36,'2026_10_07_094818_create_users_table',1),(37,'2026_10_07_125742_add_foreign_keys_to_tables',2),(40,'2026_10_22_113327_refactor_shop_orders_to_orders_table',3),(42,'2026_10_22_182622_drop_legacy_shop_status_tables',4),(43,'2026_10_23_215500_rename_shop_payment_method_to_order_payment_methods',5),(44,'2026_10_23_235000_standardize_payment_schema',6),(45,'2026_10_24_130000_rename_shop_currencies_to_currencies',7),(46,'2026_10_27_154729_standardize_users_name_columns',8);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1243,4 +1241,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-10-28  1:39:17
+-- Dump completed on 2026-11-21  0:07:20

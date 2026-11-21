@@ -64,6 +64,99 @@
                 </ul>
             </div>
 
+            <div class="card shadow-sm border-0 mb-4" id="dbExportCard">
+                <div class="card-header bg-white py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <h5 class="card-title mb-0 text-success">
+                        <i class="fa-light fa-file-export me-2"></i>Xuất Database đa định dạng (MySQL / PostgreSQL / MongoDB)
+                    </h5>
+                    <span class="badge bg-light text-dark border">1-Click Export &amp; Download</span>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 mb-3">
+                        @php
+                            $formatMeta = [
+                                'mysql' => [
+                                    'title' => 'MySQL / MariaDB (.sql)',
+                                    'desc' => 'Đồng bộ sang MySQL (chuẩn InnoDB, utf8mb4, JSONB, AUTO_INCREMENT) để import phpMyAdmin / HeidiSQL.',
+                                    'icon' => 'fa-database text-primary',
+                                ],
+                                'pgsql' => [
+                                    'title' => 'PostgreSQL (.sql)',
+                                    'desc' => 'Xuất trực tiếp bằng pg_dump (Plain UTF-8 SQL) để khôi phục nhanh lên PostgreSQL / DBeaver / pgAdmin.',
+                                    'icon' => 'fa-server text-info',
+                                ],
+                                'mongodb' => [
+                                    'title' => 'MongoDB (.zip — JSON)',
+                                    'desc' => 'Xuất toàn bộ bảng thành các file .json chuẩn MongoDB Compass & kèm script mongoimport tự động.',
+                                    'icon' => 'fa-leaf text-success',
+                                ],
+                            ];
+                        @endphp
+
+                        @foreach ($formatMeta as $fmtKey => $fmtInfo)
+                            @php
+                                $st = $exportStatuses[$fmtKey] ?? [];
+                                $isReady = (bool) ($st['ready'] ?? false);
+                                $exists = (bool) ($st['dump_exists'] ?? false);
+                            @endphp
+                            <div class="col-md-4">
+                                <label class="db-export-option card h-100 border {{ $fmtKey === 'mysql' ? 'border-success bg-success-subtle bg-opacity-10' : 'border-secondary-subtle' }} p-3 mb-0"
+                                    style="cursor: pointer;"
+                                    data-format="{{ $fmtKey }}"
+                                    data-ready="{{ $isReady ? '1' : '0' }}"
+                                    data-exists="{{ $exists ? '1' : '0' }}"
+                                    data-download-url="{{ $st['download_url'] ?? route('admin.database-maintenance.download', ['format' => $fmtKey]) }}">
+                                    <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                                        <div class="form-check mb-0">
+                                            <input class="form-check-input db-export-radio"
+                                                type="radio"
+                                                name="db_export_format"
+                                                value="{{ $fmtKey }}"
+                                                {{ $fmtKey === 'mysql' ? 'checked' : '' }}>
+                                            <span class="fw-bold text-dark">
+                                                <i class="fa-light {{ $fmtInfo['icon'] }} me-1"></i>{{ $fmtInfo['title'] }}
+                                            </span>
+                                        </div>
+                                        <span class="badge {{ $isReady ? 'bg-success-subtle text-success border border-success' : 'bg-danger-subtle text-danger border border-danger' }}">
+                                            {{ $isReady ? 'Sẵn sàng' : 'Chưa sẵn sàng' }}
+                                        </span>
+                                    </div>
+                                    <p class="small text-muted mb-2">{{ $fmtInfo['desc'] }}</p>
+                                    <div class="mt-auto pt-2 border-top small text-secondary" id="export-meta-{{ $fmtKey }}">
+                                        @if ($exists)
+                                            <i class="fa-light fa-clock me-1"></i>{{ $st['updated_at'] }} • <strong>{{ $st['size_human'] }}</strong>
+                                        @else
+                                            <i class="fa-light fa-circle-info me-1"></i>Chưa có bản xuất ({{ $st['status_text'] ?? '' }})
+                                        @endif
+                                    </div>
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 pt-2 border-top">
+                        <div class="small text-muted" id="dbExportSelectedHint">
+                            Định dạng đang chọn: <strong class="text-dark">MySQL / MariaDB (.sql)</strong>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="button"
+                                id="btnExportDatabase"
+                                class="btn btn-success"
+                                data-url="{{ route('admin.database-maintenance.export') }}"
+                                @if (!($exportStatuses['mysql']['ready'] ?? false)) disabled @endif>
+                                <i class="fa-light fa-cloud-arrow-down me-1"></i>
+                                <span class="btn-label">Xuất &amp; Tải Database</span>
+                            </button>
+                            <a href="{{ $exportStatuses['mysql']['download_url'] ?? route('admin.database-maintenance.download', ['format' => 'mysql']) }}"
+                                id="btnDownloadLastExport"
+                                class="btn btn-outline-primary {{ ($exportStatuses['mysql']['dump_exists'] ?? false) ? '' : 'disabled' }}">
+                                <i class="fa-light fa-download me-1"></i>Tải bản gần nhất
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-white py-3">
                     <h5 class="card-title mb-0 text-primary">
@@ -182,6 +275,137 @@ document.addEventListener('DOMContentLoaded', function () {
             modal.show();
         });
     });
+
+    const exportOptions = document.querySelectorAll('.db-export-option');
+    const btnExportDatabase = document.getElementById('btnExportDatabase');
+    const btnDownloadLastExport = document.getElementById('btnDownloadLastExport');
+    const selectedHint = document.getElementById('dbExportSelectedHint');
+
+    const formatLabels = {
+        mysql: 'MySQL / MariaDB (.sql)',
+        pgsql: 'PostgreSQL (.sql)',
+        mongodb: 'MongoDB (.zip — JSON)',
+    };
+
+    const getSelectedFormat = () => {
+        const checked = document.querySelector('.db-export-radio:checked');
+        return checked ? checked.value : 'mysql';
+    };
+
+    const syncExportButtons = () => {
+        const fmt = getSelectedFormat();
+        exportOptions.forEach((card) => {
+            const isSelected = card.getAttribute('data-format') === fmt;
+            card.classList.toggle('border-success', isSelected);
+            card.classList.toggle('bg-success-subtle', isSelected);
+            card.classList.toggle('bg-opacity-10', isSelected);
+            card.classList.toggle('border-secondary-subtle', !isSelected);
+
+            if (isSelected) {
+                const isReady = card.getAttribute('data-ready') === '1';
+                const exists = card.getAttribute('data-exists') === '1';
+                const dlUrl = card.getAttribute('data-download-url');
+
+                if (btnExportDatabase) {
+                    btnExportDatabase.disabled = !isReady;
+                }
+                if (btnDownloadLastExport && dlUrl) {
+                    btnDownloadLastExport.href = dlUrl;
+                    btnDownloadLastExport.classList.toggle('disabled', !exists);
+                }
+                if (selectedHint) {
+                    selectedHint.innerHTML = `Định dạng đang chọn: <strong class="text-dark">${formatLabels[fmt] || fmt}</strong>`;
+                }
+            }
+        });
+    };
+
+    document.querySelectorAll('.db-export-radio').forEach((radio) => {
+        radio.addEventListener('change', syncExportButtons);
+    });
+    syncExportButtons();
+
+    if (btnExportDatabase) {
+        btnExportDatabase.addEventListener('click', async function () {
+            const format = getSelectedFormat();
+            const url = this.getAttribute('data-url');
+            const labelEl = this.querySelector('.btn-label');
+            const originalText = labelEl ? labelEl.textContent : '';
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+                || document.querySelector('input[name="_token"]')?.value
+                || '';
+
+            this.disabled = true;
+            if (labelEl) {
+                labelEl.textContent = `Đang xuất ${format.toUpperCase()}...`;
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: JSON.stringify({ format }),
+                });
+
+                const payload = await response.json();
+
+                if (!response.ok || payload.status !== 'success') {
+                    throw new Error(payload.message || 'Xuất database thất bại.');
+                }
+
+                const metaEl = document.getElementById(`export-meta-${format}`);
+                if (metaEl && payload.data) {
+                    metaEl.innerHTML = `<i class="fa-light fa-clock me-1"></i>${payload.data.updated_at} • <strong>${payload.data.size_human}</strong>`;
+                }
+
+                const activeCard = document.querySelector(`.db-export-option[data-format="${format}"]`);
+                if (activeCard) {
+                    activeCard.setAttribute('data-exists', '1');
+                }
+                syncExportButtons();
+
+                if (window.Swal) {
+                    window.Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: payload.message,
+                        showConfirmButton: false,
+                        timer: 3500,
+                        timerProgressBar: true,
+                    });
+                }
+
+                if (payload.data && payload.data.download_url) {
+                    window.location.href = payload.data.download_url;
+                }
+            } catch (error) {
+                if (window.Swal) {
+                    window.Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'error',
+                        title: error.message || 'Không thể xuất database.',
+                        showConfirmButton: false,
+                        timer: 4500,
+                        timerProgressBar: true,
+                    });
+                } else {
+                    alert(error.message || 'Không thể xuất database.');
+                }
+            } finally {
+                if (labelEl) {
+                    labelEl.textContent = originalText;
+                }
+                syncExportButtons();
+            }
+        });
+    }
 });
 </script>
 @endpush

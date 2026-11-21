@@ -203,10 +203,17 @@ Route::namespace('Admin')->group(function () {
                 Route::put('/', 'AdminController@updateCSS')->name('admin.css.update');
             });
 
-            // Database Maintenance (Bảo trì CSDL & Quản lý Sequence)
+            // Database Maintenance (Bảo trì CSDL, Quản lý Sequence & Xuất Database đa định dạng)
             Route::group(['prefix' => 'database-maintenance'], function () {
                 Route::get('/', 'DatabaseMaintenanceController@index')->name('admin.database-maintenance.index');
                 Route::post('/reset', 'DatabaseMaintenanceController@reset')->name('admin.database-maintenance.reset');
+                Route::post('/export', 'DatabaseMaintenanceController@export')->name('admin.database-maintenance.export');
+                Route::get('/download/{format}', 'DatabaseMaintenanceController@download')
+                    ->whereIn('format', ['mysql', 'pgsql', 'mongodb'])
+                    ->name('admin.database-maintenance.download');
+                // Legacy aliases (backward compatibility)
+                Route::post('/export-mysql', 'DatabaseMaintenanceController@exportMysql')->name('admin.database-maintenance.export-mysql');
+                Route::get('/download-mysql', 'DatabaseMaintenanceController@downloadMysql')->name('admin.database-maintenance.download-mysql');
             });
 
             // Setting | Theme-option
