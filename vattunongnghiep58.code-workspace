@@ -26,9 +26,24 @@
         },
         {
             "path": "../db-converter"
+        },
+        {
+            "path": "../media-vault"
+        },
+        {
+            "path": "D:/Text_Document"
+        },
+        {
+            "path": "../antd-multipurpose-dashboard"
         }
     ],
     "settings": {
         "xml.downloadExternalResources.enabled": true,
-    },
+        "[xml]": {
+            "editor.formatOnSave": false
+        },
+        "[svg]": {
+            "editor.formatOnSave": false
+        }
+    }
 }
